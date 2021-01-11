@@ -2,7 +2,6 @@ tap "homebrew/bundle"
 tap "homebrew/cask"
 tap "homebrew/core"
 
-brew "aws-iam-authenticator"
 cask "1password"
 cask "balenaetcher"
 cask "bettertouchtool"

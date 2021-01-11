@@ -1,9 +1,12 @@
 { config, pkgs, ... }:
 {
+  nixpkgs.config.allowUnfree = true;
+  
   home = {
 
+
     packages = [
-      #pkgs.aws-iam-authenticator waiting for update
+      #pkgs.aws-iam-authenticator
       pkgs.awscli2
       pkgs.curl
       pkgs.helmfile
@@ -11,7 +14,6 @@
       pkgs.kubectx
       pkgs.kubernetes-helm
       pkgs.ssm-session-manager-plugin
-      pkgs.meslo-lgs-nf
       pkgs.ripgrep
       pkgs.rnix-lsp
       pkgs.terraform_0_13
