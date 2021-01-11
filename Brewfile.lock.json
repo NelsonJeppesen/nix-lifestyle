@@ -1,0 +1,165 @@
+{
+  "entries": {
+    "tap": {
+      "homebrew/bundle": {
+        "revision": "72f41aae9b14d3603dd6d9a4e6bdecd871b5310a"
+      },
+      "homebrew/cask": {
+        "revision": "d940c682f5a0a6da9cd396ceb809b9c8bcb70fb5"
+      },
+      "homebrew/cask-drivers": {
+        "revision": "59d7a6880ca1096c44627aba91ba9bb042bffe39"
+      },
+      "homebrew/cask-fonts": {
+        "revision": "22d365078bd2516afd16affb5bd4fdcf1516491e"
+      },
+      "homebrew/cask-versions": {
+        "revision": "51fa382895944b1c1fa7ce4141b2eda21e708505"
+      },
+      "homebrew/core": {
+        "revision": "f352c38416d4279270246c452edc07b37828ca80"
+      }
+    },
+    "brew": {
+      "aws-iam-authenticator": {
+        "version": "0.5.2",
+        "bottle": {
+          "cellar": ":any_skip_relocation",
+          "prefix": "/usr/local",
+          "files": {
+            "big_sur": {
+              "url": "https://homebrew.bintray.com/bottles/aws-iam-authenticator-0.5.2.big_sur.bottle.tar.gz",
+              "sha256": "2a13645e0f747838f9e8956a9b6308311ead2b47098bfa2fd9cba73f39180b00"
+            },
+            "arm64_big_sur": {
+              "url": "https://homebrew.bintray.com/bottles/aws-iam-authenticator-0.5.2.arm64_big_sur.bottle.tar.gz",
+              "sha256": "416877f0ee45382d655d6f61cc2483abf8daa2eff7e6aa03e6a847c4a8528d42"
+            },
+            "catalina": {
+              "url": "https://homebrew.bintray.com/bottles/aws-iam-authenticator-0.5.2.catalina.bottle.tar.gz",
+              "sha256": "d1ff25777bf45e10ac8eede3897bf9f6aeb0982f17e061797392e18bfb5d7aa0"
+            },
+            "mojave": {
+              "url": "https://homebrew.bintray.com/bottles/aws-iam-authenticator-0.5.2.mojave.bottle.tar.gz",
+              "sha256": "fb86fbafcccfb9a111766514290e969406345e8f7c8f443c54a856131736f07e"
+            },
+            "high_sierra": {
+              "url": "https://homebrew.bintray.com/bottles/aws-iam-authenticator-0.5.2.high_sierra.bottle.tar.gz",
+              "sha256": "17f26f6e145021a386dc82c9fd9f012b81f30cb18c39d6ff98627ea319c5cef3"
+            }
+          }
+        }
+      }
+    },
+    "cask": {
+      "1password": {
+        "version": "7.7",
+        "options": {
+          "full_name": "1password"
+        }
+      },
+      "balenaetcher": {
+        "version": "1.5.113",
+        "options": {
+          "full_name": "balenaetcher"
+        }
+      },
+      "bettertouchtool": {
+        "version": "3.504-1642",
+        "options": {
+          "full_name": "bettertouchtool"
+        }
+      },
+      "caffeine": {
+        "version": "1.1.3",
+        "options": {
+          "full_name": "caffeine"
+        }
+      },
+      "clipy": {
+        "version": "1.2.1",
+        "options": {
+          "full_name": "clipy"
+        }
+      },
+      "docker": {
+        "version": "2.1.0.1,37199",
+        "options": {
+          "full_name": "docker"
+        }
+      },
+      "font-meslo-lg-nerd-font": {
+        "version": "2.1.0",
+        "options": {
+          "full_name": "font-meslo-lg-nerd-font"
+        }
+      },
+      "google-chrome": {
+        "version": "74.0.3729.157",
+        "options": {
+          "full_name": "google-chrome"
+        }
+      },
+      "google-chrome-canary": {
+        "version": "latest",
+        "options": {
+          "full_name": "google-chrome-canary"
+        }
+      },
+      "logitech-options": {
+        "version": "7.12.82",
+        "options": {
+          "full_name": "logitech-options"
+        }
+      },
+      "monitorcontrol": {
+        "version": "2.1.0",
+        "options": {
+          "full_name": "monitorcontrol"
+        }
+      },
+      "pritunl": {
+        "version": "1.2.2653.1",
+        "options": {
+          "full_name": "pritunl"
+        }
+      },
+      "session-manager-plugin": {
+        "version": "1.2.30.0",
+        "options": {
+          "full_name": "session-manager-plugin"
+        }
+      },
+      "slack": {
+        "version": "3.4.0",
+        "options": {
+          "full_name": "slack"
+        }
+      },
+      "spotify": {
+        "version": "latest",
+        "options": {
+          "full_name": "spotify"
+        }
+      },
+      "kitty": {
+        "version": "0.19.3",
+        "options": {
+          "full_name": "kitty"
+        }
+      }
+    }
+  },
+  "system": {
+    "macos": {
+      "big_sur": {
+        "HOMEBREW_VERSION": "2.7.2",
+        "HOMEBREW_PREFIX": "/usr/local",
+        "Homebrew/homebrew-core": "f352c38416d4279270246c452edc07b37828ca80",
+        "CLT": "12.3.0.0.1.1607026830",
+        "Xcode": "12.0",
+        "macOS": "11.1"
+      }
+    }
+  }
+}

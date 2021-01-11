@@ -10,6 +10,7 @@
       pkgs.kubectl
       pkgs.kubectx
       pkgs.kubernetes-helm
+      pkgs.ssm-session-manager-plugin
       pkgs.meslo-lgs-nf
       pkgs.ripgrep
       pkgs.rnix-lsp
@@ -214,7 +215,7 @@
             deoplete-nvim
             gruvbox-community
             neovim-sensible
-            nvim-lspconfig
+            #nvim-lspconfig
             vim-airline
             vim-airline-themes
             vim-gitgutter
