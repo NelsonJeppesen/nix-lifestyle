@@ -1,6 +1,79 @@
 { config, pkgs, ... }:
 {
   nixpkgs.config.allowUnfree = true;
+
+  dconf.settings = {
+    "org/gnome/shell" = {
+      enabled-extensions = ["paperwm@hedning:matrix.org"];
+    };
+
+    "org/gnome/shellextensions/paperwm" = {
+      horizontal-margin       = 0;
+      vertical-margin         = 0;
+      vertical-margin-bottom  = 0;
+      window-gap              = 0;
+    };
+
+    "org/gnome/desktop/peripherals/touchpad" = {
+      natural-scroll = false;
+    };
+
+
+    "org/gnome/desktop/interface" = {
+      gtk-theme   = "Adwaita-dark";
+    };
+
+    "org/gnome/desktop/input-sources" = {
+      xkb-options = [ "caps:super" ];
+    };
+
+    #
+    # Focus apps if running else launch
+    #
+    "org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom0" = {
+      binding = "<Alt>Return";
+      command = "bash -c \"wmctrl -xa kitty ; [ \"$?\" == \"1\" ] && kitty\"";
+      name    = "kitty";
+    };
+
+    "org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom1" = {
+      binding = "<Alt>s";
+      command = "bash -c \"wmctrl -a slack; [ \"$?\" == \"1\" ] && slack\"";
+      name    = "slack";
+    };
+
+    "org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom2" = {
+      binding = "<Alt>c";
+      command = "bash -c \"wmctrl -xa google-chrome.Google-chrome; [ \"$?\" == \"1\" ] && google-chrome-stable \"";
+      name    = "google-chrome-stable";
+    };
+
+    "org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom3" = {
+      binding = "<Alt>v";
+      command = "bash -c \"wmctrl -xa google-chrome-beta; [ \"$?\" == \"1\" ] && google-chrome-beta \"";
+      name    = "google-chrome-beta";
+    };
+
+    "org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom4" = {
+      binding = "<Alt>m";
+      command = "bash -c \"wmctrl -xa spotify; [ \"$?\" == \"1\" ] && spotify\"";
+      name    = "spotify";
+    };
+
+    #
+    # map the mappings
+    #
+    "org/gnome/settings-daemon/plugins/media-keys" = {
+      custom-keybindings = [
+        "/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom0/"
+        "/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom1/"
+        "/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom2/"
+        "/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom3/"
+        "/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom4/"
+      ];
+    };
+
+  };
   
   home = {
 
@@ -59,53 +132,32 @@
         macos_show_window_title_in  = "none" ;
         scrollback_lines            = "10000";
         strip_trailing_spaces       = "smart";
-        tab_bar_min_tabs            = "1";
+        #tab_bar_min_tabs            = "1";
         tab_bar_style               = "powerline";
         tab_title_template          = " {index} ";
 
-#        # BirdsOfParadise
-#        background            = "#2a1e1d";
-#        color0                = "#573d25";
-#        color1                = "#be2d26";
-#        color10               = "#94d7ba";
-#        color11               = "#d0d04f";
-#        color12               = "#b8d3ed";
-#        color13               = "#d09dca";
-#        color14               = "#92ced6";
-#        color15               = "#fff9d4";
-#        color2                = "#6ba08a";
-#        color3                = "#e99c29";
-#        color4                = "#5a86ac";
-#        color5                = "#ab80a6";
-#        color6                = "#74a5ac";
-#        color7                = "#dfdab7";
-#        color8                = "#9a6b49";
-#        color9                = "#e84526";
-#        cursor                = "#573d25";
-#        foreground            = "#dfdab7";
-#        selection_background  = "#563c27";
-#        selection_foreground  = "#2a1e1d";
-background            = "#181c27";
-foreground            = "#ada37a";
-cursor                = "#91805a";
-selection_background  = "#172539";
-color0                = "#181818";
-color8                = "#555555";
-color1                = "#800009";
-color9                = "#ab3834";
-color2                = "#48513b";
-color10               = "#a6a65d";
-color3                = "#cc8a3e";
-color11               = "#dcde7b";
-color4                = "#566d8c";
-color12               = "#2f97c6";
-color5                = "#724c7c";
-color13               = "#d33060";
-color6                = "#5b4f4a";
-color14               = "#f3dab1";
-color7                = "#ada37e";
-color15               = "#f3f3f3";
-selection_foreground  = "#181c27";
+        background            = "#181c27";
+        foreground            = "#ada37a";
+        cursor                = "#91805a";
+        selection_background  = "#172539";
+        color0                = "#181818";
+        color8                = "#555555";
+        color1                = "#800009";
+        color9                = "#ab3834";
+        color2                = "#48513b";
+        color10               = "#a6a65d";
+        color3                = "#cc8a3e";
+        color11               = "#dcde7b";
+        color4                = "#566d8c";
+        color12               = "#2f97c6";
+        color5                = "#724c7c";
+        color13               = "#d33060";
+        color6                = "#5b4f4a";
+        color14               = "#f3dab1";
+        color7                = "#ada37e";
+        color15               = "#f3f3f3";
+        selection_foreground  = "#181c27";
+
       };
     };
 
