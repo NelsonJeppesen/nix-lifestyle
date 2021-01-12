@@ -23,6 +23,8 @@
       pkgs.google-chrome-beta
       pkgs.slack
       pkgs.spotify
+      pkgs.dnsutils
+      pkgs.sops
     ];
   };
 
@@ -51,7 +53,7 @@
         copy_on_select              = true;
         background_opacity          = "0.96";
         enable_audio_bell           = false;
-        font_size                   = "16.0";
+        font_size                   = "12.0";
         update_check_interval       = "24";
         hide_window_decorations     = true ;
         macos_show_window_title_in  = "none" ;
@@ -61,28 +63,49 @@
         tab_bar_style               = "powerline";
         tab_title_template          = " {index} ";
 
-        # BirdsOfParadise
-        background            = "#2a1e1d";
-        color0                = "#573d25";
-        color1                = "#be2d26";
-        color10               = "#94d7ba";
-        color11               = "#d0d04f";
-        color12               = "#b8d3ed";
-        color13               = "#d09dca";
-        color14               = "#92ced6";
-        color15               = "#fff9d4";
-        color2                = "#6ba08a";
-        color3                = "#e99c29";
-        color4                = "#5a86ac";
-        color5                = "#ab80a6";
-        color6                = "#74a5ac";
-        color7                = "#dfdab7";
-        color8                = "#9a6b49";
-        color9                = "#e84526";
-        cursor                = "#573d25";
-        foreground            = "#dfdab7";
-        selection_background  = "#563c27";
-        selection_foreground  = "#2a1e1d";
+#        # BirdsOfParadise
+#        background            = "#2a1e1d";
+#        color0                = "#573d25";
+#        color1                = "#be2d26";
+#        color10               = "#94d7ba";
+#        color11               = "#d0d04f";
+#        color12               = "#b8d3ed";
+#        color13               = "#d09dca";
+#        color14               = "#92ced6";
+#        color15               = "#fff9d4";
+#        color2                = "#6ba08a";
+#        color3                = "#e99c29";
+#        color4                = "#5a86ac";
+#        color5                = "#ab80a6";
+#        color6                = "#74a5ac";
+#        color7                = "#dfdab7";
+#        color8                = "#9a6b49";
+#        color9                = "#e84526";
+#        cursor                = "#573d25";
+#        foreground            = "#dfdab7";
+#        selection_background  = "#563c27";
+#        selection_foreground  = "#2a1e1d";
+background            = "#181c27";
+foreground            = "#ada37a";
+cursor                = "#91805a";
+selection_background  = "#172539";
+color0                = "#181818";
+color8                = "#555555";
+color1                = "#800009";
+color9                = "#ab3834";
+color2                = "#48513b";
+color10               = "#a6a65d";
+color3                = "#cc8a3e";
+color11               = "#dcde7b";
+color4                = "#566d8c";
+color12               = "#2f97c6";
+color5                = "#724c7c";
+color13               = "#d33060";
+color6                = "#5b4f4a";
+color14               = "#f3dab1";
+color7                = "#ada37e";
+color15               = "#f3f3f3";
+selection_foreground  = "#181c27";
       };
     };
 
