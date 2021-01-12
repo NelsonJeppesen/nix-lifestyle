@@ -4,7 +4,6 @@
   
   home = {
 
-
     packages = [
       #pkgs.aws-iam-authenticator
       pkgs.awscli2
@@ -18,6 +17,12 @@
       pkgs.rnix-lsp
       pkgs.terraform_0_13
       pkgs.wget
+      pkgs.gnomeExtensions.paperwm
+      pkgs.wmctrl
+      pkgs.google-chrome
+      pkgs.google-chrome-beta
+      pkgs.slack
+      pkgs.spotify
     ];
   };
 

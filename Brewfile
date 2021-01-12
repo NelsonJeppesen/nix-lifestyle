@@ -11,7 +11,7 @@ cask "docker"
 cask "google-chrome"
 cask "kitty"
 cask "monitorcontrol"
-cask "pritunl"
+#cask "pritunl"
 cask "slack"
 cask "spotify"
 
