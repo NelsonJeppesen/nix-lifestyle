@@ -4,7 +4,12 @@
 
   dconf.settings = {
     "org/gnome/shell" = {
-      enabled-extensions = ["paperwm@hedning:matrix.org"];
+      #disabled-extensions = [];
+      enabled-extensions = [
+        "paperwm@hedning:matrix.org"
+        "caffeine@patapon.info"
+        "appindicatorsupport@rgcjonas.gmail.com"
+      ];
     };
 
     "org/gnome/shellextensions/paperwm" = {
@@ -31,9 +36,7 @@
       xkb-options = [ "caps:super" ];
     };
 
-    #
     # Focus apps if running else launch
-    #
     "org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom0" = {
       binding = "<Super>backslash";
       command = "bash -c \"wmctrl -xa kitty ; [ \"$?\" == \"1\" ] && kitty\"";
@@ -64,9 +67,13 @@
       name    = "spotify";
     };
 
-    #
+    "org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom5" = {
+      binding = "<Super>j";
+      command = "bash -c \"wmctrl -xa web.whatsapp; [ \"$?\" == \"1\" ] && google-chrome-stable --app=https://web.whatsapp.com \"";
+      name    = "whatsapp";
+    };
+
     # map the mappings
-    #
     "org/gnome/settings-daemon/plugins/media-keys" = {
       custom-keybindings = [
         "/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom0/"
@@ -74,9 +81,9 @@
         "/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom2/"
         "/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom3/"
         "/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom4/"
+        "/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom5/"
       ];
     };
-
   };
   
   home = {
@@ -94,7 +101,10 @@
       pkgs.rnix-lsp
       pkgs.terraform_0_13
       pkgs.wget
+      pkgs.gnomeExtensions.appindicator
+      pkgs.gnomeExtensions.caffeine
       pkgs.gnomeExtensions.paperwm
+      pkgs.gnomeExtensions.clipboard-indicator
       pkgs.wmctrl
       pkgs.google-chrome
       pkgs.google-chrome-beta
