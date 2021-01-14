@@ -27,6 +27,9 @@
       overlay-key = "Super_R";
     };
 
+    "org/gnome/shell/keybindings" = {
+      toggle-overview  =  [];
+    };
 
     "org/gnome/desktop/interface" = {
       gtk-theme   = "Adwaita-dark";
