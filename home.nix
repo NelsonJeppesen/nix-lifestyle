@@ -18,6 +18,10 @@
       natural-scroll = false;
     };
 
+    "org/gnome/mutter" = {
+      overlay-key = "Super_R";
+    };
+
 
     "org/gnome/desktop/interface" = {
       gtk-theme   = "Adwaita-dark";
