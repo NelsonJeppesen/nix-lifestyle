@@ -31,31 +31,31 @@
     # Focus apps if running else launch
     #
     "org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom0" = {
-      binding = "<Alt>Return";
+      binding = "<Super>backslash";
       command = "bash -c \"wmctrl -xa kitty ; [ \"$?\" == \"1\" ] && kitty\"";
       name    = "kitty";
     };
 
     "org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom1" = {
-      binding = "<Alt>s";
+      binding = "<Super>s";
       command = "bash -c \"wmctrl -a slack; [ \"$?\" == \"1\" ] && slack\"";
       name    = "slack";
     };
 
     "org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom2" = {
-      binding = "<Alt>c";
+      binding = "<Super>x";
       command = "bash -c \"wmctrl -xa google-chrome.Google-chrome; [ \"$?\" == \"1\" ] && google-chrome-stable \"";
       name    = "google-chrome-stable";
     };
 
     "org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom3" = {
-      binding = "<Alt>v";
+      binding = "<Super>b";
       command = "bash -c \"wmctrl -xa google-chrome-beta; [ \"$?\" == \"1\" ] && google-chrome-beta \"";
       name    = "google-chrome-beta";
     };
 
     "org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom4" = {
-      binding = "<Alt>m";
+      binding = "<Super>z";
       command = "bash -c \"wmctrl -xa spotify; [ \"$?\" == \"1\" ] && spotify\"";
       name    = "spotify";
     };
