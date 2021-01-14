@@ -7,9 +7,11 @@
 
   nixpkgs.config.allowUnfree = true; 
 
-  boot.kernelPackages = pkgs.linuxPackages_zen;
+  boot.kernelPackages = pkgs.linuxPackages_latest;
   boot.loader.systemd-boot.enable = true;
   boot.loader.efi.canTouchEfiVariables = true;
+
+  hardware.opengl.extraPackages = [ pkgs.amdvlk ];
 
   # Set your time zone.
   time.timeZone = "America/Los_Angeles";
@@ -20,6 +22,12 @@
     displayManager.gdm.enable = true;
     enable = true;
     videoDrivers = ["amdgpu"];
+    
+    libinput = {
+      enable = true;
+      accelProfile = "flat";
+    };
+
   };
    
   # Configure keymap in X11
@@ -28,6 +36,7 @@
   # Enable sound.
   sound.enable = true;
   hardware.pulseaudio.enable = true;
+  hardware.opengl.driSupport = true;
 
   users.users.nelson = {
     isNormalUser = true;
