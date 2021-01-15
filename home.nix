@@ -6,9 +6,10 @@
     "org/gnome/shell" = {
       #disabled-extensions = [];
       enabled-extensions = [
-        "paperwm@hedning:matrix.org"
-        "caffeine@patapon.info"
         "appindicatorsupport@rgcjonas.gmail.com"
+        "caffeine@patapon.info"
+        "clipboard-indicator@tudmotu.com"
+        "paperwm@hedning:matrix.org"
       ];
     };
 
@@ -54,14 +55,15 @@
 
     "org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom2" = {
       binding = "<Super>x";
-      command = "bash -c \"wmctrl -xa google-chrome.Google-chrome; [ \"$?\" == \"1\" ] && google-chrome-stable \"";
-      name    = "google-chrome-stable";
+      command = "bash -c \"wmctrl -xa chrome/work; [ \"$?\" == \"1\" ] && google-chrome-stable --user-data-dir=$HOME/.config/chrome/work\"";
+
+      name    = "google-chrome-work";
     };
 
     "org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom3" = {
       binding = "<Super>b";
-      command = "bash -c \"wmctrl -xa google-chrome-beta; [ \"$?\" == \"1\" ] && google-chrome-beta \"";
-      name    = "google-chrome-beta";
+      command = "bash -c \"wmctrl -xa chrome/personal; [ \"$?\" == \"1\" ] && google-chrome-stable --user-data-dir=$HOME/.config/chrome/personal \"";
+      name    = "google-chrome-personal";
     };
 
     "org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom4" = {
@@ -72,8 +74,8 @@
 
     "org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom5" = {
       binding = "<Super>j";
-      command = "bash -c \"wmctrl -xa web.whatsapp; [ \"$?\" == \"1\" ] && google-chrome-stable --app=https://web.whatsapp.com \"";
-      name    = "whatsapp";
+      command = "bash -c \"wmctrl -xa web.whatsapp; [ \"$?\" == \"1\" ] && google-chrome-stable -user-data-dir=$HOME/.config/chrome/whatsapp --app=https://web.whatsapp.com \"";
+      name    = "google-chrome-whatsapp";
     };
 
     # map the mappings
@@ -110,7 +112,6 @@
       pkgs.gnomeExtensions.clipboard-indicator
       pkgs.wmctrl
       pkgs.google-chrome
-      pkgs.google-chrome-beta
       pkgs.slack
       pkgs.spotify
       pkgs.dnsutils
