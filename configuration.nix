@@ -25,7 +25,7 @@
   services.tlp = {
     enable = true;
     settings = {
-      CPU_SCALING_GOVERNOR_ON_AC = "powersave";
+      CPU_SCALING_GOVERNOR_ON_AC = "performance";
       CPU_SCALING_GOVERNOR_ON_BAT = "powersave";
       DEVICES_TO_DISABLE_ON_STARTUP="bluetooth";
       SATA_LINKPWR_ON_AC="min_power";

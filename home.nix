@@ -43,6 +43,7 @@
       pkgs.tuir
       pkgs.wget
       pkgs.wmctrl
+      pkgs.zoom-us
     ];
   };
 }
