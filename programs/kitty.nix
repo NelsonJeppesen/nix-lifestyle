@@ -31,6 +31,7 @@
         tab_bar_style               = "powerline";
         tab_title_template          = " {index} ";
         update_check_interval       = "24";
+        term                        = "xterm-256color";
 
         background            = "#2c2c2c";
         foreground            = "#cccccc";
