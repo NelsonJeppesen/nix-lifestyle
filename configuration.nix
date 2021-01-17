@@ -8,7 +8,7 @@
   # Set your time zone.
   time.timeZone = "America/Los_Angeles";
 
-  nixpkgs.config.allowUnfree = true; 
+  nixpkgs.config.allowUnfree = true;
   #hardware.bluetooth.enable = false;
   #hardware.opengl.extraPackages = [ pkgs.amdvlk ];
   hardware.opengl.driSupport = true;
@@ -22,8 +22,8 @@
     enable = true;
   };
 
-  services.tlp = { 
-    enable = true; 
+  services.tlp = {
+    enable = true;
     settings = {
       CPU_SCALING_GOVERNOR_ON_AC = "powersave";
       CPU_SCALING_GOVERNOR_ON_BAT = "powersave";
@@ -44,19 +44,25 @@
   };
 
   # Enable the GNOME 3 Desktop Environment.
-  services.xserver = { 
+  services.xserver = {
     desktopManager.gnome3.enable = true;
     displayManager.gdm.enable = true;
     enable = true;
     videoDrivers = ["amdgpu"];
-    
+
     libinput = {
       enable = true;
       accelProfile = "flat";
     };
-
   };
-   
+
+  environment.gnome3.excludePackages = with pkgs; [
+    gnome3.gnome-music
+    gnome3.cheese
+    gnome3.gnome-contacts
+    gnome3.geary
+  ];
+
   # Configure keymap in X11
   services.xserver.layout = "us";
 

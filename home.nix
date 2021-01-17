@@ -10,9 +10,14 @@
     ./programs/shell.nix
   ];
 
+  programs = {
+    home-manager.enable = true;
+  };
+
   home = {
 
-    programs.home-manager.enable = true;
+     file.".config/tuir/tuir.cfg".source = dotfiles/tuir.cfg;
+
 
     packages = [
       #pkgs.aws-iam-authenticator
@@ -35,6 +40,7 @@
       pkgs.spotify
       pkgs.ssm-session-manager-plugin
       pkgs.terraform_0_13
+      pkgs.tuir
       pkgs.wget
       pkgs.wmctrl
     ];
