@@ -14,15 +14,26 @@
   hardware.opengl.driSupport = true;
   hardware.pulseaudio.enable = true;
   sound.enable = true;
-
-  boot.blacklistedKernelModules = [ "nouveau" ];
-  #boot.extraModulePackages = with config.boot.kernelPackages; [ acpi_call ];
-  #boot.kernelModules = [ "acpi_call" ];
   boot.kernelPackages = pkgs.linuxPackages_latest;
   boot.loader.efi.canTouchEfiVariables = true;
   boot.loader.systemd-boot.enable = true;
 
-  services.tlp = { enable = true; };
+  services.fstrim = {
+    enable = true;
+  };
+
+  services.tlp = { 
+    enable = true; 
+    settings = {
+      CPU_SCALING_GOVERNOR_ON_AC = "powersave";
+      CPU_SCALING_GOVERNOR_ON_BAT = "powersave";
+      DEVICES_TO_DISABLE_ON_STARTUP="bluetooth";
+      SATA_LINKPWR_ON_AC="min_power";
+      SATA_LINKPWR_ON_BAT="min_power";
+      CPU_BOOST_ON_AC="1";
+      CPU_BOOST_ON_BAT="0";
+    };
+  };
 
   systemd.services.disable-dgpu = {
     script = ''
@@ -68,7 +79,7 @@
   programs.zsh.enable = true;
 
   environment.systemPackages = with pkgs; [
-    wget vim kitty firefox zsh
+    wget vim firefox zsh
   ];
 
   # networking.firewall.enable = false;

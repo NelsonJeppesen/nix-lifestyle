@@ -6,10 +6,6 @@ self: super: {
     src = builtins.fetchGit {
       url = https://github.com/kubernetes-sigs/aws-iam-authenticator.git;
     };
-
-    runVend = true;
- # subPackages = [ "." ];
-
   });
 
 }
