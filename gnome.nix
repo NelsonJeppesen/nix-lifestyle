@@ -19,6 +19,10 @@
       window-gap              = 0;
     };
 
+    "org/gnome/shell/keybindings" = {
+      toggle-application-view = [ "<Super>space" ];
+    };
+
     "org/gnome/desktop/peripherals/touchpad" = {
       natural-scroll = false;
     };
