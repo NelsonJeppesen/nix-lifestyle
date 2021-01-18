@@ -16,7 +16,7 @@
       clock-format  = "12h";
     };
 
-    "org/gnome/shellextensions/paperwm" = {
+    "org/gnome/shell/extensions/paperwm" = {
       horizontal-margin       = 0;
       vertical-margin         = 0;
       vertical-margin-bottom  = 0;
@@ -24,7 +24,13 @@
     };
 
     "org/gnome/shell/keybindings" = {
-      toggle-application-view = [ "<Super>space" ];
+      toggle-application-view   = [ "<Super>space" ];
+      toggle-overview           = [];  # Free up <Super>S
+    };
+
+    "org/gnome/desktop/wm/keybindings" = {
+      switch-input-source           = [];  # Free up <Super>space
+      switch-input-source-backward  = [];  # Free up <Super><Shift>space
     };
 
     "org/gnome/desktop/peripherals/touchpad" = {
@@ -33,10 +39,6 @@
 
     "org/gnome/mutter" = {
       overlay-key = "Super_R";
-    };
-
-    "org/gnome/shell/keybindings" = {
-      toggle-overview  =  [];
     };
 
     "org/gnome/desktop/interface" = {
@@ -86,7 +88,7 @@
     };
 
     "org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom4" = {
-      binding = "<Super>p";
+      binding = "<Super>F3";
       command = "bash -c \"wmctrl -xa spotify; [ \"$?\" == \"1\" ] && spotify\"";
       name    = "spotify";
     };

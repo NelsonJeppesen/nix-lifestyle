@@ -3,8 +3,8 @@
   nixpkgs.config.allowUnfree = true;
 
   imports = [
-    ./gnome.nix
     ./programs/git.nix
+    ./programs/gnome-paperwm.nix
     ./programs/kitty.nix
     ./programs/neovim.nix
     ./programs/shell.nix
@@ -17,7 +17,6 @@
   home = {
 
      file.".config/tuir/tuir.cfg".source = dotfiles/tuir.cfg;
-
 
     packages = [
       #pkgs.aws-iam-authenticator
