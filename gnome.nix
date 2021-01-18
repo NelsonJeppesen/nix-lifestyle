@@ -12,6 +12,10 @@
       ];
     };
 
+    "org/gnome/desktop/interface" = {
+      clock-format  = "12h";
+    };
+
     "org/gnome/shellextensions/paperwm" = {
       horizontal-margin       = 0;
       vertical-margin         = 0;
