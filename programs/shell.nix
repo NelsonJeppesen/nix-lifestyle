@@ -6,7 +6,7 @@
 
     powerline-go = {
       enable = true;
-      modules = [ "cwd" "venv" "git" "perms" "nix-shell" ];
+      modules = [ "host" "cwd" "venv" "git" "perms" "nix-shell" ];
       newline = true;
     };
 

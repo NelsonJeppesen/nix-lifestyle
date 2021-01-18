@@ -1,9 +1,14 @@
-{ config, pkgs, ... }:
+{ config, pkgs, stdenv, lib, ... }:
 
 {
   imports = [
-    ./hardware-configuration.nix
+   # ./hardware-configuration.nix
+    ./hosts/black.nix
   ];
+
+  #"x86_64-linux"
+  #networking.hostName = "blue";
+  #networking.hostName = "white";
 
   # Set your time zone.
   time.timeZone = "America/Los_Angeles";
@@ -22,7 +27,10 @@
     enable = true;
   };
 
-  services.tlp = {
+  services.tlp = lib.mkIf (
+    config.networking.hostName == "black" ||
+    config.networking.hostName == "white"
+  ) {
     enable = true;
     settings = {
       CPU_SCALING_GOVERNOR_ON_AC = "performance";
