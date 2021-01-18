@@ -8,6 +8,9 @@
       enable = true;
       modules = [ "host" "cwd" "venv" "git" "perms" "nix-shell" ];
       newline = true;
+      settings = {
+        colorize-hostname = true;
+      };
     };
 
     zsh = {
