@@ -22,6 +22,8 @@
     enable = true;
   };
 
+  services.sshd.enable = true;
+
   services.tlp = lib.mkIf (
     config.networking.hostName == "black" ||
     config.networking.hostName == "white"
