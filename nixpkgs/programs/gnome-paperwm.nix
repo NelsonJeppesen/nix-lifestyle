@@ -16,6 +16,11 @@
       clock-format  = "12h";
     };
 
+    "org/gnome/shell/extensions/caffeine" = {
+      show-notifications      = false;
+      user-enabled            = false;
+    };
+
     "org/gnome/shell/extensions/paperwm" = {
       horizontal-margin       = 0;
       vertical-margin         = 0;
