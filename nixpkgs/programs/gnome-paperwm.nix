@@ -94,15 +94,22 @@
     };
 
     "org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom5" = {
-      binding = "<Super>j";
+      binding = "<Super>w";
       command = "bash -c \"wmctrl -xa web.whatsapp; [ \"$?\" == \"1\" ] && google-chrome-stable -user-data-dir=$HOME/.config/chrome/whatsapp --app=https://web.whatsapp.com \"";
-      name    = "google-chrome-whatsapp";
+      name    = "whatsapp";
     };
 
     "org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom6" = {
       binding = "<Super>d";
       command = "bash -c \"wmctrl -xa discord.com__app; [ \"$?\" == \"1\" ] && google-chrome-stable -user-data-dir=$HOME/.config/chrome/discord --app=https://discord.com/app \"";
       name    = "google-chrome-whatsapp";
+    };
+
+
+    "org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom7" = {
+      binding = "<Super>y";
+      command = "bash -c \"wmctrl -xa www.youtube.com; [ \"$?\" == \"1\" ] && google-chrome-stable -user-data-dir=$HOME/.config/chrome/personal --app=https://www.youtube.com \"";
+      name    = "youtube";
     };
 
 
@@ -116,6 +123,7 @@
         "/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom4/"
         "/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom5/"
         "/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom6/"
+        "/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom7/"
 
         "/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom10/"
         "/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom13/"
