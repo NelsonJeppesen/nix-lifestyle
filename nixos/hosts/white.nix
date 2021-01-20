@@ -23,6 +23,14 @@
   boot.initrd.luks.devices."crypt".device = "/dev/disk/by-uuid/9a3075ca-f347-47db-8cd3-da72c6441005";
   boot.initrd.luks.devices."crypt".allowDiscards = true;
 
+  systemd.services.disable-dgpu = {
+    script = ''
+      # Disable nvidia dgpu by default g14
+      echo auto > /sys/bus/pci/devices/0000:01:00.0/power/control
+    '';
+    wantedBy = [ "multi-user.target" ];
+  };
+
   fileSystems."/boot" =
     { device = "/dev/disk/by-uuid/B458-5AF5";
       fsType = "vfat";

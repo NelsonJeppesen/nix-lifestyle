@@ -6,15 +6,10 @@
     ./hosts/black.nix
   ];
 
-  #"x86_64-linux"
-  #networking.hostName = "blue";
-  #networking.hostName = "white";
-
   # Set your time zone.
   time.timeZone = "America/Los_Angeles";
 
   nixpkgs.config.allowUnfree = true;
-  #hardware.bluetooth.enable = false;
   #hardware.opengl.extraPackages = [ pkgs.amdvlk ];
   hardware.opengl.driSupport = true;
   hardware.pulseaudio.enable = true;
@@ -33,22 +28,14 @@
   ) {
     enable = true;
     settings = {
-      CPU_SCALING_GOVERNOR_ON_AC = "performance";
-      CPU_SCALING_GOVERNOR_ON_BAT = "powersave";
-      DEVICES_TO_DISABLE_ON_STARTUP="bluetooth";
-      SATA_LINKPWR_ON_AC="min_power";
-      SATA_LINKPWR_ON_BAT="min_power";
-      CPU_BOOST_ON_AC="1";
-      CPU_BOOST_ON_BAT="0";
+      CPU_SCALING_GOVERNOR_ON_AC    = "performance";
+      CPU_SCALING_GOVERNOR_ON_BAT   = "powersave";
+      DEVICES_TO_DISABLE_ON_STARTUP ="bluetooth";
+      SATA_LINKPWR_ON_AC            ="min_power";
+      SATA_LINKPWR_ON_BAT           ="min_power";
+      CPU_BOOST_ON_AC               ="1";
+      CPU_BOOST_ON_BAT              ="0";
     };
-  };
-
-  systemd.services.disable-dgpu = {
-    script = ''
-      # Disable nvidia dgpu by default g14
-      echo auto > /sys/bus/pci/devices/0000:01:00.0/power/control
-    '';
-    wantedBy = [ "multi-user.target" ];
   };
 
   # Enable the GNOME 3 Desktop Environment.
@@ -56,7 +43,6 @@
     desktopManager.gnome3.enable = true;
     displayManager.gdm.enable = true;
     enable = true;
-    videoDrivers = ["amdgpu"];
 
     libinput = {
       enable = true;
@@ -86,17 +72,12 @@
     extraGroups = [ "wheel" ]; # Enable ‘sudo’ for the user.
   };
 
-  #fonts.fonts = with pkgs; [
-  #  nerdfonts
-  #];
-
   programs.zsh.enable = true;
 
   environment.systemPackages = with pkgs; [
-    wget vim firefox zsh
+    wget vim firefox zsh git
   ];
 
   # networking.firewall.enable = false;
   system.stateVersion = "20.09"; # Did you read the comment?
-
 }
