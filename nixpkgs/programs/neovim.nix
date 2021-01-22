@@ -14,6 +14,7 @@
           " enable true color
           set termguicolors
           colorscheme gruvbox
+          set number
 
           " autocompletion (deoplete)
           inoremap <silent><expr> <Tab>  pumvisible() ? "<C-n>" : "<Tab>"
@@ -46,9 +47,10 @@
             ale
             deoplete-nvim
             gruvbox-community
-            neovim-sensible
+            #neovim-sensible
             #nvim-lspconfig
             vim-airline
+            #vim-grammarous
             vim-airline-themes
             vim-gitgutter
             vim-nix
