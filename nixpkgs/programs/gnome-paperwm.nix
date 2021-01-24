@@ -26,6 +26,7 @@
       vertical-margin         = 0;
       vertical-margin-bottom  = 0;
       window-gap              = 0;
+      cycle-width-steps       = [0.38195 0.6 0.8];
     };
 
     "org/gnome/shell/keybindings" = {
