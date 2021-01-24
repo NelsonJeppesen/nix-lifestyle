@@ -1,14 +1,17 @@
 #
 # ASUS ROG Zephyrus G14 GA401
 #
-{ config, lib, pkgs, modulesPath, ... }:
+{ config, pkgs, stdenv, lib, modulesPath, ... }:
 
 {
   imports =
-    [ (modulesPath + "/installer/scan/not-detected.nix")
+  [ (modulesPath + "/installer/scan/not-detected.nix")
+     ./platforms/x86_64.nix
+     ./profiles/shared.nix
   ];
 
   networking.hostName = "white";
+  hardware.opengl.extraPackages = [ pkgs.amdvlk ];
 
   boot.initrd.availableKernelModules = [ "xhci_pci" "nvme" "ahci" "usbhid" "usb_storage" "sd_mod" "cryptd" ];
   boot.initrd.kernelModules = [ ];

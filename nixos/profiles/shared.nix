@@ -1,20 +1,13 @@
 { config, pkgs, stdenv, lib, ... }:
 
 {
-  imports = [
-   # ./hardware-configuration.nix
-    ./hosts/black.nix
-  ];
-
   # Set your time zone.
   time.timeZone = "America/Los_Angeles";
 
   nixpkgs.config.allowUnfree = true;
-  #hardware.opengl.extraPackages = [ pkgs.amdvlk ];
   hardware.opengl.driSupport = true;
   hardware.pulseaudio.enable = true;
   sound.enable = true;
-  boot.kernelPackages = pkgs.linuxPackages_latest;
   boot.loader.efi.canTouchEfiVariables = true;
   boot.loader.systemd-boot.enable = true;
 
@@ -44,6 +37,7 @@
   services.xserver = {
     desktopManager.gnome3.enable = true;
     displayManager.gdm.enable = true;
+    videoDrivers = ["amdgpu"];
     enable = true;
 
     libinput = {
