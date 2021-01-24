@@ -1,33 +1,54 @@
 #
 # Raspberry Pi 4
 #
-
-{ config, lib, pkgs, modulesPath, ... }:
+{ config, pkgs, ... }:
 
 {
-  imports =
-    [ (modulesPath + "/installer/scan/not-detected.nix")
-    ];
 
-  boot.initrd.availableKernelModules = [ "xhci_pci" "nvme" "ahci" "usbhid" "usb_storage" "sd_mod" "rtsx_usb_sdmmc" ];
-  boot.initrd.kernelModules = [ ];
-  boot.kernelModules = [ "kvm-amd" ];
-  boot.extraModulePackages = [ ];
-
-  fileSystems."/" =
-    { device = "/dev/disk/by-uuid/d2899aec-29ec-4dbc-b9db-2a1d5f678dcf";
+  # Assuming this is installed on top of the disk image.
+  fileSystems = {
+    "/" = {
+      device = "/dev/disk/by-label/NIXOS_SD";
       fsType = "ext4";
     };
-
-  fileSystems."/boot" =
-    { device = "/dev/disk/by-uuid/2B58-7FF6";
-      fsType = "vfat";
-    };
-
-  swapDevices = [ ];
-
+  };
+  boot.loader.grub.enable = false;
+  boot.loader.generic-extlinux-compatible.enable = true;
+  boot.kernelPackages = pkgs.linuxPackages_rpi4;
   networking.hostName = "blue";
+  networking.networkmanager.enable = true;
 
-  # high-resolution display
-  hardware.video.hidpi.enable = lib.mkDefault true;
+  # Enable the OpenSSH server.
+  services.sshd.enable = true;
+
+  # Required for the Wireless firmware
+  hardware.enableRedistributableFirmware = true;
+
+  services.fstrim.enable = true;
+
+  # Set your time zone.
+  time.timeZone = "America/Los_Angeles";
+
+  nixpkgs.config.allowUnfree = true;
+
+  users.defaultUserShell = pkgs.zsh;
+
+  users.users.nelson = {
+    isNormalUser = true;
+    extraGroups = [ "wheel" ]; # Enable ‘sudo’ for the user.
+  };
+
+  users.users.alex = {
+    isNormalUser = true;
+    extraGroups = [ "wheel" ]; # Enable ‘sudo’ for the user.
+  };
+
+  programs.zsh.enable = true;
+
+  environment.systemPackages = with pkgs; [
+    wget neovim zsh
+  ];
+
+  system.stateVersion = "20.09"; # Did you read the comment?
+
 }
