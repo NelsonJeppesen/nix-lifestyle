@@ -6,7 +6,7 @@
 
     powerline-go = {
       enable = true;
-      modules = [ "host" "cwd" "venv" "git" "perms" "nix-shell" ];
+      modules = [ "ssh" "host" "cwd" "venv" "git" "perms" "nix-shell" ];
       newline = true;
       settings = {
         colorize-hostname = true;
@@ -35,7 +35,7 @@
       };
 
       shellAliases = {
-        ctx           = "kubectx";
+        uc            = "kubectx";
         k             = "kubectl";
         kns           = "kubens";
         osx-flushdns  = "sudo killall -v -HUP mDNSResponder";
