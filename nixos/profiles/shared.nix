@@ -39,11 +39,6 @@
     displayManager.gdm.enable = true;
     videoDrivers = ["amdgpu"];
     enable = true;
-
-    libinput = {
-      enable = true;
-      accelProfile = "flat";
-    };
   };
 
   environment.gnome3.excludePackages = with pkgs; [

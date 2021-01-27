@@ -28,14 +28,11 @@
 
   # Enable the GNOME 3 Desktop Environment.
   services.xserver = {
-    desktopManager.gnome3.enable = true;
-    displayManager.gdm.enable = true;
     enable = true;
 
-    libinput = {
-      enable = true;
-      accelProfile = "flat";
-    };
+    desktopManager.gnome3.enable = true;
+    displayManager.gdm.enable = true;
+    libinput.touchpad.accelProfile = "flat";
   };
 
   environment.gnome3.excludePackages = with pkgs; [
