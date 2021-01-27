@@ -24,6 +24,9 @@
           command! CopyToClipboard :%y+
           set clipboard=unnamedplus
 
+          " enable mouse
+          set mouse=a
+
           " Set leader:
           map , <Leader>
           set updatetime=70

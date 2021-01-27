@@ -23,6 +23,7 @@
       pkgs.awscli2
       pkgs.curl
       pkgs.dnsutils
+      pkgs.factorio
       pkgs.gnomeExtensions.appindicator
       pkgs.gnomeExtensions.caffeine
       pkgs.gnomeExtensions.clipboard-indicator
