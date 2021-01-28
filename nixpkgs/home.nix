@@ -36,6 +36,7 @@
       pkgs.ripgrep
       pkgs.rnix-lsp
       pkgs.slack
+      pkgs.somafm-cli
       pkgs.sops
       pkgs.spotify
       pkgs.ssm-session-manager-plugin

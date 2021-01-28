@@ -47,17 +47,18 @@
 
         packages.myVimPackage = {
           start = with pkgs.vimPlugins; [
+            #neovim-sensible
+            #nvim-lspconfig
+            #vim-grammarous
             ale
             deoplete-nvim
             gruvbox-community
-            #neovim-sensible
-            #nvim-lspconfig
             vim-airline
-            #vim-grammarous
             vim-airline-themes
+            vim-better-whitespace
             vim-gitgutter
             vim-nix
-            vim-better-whitespace
+            vim-table-mode
           ] ;
         };
       };
