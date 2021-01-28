@@ -35,9 +35,9 @@
       };
 
       shellAliases = {
-        playDronezone       = "clear;echo -e '\033[36mPlaying dronezone';somafm play dronezone";
-        playMissioncontrol  = "clear;echo -e '\033[36mPlaying missioncontrol';somafm play missioncontrol";
-        playSf1033          = "clear;echo -e '\033[36mPlaying sf1033';somafm play sf1033";
+        playDronezone       = "clear;echo -e '\\033[36mPlaying dronezone';somafm play dronezone";
+        playMissioncontrol  = "clear;echo -e '\\033[36mPlaying missioncontrol';somafm play missioncontrol";
+        playSf1033          = "clear;echo -e '\\033[36mPlaying sf1033';somafm play sf1033";
 
         uc            = "kubectx";
         k             = "kubectl";
