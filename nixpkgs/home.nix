@@ -16,35 +16,56 @@
 
   home = {
 
-     file.".config/tuir/tuir.cfg".source = dotfiles/tuir.cfg;
+     #file.".config/tuir/tuir.cfg".source = dotfiles/tuir.cfg;
 
-    packages = [
-      #pkgs.aws-iam-authenticator
+     packages = [
+      # Browser
+      pkgs.google-chrome      # Helpful for --app mode
+
+      # Desktop
+      pkgs.gnomeExtensions.paperwm              # The best tiling window manager
+                                                # and the reason I use Linux full-time
+
+      pkgs.gnomeExtensions.appindicator         # slack notifications
+      pkgs.gnomeExtensions.caffeine             # disable sleep on demand
+      pkgs.gnomeExtensions.clipboard-indicator  # clipboard manager
+      pkgs.wmctrl                               # Used to "focus or launch" apps
+
+      # Terminals
+      pkgs.cool-retro-term    # play
+      pkgs.kitty              # work
+
+      # DevOps
       pkgs.awscli2
       pkgs.curl
-      pkgs.dnsutils
-      pkgs.factorio
-      pkgs.gnomeExtensions.appindicator
-      pkgs.gnomeExtensions.caffeine
-      pkgs.gnomeExtensions.clipboard-indicator
-      pkgs.gnomeExtensions.paperwm
-      pkgs.google-chrome
+      pkgs.dbeaver      # multi-db gui
+      pkgs.dnsutils     # dig
       pkgs.helmfile
+      pkgs.jq
       pkgs.kubectl
       pkgs.kubectx
       pkgs.kubernetes-helm
       pkgs.ripgrep
-      pkgs.rnix-lsp
-      pkgs.slack
-      pkgs.somafm-cli
       pkgs.sops
-      pkgs.spotify
       pkgs.ssm-session-manager-plugin
       pkgs.terraform_0_13
-      pkgs.tuir
       pkgs.wget
-      pkgs.wmctrl
+
+      # Work
       pkgs.zoom-us
+      pkgs.slack
+
+      # Games
+      pkgs.dosbox     # Simcity 2000
+      pkgs.frotz      # Zork I
+      pkgs.factorio   # Automation when not at work
+
+      # Music
+      pkgs.somafm-cli
+      pkgs.spotify
+
+      # Reddit
+      pkgs.tuir
     ];
   };
 }
