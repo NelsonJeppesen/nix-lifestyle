@@ -13,8 +13,10 @@
   programs = {
     home-manager.enable = true;
   };
+news.display = "show";
 
   home = {
+
 
      #file.".config/tuir/tuir.cfg".source = dotfiles/tuir.cfg;
 
@@ -29,6 +31,8 @@
       pkgs.gnomeExtensions.appindicator         # slack notifications
       pkgs.gnomeExtensions.caffeine             # disable sleep on demand
       pkgs.gnomeExtensions.clipboard-indicator  # clipboard manager
+      #pkgs.gnomeExtensions.drop-down-terminal
+      #pkgs.gnomeExtensions.emoji-selector
       pkgs.wmctrl                               # Used to "focus or launch" apps
 
       # Terminals
@@ -62,6 +66,7 @@
 
       # Music
       pkgs.somafm-cli
+      pkgs.ncspot
       pkgs.spotify
 
       # Reddit

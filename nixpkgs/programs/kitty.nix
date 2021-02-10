@@ -5,6 +5,11 @@
     kitty = {
       enable = true;
 
+      font = {
+        package = pkgs.fira-code;
+        name = "Fira Code";
+      };
+
       keybindings = {
         #"cmd+0" = "goto_tab 10";
         #"cmd+1" = "goto_tab 1";
@@ -21,14 +26,16 @@
       };
 
       settings = {
+        background_opacity                 = "0.80";
+        font_size                   = "14.0";
         copy_on_select              = true;
         enable_audio_bell           = false;
-        font_size                   = "12.0";
         hide_window_decorations     = true ;
         macos_show_window_title_in  = "none" ;
         scrollback_lines            = "10000";
         strip_trailing_spaces       = "smart";
         tab_bar_style               = "powerline";
+        dynamic_background_opacity  = true;
         tab_title_template          = " {index} ";
         update_check_interval       = "0";
         term                        = "xterm-256color";

@@ -6,7 +6,7 @@
 
     powerline-go = {
       enable = true;
-      modules = [ "ssh" "host" "cwd" "venv" "git" "perms" "nix-shell" ];
+      modules = [ "ssh" "host" "cwd" "venv" "git" "perms" "nix-shell" "kube" ];
       newline = true;
       settings = {
         colorize-hostname = true;
@@ -17,6 +17,11 @@
       enable = true;
       enableCompletion = true;
       enableAutosuggestions = true;
+      dirHashes = {
+        docs  = "$HOME/Documents";
+        dl    = "$HOME/Downloads";
+        src   = "$HOME/src";
+      };
 
       initExtra = ''
         # Only change to src if in root of $HOME or WSL home
@@ -32,6 +37,7 @@
 
       sessionVariables = {
         EDITOR="nvim";
+        RPS1="";
       };
 
       shellAliases = {
