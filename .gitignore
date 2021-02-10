@@ -1,3 +1,2 @@
 /nixos/configuration.nix
-nixpkgs/overlays/factorio.nix
-factorio.nix
+/nixpkgs/overlays/factorio.nix
