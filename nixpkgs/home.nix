@@ -40,6 +40,7 @@ news.display = "show";
       pkgs.kitty              # work
 
       # DevOps
+      pkgs.aws-iam-authenticator
       pkgs.awscli2
       pkgs.curl
       pkgs.dbeaver      # multi-db gui
