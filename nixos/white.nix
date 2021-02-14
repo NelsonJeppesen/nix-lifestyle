@@ -13,6 +13,10 @@
   networking.hostName = "white";
   hardware.opengl.extraPackages = [ pkgs.amdvlk ];
 
+  # vulkan 32bit and 64bit
+  hardware.opengl.driSupport = true;
+  hardware.opengl.driSupport32Bit = true;
+
   boot.initrd.availableKernelModules = [ "xhci_pci" "nvme" "ahci" "usbhid" "usb_storage" "sd_mod" "cryptd" ];
   boot.initrd.kernelModules = [ ];
   boot.kernelModules = [ "kvm-amd" "amdgpu"];
