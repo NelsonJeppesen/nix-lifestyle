@@ -45,6 +45,8 @@
         playMissioncontrol  = "clear;echo -e '\\033[36mPlaying missioncontrol';somafm play missioncontrol";
         playSf1033          = "clear;echo -e '\\033[36mPlaying sf1033';somafm play sf1033";
 
+        rst           = "kubectx -u; cd ~/src; clear";
+
         uc            = "kubectx";
         k             = "kubectl";
         kns           = "kubens";

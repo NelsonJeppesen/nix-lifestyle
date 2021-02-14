@@ -28,6 +28,7 @@ news.display = "show";
       pkgs.gnomeExtensions.paperwm              # The best tiling window manager
                                                 # and the reason I use Linux full-time
 
+      pkgs.flameshot                            # Fancy screenshot tool
       pkgs.gnomeExtensions.appindicator         # slack notifications
       pkgs.gnomeExtensions.caffeine             # disable sleep on demand
       pkgs.gnomeExtensions.clipboard-indicator  # clipboard manager
