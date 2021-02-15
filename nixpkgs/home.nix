@@ -69,7 +69,7 @@ news.display = "show";
       # Music
       pkgs.somafm-cli
       pkgs.ncspot
-      pkgs.spotify
+      #pkgs.spotify
 
       # Reddit
       pkgs.tuir

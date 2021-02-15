@@ -112,7 +112,6 @@
     "org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom20" = {
       binding = "<Super>x";
       command = "bash -c \"wmctrl -xa chrome/work; [ \"$?\" == \"1\" ] && google-chrome-stable --user-data-dir=$HOME/.config/chrome/work\"";
-
       name    = "chrome (work)";
     };
 
@@ -143,8 +142,8 @@
     # custom bindings 9x - misc
     "org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom90" = {
       binding = "<Super>F3";
-      command = "bash -c \"wmctrl -xa spotify; [ \"$?\" == \"1\" ] && spotify\"";
-      name    = "spotify";
+      command = "bash -c \"wmctrl -a coolncspot; [ \"$?\" == \"1\" ] && cool-retro-term -T coolncspot --default-settings -e ncspot\"";
+      name    = "ncspotify";
     };
 
     "org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom91" = {
