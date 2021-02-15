@@ -17,6 +17,23 @@
       ];
     };
 
+    "org/gnome/shell/extensions/clipboard-indicator" = {
+      cache-size      = 10240; # 10MB
+      display-mode    = 0;
+      history-size    = 200;
+      move-item-first = true;
+      notify-on-copy  = false;
+      preview-size    = 100;
+      strip-text      = true;
+      toggle-menu     = ["Launch1"];
+      topbar-preview-size = 4;
+
+      # Clear bindings
+      clear-history   = [];
+      next-entry      = [];
+      prev-entry      = [];
+    };
+
     "org/gnome/desktop/interface" = {
       clock-format  = "12h";
     };
