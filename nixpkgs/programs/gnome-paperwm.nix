@@ -154,7 +154,8 @@
 
     "org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom92" = {
       binding = "<Super>s";
-      command = "bash -c \"wmctrl -a slack; [ \"$?\" == \"1\" ] && slack\"";
+      #command = "bash -c \"wmctrl -a slack; [ \"$?\" == \"1\" ] && slack\"";
+      command = "bash -c \"wmctrl -xa apptentive.slack.com; [ \"$?\" == \"1\" ] && google-chrome-stable -user-data-dir=$HOME/.config/chrome/work --app=https://apptentive.slack.com \"";
       name    = "slack";
     };
   };
