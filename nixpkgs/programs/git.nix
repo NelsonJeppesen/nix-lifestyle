@@ -13,12 +13,12 @@
       ];
 
       extraConfig = {
-        pull = { 
-          ff       = "only";     
+        pull = {
+          ff       = "only";
         };
 
-        push = { 
-          default  = "current";  
+        push = {
+          default  = "current";
         };
 
         color = {
