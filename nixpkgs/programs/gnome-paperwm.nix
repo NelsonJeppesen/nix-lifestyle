@@ -91,6 +91,7 @@
         "/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom90/"
         "/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom91/"
         "/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom92/"
+        "/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom93/"
       ];
 
     };
@@ -158,5 +159,13 @@
       command = "bash -c \"wmctrl -xa apptentive.slack.com; [ \"$?\" == \"1\" ] && google-chrome-stable -user-data-dir=$HOME/.config/chrome/work --app=https://apptentive.slack.com \"";
       name    = "slack";
     };
+
+    "org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom93" = {
+      binding = "<Super>z";
+      command = "wmctrl -a 'Zoom Meeting'";
+      name    = "focus zoom running zoom meeting";
+    };
+
+
   };
 }

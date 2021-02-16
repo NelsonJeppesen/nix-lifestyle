@@ -55,16 +55,18 @@ news.display = "show";
       pkgs.sops
       pkgs.ssm-session-manager-plugin
       pkgs.terraform_0_13
+      pkgs.p7zip
       pkgs.wget
 
       # Work
       pkgs.zoom-us
-      pkgs.slack
+      #pkgs.slack
 
       # Games
       pkgs.dosbox     # Simcity 2000
       pkgs.frotz      # Zork I
       pkgs.factorio   # Automation when not at work
+      pkgs.steam
 
       # Music
       pkgs.somafm-cli

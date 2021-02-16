@@ -1,9 +1,6 @@
 { config, pkgs, stdenv, lib, ... }:
 
 {
-  # Set your time zone.
-  time.timeZone = "America/Los_Angeles";
-
   nixpkgs.config.allowUnfree = true;
   hardware.opengl.driSupport = true;
   hardware.pulseaudio.enable = true;
