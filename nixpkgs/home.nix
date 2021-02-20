@@ -32,8 +32,9 @@ news.display = "show";
       pkgs.gnomeExtensions.appindicator         # slack notifications
       pkgs.gnomeExtensions.caffeine             # disable sleep on demand
       pkgs.gnomeExtensions.clipboard-indicator  # clipboard manager
+      pkgs.gnomeExtensions.gsconnect
       #pkgs.gnomeExtensions.drop-down-terminal
-      #pkgs.gnomeExtensions.emoji-selector
+      pkgs.gnomeExtensions.emoji-selector
       pkgs.wmctrl                               # Used to "focus or launch" apps
 
       # Terminals
@@ -55,23 +56,22 @@ news.display = "show";
       pkgs.sops
       pkgs.ssm-session-manager-plugin
       pkgs.terraform_0_13
+      pkgs.terraform-docs
       pkgs.p7zip
       pkgs.wget
 
       # Work
       pkgs.zoom-us
-      #pkgs.slack
 
       # Games
       pkgs.dosbox     # Simcity 2000
       pkgs.frotz      # Zork I
-      pkgs.factorio   # Automation when not at work
+      #pkgs.factorio  # Automation when not at work
       pkgs.steam
 
       # Music
       pkgs.somafm-cli
       pkgs.ncspot
-      #pkgs.spotify
 
       # Reddit
       pkgs.tuir

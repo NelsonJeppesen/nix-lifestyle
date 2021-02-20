@@ -52,7 +52,7 @@
 
   users.users.nelson = {
     isNormalUser = true;
-    extraGroups = [ "wheel" ]; # Enable ‘sudo’ for the user.
+    extraGroups = [ "wheel" "docker" ]; # Enable ‘sudo’ for the user.
   };
 
   users.users.alex = {
