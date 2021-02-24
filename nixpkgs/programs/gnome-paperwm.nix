@@ -13,6 +13,7 @@
         "appindicatorsupport@rgcjonas.gmail.com"  # show notifications e.g. slack
         "caffeine@patapon.info"                   # top bar icon to prevent sleep
         "clipboard-indicator@tudmotu.com"         # clipboard manager
+        "gsconnect@andyholmes.github.io"          # connect to my phone
         "paperwm@hedning:matrix.org"              # paperwm - best scrolling WM there is
       ];
     };

@@ -66,6 +66,11 @@
     wget vim firefox zsh git
   ];
 
-  # networking.firewall.enable = false;
+  networking.firewall.enable = true;
+
+  # Open KDE Connect
+  networking.firewall.allowedTCPPortRanges = [ { from = 1714; to = 1764; } ];
+  networking.firewall.allowedUDPPortRanges = [ { from = 1714; to = 1764; } ];
+
   system.stateVersion = "20.09"; # Did you read the comment?
 }
