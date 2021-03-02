@@ -2,7 +2,6 @@
 
 {
   nixpkgs.config.allowUnfree = true;
-  hardware.opengl.driSupport = true;
   hardware.pulseaudio.enable = true;
   sound.enable = true;
   boot.loader.efi.canTouchEfiVariables = true;
@@ -13,22 +12,6 @@
   };
 
   services.sshd.enable = true;
-
-  services.tlp = lib.mkIf (
-    config.networking.hostName == "black" ||
-    config.networking.hostName == "white"
-  ) {
-    enable = true;
-    settings = {
-      CPU_SCALING_GOVERNOR_ON_AC    = "performance";
-      CPU_SCALING_GOVERNOR_ON_BAT   = "powersave";
-      DEVICES_TO_DISABLE_ON_STARTUP ="bluetooth";
-      SATA_LINKPWR_ON_AC            ="min_power";
-      SATA_LINKPWR_ON_BAT           ="min_power";
-      CPU_BOOST_ON_AC               ="1";
-      CPU_BOOST_ON_BAT              ="0";
-    };
-  };
 
   # Enable the GNOME 3 Desktop Environment.
   services.xserver = {
@@ -53,11 +36,6 @@
   users.users.nelson = {
     isNormalUser = true;
     extraGroups = [ "wheel" "docker" ]; # Enable ‘sudo’ for the user.
-  };
-
-  users.users.alex = {
-    isNormalUser = true;
-    extraGroups = [ "wheel" ]; # Enable ‘sudo’ for the user.
   };
 
   programs.zsh.enable = true;
