@@ -49,7 +49,7 @@
       vertical-margin         = 0;
       vertical-margin-bottom  = 0;
       window-gap              = 0;
-      cycle-width-steps       = [0.38195 0.6 0.8];
+      #cycle-width-steps       = [0.38195 0.6 0.8];
     };
 
     "org/gnome/shell/keybindings" = {
@@ -100,13 +100,13 @@
     # custom binding 1x - terminal
     "org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom10" = {
       binding = "<Super>backslash";
-      command = "bash -c \"wmctrl -xa kitty ; [ \"$?\" == \"1\" ] && kitty\"";
+      command = "bash -c \"wmctrl -xa kitty ; [ \"$?\" == \"1\" ] && kitty --single-instance\"";
       name    = "kitty";
     };
 
     "org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom11" = {
       binding = "<Shift><Super>backslash";
-      command = "kitty";
+      command = "kitty --single-instance";
       name    = "kitty (new window)";
     };
 

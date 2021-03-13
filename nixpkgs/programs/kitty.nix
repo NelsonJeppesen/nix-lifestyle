@@ -1,5 +1,10 @@
 { config, pkgs, ... }:
 {
+
+  home = {
+    file.".config/kitty/kitty.startup.session".source = ../dotfiles/kitty.startup.session;
+  };
+
   programs = {
 
     kitty = {
@@ -11,34 +16,25 @@
       };
 
       keybindings = {
-        #"cmd+0" = "goto_tab 10";
-        #"cmd+1" = "goto_tab 1";
-        #"cmd+2" = "goto_tab 2";
-        #"cmd+3" = "goto_tab 3";
-        #"cmd+4" = "goto_tab 4";
-        #"cmd+5" = "goto_tab 5";
-        #"cmd+6" = "goto_tab 6";
-        #"cmd+7" = "goto_tab 7";
-        #"cmd+8" = "goto_tab 8";
-        #"cmd+9" = "goto_tab 9";
-        #"cmd+w" = "close_window";
-        #"ctrl+shift+enter" =  "launch --cwd=current";
+        "ctrl+shift+backspace"  = "close_window";
+        "ctrl+shift+down"       = "next_window";
+        "ctrl+shift+up"         = "prev_window";
       };
 
       settings = {
-        background_opacity                 = "0.80";
-        font_size                   = "14.0";
+        #kitty_mod                  = "Super_L+shift";
         copy_on_select              = true;
         enable_audio_bell           = false;
+        font_size                   = "13.0";
         hide_window_decorations     = true ;
+        #linux_display_server        = "wayland";
         macos_show_window_title_in  = "none" ;
         scrollback_lines            = "10000";
+        startup_session             = "kitty.startup.session";
         strip_trailing_spaces       = "smart";
         tab_bar_style               = "powerline";
-        dynamic_background_opacity  = true;
-        tab_title_template          = " {index} ";
-        update_check_interval       = "0";
         term                        = "xterm-256color";
+        update_check_interval       = "0";
 
         background            = "#2c2c2c";
         foreground            = "#cccccc";
@@ -60,7 +56,7 @@
         color14               = "#66cccc";
         color7                = "#fffefe";
         color15               = "#fffefe";
-        selection_foreground = "#2c2c2c";
+        selection_foreground  = "#2c2c2c";
       };
     };
   };

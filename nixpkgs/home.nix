@@ -62,6 +62,7 @@ news.display = "show";
 
       # Work
       pkgs.zoom-us
+      pkgs.joplin
 
       # Games
       pkgs.dosbox     # Simcity 2000

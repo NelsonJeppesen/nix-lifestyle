@@ -24,11 +24,6 @@
   # Required for the Wireless firmware
   hardware.enableRedistributableFirmware = true;
 
-  services.fstrim.enable = true;
-
-  # Set your time zone.
-  time.timeZone = "America/Los_Angeles";
-
   nixpkgs.config.allowUnfree = true;
 
   users.defaultUserShell = pkgs.zsh;

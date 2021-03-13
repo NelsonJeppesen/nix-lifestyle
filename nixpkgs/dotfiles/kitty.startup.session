@@ -1,0 +1,19 @@
+layout vertical
+new_tab fat
+layout fat
+cd ~/src
+launch
+launch
+launch
+
+new_tab full
+cd ~/src
+launch
+
+new_tab full
+cd ~/src
+launch
+
+new_tab full
+cd ~/src
+launch
