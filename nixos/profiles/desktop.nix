@@ -1,8 +1,14 @@
 { config, pkgs, stdenv, lib, ... }:
 
 {
-  hardware.pulseaudio.enable = true;
   sound.enable = true;
+
+  # vulkan 32bit and 64bit
+  hardware.opengl.driSupport = true;
+  hardware.opengl.driSupport32Bit = true;
+
+  hardware.pulseaudio.enable = true;
+  #hardware.pulseaudio.package = pkgs.pulseaudioFull;
 
   # Enable the GNOME 3 Desktop Environment.
   services.xserver = {

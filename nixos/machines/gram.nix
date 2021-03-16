@@ -27,6 +27,7 @@
     "i915.modeset=1"
     "i915.fastboot=1"
     "i915.enable_fbc=1"
+    #"snd_hda_intel.dmic_detect=0"
     #"i915.enable_gvt=1"
     #"i915.enable_psr=1"
   ];
@@ -38,8 +39,8 @@
   boot.extraModprobeConfig = ''
     #options snd-hda-intel model=alc298-dell-aio
     options snd_hda_intel power_save=2
-    options snd_intel_dspcfg dsp_driver=3
-    options snd-hda-intel model=dual-codecs
+    #options snd_intel_dspcfg dsp_driver=3
+    #options snd-hda-intel model=dual-codecs
   '';
 
   boot.initrd.availableKernelModules = [ "xhci_pci" "nvme" "usb_storage" "sd_mod" ];
