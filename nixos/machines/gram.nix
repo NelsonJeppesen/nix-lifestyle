@@ -4,14 +4,23 @@
 { config, pkgs, stdenv, lib, modulesPath, ... }:
 
 {
-  imports =
-  [ (modulesPath + "/installer/scan/not-detected.nix")
-     ../profiles/x86_64.nix
-     ../profiles/intel.nix
-     ../profiles/shared.nix
-     ../profiles/desktop.nix
+  networking.hostName = "gram";
+
+  imports = [
+    (modulesPath + "/installer/scan/not-detected.nix")
+    ../profiles/x86_64.nix
+    ../profiles/intel.nix
+    ../profiles/shared.nix
+    ../profiles/desktop.nix
   ];
 
+  systemd.services.fix-suspend = {
+    script = ''
+      # Enable fn-lock
+      echo 1 > /sys/devices/platform/lg-laptop/fn_lock
+    '';
+    wantedBy = [ "multi-user.target" ];
+  };
 
 # boot.kernelPatches = [{
 #   name = "crashdump-config";
@@ -31,8 +40,6 @@
     #"i915.enable_gvt=1"
     #"i915.enable_psr=1"
   ];
-
-  networking.hostName = "gram";
 
   boot.extraModprobeConfig = ''
     #options snd-hda-intel model=alc298-dell-aio
