@@ -4,6 +4,9 @@
   services.xserver.videoDrivers = [ "modesetting" ];
   services.xserver.useGlamor = true;
 
+  hardware.cpu.intel.updateMicrocode =
+    lib.mkDefault config.hardware.enableRedistributableFirmware;
+
   boot.initrd.availableKernelModules = [
     "aesni_intel"
     "cryptd"

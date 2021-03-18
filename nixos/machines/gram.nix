@@ -33,8 +33,6 @@
   ];
 
   networking.hostName = "gram";
-  hardware.cpu.intel.updateMicrocode =
-    lib.mkDefault config.hardware.enableRedistributableFirmware;
 
   boot.extraModprobeConfig = ''
     #options snd-hda-intel model=alc298-dell-aio
