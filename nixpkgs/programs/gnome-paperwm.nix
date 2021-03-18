@@ -5,7 +5,10 @@
 
     # Use capslock as super key
     "org/gnome/desktop/input-sources" = {
-      xkb-options = [ "caps:super" ];
+      xkb-options = [
+        "caps:super"  # map capslock to windows/mac key
+        "numpad:mac"  # always enable numlock
+      ];
     };
 
     "org/gnome/shell" = {
