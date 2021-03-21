@@ -3,11 +3,17 @@
 {
   nixpkgs.config.allowUnfree = true;
   boot.loader.efi.canTouchEfiVariables = true;
-  boot.loader.systemd-boot.enable = true;
+  #boot.loader.systemd-boot.enable = true;
   boot.consoleLogLevel = 3; # hide ACPI error
 
   services.fstrim = {
     enable = true;
+  };
+
+  nix.gc = {
+    automatic = true;
+    dates = "weekly";
+    options = "--delete-older-than 30d";
   };
 
   services.sshd.enable = true;

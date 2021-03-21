@@ -41,6 +41,13 @@
     #"i915.enable_psr=1"
   ];
 
+  boot.loader.grub.devices = [ "nodev" ];
+  boot.loader.grub.efiSupport = true;
+  boot.loader.grub.enable = true;
+  boot.loader.grub.useOSProber = true;
+  boot.loader.grub.version = 2;
+  boot.loader.grub.gfxmodeEfi = "1024x768";
+
   boot.extraModprobeConfig = ''
     #options snd-hda-intel model=alc298-dell-aio
     options snd_hda_intel power_save=2

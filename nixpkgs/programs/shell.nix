@@ -5,8 +5,8 @@
     direnv.enable = true;
 
     powerline-go = {
-      enable = true;
-      modules = [ "ssh" "host" "cwd" "venv" "git" "perms" "nix-shell" "kube" ];
+      enable = false;
+      modules = [ "kube" ];
       newline = true;
       settings = {
         colorize-hostname = true;
@@ -15,6 +15,7 @@
 
     zsh = {
       enable = true;
+
       enableCompletion = true;
       enableAutosuggestions = true;
 
@@ -22,6 +23,24 @@
         # Single tab complete
         #unsetopt listambiguous
         setopt menu_complete
+
+        function powerline_precmd() {
+          eval "$(${pkgs.powerline-go}/bin/powerline-go -error $? -shell zsh -eval -modules ssh,host,cwd,venv,git,perms,nix-shell -modules-right kube)"
+        }
+
+        function install_powerline_precmd() {
+          for s in "$\{precmd_functions[@]}"; do
+            if [ "$s" = "powerline_precmd" ]; then
+              return
+            fi
+          done
+          precmd_functions+=(powerline_precmd)
+        }
+
+        if [ "$TERM" != "linux" ]; then
+          install_powerline_precmd
+          cd ~/src
+        fi
       '';
 
       sessionVariables = {

@@ -67,8 +67,7 @@ news.display = "show";
       # Games
       pkgs.dosbox     # Simcity 2000
       pkgs.frotz      # Zork I
-      #pkgs.factorio  # Automation when not at work
-      pkgs.steam
+      #pkgs.steam
 
       # Music
       pkgs.somafm-cli
