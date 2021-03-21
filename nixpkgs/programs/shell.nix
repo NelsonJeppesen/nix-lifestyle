@@ -2,17 +2,6 @@
 {
   programs = {
 
-    direnv.enable = true;
-
-    powerline-go = {
-      enable = false;
-      modules = [ "kube" ];
-      newline = true;
-      settings = {
-        colorize-hostname = true;
-      };
-    };
-
     zsh = {
       enable = true;
 
@@ -25,7 +14,7 @@
         setopt menu_complete
 
         function powerline_precmd() {
-          eval "$(${pkgs.powerline-go}/bin/powerline-go -error $? -shell zsh -eval -modules ssh,host,cwd,venv,git,perms,nix-shell -modules-right kube)"
+          eval "$(${pkgs.powerline-go}/bin/powerline-go -error $? -shell zsh -eval -modules ssh,host,cwd,venv,git,perms,nix-shell -modules-right kube -newline)"
         }
 
         function install_powerline_precmd() {
@@ -37,15 +26,19 @@
           precmd_functions+=(powerline_precmd)
         }
 
+        eval "$(${pkgs.direnv}/bin/direnv hook zsh)"
+
         if [ "$TERM" != "linux" ]; then
           install_powerline_precmd
           cd ~/src
+          clear
         fi
       '';
 
       sessionVariables = {
-        EDITOR="nvim";
-        RPS1="";
+        ZSH_AUTOSUGGEST_HIGHLIGHT_STYLE = "fg=4";
+        EDITOR = "nvim";
+        RPS1 = "";
       };
 
       shellAliases = {

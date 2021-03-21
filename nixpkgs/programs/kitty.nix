@@ -25,7 +25,7 @@
         #kitty_mod                  = "Super_L+shift";
         copy_on_select              = true;
         enable_audio_bell           = false;
-        font_size                   = "14.0";
+        font_size                   = "16.0";
         hide_window_decorations     = true ;
         #linux_display_server        = "wayland";
         macos_show_window_title_in  = "none" ;
