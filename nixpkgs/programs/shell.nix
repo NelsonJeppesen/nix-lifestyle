@@ -14,7 +14,7 @@
         setopt menu_complete
 
         function powerline_precmd() {
-          eval "$(${pkgs.powerline-go}/bin/powerline-go -error $? -shell zsh -eval -modules ssh,host,cwd,venv,git,perms,nix-shell -modules-right kube -newline)"
+          eval "$(${pkgs.powerline-go}/bin/powerline-go -colorize-hostname -error $? -shell zsh -eval -modules newline,kube,newline,ssh,host,git,cwd,venv,perms,nix-shell -newline)"
         }
 
         function install_powerline_precmd() {
@@ -36,6 +36,7 @@
       '';
 
       sessionVariables = {
+        NIXPKGS_ALLOW_UNFREE = "1";
         ZSH_AUTOSUGGEST_HIGHLIGHT_STYLE = "fg=4";
         EDITOR = "nvim";
         RPS1 = "";
@@ -48,6 +49,7 @@
         rst           = "kubectx -u; cd ~/src; clear";
 
         uc            = "kubectx";
+        ucu           = "kubectx -u";
         k             = "kubectl";
         kd            = "kubectl describe";
         kg            = "kubectl get";

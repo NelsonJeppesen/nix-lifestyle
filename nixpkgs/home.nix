@@ -13,7 +13,8 @@
   programs = {
     home-manager.enable = true;
   };
-news.display = "show";
+
+  news.display = "show";
 
   home = {
 
@@ -67,6 +68,7 @@ news.display = "show";
       # Games
       pkgs.dosbox     # Simcity 2000
       pkgs.frotz      # Zork I
+      pkgs.vitetris   # CLI Tetris
       #pkgs.steam
 
       # Music
