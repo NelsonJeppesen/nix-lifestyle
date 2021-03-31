@@ -29,7 +29,7 @@
         hide_window_decorations     = true ;
         #linux_display_server        = "wayland";
         macos_show_window_title_in  = "none" ;
-        scrollback_lines            = "10000";
+        scrollback_lines            = "30000";
         startup_session             = "kitty.startup.session";
         strip_trailing_spaces       = "smart";
         tab_bar_style               = "powerline";

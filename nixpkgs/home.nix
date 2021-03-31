@@ -69,7 +69,7 @@
       pkgs.dosbox     # Simcity 2000
       pkgs.frotz      # Zork I
       pkgs.vitetris   # CLI Tetris
-      #pkgs.steam
+      pkgs.steam
 
       # Music
       pkgs.somafm-cli

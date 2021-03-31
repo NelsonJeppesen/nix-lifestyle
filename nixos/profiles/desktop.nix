@@ -26,6 +26,15 @@
     gnome3.cheese
     gnome3.gnome-contacts
     gnome3.geary
+    gnome3.gnome-backgrounds
+    gnome3.gnome-getting-started-docs
+    gnome3.gnome-user-docs
+    gnome3.gnome-maps
+    gnome3.gnome-logs
+    gnome3.gnome-screenshot
+    gnome3.gnome-weather
+    gnome3.gnome-online-accounts
+    gnome3.gnome-online-miners
   ];
 
   # Configure keymap in X11

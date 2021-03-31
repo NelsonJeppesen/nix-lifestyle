@@ -14,7 +14,10 @@
         setopt menu_complete
 
         function powerline_precmd() {
-          eval "$(${pkgs.powerline-go}/bin/powerline-go -colorize-hostname -error $? -shell zsh -eval -modules newline,kube,newline,ssh,host,git,cwd,venv,perms,nix-shell -newline)"
+          eval "$(${pkgs.powerline-go}/bin/powerline-go                       \
+            -colorize-hostname -error $? -shell zsh -eval -newline            \
+            -modules kube,newline,git,cwd,venv,perms,nix-shell                \
+          )"
         }
 
         function install_powerline_precmd() {
