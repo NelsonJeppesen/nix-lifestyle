@@ -6,13 +6,14 @@
 {
   imports =
   [ (modulesPath + "/installer/scan/not-detected.nix")
-     ./platforms/x86_64.nix
-     ./platforms/amd_xen.nix
-     ./profiles/shared.nix
+    ../profiles/shared.nix
+    ../profiles/x86_64.nix
+    ../profiles/amd_xen.nix
+    ../profiles/desktop.nix
   ];
 
-  networking.hostName = "white";
-
+  networking.hostName = "g14";
+  boot.loader.systemd-boot.enable = true;
   boot.initrd.availableKernelModules = [ "xhci_pci" "nvme" "ahci" "usbhid" "usb_storage" "sd_mod" "cryptd" ];
 
   fileSystems."/" =

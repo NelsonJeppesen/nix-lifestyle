@@ -3,7 +3,6 @@
 {
   nixpkgs.config.allowUnfree = true;
   boot.loader.efi.canTouchEfiVariables = true;
-  #boot.loader.systemd-boot.enable = true;
   boot.consoleLogLevel = 3; # hide ACPI error
 
   services.fstrim = {
