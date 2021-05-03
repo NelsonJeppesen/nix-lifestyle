@@ -18,7 +18,6 @@
 
   home = {
 
-
      #file.".config/tuir/tuir.cfg".source = dotfiles/tuir.cfg;
 
      packages = [
@@ -46,7 +45,8 @@
       pkgs.aws-iam-authenticator
       pkgs.awscli2
       pkgs.curl
-      pkgs.dbeaver      # multi-db gui
+      pkgs.direnv
+      #pkgs.dbeaver      # multi-db gui
       pkgs.dnsutils     # dig
       pkgs.helmfile
       pkgs.jq
@@ -63,20 +63,20 @@
 
       # Work
       pkgs.zoom-us
-      pkgs.joplin
+      #pkgs.joplin
 
       # Games
-      pkgs.dosbox     # Simcity 2000
-      pkgs.frotz      # Zork I
-      pkgs.vitetris   # CLI Tetris
-      pkgs.steam
+      #pkgs.dosbox     # Simcity 2000
+      #pkgs.frotz      # Zork I
+      #pkgs.vitetris   # CLI Tetris
+      #pkgs.steam
 
       # Music
       pkgs.somafm-cli
       pkgs.ncspot
 
       # Reddit
-      pkgs.tuir
+      #pkgs.tuir
     ];
   };
 }

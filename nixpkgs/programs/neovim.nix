@@ -25,6 +25,10 @@
         ];
 
       extraConfig = ''
+        " set title in Kitty term tab to just the filename
+        set titlestring=%t
+        set title
+
         " enable true color
         set termguicolors
         colorscheme gruvbox

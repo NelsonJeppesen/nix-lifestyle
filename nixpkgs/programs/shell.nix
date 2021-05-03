@@ -13,10 +13,24 @@
         #unsetopt listambiguous
         setopt menu_complete
 
+        function set-title-precmd() {
+          printf "\e]2;%s\a" "''${PWD/#$HOME/~}"
+        }
+
+        function set-title-preexec() {
+          printf "\e]2;%s\a" "$1"
+        }
+
+        #autoload -Uz add-zsh-hook
+        add-zsh-hook precmd set-title-precmd
+        add-zsh-hook preexec set-title-preexec
+
         function powerline_precmd() {
-          eval "$(${pkgs.powerline-go}/bin/powerline-go                       \
-            -colorize-hostname -error $? -shell zsh -eval -newline            \
-            -modules kube,newline,git,cwd,venv,perms,nix-shell                \
+          eval "$(${pkgs.powerline-go}/bin/powerline-go             \
+            -path-aliases \~/s=※                                    \
+            -colorize-hostname -error $? -shell zsh -eval -newline  \
+            -modules kube,newline,cwd,venv,perms,nix-shell,git      \
+            -numeric-exit-codes \
           )"
         }
 
@@ -33,7 +47,7 @@
 
         if [ "$TERM" != "linux" ]; then
           install_powerline_precmd
-          cd ~/src
+          cd ~/s
           clear
         fi
       '';
@@ -49,7 +63,7 @@
         update-all    = "sudo nixos-rebuild switch --upgrade;nix-channel --update; home-manager switch";
         update-os     = "sudo nixos-rebuild switch --upgrade;nix-channel --update";
         update-hm     = "nix-channel --update; home-manager switch";
-        rst           = "kubectx -u; cd ~/src; clear";
+        rst           = "kubectx -u; cd ~/s; clear";
 
         uc            = "kubectx";
         ucu           = "kubectx -u";

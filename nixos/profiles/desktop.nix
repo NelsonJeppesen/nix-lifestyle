@@ -1,14 +1,24 @@
 { config, pkgs, stdenv, lib, ... }:
 
 {
+
+  hardware.bluetooth.enable = true;
+
+  # Pipewire stack with alsa/pulseaudio compat
   sound.enable = true;
+  hardware.pulseaudio.enable = false;
+  services.pipewire = {
+    enable = true;
+    alsa = {
+      enable = true;
+      support32Bit = true;
+    };
+    pulse.enable = true;
+  };
 
   # vulkan 32bit and 64bit
   hardware.opengl.driSupport = true;
   hardware.opengl.driSupport32Bit = true;
-
-  hardware.pulseaudio.enable = true;
-  #hardware.pulseaudio.package = pkgs.pulseaudioFull;
 
   # Enable the GNOME 3 Desktop Environment.
   services.xserver = {
@@ -18,8 +28,14 @@
     enable = true;
   };
 
-  #services.printing.enable = true;
-  #services.printing.drivers = [ pkgs.gutenprint pkgs.gutenprintBin];
+  services.gnome3.gnome-online-accounts.enable = false;
+  services.gnome3.gnome-remote-desktop.enable = false;
+  services.gnome3.gnome-initial-setup.enable = false;
+  services.gnome3.gnome-user-share.enable = false;
+
+  services.printing.enable = true;
+  services.printing.drivers = [ pkgs.hplip];
+  hardware.sane.enable = true;
 
   environment.gnome3.excludePackages = with pkgs; [
     gnome3.gnome-music
