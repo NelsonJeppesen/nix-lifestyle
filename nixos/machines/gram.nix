@@ -4,6 +4,32 @@
 { config, pkgs, stdenv, lib, modulesPath, ... }:
 
 {
+  # Enable fingerprint reader for login but not sudo
+  services.fprintd.enable = true;
+  security.pam.services.sudo.fprintAuth = false;
+
+  # I forked libfprint to add support for this laptop
+  # Waiting on two things
+  # 1. nixpkgs to use latest fprint release
+  # 2. libfprint to merge my PR
+  nixpkgs.overlays = [(
+  self: super:
+  {
+    libfprint = super.libfprint.overrideAttrs (old: {
+      pname = "libfprint";
+      version = "1.90.9";
+      outputs = [ "out" "devdoc" ];
+      src = super.fetchFromGitLab {
+        domain = "gitlab.freedesktop.org";
+        owner = "NelsonJeppesen";
+        repo = "libfprint";
+        rev = "67ff412e8c53d686dfb337412c2da9befab3e56a";
+        sha256 = "036z9nn6fzy3w6hcyab67qw22mam5mcscinpjsiylrmrki6g8kkl";
+      };
+    });
+  }
+  )];
+
   networking.hostName = "gram";
 
   imports = [
