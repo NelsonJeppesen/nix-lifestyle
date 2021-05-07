@@ -33,6 +33,7 @@
 
       aliases = {
         a     = "add";
+        b     = "branch";
         co    = "checkout";
         ct    = "commit";
         some  = "!git fetch -a && git pull";
