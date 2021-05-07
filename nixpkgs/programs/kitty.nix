@@ -27,7 +27,7 @@
         enable_audio_bell           = false;
         font_size                   = "16.0";
         hide_window_decorations     = true ;
-        #linux_display_server        = "wayland";
+        linux_display_server        = "x11";
         macos_show_window_title_in  = "none" ;
         scrollback_lines            = "30000";
         startup_session             = "kitty.startup.session";
