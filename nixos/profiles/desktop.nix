@@ -43,7 +43,6 @@
     gnome3.gnome-contacts
     gnome3.geary
     gnome3.gnome-backgrounds
-    gnome3.gnome-getting-started-docs
     gnome3.gnome-user-docs
     gnome3.gnome-maps
     gnome3.gnome-logs

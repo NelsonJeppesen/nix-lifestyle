@@ -4,8 +4,8 @@
 { config, pkgs, stdenv, lib, modulesPath, ... }:
 
 {
-  imports =
-  [ (modulesPath + "/installer/scan/not-detected.nix")
+  imports = [
+    (modulesPath + "/installer/scan/not-detected.nix")
     ../profiles/shared.nix
     ../profiles/x86_64.nix
     ../profiles/amd_xen.nix
