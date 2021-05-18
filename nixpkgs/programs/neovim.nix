@@ -29,6 +29,9 @@
         set titlestring=%t
         set title
 
+        " github markdown compat table mode
+        let g:table_mode_corner='|'
+
         " enable true color
         set termguicolors
         colorscheme gruvbox
