@@ -56,7 +56,7 @@
       pkgs.ripgrep
       pkgs.sops
       pkgs.ssm-session-manager-plugin
-      pkgs.terraform_0_14
+      pkgs.terraform_0_15
       pkgs.terraform-docs
       pkgs.p7zip
       pkgs.wget
