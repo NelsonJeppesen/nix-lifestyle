@@ -5,6 +5,12 @@
     zsh = {
       enable = true;
 
+      history = {
+        extended = true;
+        save = 999999;
+        size = 999999;
+      };
+
       enableCompletion = true;
       enableAutosuggestions = true;
 
