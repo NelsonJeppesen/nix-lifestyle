@@ -1,4 +1,4 @@
-{ config, pkgs, ... }:
+{ config, lib, pkgs, ... }:
 
 {
   dconf.settings = {
@@ -15,27 +15,17 @@
       enabled-extensions = [
         "appindicatorsupport@rgcjonas.gmail.com"  # show notifications e.g. slack
         "caffeine@patapon.info"                   # top bar icon to prevent sleep
-        "clipboard-indicator@tudmotu.com"         # clipboard manager
+        "GPaste@gnome-shell-extensions.gnome.org" # clipboard manager with img support
         "gsconnect@andyholmes.github.io"          # connect to my phone
         "paperwm@hedning:matrix.org"              # paperwm - best scrolling WM there is
       ];
     };
 
-    "org/gnome/shell/extensions/clipboard-indicator" = {
-      cache-size      = 10240; # 10MB
-      display-mode    = 0;
-      history-size    = 200;
-      move-item-first = true;
-      notify-on-copy  = false;
-      preview-size    = 100;
-      strip-text      = true;
-      toggle-menu     = ["Launch1"];
-      topbar-preview-size = 4;
-
-      # Clear bindings
-      clear-history   = [];
-      next-entry      = [];
-      prev-entry      = [];
+    "org/gnome/GPaste" = {
+      "images-support"    = true;
+      "max-history-size"  = lib.hm.gvariant.mkUint64 2000;
+      "max-memory-usage"  = lib.hm.gvariant.mkUint64 100;
+      "trim-items"        = true;
     };
 
     "org/gnome/desktop/interface" = {
@@ -169,7 +159,6 @@
       command = "wmctrl -a 'Zoom Meeting'";
       name    = "focus zoom running zoom meeting";
     };
-
 
   };
 }

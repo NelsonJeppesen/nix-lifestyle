@@ -4,6 +4,9 @@
 
   hardware.bluetooth.enable = true;
 
+
+  programs.gpaste.enable = true;
+
   # Pipewire stack with alsa/pulseaudio compat
   sound.enable = true;
   hardware.pulseaudio.enable = false;
