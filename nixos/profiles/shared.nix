@@ -4,6 +4,8 @@
   nixpkgs.config.allowUnfree = true;
   boot.consoleLogLevel = 3; # hide ACPI error
 
+  networking.useNetworkd = true;
+
   services.fstrim = {
     enable = true;
   };
