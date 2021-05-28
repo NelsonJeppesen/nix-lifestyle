@@ -5,6 +5,8 @@
   boot.consoleLogLevel = 3; # hide ACPI error
 
   networking.useNetworkd = true;
+  networking.dhcpcd.enable = false;
+  systemd.network.enable = true;
 
   services.fstrim = {
     enable = true;
