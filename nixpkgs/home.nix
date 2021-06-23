@@ -75,6 +75,7 @@
       # Music
       pkgs.somafm-cli
       pkgs.ncspot
+      pkgs.spotify
 
       # Reddit
       #pkgs.tuir

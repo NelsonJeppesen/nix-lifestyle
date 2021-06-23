@@ -4,6 +4,7 @@
 
   hardware.bluetooth.enable = true;
 
+  services.power-profiles-daemon.enable = false;
 
   programs.gpaste.enable = true;
 
@@ -25,34 +26,34 @@
 
   # Enable the GNOME 3 Desktop Environment.
   services.xserver = {
-    desktopManager.gnome3.enable = true;
+    desktopManager.gnome.enable = true;
     displayManager.gdm.enable = true;
     libinput.touchpad.accelProfile = "flat";
     enable = true;
   };
 
-  services.gnome3.gnome-online-accounts.enable = false;
-  services.gnome3.gnome-remote-desktop.enable = false;
-  services.gnome3.gnome-initial-setup.enable = false;
-  services.gnome3.gnome-user-share.enable = false;
+  services.gnome.gnome-online-accounts.enable = false;
+  services.gnome.gnome-remote-desktop.enable = false;
+  services.gnome.gnome-initial-setup.enable = false;
+  services.gnome.gnome-user-share.enable = false;
 
   services.printing.enable = true;
   services.printing.drivers = [ pkgs.hplip];
   hardware.sane.enable = true;
 
-  environment.gnome3.excludePackages = with pkgs; [
-    gnome3.gnome-music
-    gnome3.cheese
-    gnome3.gnome-contacts
-    gnome3.geary
-    gnome3.gnome-backgrounds
-    gnome3.gnome-user-docs
-    gnome3.gnome-maps
-    gnome3.gnome-logs
-    gnome3.gnome-screenshot
-    gnome3.gnome-weather
-    gnome3.gnome-online-accounts
-    gnome3.gnome-online-miners
+  environment.gnome.excludePackages = with pkgs; [
+    gnome.gnome-music
+    gnome.cheese
+    gnome.gnome-contacts
+    gnome.geary
+    gnome.gnome-backgrounds
+    gnome.gnome-user-docs
+    gnome.gnome-maps
+    gnome.gnome-logs
+    gnome.gnome-screenshot
+    gnome.gnome-weather
+    gnome.gnome-online-accounts
+    gnome.gnome-online-miners
   ];
 
   # Configure keymap in X11
