@@ -20,6 +20,7 @@
          vim-airline-themes
          vim-better-whitespace
          vim-gitgutter
+         vim-lastplace
          vim-nix
          vim-table-mode
         ];
