@@ -2,6 +2,11 @@
 
 {
 
+  # The start of the week *should* be Monday, not Sunday
+  i18n.extraLocaleSettings = {
+    LC_TIME = "en_GB.UTF-8";
+  };
+
   hardware.bluetooth.enable = true;
 
   services.power-profiles-daemon.enable = false;
