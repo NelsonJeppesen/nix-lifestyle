@@ -10,10 +10,10 @@
     kitty = {
       enable = true;
 
-      font = {
-        package = pkgs.fira-code;
-        name = "Fira Code";
-      };
+      #font = {
+      #  package = pkgs.fira-code;
+      #  name = "Fira Code";
+      #};
 
       keybindings = {
         "ctrl+shift+backspace"  = "close_window";

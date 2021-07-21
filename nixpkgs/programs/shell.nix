@@ -81,7 +81,8 @@
         ke            = "kubectl edit";
         kns           = "kubens";
 
-        n             = "vim ~/.notes";
+        n             = "vim ~/.notes.md";
+        v             = "vim";
 
         playDronezone       = "clear;echo -e '\\033[36mPlaying dronezone';somafm play dronezone";
         playMissioncontrol  = "clear;echo -e '\\033[36mPlaying missioncontrol';somafm play missioncontrol";
