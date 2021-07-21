@@ -3,6 +3,7 @@
 {
   services.xserver.videoDrivers = [ "modesetting" ];
   services.xserver.useGlamor = true;
+  services.thermald.enable = true;
 
   hardware.cpu.intel.updateMicrocode =
     lib.mkDefault config.hardware.enableRedistributableFirmware;
@@ -12,6 +13,7 @@
     "cryptd"
   ];
 
+  services.power-profiles-daemon.enable = false;
   services.tlp = {
     enable = true;
     settings = {
@@ -23,6 +25,7 @@
       CPU_MIN_PERF_ON_BAT           = "0";
       CPU_SCALING_GOVERNOR_ON_AC    = "performance";
       CPU_SCALING_GOVERNOR_ON_BAT   = "powersave";
+      USB_WHITELIST                 = "27c6:6a94";
       #DEVICES_TO_DISABLE_ON_STARTUP = "bluetooth";
     };
   };

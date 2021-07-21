@@ -9,9 +9,8 @@
 
   hardware.bluetooth.enable = true;
 
-  services.power-profiles-daemon.enable = false;
-
   programs.gpaste.enable = true;
+  programs.steam.enable = true;
 
   # Pipewire stack with alsa/pulseaudio compat
   sound.enable = true;
@@ -37,10 +36,11 @@
     enable = true;
   };
 
-  services.gnome.gnome-online-accounts.enable = false;
+  services.gnome.gnome-online-accounts.enable = true;
   services.gnome.gnome-remote-desktop.enable = false;
   services.gnome.gnome-initial-setup.enable = false;
   services.gnome.gnome-user-share.enable = false;
+  #hardware.logitech.wireless.enable = true;
 
   services.printing.enable = true;
   services.printing.drivers = [ pkgs.hplip];
@@ -57,8 +57,8 @@
     gnome.gnome-logs
     gnome.gnome-screenshot
     gnome.gnome-weather
-    gnome.gnome-online-accounts
-    gnome.gnome-online-miners
+    #gnome.gnome-online-accounts
+    #gnome.gnome-online-miners
   ];
 
   # Configure keymap in X11
