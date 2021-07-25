@@ -73,8 +73,8 @@
       #pkgs.steam
 
       # Music
-      pkgs.somafm-cli
-      pkgs.ncspot
+      #pkgs.somafm-cli
+      #pkgs.ncspot
       pkgs.spotify
 
       # Reddit

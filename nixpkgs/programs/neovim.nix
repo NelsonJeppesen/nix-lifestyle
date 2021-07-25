@@ -3,81 +3,54 @@
   programs = {
 
     neovim = {
-      enable = true;
-      viAlias = true;
-      vimAlias = true;
+      enable       = true;
+      viAlias      = true;
+      vimAlias     = true;
       vimdiffAlias = true;
 
       plugins =
         with pkgs.vimPlugins; [
-          #gina-vim
-          #neorg
-          #neovim-sensible
-          #nvim-lspconfig
-          #nvim-lspconfig
-          #packer-nvim
-          #plenary-nvim
-          #vim-gitgutter
-          #vim-grammarous
-          gruvbox-community
-          vim-startify
-          #gruvbox-nvim
-          nvim-compe              # autocomplete
-          vim-airline
-          vim-airline-themes
-          vim-better-whitespace
-          vim-lastplace
-          vim-nix
-          vim-signify
-          vim-table-mode
+          # Lua NeoVIm plugins
+          #barbar-nvim
+          #nvim-treesitter
+          #nvim-web-devicons
+          #registers-nvim
+
+          formatter-nvim  # generic formatter
+          git-blame-nvim  # <leader><leader>f
+          gitsigns-nvim   # Git gutter
+          lualine-nvim    # status line
+          nvim-compe      # autocomplete
+          scrollbar-nvim
+          train-nvim
           which-key-nvim
+
+          # Legacy Vimscript Plugins
+          gruvbox-community     # theme;
+          vim-better-whitespace
+          vim-lastplace         # remember location in file
+          vim-nix
+          vim-table-mode
         ];
 
         extraConfig = ''
-          " Show modified tracked files in git
-          function! s:gitModified()
-            let files = systemlist('git ls-files -m 2>/dev/null')
-            return map(files, "{'line': v:val, 'path': v:val}")
-          endfunction
+          let mapleader=","
+          nnoremap            <leader><leader>b   :GitBlameToggle<CR>
+          nnoremap            <leader><leader>c   :%y+<CR>
+          nnoremap            <leader><leader>d   :set background=dark<CR>
+          nnoremap            <leader><leader>l   :set background=light<CR>
+          nnoremap            <leader><leader>s   :StripWhitespace<CR>
+          nnoremap  <silent>  <leader><leader>f   :Format<CR>
+          nnoremap  <silent>  <leader><leader>t   :TableModeToggle<CR>
 
-          " same as above, but show untracked files, honouring .gitignore
-          function! s:gitUntracked()
-            let files = systemlist('git ls-files -o --exclude-standard 2>/dev/null')
-            return map(files, "{'line': v:val, 'path': v:val}")
-          endfunction
+          " https://github.com/tjdevries/train.nvim/
+          nnoremap            <leader>tu          :TrainUpDown<CR>
+          nnoremap            <leader>tw          :TrainWord<CR>
+          nnoremap            <leader>to          :TrainTextObj<CR>
 
-          " when starting [n]vim without a file, open vim-startify and show
-          "   1. most recent files in current working dir
-          "   2. git modified and tracked files
-          "   3. git untracked files
-          "   4. most recent files globaly
-          let g:startify_lists = [
-              \ { 'type': 'dir',       'header': ['   MRU '. getcwd()] },
-              \ { 'type': function('s:gitModified'),  'header': ['   git modified']},
-              \ { 'type': function('s:gitUntracked'), 'header': ['   git untracked']},
-              \ { 'type': 'files',     'header': ['   MRU']            },
-              \ ]
+          "set colorcolumn=120
 
-          " Dont show vim-startify banner with quote and cow
-          let g:startify_custom_header = []
-
-          " default nvim-compe config
-          set completeopt=menuone,noselect
           let g:compe = {}
-          let g:compe.enabled = v:true
-          let g:compe.autocomplete = v:true
-          let g:compe.debug = v:false
-          let g:compe.min_length = 1
-          let g:compe.preselect = 'enable'
-          let g:compe.throttle_time = 80
-          let g:compe.source_timeout = 200
-          let g:compe.resolve_timeout = 800
-          let g:compe.incomplete_delay = 400
-          let g:compe.max_abbr_width = 100
-          let g:compe.max_kind_width = 100
-          let g:compe.max_menu_width = 100
-          let g:compe.documentation = v:true
-
           let g:compe.source = {}
           let g:compe.source.path = v:true
           let g:compe.source.buffer = v:true
@@ -89,30 +62,65 @@
           let g:compe.source.luasnip = v:true
           let g:compe.source.emoji = v:true
 
+          " Show `▸▸` for tabs: 	, `·` for tailing whitespace:
+          set list listchars=tab:▸▸,trail:·
+
+          augroup ScrollbarInit
+            autocmd!
+            autocmd CursorMoved,VimResized,QuitPre * silent! lua require('scrollbar').show()
+            autocmd WinEnter,FocusGained           * silent! lua require('scrollbar').show()
+            autocmd WinLeave,BufLeave,BufWinLeave,FocusLost            * silent! lua require('scrollbar').clear()
+          augroup end
+
+          let g:scrollbar_shape = {
+              \ 'head': '░',
+              \ 'body': '░',
+              \ 'tail': '░',
+              \ }
+
+          let g:gitblame_enabled = 0
+          lua << EOF
+            require('formatter').setup({
+              logging = false,
+              filetype = {
+                tf = {
+                  function()
+                  return {
+                    exe = "terraform",
+                    args = {"fmt", '-'},
+                    stdin = true
+                  }
+                  end
+                },
+                yaml = {
+                  function()
+                  return {
+                    exe = 'yq',
+                    args = {'--yaml-output','.'},
+                    stdin = true
+                  }
+                  end
+                }
+              }
+            })
+          EOF
+
           " set title in Kitty term tab to just the filename
           set titlestring=%t
           set title
 
-          " Set leader:
-          map , <Leader>
-
           " setup colorschemes
           set background=light
           set termguicolors
-          let g:airline_theme           = 'monochrome'
           let g:gruvbox_contrast_dark   = 'hard'
           let g:gruvbox_contrast_light  = 'hard'
           let g:gruvbox_italic          = '1'
           colorscheme                     gruvbox
-          nnoremap <silent> <Leader>,d :set background=dark<CR>
-          nnoremap <silent> <Leader>,l :set background=light<CR>
 
           " Copy all to clipboard
-          nnoremap <silent> <Leader>,c :%y+<CR>
           set clipboard=unnamedplus
 
           " TableModeToggle
-          nnoremap <silent> <Leader>,t :TableModeToggle<CR>
           let g:table_mode_corner='|'
 
           " enable mouse
@@ -133,16 +141,25 @@
 
           " helpfull popup for shortcuts
           set timeoutlen=500
-          lua << EOF
-            require("which-key").setup {}
-          EOF
 
           set conceallevel=2
+          " #require'nvim-treesitter.configs'.setup {}
+          lua << EOF
+            require("which-key").setup {}
+            require('gitsigns').setup()
+            require('lualine').setup {
+              options = {
+                theme = 'gruvbox_light',
+                section_separators = "",
+                component_separators = ""
+              }
+            }
+          EOF
+
+          let g:better_whitespace_guicolor='#cccccc'
 
           " cant spell
           set spelllang=en
-          "nnoremap <silent> <Leader>s :call ToggleSpellCheck()<CR>
-
         '';
     };
   };
