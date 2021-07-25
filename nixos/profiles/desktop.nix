@@ -42,9 +42,9 @@
   services.gnome.gnome-user-share.enable = false;
   #hardware.logitech.wireless.enable = true;
 
-  services.printing.enable = true;
-  services.printing.drivers = [ pkgs.hplip];
-  hardware.sane.enable = true;
+  #services.printing.enable = true;
+  #services.printing.drivers = [ pkgs.hplip];
+  #hardware.sane.enable = true;
 
   environment.gnome.excludePackages = with pkgs; [
     gnome.gnome-music
