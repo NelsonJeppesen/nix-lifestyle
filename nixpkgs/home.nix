@@ -47,10 +47,11 @@
       pkgs.awscli2
       pkgs.curl
       pkgs.direnv
-      #pkgs.dbeaver      # multi-db gui
+      pkgs.dbeaver      # multi-db gui
       pkgs.dnsutils     # dig
       pkgs.helmfile
       pkgs.jq
+      pkgs.delta
       pkgs.kubectl
       pkgs.kubectx
       pkgs.kubernetes-helm

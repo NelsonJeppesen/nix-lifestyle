@@ -24,8 +24,10 @@
           scrollbar-nvim
           train-nvim
           which-key-nvim
+          indent-blankline-nvim
 
           # Legacy Vimscript Plugins
+          goyo-vim              # focus
           gruvbox-community     # theme;
           vim-better-whitespace
           vim-lastplace         # remember location in file
@@ -42,11 +44,29 @@
           nnoremap            <leader><leader>s   :StripWhitespace<CR>
           nnoremap  <silent>  <leader><leader>f   :Format<CR>
           nnoremap  <silent>  <leader><leader>t   :TableModeToggle<CR>
+          nnoremap  <silent>  <leader><leader>z   :call ToggleHiddenAll()<CR>
 
           " https://github.com/tjdevries/train.nvim/
           nnoremap            <leader>tu          :TrainUpDown<CR>
           nnoremap            <leader>tw          :TrainWord<CR>
           nnoremap            <leader>to          :TrainTextObj<CR>
+
+          let s:hidden_all = 0
+          function! ToggleHiddenAll()
+              if s:hidden_all  == 0
+                  let s:hidden_all = 1
+                  set noshowmode
+                  set noruler
+                  set laststatus=0
+                  set noshowcmd
+              else
+                  let s:hidden_all = 0
+                  set showmode
+                  set ruler
+                  set laststatus=2
+                  set showcmd
+              endif
+          endfunction
 
           "set colorcolumn=120
 
@@ -128,6 +148,7 @@
 
           set updatetime=75
 
+
           " Indentation settings for using 2 spaces instead of tabs.
           set shiftwidth=2
           set softtabstop=2
@@ -135,6 +156,7 @@
 
           autocmd bufreadpre *.md setlocal shiftwidth=4
           autocmd bufreadpre *.md setlocal softtabstop=4
+          "autocmd bufreadpre *.md :Goyo
 
           " Use case-insensitive search
           set ignorecase

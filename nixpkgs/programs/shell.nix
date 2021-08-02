@@ -15,9 +15,10 @@
       enableAutosuggestions = true;
 
       initExtra = ''
+        bindkey -e
         # Single tab complete
         #unsetopt listambiguous
-        setopt menu_complete
+        unsetopt menucomplete
 
         function set-title-precmd() {
           printf "\e]2;%s\a" "''${PWD/#$HOME/~}"
@@ -66,11 +67,9 @@
       };
 
       shellAliases = {
-        update-all    = "sudo nixos-rebuild switch --upgrade;nix-channel --update; home-manager switch";
-        update-os     = "sudo nixos-rebuild switch --upgrade;nix-channel --update";
-        update-hm     = "nix-channel --update; home-manager switch";
-        rst           = "kubectx -u; cd ~/s; clear";
+        update        = "sudo nixos-rebuild switch --upgrade;nix-channel --update; home-manager switch";
 
+        rst           = "kubectx -u; cd ~/s; clear";
         uc            = "kubectx";
         ucu           = "kubectx -u";
         k             = "kubectl";
@@ -83,11 +82,6 @@
 
         n             = "vim ~/.notes.md";
         v             = "vim";
-
-        playDronezone       = "clear;echo -e '\\033[36mPlaying dronezone';somafm play dronezone";
-        playMissioncontrol  = "clear;echo -e '\\033[36mPlaying missioncontrol';somafm play missioncontrol";
-        playSf1033          = "clear;echo -e '\\033[36mPlaying sf1033';somafm play sf1033";
-
       };
     };
   };
