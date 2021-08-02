@@ -3,6 +3,13 @@
 {
   nixpkgs.config.allowUnfree = true;
   boot.consoleLogLevel = 3; # hide ACPI error
+  documentation.enable = false;
+  environment.defaultPackages = [];
+
+  programs.neovim.enable = true;
+  programs.neovim.defaultEditor = true;
+  programs.neovim.vimAlias = true;
+  programs.neovim.viAlias = true;
 
   networking.useNetworkd = true;
   networking.dhcpcd.enable = false;
@@ -32,7 +39,7 @@
   programs.zsh.enable = true;
 
   environment.systemPackages = with pkgs; [
-    wget vim firefox zsh git powertop
+    wget curl git
   ];
 
   networking.firewall.enable = true;

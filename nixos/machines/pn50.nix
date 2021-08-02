@@ -13,7 +13,6 @@
   ];
 
   networking.hostName = "pn50";
-  services.power-profiles-daemon.enable = false;
   boot.loader.systemd-boot.enable = true;
 
   boot.initrd.availableKernelModules = [ "xhci_pci" "nvme" "ahci" "usbhid" "usb_storage" "sd_mod" "rtsx_usb_sdmmc" ];

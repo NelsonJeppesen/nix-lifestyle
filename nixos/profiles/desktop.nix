@@ -1,6 +1,8 @@
 { config, pkgs, stdenv, lib, ... }:
 
 {
+  services.resolved.enable = false;
+  services.power-profiles-daemon.enable = false;
 
   # The start of the week *should* be Monday, not Sunday
   i18n.extraLocaleSettings = {
@@ -36,7 +38,7 @@
     enable = true;
   };
 
-  services.gnome.gnome-online-accounts.enable = true;
+  services.gnome.gnome-online-accounts.enable = false;
   services.gnome.gnome-remote-desktop.enable = false;
   services.gnome.gnome-initial-setup.enable = false;
   services.gnome.gnome-user-share.enable = false;
@@ -47,18 +49,18 @@
   #hardware.sane.enable = true;
 
   environment.gnome.excludePackages = with pkgs; [
-    gnome.gnome-music
     gnome.cheese
-    gnome.gnome-contacts
     gnome.geary
     gnome.gnome-backgrounds
-    gnome.gnome-user-docs
-    gnome.gnome-maps
+    gnome.gnome-contacts
     gnome.gnome-logs
+    gnome.gnome-maps
+    gnome.gnome-music
     gnome.gnome-screenshot
+    gnome.gnome-user-docs
     gnome.gnome-weather
-    #gnome.gnome-online-accounts
-    #gnome.gnome-online-miners
+    gnome.gnome-online-accounts
+    gnome.gnome-online-miners
   ];
 
   # Configure keymap in X11

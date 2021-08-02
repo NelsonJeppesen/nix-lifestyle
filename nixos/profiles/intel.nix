@@ -3,7 +3,6 @@
 {
   services.xserver.videoDrivers = [ "modesetting" ];
   services.xserver.useGlamor = true;
-  services.thermald.enable = true;
 
   hardware.cpu.intel.updateMicrocode =
     lib.mkDefault config.hardware.enableRedistributableFirmware;
@@ -13,7 +12,6 @@
     "cryptd"
   ];
 
-  services.power-profiles-daemon.enable = false;
   services.tlp = {
     enable = true;
     settings = {
