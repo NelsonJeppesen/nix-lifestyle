@@ -182,6 +182,8 @@
 
           " cant spell
           set spelllang=en
+
+          hi Normal guibg=NONE ctermbg=NONE
         '';
     };
   };
