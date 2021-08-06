@@ -25,6 +25,7 @@
         #kitty_mod                  = "Super_L+shift";
         copy_on_select              = true;
         enable_audio_bell           = false;
+        enabled_layouts             = "fat:bias=70,tall:bias=70,stack";
         font_size                   = "16.0";
         hide_window_decorations     = true ;
         linux_display_server        = "x11";
@@ -33,6 +34,7 @@
         startup_session             = "kitty.startup.session";
         strip_trailing_spaces       = "smart";
         tab_bar_style               = "powerline";
+        tab_powerline_style         = "slanted";
         term                        = "xterm-256color";
         update_check_interval       = "0";
 
