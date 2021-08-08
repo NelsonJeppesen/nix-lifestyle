@@ -12,7 +12,8 @@
 
       font = {
         package = pkgs.nerdfonts;
-        name = "VictorMono Nerd Font Mono";
+        #name = "VictorMono Nerd Font Mono";
+        name = "Lekton Nerd Font";
       };
 
       keybindings = {
