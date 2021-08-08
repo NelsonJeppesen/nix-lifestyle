@@ -2,6 +2,15 @@
 {
   programs = {
 
+    starship = {
+      enable = true;
+      enableZshIntegration = true;
+      settings = {
+        aws.disabled        = true;
+        kubernetes.disabled = false;
+      };
+    };
+
     zsh = {
       enable = true;
 
@@ -32,28 +41,9 @@
         add-zsh-hook precmd set-title-precmd
         add-zsh-hook preexec set-title-preexec
 
-        function powerline_precmd() {
-          eval "$(${pkgs.powerline-go}/bin/powerline-go             \
-            -path-aliases \~/s=※                                    \
-            -colorize-hostname -error $? -shell zsh -eval -newline  \
-            -modules kube,newline,cwd,venv,perms,nix-shell,git      \
-            -numeric-exit-codes \
-          )"
-        }
-
-        function install_powerline_precmd() {
-          for s in "$\{precmd_functions[@]}"; do
-            if [ "$s" = "powerline_precmd" ]; then
-              return
-            fi
-          done
-          precmd_functions+=(powerline_precmd)
-        }
-
         eval "$(${pkgs.direnv}/bin/direnv hook zsh)"
 
         if [ "$TERM" != "linux" ]; then
-          install_powerline_precmd
           cd ~/s
           clear
         fi
@@ -67,7 +57,7 @@
       };
 
       shellAliases = {
-        update        = "sudo nixos-rebuild switch --upgrade;nix-channel --update; home-manager switch";
+        update        = "sudo nixos-rebuild switch --upgrade && echo ------------ && nix-channel --update && echo ------------ && home-manager switch";
 
         rst           = "kubectx -u; cd ~/s; clear";
         uc            = "kubectx";

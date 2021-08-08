@@ -49,7 +49,7 @@
       pkgs.direnv
       pkgs.dbeaver      # multi-db gui
       pkgs.dnsutils     # dig
-      pkgs.helmfile
+      #pkgs.helmfile
       pkgs.jq
       pkgs.delta
       pkgs.kubectl

@@ -24,11 +24,12 @@
           scrollbar-nvim
           train-nvim
           which-key-nvim
-          indent-blankline-nvim
+          #indent-blankline-nvim
 
           # Legacy Vimscript Plugins
-          goyo-vim              # focus
-          gruvbox-community     # theme;
+          #goyo-vim              # focus
+          #gruvbox-community     # theme;
+          nord-nvim
           vim-better-whitespace
           vim-lastplace         # remember location in file
           vim-nix
@@ -36,6 +37,7 @@
         ];
 
         extraConfig = ''
+          set autoread
           let mapleader=","
           nnoremap            <leader><leader>b   :GitBlameToggle<CR>
           nnoremap            <leader><leader>c   :%y+<CR>
@@ -130,12 +132,13 @@
           set title
 
           " setup colorschemes
-          set background=light
+          "set background=light
           set termguicolors
-          let g:gruvbox_contrast_dark   = 'hard'
-          let g:gruvbox_contrast_light  = 'hard'
-          let g:gruvbox_italic          = '1'
-          colorscheme                     gruvbox
+          "let g:gruvbox_contrast_dark   = 'hard'
+          "let g:gruvbox_contrast_light  = 'hard'
+          "let g:gruvbox_italic          = '1'
+          colorscheme                     nord
+          hi Normal guibg=NONE ctermbg=NONE
 
           " Copy all to clipboard
           set clipboard=unnamedplus
@@ -171,19 +174,20 @@
             require('gitsigns').setup()
             require('lualine').setup {
               options = {
-                theme = 'gruvbox_light',
+                theme = "horizon",
                 section_separators = "",
                 component_separators = ""
               }
             }
           EOF
+          "theme = 'gruvbox_light',
 
           let g:better_whitespace_guicolor='#cccccc'
 
           " cant spell
           set spelllang=en
 
-          hi Normal guibg=NONE ctermbg=NONE
+          autocmd vimenter * hi Normal guibg=NONE ctermbg=NONE
         '';
     };
   };
