@@ -16,15 +16,15 @@
 
   # Pipewire stack with alsa/pulseaudio compat
   sound.enable = true;
-  #hardware.pulseaudio.enable = false;
-  #services.pipewire = {
-  #  enable = true;
-  #  alsa = {
-  #    enable = true;
-  #    support32Bit = true;
-  #  };
-  #  pulse.enable = true;
-  #};
+  hardware.pulseaudio.enable = false;
+  services.pipewire = {
+    enable = true;
+    alsa = {
+      enable = true;
+      support32Bit = true;
+    };
+    pulse.enable = true;
+  };
 
   # vulkan 32bit and 64bit
   hardware.opengl.driSupport = true;
