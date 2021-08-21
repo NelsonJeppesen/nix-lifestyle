@@ -157,9 +157,11 @@
           set softtabstop=2
           set expandtab
 
-          autocmd bufreadpre *.md setlocal shiftwidth=4
-          autocmd bufreadpre *.md setlocal softtabstop=4
-          "autocmd bufreadpre *.md :Goyo
+          "Autosave file when working on markdown (my notes)
+          autocmd bufreadpre .notes.md  :autocmd  TextChanged,TextChangedI <buffer> silent write
+          autocmd bufreadpre .notes.md            :set noswapfile
+          autocmd bufreadpre .notes.md            setlocal shiftwidth=4
+          autocmd bufreadpre .notes.md            setlocal softtabstop=4
 
           " Use case-insensitive search
           set ignorecase

@@ -6,7 +6,12 @@
       enable = true;
       enableZshIntegration = true;
       settings = {
+        # Disabled
         aws.disabled        = true;
+        helm.disabled       = true;
+        terraform.disabled  = true;
+
+        # Enabled
         kubernetes.disabled = false;
       };
     };

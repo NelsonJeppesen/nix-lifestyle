@@ -18,6 +18,7 @@
         "GPaste@gnome-shell-extensions.gnome.org" # clipboard manager with img support
         "gsconnect@andyholmes.github.io"          # connect to my phone
         "paperwm@hedning:matrix.org"              # paperwm - best scrolling WM there is
+        "instantworkspaceswitcher@amalantony.net" # fix some UI glitches gnome40+paperwm
       ];
     };
 

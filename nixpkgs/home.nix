@@ -31,6 +31,7 @@
       pkgs.flameshot                            # Fancy screenshot tool
       pkgs.gnomeExtensions.appindicator         # slack notifications
       pkgs.gnomeExtensions.caffeine             # disable sleep on demand
+      pkgs.gnomeExtensions.disable-workspace-switch-animation-for-gnome-40
       #pkgs.gnomeExtensions.clipboard-indicator  # clipboard manager
       pkgs.gnome3.gpaste
       pkgs.gnomeExtensions.gsconnect

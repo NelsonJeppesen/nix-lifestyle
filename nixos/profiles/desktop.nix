@@ -3,11 +3,15 @@
 {
   services.resolved.enable = false;
   services.power-profiles-daemon.enable = false;
+  #services.ddccontrol.enable = true;
 
   # The start of the week *should* be Monday, not Sunday
   i18n.extraLocaleSettings = {
     LC_TIME = "en_GB.UTF-8";
   };
+
+  hardware.i2c.enable = true;
+  hardware.i2c.group = "users";
 
   hardware.bluetooth.enable = true;
 
