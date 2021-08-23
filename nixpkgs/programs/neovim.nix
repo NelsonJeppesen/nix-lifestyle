@@ -158,10 +158,10 @@
           set expandtab
 
           "Autosave file when working on markdown (my notes)
-          autocmd bufreadpre .notes.md  :autocmd  TextChanged,TextChangedI <buffer> silent write
-          autocmd bufreadpre .notes.md            :set noswapfile
-          autocmd bufreadpre .notes.md            setlocal shiftwidth=4
-          autocmd bufreadpre .notes.md            setlocal softtabstop=4
+          autocmd bufreadpre ~/s/notes/*  :autocmd  TextChanged,TextChangedI <buffer> silent write
+          autocmd bufreadpre ~/s/notes/*            :set noswapfile
+          autocmd bufreadpre ~/s/notes/*            setlocal shiftwidth=4
+          autocmd bufreadpre ~/s/notes/*            setlocal softtabstop=4
 
           " Use case-insensitive search
           set ignorecase
