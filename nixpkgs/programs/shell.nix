@@ -75,7 +75,9 @@
         ke            = "kubectl edit";
         kns           = "kubens";
 
-        n             = "vim ~/.notes.md";
+        n             = "vim ~/s/notes/notes.md";
+        s             = "vim ~/s/notes/scratch.md";
+        p             = "vim ~/s/notes/personal.md";
         v             = "vim";
       };
     };

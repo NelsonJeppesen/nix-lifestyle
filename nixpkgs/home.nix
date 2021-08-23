@@ -14,6 +14,10 @@
     home-manager.enable = true;
   };
 
+  services.git-sync.enable = true;
+  services.git-sync.repositories.notes.uri = "bogus";
+  services.git-sync.repositories.notes.path = "/home/nelson/s/notes";
+
   news.display = "show";
 
   home = {
