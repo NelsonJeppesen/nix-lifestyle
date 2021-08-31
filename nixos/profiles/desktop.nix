@@ -2,7 +2,7 @@
 
 {
   services.resolved.enable = false;
-  services.power-profiles-daemon.enable = false;
+  services.power-profiles-daemon.enable = false; # I'm using TLP right now
   #services.ddccontrol.enable = true;
 
   # The start of the week *should* be Monday, not Sunday
@@ -19,41 +19,43 @@
   programs.steam.enable = true;
 
   # Pipewire stack with alsa/pulseaudio compat
+  # Pipewire is the future
   sound.enable = true;
   hardware.pulseaudio.enable = false;
   services.pipewire = {
     enable = true;
     alsa = {
-      enable = true;
-      support32Bit = true;
+      enable        = true;
+      support32Bit  = true; # Steam support
     };
     pulse.enable = true;
   };
 
   # vulkan 32bit and 64bit
   hardware.opengl.driSupport = true;
-  hardware.opengl.driSupport32Bit = true;
+  hardware.opengl.driSupport32Bit = true; # Steam support
 
-  # Enable the GNOME 3 Desktop Environment.
+  # Enable the GNOME Desktop Environment.
   services.xserver = {
-    desktopManager.gnome.enable = true;
-    displayManager.gdm.enable = true;
-    libinput.touchpad.accelProfile = "flat";
-    libinput.touchpad.tappingDragLock = false;
-    libinput.touchpad.tapping = false;
     enable = true;
+    desktopManager.gnome.enable = true;
+    displayManager.gdm.enable   = true;
+    libinput.touchpad.accelProfile    = "flat";
+    libinput.touchpad.tappingDragLock = false; # make less gltichy
+    libinput.touchpad.tapping         = false; # make less gltichy
   };
 
   services.gnome.gnome-online-accounts.enable = false;
-  services.gnome.gnome-remote-desktop.enable = false;
-  services.gnome.gnome-initial-setup.enable = false;
-  services.gnome.gnome-user-share.enable = false;
-  #hardware.logitech.wireless.enable = true;
+  services.gnome.gnome-remote-desktop.enable  = false;
+  services.gnome.gnome-initial-setup.enable   = false;
+  services.gnome.gnome-user-share.enable      = false;
+  #hardware.logitech.wireless.enable           = true;
 
-  #services.printing.enable = true;
-  #services.printing.drivers = [ pkgs.hplip];
-  #hardware.sane.enable = true;
+  #services.printing.enable   = true;
+  #services.printing.drivers  = [ pkgs.hplip];
+  #hardware.sane.enable       = true;
 
+  # Remove gnome tools I don't use
   environment.gnome.excludePackages = with pkgs; [
     gnome.cheese
     gnome.geary
