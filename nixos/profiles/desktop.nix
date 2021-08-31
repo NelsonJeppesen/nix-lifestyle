@@ -39,6 +39,8 @@
     desktopManager.gnome.enable = true;
     displayManager.gdm.enable = true;
     libinput.touchpad.accelProfile = "flat";
+    libinput.touchpad.tappingDragLock = false;
+    libinput.touchpad.tapping = false;
     enable = true;
   };
 

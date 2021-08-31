@@ -39,6 +39,7 @@
         extraConfig = ''
           set autoread
           let mapleader=","
+          nnoremap <silent>   <leader><leader>n   ggO<cr><esc>:r! date<cr>o<tab>
           nnoremap            <leader><leader>b   :GitBlameToggle<CR>
           nnoremap            <leader><leader>c   :%y+<CR>
           nnoremap            <leader><leader>d   :set background=dark<CR>
