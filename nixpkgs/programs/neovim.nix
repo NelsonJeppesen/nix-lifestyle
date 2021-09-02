@@ -37,6 +37,8 @@
         ];
 
         extraConfig = ''
+          set signcolumn=yes " always show gutter
+
           set autoread
           let mapleader=","
           nnoremap <silent>   <leader><leader>n   ggO<cr><esc>:r! date<cr>o<tab>
