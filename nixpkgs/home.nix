@@ -40,7 +40,7 @@
       pkgs.gnome3.gpaste
       pkgs.gnomeExtensions.gsconnect
       #pkgs.gnomeExtensions.drop-down-terminal
-      pkgs.gnomeExtensions.emoji-selector
+      #pkgs.gnomeExtensions.emoji-selector
       pkgs.wmctrl                               # Used to "focus or launch" apps
 
       # Terminals
@@ -63,7 +63,7 @@
       pkgs.ripgrep
       pkgs.sops
       pkgs.ssm-session-manager-plugin
-      pkgs.terraform_0_15
+      pkgs.terraform
       pkgs.terraform-docs
       pkgs.p7zip
       pkgs.wget

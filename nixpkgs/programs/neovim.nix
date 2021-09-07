@@ -15,6 +15,7 @@
           #nvim-treesitter
           #nvim-web-devicons
           #registers-nvim
+          telescope-nvim
 
           formatter-nvim  # generic formatter
           git-blame-nvim  # <leader><leader>f
@@ -50,6 +51,15 @@
           nnoremap  <silent>  <leader><leader>f   :Format<CR>
           nnoremap  <silent>  <leader><leader>t   :TableModeToggle<CR>
           nnoremap  <silent>  <leader><leader>z   :call ToggleHiddenAll()<CR>
+
+          " Using Lua functions
+          nnoremap <leader>ff <cmd>lua require('telescope.builtin').find_files()<cr>
+          nnoremap <leader>fg <cmd>lua require('telescope.builtin').git_files()<cr>
+          nnoremap <leader>fb <cmd>lua require('telescope.builtin').buffers()<cr>
+          nnoremap <leader>fo <cmd>lua require('telescope.builtin').file_browser()<cr>
+          nnoremap <leader>fh <cmd>lua require('telescope.builtin').oldfiles()<cr>
+          nnoremap <leader>fc <cmd>lua require('telescope.builtin').colorscheme()<cr>
+          nnoremap <leader>fr <cmd>lua require('telescope.builtin').registers()<cr>
 
           " https://github.com/tjdevries/train.nvim/
           nnoremap            <leader>tu          :TrainUpDown<CR>
