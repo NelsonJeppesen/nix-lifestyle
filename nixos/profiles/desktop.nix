@@ -18,32 +18,28 @@
   programs.gpaste.enable = true;
   programs.steam.enable = true;
 
+  sound.enable = true;
+
   # Pipewire stack with alsa/pulseaudio compat
   # Pipewire is the future
-  sound.enable = true;
-  hardware.pulseaudio.enable = false;
-  services.pipewire = {
-    enable = true;
-    alsa = {
-      enable        = true;
-      support32Bit  = true; # Steam support
-    };
-    pulse.enable = true;
-  };
+  hardware.pulseaudio.enable            = false;  # Use pipewire with pulse compat
+  services.pipewire.alsa.enable         = true;
+  services.pipewire.alsa.support32Bit   = true;   # Steam support
+  services.pipewire.enable              = true;
+  services.pipewire.pulse.enable        = true;
 
   # vulkan 32bit and 64bit
   hardware.opengl.driSupport = true;
   hardware.opengl.driSupport32Bit = true; # Steam support
 
   # Enable the GNOME Desktop Environment.
-  services.xserver = {
-    enable = true;
-    desktopManager.gnome.enable = true;
-    displayManager.gdm.enable   = true;
-    libinput.touchpad.accelProfile    = "flat";
-    libinput.touchpad.tappingDragLock = false; # make less gltichy
-    libinput.touchpad.tapping         = false; # make less gltichy
-  };
+  services.xserver.enable = true;
+  services.xserver.desktopManager.gnome.enable = true;
+  services.xserver.displayManager.gdm.enable   = true;
+
+  services.xserver.libinput.touchpad.accelProfile    = "flat";
+  services.xserver.libinput.touchpad.tappingDragLock = false; # make less gltichy
+  services.xserver.libinput.touchpad.tapping         = false; # make less gltichy
 
   services.gnome.gnome-online-accounts.enable = false;
   services.gnome.gnome-remote-desktop.enable  = false;
@@ -78,5 +74,5 @@
   networking.firewall.allowedTCPPortRanges = [ { from = 1714; to = 1764; } ];
   networking.firewall.allowedUDPPortRanges = [ { from = 1714; to = 1764; } ];
 
-  system.stateVersion = "20.09"; # Did you read the comment?
+  system.stateVersion = "21.05"; # Did you read the comment?
 }
