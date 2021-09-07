@@ -9,25 +9,39 @@
   hardware.cpu.intel.updateMicrocode =
     lib.mkDefault config.hardware.enableRedistributableFirmware;
 
+  boot.extraModprobeConfig = ''
+    options snd_hda_intel power_save=2
+  '';
+
   # Ensure modules used for efficent disk encryption are loaded
   # early in the boot process
-  boot.initrd.availableKernelModules = ["aesni_intel" "cryptd"];
+  boot.initrd.availableKernelModules = [ "xhci_pci" "nvme" "usb_storage" "sd_mod" "aesni_intel" "cryptd"];
 
-  # Enable TLP service to reduce power usage, particularly on battery
+  boot.kernelParams = [
+
+    # reserve the frame-buffer as setup by the BIOS or bootloader to avoid any flickering until Xorg
+    "i915.fastboot=1"
+    "i915.modeset=1"
+
+    # Making use of Framebuffer compression (FBC) can reduce power consumption while reducing memory bandwidth needed for screen refreshes
+    "i915.enable_fbc=1"
+  ];
+
+  # Enable TLP service to reduce power usage and fan noise, particularly on battery
   #
   # Always disable turbo boost
   # Run at 70% speed on battery and 90% on ac
   services.tlp.enable = true;
   services.tlp.settings = {
-    CPU_BOOST_ON_AC               = "0";
-    CPU_BOOST_ON_BAT              = "0";
-    CPU_MAX_PERF_ON_AC            = "90";
-    CPU_MAX_PERF_ON_BAT           = "70";
-    CPU_MIN_PERF_ON_BAT           = "0";
-    CPU_SCALING_GOVERNOR_ON_AC    = "powersave";
-    CPU_SCALING_GOVERNOR_ON_BAT   = "powersave";
-    USB_WHITELIST                 = "27c6:6a94";
-    #DEVICES_TO_DISABLE_ON_STARTUP = "bluetooth";
+    #USB_WHITELIST                   = "27c6:6a94";
+    CPU_BOOST_ON_AC                 = "0";
+    CPU_BOOST_ON_BAT                = "0";
+    CPU_MAX_PERF_ON_AC              = "90";
+    CPU_MAX_PERF_ON_BAT             = "70";
+    CPU_MIN_PERF_ON_BAT             = "0";
+    CPU_SCALING_GOVERNOR_ON_AC      = "powersave";
+    CPU_SCALING_GOVERNOR_ON_BAT     = "powersave";
+    RESTORE_DEVICE_STATE_ON_STARTUP = "0";
   };
 
 }
