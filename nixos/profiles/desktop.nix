@@ -1,7 +1,7 @@
 { config, pkgs, stdenv, lib, ... }:
 
 {
-  services.resolved.enable = false;
+  services.resolved.enable = true;
   services.power-profiles-daemon.enable = false; # I'm using TLP right now
   #services.ddccontrol.enable = true;
 
@@ -41,10 +41,13 @@
   services.xserver.libinput.touchpad.tappingDragLock = false; # make less gltichy
   services.xserver.libinput.touchpad.tapping         = false; # make less gltichy
 
-  services.gnome.gnome-online-accounts.enable = false;
-  services.gnome.gnome-remote-desktop.enable  = false;
   services.gnome.gnome-initial-setup.enable   = false;
+  services.gnome.gnome-online-accounts.enable = false;
+  #services.gnome.gnome-online-miners.enable   = false;
+  services.gnome.gnome-remote-desktop.enable  = false;
   services.gnome.gnome-user-share.enable      = false;
+  services.gnome.tracker.enable               = false;
+  services.gnome.rygel.enable                 = false;
   #hardware.logitech.wireless.enable           = true;
 
   #services.printing.enable   = true;
@@ -57,6 +60,7 @@
     gnome.geary
     gnome.gnome-backgrounds
     gnome.gnome-contacts
+    gnome.gnome-calendar
     gnome.gnome-logs
     gnome.gnome-maps
     gnome.gnome-music

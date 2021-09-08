@@ -10,6 +10,12 @@
         component_separators = ""
       }
     }
+    require("toggleterm").setup{
+      direction = 'float',
+      float_opts = {
+        border = 'curved'
+        }
+    }
   '';
 
   home.file.".config/nvim/lua/local/formatter.lua".text = ''
@@ -62,6 +68,7 @@
           lualine-nvim    # status line
           nvim-compe      # autocomplete
           scrollbar-nvim
+          toggleterm-nvim
           train-nvim
           which-key-nvim
           #indent-blankline-nvim
@@ -79,6 +86,15 @@
         extraConfig = ''
           set signcolumn=yes " always show gutter
 
+          function InsertIfEmpty()
+              if @% == ""
+                  " No filename for current buffer
+                  Telescope find_files
+              endif
+          endfunction
+
+          au VimEnter * call InsertIfEmpty()
+
           set autoread
           let mapleader=","
           nnoremap <silent>   <leader><leader>n   ggO<cr><esc>:r! date<cr>o<tab>
@@ -88,7 +104,8 @@
           nnoremap            <leader><leader>l   :set background=light<CR>
           nnoremap            <leader><leader>s   :StripWhitespace<CR>
           nnoremap  <silent>  <leader><leader>f   :Format<CR>
-          nnoremap  <silent>  <leader><leader>t   :TableModeToggle<CR>
+          nnoremap  <silent>  <leader><leader>a   :TableModeToggle<CR>
+          nnoremap  <silent>  <leader><leader>t   :execute 'ToggleTerm dir=' . expand('%:p:h')<CR>
           nnoremap  <silent>  <leader><leader>z   :call ToggleHiddenAll()<CR>
 
 

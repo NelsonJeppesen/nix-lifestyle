@@ -3,7 +3,7 @@
 
   home.file.".config/kitty/kitty.startup.session".text = ''
     new_tab
-    cd ~/s
+    #cd ~/s
     launch
   '';
 
@@ -40,7 +40,7 @@
         linux_display_server        = "wayland";
         macos_show_window_title_in  = "none" ;
         scrollback_lines            = "30000";
-        startup_session             = "kitty.startup.session";
+        #startup_session             = "kitty.startup.session";
         strip_trailing_spaces       = "smart";
         tab_bar_style               = "powerline";
         tab_powerline_style         = "slanted";

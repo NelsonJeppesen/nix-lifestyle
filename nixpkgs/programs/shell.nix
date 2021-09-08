@@ -49,8 +49,10 @@
         eval "$(${pkgs.direnv}/bin/direnv hook zsh)"
 
         if [ "$TERM" != "linux" ]; then
-          cd ~/s
-          clear
+          if [ "$(pwd)" = "$HOME" ]; then
+            cd ~/s
+            clear
+          fi
         fi
       '';
 
