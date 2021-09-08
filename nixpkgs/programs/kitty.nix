@@ -1,7 +1,11 @@
 { config, pkgs, ... }:
 {
 
-  home.file.".config/kitty/kitty.startup.session".source = ../dotfiles/kitty.startup.session;
+  home.file.".config/kitty/kitty.startup.session".text = ''
+    new_tab
+    cd ~/s
+    launch
+  '';
 
   programs = {
 

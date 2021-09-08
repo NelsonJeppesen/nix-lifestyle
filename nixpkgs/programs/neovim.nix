@@ -1,8 +1,42 @@
 { config, pkgs, ... }:
 {
+  home.file.".config/nvim/lua/local/misc.lua".text = ''
+    require('which-key').setup()
+    require('gitsigns').setup()
+    require('lualine').setup {
+      options = {
+        theme = "horizon",
+        section_separators = "",
+        component_separators = ""
+      }
+    }
+  '';
 
-  home.file.".config/nvim/lua/local/which-key.lua".source = ../dotfiles/which-key.lua;
-  #home.file.".config/nvim/lua/local/which-key.lua".source = ../dotfiles/which-key.lua;
+  home.file.".config/nvim/lua/local/formatter.lua".text = ''
+    require('formatter').setup({
+        logging = false,
+        filetype = {
+          tf = {
+            function()
+            return {
+              exe = "terraform",
+              args = {"fmt", '-'},
+              stdin = true
+            }
+            end
+          },
+          yaml = {
+            function()
+            return {
+              exe = 'yq',
+              args = {'--yaml-output','.'},
+              stdin = true
+            }
+            end
+          }
+        }
+      })
+  '';
 
   programs = {
 
@@ -126,31 +160,6 @@
               \ }
 
           let g:gitblame_enabled = 0
-          lua << EOF
-            require('formatter').setup({
-              logging = false,
-              filetype = {
-                tf = {
-                  function()
-                  return {
-                    exe = "terraform",
-                    args = {"fmt", '-'},
-                    stdin = true
-                  }
-                  end
-                },
-                yaml = {
-                  function()
-                  return {
-                    exe = 'yq',
-                    args = {'--yaml-output','.'},
-                    stdin = true
-                  }
-                  end
-                }
-              }
-            })
-          EOF
 
           " set title in Kitty term tab to just the filename
           set titlestring=%t
@@ -175,6 +184,10 @@
           set mouse=a
 
           set updatetime=75
+          lua << EOF
+            require('local.misc')
+            require('local.formatter')
+          EOF
 
 
           " Indentation settings for using 2 spaces instead of tabs.
@@ -196,17 +209,6 @@
 
           set conceallevel=2
           " #require'nvim-treesitter.configs'.setup {}
-          lua << EOF
-            require('local.which-key')
-            require('gitsigns').setup()
-            require('lualine').setup {
-              options = {
-                theme = "horizon",
-                section_separators = "",
-                component_separators = ""
-              }
-            }
-          EOF
           "theme = 'gruvbox_light',
 
           let g:better_whitespace_guicolor='#cccccc'
