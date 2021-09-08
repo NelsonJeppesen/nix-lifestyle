@@ -13,24 +13,24 @@
       ];
 
       extraConfig = {
-        pager = {
-          diff    = "delta";
-          log     = "delta";
-          reflog  = "delta";
-          show    = "delta";
-        };
+        #pager = {
+        #  diff    = "delta";
+        #  log     = "delta";
+        #  reflog  = "delta";
+        #  show    = "delta";
+        #};
 
-        delta = {
+        #delta = {
 
-          plus-style    = "syntax #012800";
-          minus-style   = "syntax #340001";
-          syntax-theme  = "Nord";
-          navigate      = true;
-        };
+        #  plus-style    = "syntax #012800";
+        #  minus-style   = "syntax #340001";
+        #  syntax-theme  = "Nord";
+        #  navigate      = true;
+        #};
 
-        interactive = {
-          diffFilter = "delta --color-only";
-        };
+        #interactive = {
+        #  diffFilter = "delta --color-only";
+        #};
 
         pull = {
           ff       = "only";

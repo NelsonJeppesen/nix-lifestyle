@@ -1,6 +1,11 @@
 { config, pkgs, ... }:
 {
+
+  home.file.".config/nvim/lua/local/which-key.lua".source = ../dotfiles/which-key.lua;
+  #home.file.".config/nvim/lua/local/which-key.lua".source = ../dotfiles/which-key.lua;
+
   programs = {
+
 
     neovim = {
       enable       = true;
@@ -52,14 +57,21 @@
           nnoremap  <silent>  <leader><leader>t   :TableModeToggle<CR>
           nnoremap  <silent>  <leader><leader>z   :call ToggleHiddenAll()<CR>
 
-          " Using Lua functions
-          nnoremap <leader>ff <cmd>lua require('telescope.builtin').find_files()<cr>
-          nnoremap <leader>fg <cmd>lua require('telescope.builtin').git_files()<cr>
-          nnoremap <leader>fb <cmd>lua require('telescope.builtin').buffers()<cr>
-          nnoremap <leader>fo <cmd>lua require('telescope.builtin').file_browser()<cr>
-          nnoremap <leader>fh <cmd>lua require('telescope.builtin').oldfiles()<cr>
-          nnoremap <leader>fc <cmd>lua require('telescope.builtin').colorscheme()<cr>
-          nnoremap <leader>fr <cmd>lua require('telescope.builtin').registers()<cr>
+
+          "
+          " telescope-nvim fast, lisp-jit fuzy finder
+          "
+          " Fuzzy search through the output of `git ls-files` command in cwd of open file
+          " Lists files in your current working directory, respects .gitignore
+          nnoremap            <leader>fg          :execute 'Telescope git_files cwd=' . expand('%:p:h')<cr>
+
+          nnoremap            <leader>ff          <cmd>lua require('telescope.builtin').find_files()<cr>
+          nnoremap            <leader>f/          <cmd>lua require('telescope.builtin').current_buffer_fuzzy_find()<cr>
+          nnoremap            <leader>fb          <cmd>lua require('telescope.builtin').buffers()<cr>
+          nnoremap            <leader>fo          <cmd>lua require('telescope.builtin').file_browser()<cr>
+          nnoremap            <leader>fh          <cmd>lua require('telescope.builtin').oldfiles()<cr>
+          nnoremap            <leader>fc          <cmd>lua require('telescope.builtin').colorscheme()<cr>
+          nnoremap            <leader>fr          <cmd>lua require('telescope.builtin').registers()<cr>
 
           " https://github.com/tjdevries/train.nvim/
           nnoremap            <leader>tu          :TrainUpDown<CR>
@@ -185,7 +197,7 @@
           set conceallevel=2
           " #require'nvim-treesitter.configs'.setup {}
           lua << EOF
-            require("which-key").setup {}
+            require('local.which-key')
             require('gitsigns').setup()
             require('lualine').setup {
               options = {
