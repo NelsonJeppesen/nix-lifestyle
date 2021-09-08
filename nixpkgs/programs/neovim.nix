@@ -1,51 +1,6 @@
 { config, pkgs, ... }:
 {
-  home.file.".config/nvim/lua/local/misc.lua".text = ''
-    require('which-key').setup()
-    require('gitsigns').setup()
-    require('lualine').setup {
-      options = {
-        theme = "horizon",
-        section_separators = "",
-        component_separators = ""
-      }
-    }
-    require("toggleterm").setup{
-      direction = 'float',
-      float_opts = {
-        border = 'curved'
-        }
-    }
-  '';
-
-  home.file.".config/nvim/lua/local/formatter.lua".text = ''
-    require('formatter').setup({
-        logging = false,
-        filetype = {
-          tf = {
-            function()
-            return {
-              exe = "terraform",
-              args = {"fmt", '-'},
-              stdin = true
-            }
-            end
-          },
-          yaml = {
-            function()
-            return {
-              exe = 'yq',
-              args = {'--yaml-output','.'},
-              stdin = true
-            }
-            end
-          }
-        }
-      })
-  '';
-
   programs = {
-
 
     neovim = {
       enable       = true;
@@ -55,31 +10,68 @@
 
       plugins =
         with pkgs.vimPlugins; [
-          # Lua NeoVIm plugins
-          #barbar-nvim
-          #nvim-treesitter
-          #nvim-web-devicons
-          #registers-nvim
+          # -------------------------------------- Lua Plugins -------------------------------------------------
+
+          # https://github.com/shaunsingh/nord.nvim
+          #   "Neovim theme based off of the Nord Color Palette, written in lua with tree sitter support"
+          nord-nvim
+
+          # https://github.com/nvim-telescope/telescope.nvim
+          #   "highly extendable fuzzy finder over lists"
           telescope-nvim
 
-          formatter-nvim  # generic formatter
-          git-blame-nvim  # <leader><leader>f
-          gitsigns-nvim   # Git gutter
-          lualine-nvim    # status line
-          nvim-compe      # autocomplete
-          scrollbar-nvim
+          # https://github.com/akinsho/toggleterm.nvim
+          #   "A neovim plugin to persist and toggle multiple terminals during an editing session"
           toggleterm-nvim
-          train-nvim
-          which-key-nvim
-          #indent-blankline-nvim
 
-          # Legacy Vimscript Plugins
-          #goyo-vim              # focus
-          #gruvbox-community     # theme;
-          nord-nvim
+          # https://github.com/mhartington/formatter.nvim
+          #   "A format runner for neovim, written in lua"
+          formatter-nvim
+
+          # https://github.com/f-person/git-blame.nvim
+          #   "A git blame plugin for Neovim written in Lua"
+          git-blame-nvim
+
+          # https://github.com/lewis6991/gitsigns.nvim
+          #   "Super fast git decorations implemented purely in lua/teal"
+          gitsigns-nvim
+
+          # https://github.com/hoob3rt/lualine.nvim
+          #   "A blazing fast and easy to configure neovim statusline written in pure lua"
+          lualine-nvim
+
+          # https://github.com/hrsh7th/nvim-cmp
+          #   "A completion plugin for neovim coded in Lua"
+          nvim-cmp    # core
+          cmp-path    # cmp plugin, file path
+          cmp-buffer  # cmp plugin, buffer
+          cmp-emoji   # cmp plugin, emoji
+
+          # https://github.com/folke/which-key.nvim
+          #   "displays a popup with possible keybindings of the command you started typing"
+          which-key-nvim
+
+          # https://github.com/tjdevries/train.nvim
+          #   "Train yourself with vim motions and make your own train tracks :)"
+          train-nvim
+
+          # ------------------------------------ Vimscript Plugins ---------------------------------------------
+
+          # https://github.com/farmergreg/vim-lastplace
+          #   "Intelligently reopen files at your last edit position in Vim"
+          vim-lastplace
+
+
+          # https://github.com/ntpeters/vim-better-whitespace
+          #   "Better whitespace highlighting for Vim"
           vim-better-whitespace
-          vim-lastplace         # remember location in file
+
+          # https://github.com/LnL7/vim-nix/
+          #   "Vim configuration files for Nix"
           vim-nix
+
+          # https://github.com/dhruvasagar/vim-table-mode
+          #   "VIM Table Mode for instant [ASCII] table creation"
           vim-table-mode
         ];
 
@@ -148,33 +140,8 @@
 
           "set colorcolumn=120
 
-          let g:compe = {}
-          let g:compe.source = {}
-          let g:compe.source.path = v:true
-          let g:compe.source.buffer = v:true
-          let g:compe.source.calc = v:true
-          let g:compe.source.nvim_lsp = v:true
-          let g:compe.source.nvim_lua = v:true
-          let g:compe.source.vsnip = v:true
-          let g:compe.source.ultisnips = v:true
-          let g:compe.source.luasnip = v:true
-          let g:compe.source.emoji = v:true
-
           " Show `▸▸` for tabs: 	, `·` for tailing whitespace:
           set list listchars=tab:▸▸,trail:·
-
-          augroup ScrollbarInit
-            autocmd!
-            autocmd CursorMoved,VimResized,QuitPre * silent! lua require('scrollbar').show()
-            autocmd WinEnter,FocusGained           * silent! lua require('scrollbar').show()
-            autocmd WinLeave,BufLeave,BufWinLeave,FocusLost            * silent! lua require('scrollbar').clear()
-          augroup end
-
-          let g:scrollbar_shape = {
-              \ 'head': '░',
-              \ 'body': '░',
-              \ 'tail': '░',
-              \ }
 
           let g:gitblame_enabled = 0
 
@@ -185,26 +152,19 @@
           " setup colorschemes
           "set background=light
           set termguicolors
-          "let g:gruvbox_contrast_dark   = 'hard'
-          "let g:gruvbox_contrast_light  = 'hard'
-          "let g:gruvbox_italic          = '1'
           colorscheme                     nord
           hi Normal guibg=NONE ctermbg=NONE
 
           " Copy all to clipboard
           set clipboard=unnamedplus
 
-          " TableModeToggle
+          " Make tables github markdown compatable
           let g:table_mode_corner='|'
 
           " enable mouse
           set mouse=a
 
           set updatetime=75
-          lua << EOF
-            require('local.misc')
-            require('local.formatter')
-          EOF
 
 
           " Indentation settings for using 2 spaces instead of tabs.
@@ -234,7 +194,65 @@
           set spelllang=en
 
           autocmd vimenter * hi Normal guibg=NONE ctermbg=NONE
+
+          " Load my lua configurations
+          lua << EOF
+            require('local.misc')
+            require('local.formatter')
+          EOF
         '';
     };
   };
+
+  home.file.".config/nvim/lua/local/misc.lua".text = ''
+    require('which-key').setup()
+    require('gitsigns').setup()
+    require('cmp').setup{
+      sources = {
+        { name = 'buffer' },
+        { name = 'path'},
+        { name = 'emoji'},
+      }
+    }
+    require('lualine').setup {
+      options = {
+        theme = "horizon",
+        section_separators = "",
+        component_separators = ""
+      }
+    }
+    require("toggleterm").setup{
+      direction = 'float',
+      float_opts = {
+        border = 'curved'
+        }
+    }
+  '';
+
+  home.file.".config/nvim/lua/local/formatter.lua".text = ''
+    require('formatter').setup({
+        logging = false,
+        filetype = {
+          tf = {
+            function()
+            return {
+              exe = "terraform",
+              args = {"fmt", '-'},
+              stdin = true
+            }
+            end
+          },
+          yaml = {
+            function()
+            return {
+              exe = 'yq',
+              args = {'--yaml-output','.'},
+              stdin = true
+            }
+            end
+          }
+        }
+      })
+  '';
+
 }
