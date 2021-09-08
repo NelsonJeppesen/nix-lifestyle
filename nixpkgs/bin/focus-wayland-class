@@ -1,0 +1,27 @@
+#!/bin/sh
+
+find=$(gdbus call \
+  --session \
+  --dest org.gnome.Shell \
+  --object-path /org/gnome/Shell \
+  --method org.gnome.Shell.Eval "
+    global
+      .get_window_actors()
+      .map(a=>a.meta_window)
+      .map(w=>({class: w.get_wm_class()}))"|grep '"class":"kitty"' |wc -l)
+
+if [[ $find == "0" ]]
+then
+  kitty
+else
+  gdbus call \
+    --session \
+    --dest org.gnome.Shell \
+    --object-path /org/gnome/Shell \
+    --method org.gnome.Shell.Eval "
+  var mw =
+    global.get_window_actors()
+      .map(w=>w.meta_window)
+      .find(mw=>mw.get_wm_class().includes('kitty'));
+  mw && mw.activate(0)"
+fi
