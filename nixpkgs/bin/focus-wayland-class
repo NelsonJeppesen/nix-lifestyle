@@ -1,5 +1,7 @@
 #!/bin/sh
 
+echo $1
+
 find=$(gdbus call \
   --session \
   --dest org.gnome.Shell \
@@ -8,11 +10,11 @@ find=$(gdbus call \
     global
       .get_window_actors()
       .map(a=>a.meta_window)
-      .map(w=>({class: w.get_wm_class()}))"|grep '"class":"kitty"' |wc -l)
+      .map(w=>({class: w.get_wm_class()}))"|grep "\"class\":\"$1\"" |wc -l)
 
 if [[ $find == "0" ]]
 then
-  kitty
+  $2
 else
   gdbus call \
     --session \
@@ -22,6 +24,6 @@ else
   var mw =
     global.get_window_actors()
       .map(w=>w.meta_window)
-      .find(mw=>mw.get_wm_class().includes('kitty'));
+      .find(mw=>mw.get_wm_class().includes('"$1"'));
   mw && mw.activate(0)"
 fi
