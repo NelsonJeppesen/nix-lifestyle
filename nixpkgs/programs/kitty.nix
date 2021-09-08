@@ -37,7 +37,7 @@
         font_size                   = "16.0";
         hide_window_decorations     = true ;
         inactive_text_alpha         = "0.5";
-        linux_display_server        = "x11";
+        linux_display_server        = "wayland";
         macos_show_window_title_in  = "none" ;
         scrollback_lines            = "30000";
         startup_session             = "kitty.startup.session";

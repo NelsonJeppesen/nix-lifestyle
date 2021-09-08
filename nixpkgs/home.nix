@@ -14,6 +14,10 @@
     home-manager.enable = true;
   };
 
+  # Add local scripts
+  home.sessionPath = [ "/home/nelson/.local/bin" ];
+  home.file.".local/bin".source = ./bin;
+
   services.git-sync.enable = true;
   services.git-sync.repositories.notes.uri = "bogus";
   services.git-sync.repositories.notes.path = "/home/nelson/s/notes";

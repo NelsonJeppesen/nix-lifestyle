@@ -94,7 +94,7 @@
     # custom binding 1x - terminal
     "org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom10" = {
       binding = "<Super>backslash";
-      command = "bash -c \"wmctrl -xa kitty ; [ \"$?\" == \"1\" ] && kitty --single-instance\"";
+      command = ".local/bin/focus-wayland-class kitty";
       name    = "kitty";
     };
 
