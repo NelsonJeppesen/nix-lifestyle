@@ -52,6 +52,7 @@
 
       aliases = {
         a     = "add";
+        ap    = "add * --patch";
         b     = "branch";
         co    = "checkout";
         ct    = "commit";
@@ -62,9 +63,7 @@
         st    = "stash";
         stp   = "stash pop";
         stc   = "stash clear";
-        dfm   = "diff origin/master";
-        l     = "log -p --color";
-        l1    = "log -1 HEAD";
+        dfm   = "diff origin/main";
         rb    = "rebase -i HEAD~9";
         rba   = "rebase --abort";
         rbc   = "rebase --continue";

@@ -89,7 +89,7 @@
 
           set autoread
           let mapleader=","
-          nnoremap <silent>   <leader><leader>n   ggO<cr><esc>:r! date<cr>o<tab>
+          nnoremap <silent>   <leader><leader>n   Go<cr><esc>:r! date<cr>I# <esc>o##<space>
           nnoremap            <leader><leader>b   :GitBlameToggle<CR>
           nnoremap            <leader><leader>c   :%y+<CR>
           nnoremap            <leader><leader>d   :set background=dark<CR>
@@ -177,6 +177,7 @@
           autocmd bufreadpre ~/s/notes/*            :set noswapfile
           autocmd bufreadpre ~/s/notes/*            setlocal shiftwidth=4
           autocmd bufreadpre ~/s/notes/*            setlocal softtabstop=4
+          autocmd bufreadpre ~/s/notes/*            set signcolumn=no
 
           " Use case-insensitive search
           set ignorecase
