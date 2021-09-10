@@ -90,16 +90,22 @@
           set autoread
           let mapleader=","
           nnoremap <silent>   <leader><leader>n   Go<cr><esc>:r! date<cr>I# <esc>o##<space>
-          nnoremap            <leader><leader>b   :GitBlameToggle<CR>
-          nnoremap            <leader><leader>c   :%y+<CR>
-          nnoremap            <leader><leader>d   :set background=dark<CR>
-          nnoremap            <leader><leader>l   :set background=light<CR>
-          nnoremap            <leader><leader>s   :StripWhitespace<CR>
-          nnoremap  <silent>  <leader><leader>f   :Format<CR>
-          nnoremap  <silent>  <leader><leader>a   :TableModeToggle<CR>
-          nnoremap  <silent>  <leader><leader>t   :execute 'ToggleTerm dir=' . expand('%:p:h')<CR>
-          nnoremap  <silent>  <leader><leader>z   :call ToggleHiddenAll()<CR>
+          nnoremap            <leader><leader>b   :GitBlameToggle<cr>
+          nnoremap            <leader><leader>c   :%y+<cr>
+          nnoremap            <leader><leader>d   :set background=dark<cr>
+          nnoremap            <leader><leader>l   :set background=light<cr>
+          nnoremap            <leader><leader>s   :StripWhitespace<cr>
+          nnoremap  <silent>  <leader><leader>f   :Format<cr>
+          nnoremap  <silent>  <leader><leader>a   :TableModeToggle<cr>
+          nnoremap  <silent>  <leader><leader>z   :call ToggleHiddenAll()<cr>
 
+          " keep terminal in background
+          set hidden
+
+          " Floating terminal in the working dir of the open buffer
+          nnoremap  <silent>  <c-\>      <cmd>execute 'ToggleTerm dir=' . expand('%:p:h')<cr>
+          inoremap  <silent>  <c-\> <esc><cmd>execute 'ToggleTerm dir=' . expand('%:p:h')<cr>
+          tnoremap  <silent>  <c-\> <esc><cmd>ToggleTerm<cr>
 
           "
           " telescope-nvim fast, lisp-jit fuzy finder
@@ -117,9 +123,9 @@
           nnoremap            <leader>fr          <cmd>lua require('telescope.builtin').registers()<cr>
 
           " https://github.com/tjdevries/train.nvim/
-          nnoremap            <leader>tu          :TrainUpDown<CR>
-          nnoremap            <leader>tw          :TrainWord<CR>
-          nnoremap            <leader>to          :TrainTextObj<CR>
+          nnoremap            <leader>tu          :TrainUpDown<cr>
+          nnoremap            <leader>tw          :TrainWord<cr>
+          nnoremap            <leader>to          :TrainTextObj<cr>
 
           let s:hidden_all = 0
           function! ToggleHiddenAll()
