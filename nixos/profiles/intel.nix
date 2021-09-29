@@ -11,6 +11,10 @@
 
   boot.extraModprobeConfig = ''
     options snd_hda_intel power_save=2
+    #options iwlwifi power_save=Y power_level=3
+    options iwlwifi power_save=1 d0i3_disable=0 uapsd_disable=0
+    options iwldvm force_cam=0
+    options iwlmvm power_scheme=3
   '';
 
   # Ensure modules used for efficent disk encryption are loaded
@@ -25,6 +29,8 @@
 
     # Making use of Framebuffer compression (FBC) can reduce power consumption while reducing memory bandwidth needed for screen refreshes
     "i915.enable_fbc=1"
+    "i915.enable_psr=1"
+    "i915.enable_dc=1"
   ];
 
   # Enable TLP service to reduce power usage and fan noise, particularly on battery
@@ -33,7 +39,10 @@
   # Run at 70% speed on battery and 90% on ac
   services.tlp.enable = true;
   services.tlp.settings = {
-    #USB_WHITELIST                   = "27c6:6a94";
+    INTEL_GPU_MAX_FREQ_ON_AC        = "1100";
+    INTEL_GPU_MAX_FREQ_ON_BAT       = "1100";
+    INTEL_GPU_BOOST_FREQ_ON_AC      = "1100";
+    INTEL_GPU_BOOST_FREQ_ON_BAT     = "1100";
     CPU_BOOST_ON_AC                 = "0";
     CPU_BOOST_ON_BAT                = "0";
     CPU_MAX_PERF_ON_AC              = "90";

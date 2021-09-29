@@ -8,6 +8,7 @@
       xkb-options = [
         "caps:super"  # map capslock to windows/mac key
         "numpad:mac"  # always enable numlock
+        "f:XF86AudioRaiseVolume"
       ];
     };
 

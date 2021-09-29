@@ -16,6 +16,13 @@
   networking.dhcpcd.enable  = false;
   systemd.network.enable    = true;
 
+  # Save battery, sync to disk max 30 seconds
+  #boot.kernel.sysctl = {
+  #  "vm.dirty_writeback_centisecs" = 3000;
+  #  "kernel.nmi_watchdog" = 1;
+  #  "vm.laptop_mode" = 5;
+  #};
+
   # trim deleted blocks from ssd
   services.fstrim.enable = true;
 

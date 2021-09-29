@@ -16,6 +16,10 @@
           #   "Neovim theme based off of the Nord Color Palette, written in lua with tree sitter support"
           nord-nvim
 
+          # https://github.com/eddyekofo94/gruvbox-flat.nvim/
+          #   "Another attempt of a flat Gruvbox theme for Neovim"
+          gruvbox-flat-nvim
+
           # https://github.com/nvim-telescope/telescope.nvim
           #   "highly extendable fuzzy finder over lists"
           telescope-nvim
@@ -230,6 +234,7 @@
     }
     require("toggleterm").setup{
       direction = 'float',
+      winblend = 3,
       float_opts = {
         border = 'curved'
         }
