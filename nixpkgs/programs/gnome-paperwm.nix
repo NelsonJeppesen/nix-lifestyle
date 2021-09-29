@@ -71,6 +71,11 @@
       # Unset default screenshot key, so I can rebind to flameshot
       screenshot =  [];
 
+      next        = ["<Super>bracketright"];
+      previous    = ["<Super>bracketleft"];
+      volume-down = ["<Shift><Super>braceleft"];
+      volume-up   = ["<Shift><Super>braceright"];
+
       custom-keybindings = [
         # custom bindings 1x - terminal
         "/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom10/"
