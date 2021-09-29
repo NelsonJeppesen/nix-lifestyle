@@ -103,6 +103,11 @@
           nnoremap  <silent>  <leader><leader>a   :TableModeToggle<cr>
           nnoremap  <silent>  <leader><leader>z   :call ToggleHiddenAll()<cr>
 
+          " avoid using :
+          nnoremap  <silent>  <leader>qq          :q!<cr>
+          nnoremap  <silent>  <leader>ww          :w<cr>
+          nnoremap  <silent>  <leader>wq          :wq<cr>
+
           " keep terminal in background
           set hidden
 
