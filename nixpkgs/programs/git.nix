@@ -13,12 +13,13 @@
       ];
 
       extraConfig = {
-        #pager = {
-        #  diff    = "delta";
-        #  log     = "delta";
-        #  reflog  = "delta";
-        #  show    = "delta";
-        #};
+        pager = {
+          diff    = "false";
+          log     = "false";
+          reflog  = "false";
+          show    = "false";
+          branch  = "false";
+        };
 
         #delta = {
 
@@ -40,14 +41,14 @@
           default  = "current";
         };
 
-        color = {
-          diff        = "auto";
-          status      = "auto";
-          branch      = "auto";
-          interactive = "auto";
-          ui          = true;
-          pager       = true;
-        };
+        #color = {
+        #  diff        = "auto";
+        #  status      = "auto";
+        #  branch      = "auto";
+        #  interactive = "auto";
+        #  ui          = true;
+        #  pager       = false;
+        #};
       };
 
       aliases = {
@@ -60,10 +61,15 @@
         ps    = "push";
         psf   = "push --force-with-lease";
         s     = "status";
+
         st    = "stash";
         stp   = "stash pop";
         stc   = "stash clear";
-        dfm   = "diff origin/main";
+
+        dmast   = "diff origin/mast";
+        dmain   = "diff origin/main";
+        dcicd   = "diff origin/cicd";
+
         rb    = "rebase -i HEAD~9";
         rba   = "rebase --abort";
         rbc   = "rebase --continue";
