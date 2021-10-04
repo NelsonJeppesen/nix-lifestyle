@@ -12,9 +12,14 @@
         with pkgs.vimPlugins; [
           # -------------------------------------- Lua Plugins -------------------------------------------------
 
+          # https://github.com/SidOfc/mkdx/
+          #   "A vim plugin that adds some nice extra's for working with markdown documents"
+          mkdx
+
           # https://github.com/shaunsingh/nord.nvim
           #   "Neovim theme based off of the Nord Color Palette, written in lua with tree sitter support"
-          nord-nvim
+          #nord-nvim
+          nord-vim
 
           # https://github.com/eddyekofo94/gruvbox-flat.nvim/
           #   "Another attempt of a flat Gruvbox theme for Neovim"
@@ -68,7 +73,7 @@
 
           # https://github.com/ntpeters/vim-better-whitespace
           #   "Better whitespace highlighting for Vim"
-          vim-better-whitespace
+          #vim-better-whitespace
 
           # https://github.com/LnL7/vim-nix/
           #   "Vim configuration files for Nix"
@@ -109,7 +114,7 @@
           nnoremap  <silent>  <leader>wq          :wq<cr>
 
           " keep terminal in background
-          set hidden
+          "set hidden
 
           " Floating terminal in the working dir of the open buffer
           nnoremap  <silent>  <c-\>      <cmd>execute 'ToggleTerm dir=' . expand('%:p:h')<cr>
@@ -166,9 +171,10 @@
 
           " setup colorschemes
           "set background=light
+          set background=dark
           set termguicolors
           colorscheme                     nord
-          hi Normal guibg=NONE ctermbg=NONE
+          "hi Normal guibg=NONE ctermbg=NONE
 
           " Copy all to clipboard
           set clipboard=unnamedplus
@@ -209,7 +215,7 @@
           " cant spell
           set spelllang=en
 
-          autocmd vimenter * hi Normal guibg=NONE ctermbg=NONE
+          "autocmd vimenter * hi Normal guibg=NONE ctermbg=NONE
 
           " Load my lua configurations
           lua << EOF

@@ -27,13 +27,13 @@
       settings = {
         #kitty_mod                  = "Super_L+shift";
         background_image_linear     = "yes";
-        background_image            = "~/s/nix-lifestyle/nixpkgs/dotfiles/kitty-background.png";
+        #background_image            = "~/s/nix-lifestyle/nixpkgs/dotfiles/kitty-background.png";
         background_image_layout     = "scaled";
         background_opacity          = "1.0";
         background_tint             = "0.75";
         copy_on_select              = true;
         enable_audio_bell           = false;
-        enabled_layouts             = "fat:bias=70,tall:bias=65,stack";
+        enabled_layouts             = "fat:bias=65,tall:bias=60,stack";
         font_size                   = "16.0";
         hide_window_decorations     = true ;
         inactive_text_alpha         = "0.5";
@@ -47,7 +47,7 @@
         term                        = "xterm-256color";
         update_check_interval       = "0";
         window_border_width         = "0.0pt";
-        window_margin_width         = "3";
+        window_margin_width         = "7";
 
         background            = "#2c2c2c";
         foreground            = "#cccccc";
