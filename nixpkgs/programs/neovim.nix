@@ -73,7 +73,7 @@
 
           # https://github.com/ntpeters/vim-better-whitespace
           #   "Better whitespace highlighting for Vim"
-          #vim-better-whitespace
+          vim-better-whitespace
 
           # https://github.com/LnL7/vim-nix/
           #   "Vim configuration files for Nix"
@@ -85,6 +85,32 @@
         ];
 
         extraConfig = ''
+          " Hard mode
+          " Remove newbie crutches in Command Mode
+          cnoremap <Down> <Nop>
+          cnoremap <Left> <Nop>
+          cnoremap <Right> <Nop>
+          cnoremap <Up> <Nop>
+
+          " Remove newbie crutches in Insert Mode
+          inoremap <Down> <Nop>
+          inoremap <Left> <Nop>
+          inoremap <Right> <Nop>
+          inoremap <Up> <Nop>
+
+          " Remove newbie crutches in Normal Mode
+          nnoremap <Down> <Nop>
+          nnoremap <Left> <Nop>
+          nnoremap <Right> <Nop>
+          nnoremap <Up> <Nop>
+
+          " Remove newbie crutches in Visual Mode
+          vnoremap <Down> <Nop>
+          vnoremap <Left> <Nop>
+          vnoremap <Right> <Nop>
+          vnoremap <Up> <Nop>
+
+
           set signcolumn=yes " always show gutter
 
           function InsertIfEmpty()
@@ -159,6 +185,8 @@
           endfunction
 
           "set colorcolumn=120
+          set number
+          set relativenumber
 
           " Show `▸▸` for tabs: 	, `·` for tailing whitespace:
           set list listchars=tab:▸▸,trail:·
@@ -229,13 +257,19 @@
   home.file.".config/nvim/lua/local/misc.lua".text = ''
     require('which-key').setup()
     require('gitsigns').setup()
-    require('cmp').setup{
+
+    local cmp = require'cmp'
+
+    require('cmp').setup({
       sources = {
         { name = 'buffer' },
         { name = 'path'},
         { name = 'emoji'},
+      },
+      mapping = {
+        ['<Tab>'] = cmp.mapping(cmp.mapping.select_next_item()),
       }
-    }
+    })
     require('lualine').setup {
       options = {
         theme = "horizon",
