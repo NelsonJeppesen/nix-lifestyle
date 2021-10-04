@@ -16,7 +16,6 @@
 
   # Add local scripts
   home.sessionPath = [ "/home/nelson/.local/bin" ];
-  home.file.".local/bin".source = ./bin;
 
   services.git-sync.enable = true;
   services.git-sync.repositories.notes.uri = "bogus";
@@ -27,6 +26,9 @@
   home = {
 
      #file.".config/tuir/tuir.cfg".source = dotfiles/tuir.cfg;
+     file.".local/bin".source = ./bin;
+     file.".terraformrc".source = dotfiles/terraformrc;
+     file.".terraform.d/plugin-cache/.empty".source = dotfiles/empty;
 
      packages = [
       # Browser
