@@ -66,7 +66,7 @@
         stp   = "stash pop";
         stc   = "stash clear";
 
-        dmast   = "diff origin/mast";
+        dmast   = "diff origin/master";
         dmain   = "diff origin/main";
         dcicd   = "diff origin/cicd";
 

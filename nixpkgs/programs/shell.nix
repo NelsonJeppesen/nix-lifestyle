@@ -47,6 +47,7 @@
         add-zsh-hook preexec set-title-preexec
 
         eval "$(${pkgs.direnv}/bin/direnv hook zsh)"
+        bindkey -v
 
         if [ "$TERM" != "linux" ]; then
           if [ "$(pwd)" = "$HOME" ]; then

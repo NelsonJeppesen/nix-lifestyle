@@ -19,9 +19,14 @@
       };
 
       keybindings = {
-        "ctrl+shift+backspace"  = "close_window";
-        "ctrl+shift+down"       = "next_window";
-        "ctrl+shift+up"         = "prev_window";
+        "kitty_mod+backspace"  = "close_window";
+        "kitty_mod+j"          = "next_window";
+        "kitty_mod+k"          = "prev_window";
+        "kitty_mod+l"          = "next_tab";
+        "kitty_mod+h"          = "prev_tab";
+        "kitty_mod+right"      = "no-op";
+        "kitty_mod+left"       = "no-op";
+        "kitty_mod+s"          = "show_scrollback";
       };
 
       settings = {
