@@ -14,11 +14,11 @@
 
       extraConfig = {
         pager = {
-          diff    = "false";
-          log     = "false";
-          reflog  = "false";
-          show    = "false";
-          branch  = "false";
+          diff    = "nvimpager";
+          log     = "nvimpager";
+          reflog  = "nvimpager";
+          show    = "nvimpager";
+          branch  = "nvimpager";
         };
 
         #delta = {

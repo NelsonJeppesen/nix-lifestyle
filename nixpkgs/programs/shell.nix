@@ -81,7 +81,9 @@
         n             = "vim ~/s/notes/$(date +work-%Y-%W).md";
         N             = "vim ~/s/notes/$(date +home-%Y).md";
         s             = "vim ~/s/notes/scratch.md";
-        v             = "vim";
+        v             = "nvim";
+        c             = "nvimpager -c";
+        m             = "nvimpager";
       };
     };
   };

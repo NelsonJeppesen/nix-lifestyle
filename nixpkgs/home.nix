@@ -52,6 +52,7 @@
       # Terminals
       pkgs.cool-retro-term    # play
       pkgs.kitty              # work
+      pkgs.nvimpager
 
       # DevOps
       pkgs.aws-iam-authenticator
@@ -64,6 +65,8 @@
       pkgs.jq
       pkgs.delta
       pkgs.kubectl
+      pkgs.krew         # kubectl plugin manager
+      pkgs.wireshark
       pkgs.kubectx
       pkgs.kubernetes-helm
       pkgs.ripgrep

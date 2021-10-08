@@ -47,6 +47,11 @@
       #cycle-width-steps       = [0.38195 0.6 0.8];
     };
 
+    "org/gnome/shell/extensions/paperwm/keybindings" = {
+      switch-left             = ["<Super>h"];
+      switch-right            = ["<Super>l"];
+    };
+
     "org/gnome/shell/keybindings" = {
       toggle-application-view   = [ "<Super>space" ];
       toggle-overview           = [];  # Free up <Super>S
@@ -143,8 +148,8 @@
 
     # custom bindings 9x - misc
     "org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom90" = {
-      binding = "<Super>F3";
-      command = "bash -c \"wmctrl -a coolncspot; [ \"$?\" == \"1\" ] && cool-retro-term -T coolncspot --default-settings -e ncspot\"";
+      binding = "<Super><Shift>s";
+      command = "bash -c \"wmctrl -a spotify; [ \"$?\" == \"1\" ] && spotify\"";
       name    = "ncspotify";
     };
 

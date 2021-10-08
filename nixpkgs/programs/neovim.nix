@@ -120,7 +120,8 @@
               endif
           endfunction
 
-          au VimEnter * call InsertIfEmpty()
+
+          "au VimEnter * call InsertIfEmpty()
 
           set autoread
           let mapleader=","
