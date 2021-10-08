@@ -3,11 +3,11 @@
   nixpkgs.config.allowUnfree = true;
 
   imports = [
-    ./programs/git.nix
-    ./programs/gnome-paperwm.nix
-    ./programs/kitty.nix
-    ./programs/neovim.nix
-    ./programs/shell.nix
+    ./git.nix
+    ./gnome-paperwm.nix
+    ./kitty.nix
+    ./neovim.nix
+    ./zsh.nix
   ];
 
   programs = {
