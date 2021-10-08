@@ -142,7 +142,7 @@
           nnoremap  <silent>  <leader>wq          :wq<cr>
 
           " keep terminal in background
-          "set hidden
+          set hidden
 
           " Floating terminal in the working dir of the open buffer
           nnoremap  <silent>  <c-\>      <cmd>execute 'ToggleTerm dir=' . expand('%:p:h')<cr>
