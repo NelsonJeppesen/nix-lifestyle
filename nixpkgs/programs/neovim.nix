@@ -110,7 +110,6 @@
           vnoremap <Right> <Nop>
           vnoremap <Up> <Nop>
 
-
           set signcolumn=yes " always show gutter
 
           function InsertIfEmpty()
@@ -120,6 +119,8 @@
               endif
           endfunction
 
+          " Show search/replace in real-time
+          set inccommand=nosplit
 
           "au VimEnter * call InsertIfEmpty()
 
