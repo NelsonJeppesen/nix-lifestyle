@@ -12,6 +12,10 @@
         with pkgs.vimPlugins; [
           # -------------------------------------- Lua Plugins -------------------------------------------------
 
+          # https://github.com/karb94/neoscroll.nvim/
+          #   "Smooth scrolling neovim plugin written in lua"
+          neoscroll-nvim
+
           # https://github.com/SidOfc/mkdx/
           #   "A vim plugin that adds some nice extra's for working with markdown documents"
           mkdx
@@ -286,6 +290,7 @@
         border = 'curved'
         }
     }
+    require('neoscroll').setup({})
   '';
 
   home.file.".config/nvim/lua/local/formatter.lua".text = ''
