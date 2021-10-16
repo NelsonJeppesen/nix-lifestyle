@@ -47,7 +47,7 @@
         add-zsh-hook preexec set-title-preexec
 
         eval "$(${pkgs.direnv}/bin/direnv hook zsh)"
-        bindkey -v
+        #bindkey -v
 
         if [ "$TERM" != "linux" ]; then
           if [ "$(pwd)" = "$HOME" ]; then
@@ -66,7 +66,7 @@
 
       shellAliases = {
         update        = "sudo nixos-rebuild switch --upgrade && echo ------------ && nix-channel --update && echo ------------ && home-manager switch";
-
+        watch         = "watch "; # allow watch to run aliases
         rst           = "kubectx -u; cd ~/s; clear";
         uc            = "kubectx";
         ucu           = "kubectx -u";
@@ -79,7 +79,7 @@
         kns           = "kubens";
 
         n             = "vim ~/s/notes/$(date +work-%Y-%W).md";
-        N             = "vim ~/s/notes/$(date +home-%Y).md";
+        nw            = "vim ~/s/notes/$(date +work-%Y-%W -d 'next week').md";  # note for next week
         s             = "vim ~/s/notes/scratch.md";
         v             = "nvim";
         c             = "nvimpager -c";

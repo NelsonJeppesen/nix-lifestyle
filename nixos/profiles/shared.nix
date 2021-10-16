@@ -6,6 +6,8 @@
   documentation.enable        = false;    # I dont use local docs
   environment.defaultPackages = [];       # Remove default pacakges
 
+  services.fwupd.enable = true;
+
   # Install neovim as the system's editor
   programs.neovim.enable        = true;
   programs.neovim.defaultEditor = true;
