@@ -41,7 +41,11 @@
         dmain = "diff origin/main";
         dcicd = "diff origin/cicd";
 
-        rb    = "rebase -i HEAD~9";
+        rbhead = "rebase -i HEAD~9";
+        rbmast = "rebase -i origin/master";
+        rbmain = "rebase -i origin/main";
+        rbcicd = "rebase -i origin/cicd";
+
         rba   = "rebase --abort";
         rbc   = "rebase --continue";
       };
