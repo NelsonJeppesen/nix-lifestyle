@@ -1,3 +1,6 @@
+# NeoVim for daily work and daily notes
+# prefer Lua built NeoVim plugins when possible
+
 { config, pkgs, ... }:
 {
   programs = {
