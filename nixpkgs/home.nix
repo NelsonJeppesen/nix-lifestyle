@@ -58,7 +58,6 @@
       pkgs.aws-iam-authenticator
       pkgs.awscli2
       pkgs.curl
-      pkgs.direnv
       pkgs.dbeaver      # multi-db gui
       pkgs.dnsutils     # dig
       pkgs.helmfile

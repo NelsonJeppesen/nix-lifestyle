@@ -8,13 +8,16 @@
       vimAlias     = true;
       vimdiffAlias = true;
 
+      # Install Vim Plugins, keep configuration local to install block if possible
       plugins =
         with pkgs.vimPlugins; [
           # -------------------------------------- Lua Plugins -------------------------------------------------
 
           # https://github.com/karb94/neoscroll.nvim/
           #   "Smooth scrolling neovim plugin written in lua"
-          neoscroll-nvim
+          { plugin = neoscroll-nvim;
+            config = "lua require('neoscroll').setup({})";
+          }
 
           # https://github.com/SidOfc/mkdx/
           #   "A vim plugin that adds some nice extra's for working with markdown documents"
@@ -23,7 +26,13 @@
           # https://github.com/shaunsingh/nord.nvim
           #   "Neovim theme based off of the Nord Color Palette, written in lua with tree sitter support"
           #nord-nvim
-          nord-vim
+          { plugin = nord-vim;
+            config = ''
+              set background=dark
+              set termguicolors
+              colorscheme nord
+            '';
+          }
 
           # https://github.com/eddyekofo94/gruvbox-flat.nvim/
           #   "Another attempt of a flat Gruvbox theme for Neovim"
@@ -35,11 +44,52 @@
 
           # https://github.com/akinsho/toggleterm.nvim
           #   "A neovim plugin to persist and toggle multiple terminals during an editing session"
-          toggleterm-nvim
+          { plugin = toggleterm-nvim;
+            config = ''
+              lua << EOF
+              require("toggleterm").setup{
+                direction = 'float',
+                winblend = 3,
+                float_opts = {border = 'curved'}
+              }
+              EOF
+              nnoremap  <silent>  <c-\>      <cmd>execute 'ToggleTerm dir=' . expand('%:p:h')<cr>
+              inoremap  <silent>  <c-\> <esc><cmd>execute 'ToggleTerm dir=' . expand('%:p:h')<cr>
+              tnoremap  <silent>  <c-\> <esc><cmd>ToggleTerm<cr>
+            '';
+          }
 
           # https://github.com/mhartington/formatter.nvim
           #   "A format runner for neovim, written in lua"
-          formatter-nvim
+          { plugin = formatter-nvim;
+            config = ''
+              lua << EOF
+              require('formatter').setup({
+              logging = false,
+              filetype = {
+                tf = {
+                  function()
+                  return {
+                    exe = "terraform",
+                    args = {"fmt", '-'},
+                    stdin = true
+                  }
+                  end
+                },
+                yaml = {
+                  function()
+                  return {
+                    exe = 'yq',
+                    args = {'--yaml-output','.'},
+                    stdin = true
+                  }
+                  end
+                }
+              }
+              })
+              EOF
+            '';
+          }
 
           # https://github.com/f-person/git-blame.nvim
           #   "A git blame plugin for Neovim written in Lua"
@@ -47,22 +97,54 @@
 
           # https://github.com/lewis6991/gitsigns.nvim
           #   "Super fast git decorations implemented purely in lua/teal"
-          gitsigns-nvim
+          { plugin = gitsigns-nvim;
+            config = "lua require('gitsigns').setup()";
+          }
 
           # https://github.com/hoob3rt/lualine.nvim
           #   "A blazing fast and easy to configure neovim statusline written in pure lua"
-          lualine-nvim
+          { plugin = lualine-nvim;
+            config = ''
+              lua << EOF
+              require('lualine').setup {
+                options = {
+                  theme = "horizon",
+                  section_separators = "",
+                  component_separators = ""
+                }
+              }
+              EOF
+            '';
+          }
 
           # https://github.com/hrsh7th/nvim-cmp
           #   "A completion plugin for neovim coded in Lua"
-          nvim-cmp    # core
           cmp-path    # cmp plugin, file path
           cmp-buffer  # cmp plugin, buffer
           cmp-emoji   # cmp plugin, emoji
+          { plugin = nvim-cmp;
+            config = ''
+              lua << EOF
+              local cmp = require'cmp'
+              require('cmp').setup({
+                sources = {
+                  { name = 'buffer' },
+                  { name = 'path'},
+                  { name = 'emoji'},
+                },
+                mapping = {
+                  ['<Tab>'] = cmp.mapping(cmp.mapping.select_next_item()),
+                }
+              })
+              EOF
+            '';
+          }
 
           # https://github.com/folke/which-key.nvim
           #   "displays a popup with possible keybindings of the command you started typing"
-          which-key-nvim
+          { plugin = which-key-nvim;
+            config = "lua require('which-key').setup()";
+          }
 
           # https://github.com/tjdevries/train.nvim
           #   "Train yourself with vim motions and make your own train tracks :)"
@@ -74,10 +156,15 @@
           #   "Intelligently reopen files at your last edit position in Vim"
           vim-lastplace
 
-
           # https://github.com/ntpeters/vim-better-whitespace
           #   "Better whitespace highlighting for Vim"
-          vim-better-whitespace
+          { plugin = vim-better-whitespace;
+            config = ''
+              let g:better_whitespace_guicolor='#556e87'
+              set list listchars=tab:▸▸,trail:·
+            '';
+          }
+
 
           # https://github.com/LnL7/vim-nix/
           #   "Vim configuration files for Nix"
@@ -148,10 +235,7 @@
           " keep terminal in background
           set hidden
 
-          " Floating terminal in the working dir of the open buffer
-          nnoremap  <silent>  <c-\>      <cmd>execute 'ToggleTerm dir=' . expand('%:p:h')<cr>
-          inoremap  <silent>  <c-\> <esc><cmd>execute 'ToggleTerm dir=' . expand('%:p:h')<cr>
-          tnoremap  <silent>  <c-\> <esc><cmd>ToggleTerm<cr>
+
 
           "
           " telescope-nvim fast, lisp-jit fuzy finder
@@ -194,21 +278,11 @@
           set number
           set relativenumber
 
-          " Show `▸▸` for tabs: 	, `·` for tailing whitespace:
-          set list listchars=tab:▸▸,trail:·
-
           let g:gitblame_enabled = 0
 
           " set title in Kitty term tab to just the filename
           set titlestring=%t
           set title
-
-          " setup colorschemes
-          "set background=light
-          set background=dark
-          set termguicolors
-          colorscheme                     nord
-          "hi Normal guibg=NONE ctermbg=NONE
 
           " Copy all to clipboard
           set clipboard=unnamedplus
@@ -218,9 +292,7 @@
 
           " enable mouse
           set mouse=a
-
           set updatetime=75
-
 
           " Indentation settings for using 2 spaces instead of tabs.
           set shiftwidth=2
@@ -241,82 +313,10 @@
           set timeoutlen=500
 
           set conceallevel=2
-          " #require'nvim-treesitter.configs'.setup {}
-          "theme = 'gruvbox_light',
-
-          let g:better_whitespace_guicolor='#cccccc'
 
           " cant spell
           set spelllang=en
-
-          "autocmd vimenter * hi Normal guibg=NONE ctermbg=NONE
-
-          " Load my lua configurations
-          lua << EOF
-            require('local.misc')
-            require('local.formatter')
-          EOF
         '';
     };
   };
-
-  home.file.".config/nvim/lua/local/misc.lua".text = ''
-    require('which-key').setup()
-    require('gitsigns').setup()
-
-    local cmp = require'cmp'
-
-    require('cmp').setup({
-      sources = {
-        { name = 'buffer' },
-        { name = 'path'},
-        { name = 'emoji'},
-      },
-      mapping = {
-        ['<Tab>'] = cmp.mapping(cmp.mapping.select_next_item()),
-      }
-    })
-    require('lualine').setup {
-      options = {
-        theme = "horizon",
-        section_separators = "",
-        component_separators = ""
-      }
-    }
-    require("toggleterm").setup{
-      direction = 'float',
-      winblend = 3,
-      float_opts = {
-        border = 'curved'
-        }
-    }
-    require('neoscroll').setup({})
-  '';
-
-  home.file.".config/nvim/lua/local/formatter.lua".text = ''
-    require('formatter').setup({
-        logging = false,
-        filetype = {
-          tf = {
-            function()
-            return {
-              exe = "terraform",
-              args = {"fmt", '-'},
-              stdin = true
-            }
-            end
-          },
-          yaml = {
-            function()
-            return {
-              exe = 'yq',
-              args = {'--yaml-output','.'},
-              stdin = true
-            }
-            end
-          }
-        }
-      })
-  '';
-
 }
