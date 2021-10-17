@@ -1,5 +1,9 @@
 # Living the nix[os] lifestyle
 
+### structure
+* **nixos** system NixOS configuration
+* **nixpkgs** home-manager configuration
+
 ### ./nixos/
 ```
 sudo ln -s nixos /etc/nixos
