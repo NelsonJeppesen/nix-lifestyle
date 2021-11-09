@@ -206,12 +206,12 @@
 
           set signcolumn=yes " always show gutter
 
-          function InsertIfEmpty()
-              if @% == ""
-                  " No filename for current buffer
-                  Telescope find_files
-              endif
-          endfunction
+          "function InsertIfEmpty()
+          "    if @% == ""
+          "        " No filename for current buffer
+          "        Telescope find_files
+          "    endif
+          "endfunction
 
           " Show search/replace in real-time
           set inccommand=nosplit
