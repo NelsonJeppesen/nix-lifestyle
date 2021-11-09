@@ -1,0 +1,13 @@
+index ceda859..90da7bb 100644
+--- a/extension.js
++++ b/extension.js
+@@ -194,7 +194,7 @@ function notify(msg, details, params) {
+     Main.messageTray.add(source);
+     let notification = new MessageTray.Notification(source, msg, details, params);
+     notification.setResident(true); // Usually more annoying that the notification disappear than not
+-    source.notify(notification);
++    source.notify(msg);
+     return notification;
+ }
+ 
+-- 
