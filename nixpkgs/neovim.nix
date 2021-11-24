@@ -315,7 +315,7 @@
           " helpfull popup for shortcuts
           set timeoutlen=500
 
-          set conceallevel=2
+          "set conceallevel=2
 
           " cant spell
           set spelllang=en
