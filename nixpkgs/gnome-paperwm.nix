@@ -20,6 +20,7 @@
         "gsconnect@andyholmes.github.io"          # connect to my phone
         "paperwm@hedning:matrix.org"              # paperwm - best scrolling WM there is
         "instantworkspaceswitcher@amalantony.net" # fix some UI glitches gnome40+paperwm
+        "run-or-raise@edvard.cz"
       ];
     };
 
@@ -100,13 +101,6 @@
         "/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom93/"
       ];
 
-    };
-
-    # custom binding 1x - terminal
-    "org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom10" = {
-      binding = "<Super>backslash";
-      command = ".local/bin/focus-wayland-class kitty kitty";
-      name    = "kitty";
     };
 
     "org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom11" = {

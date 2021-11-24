@@ -29,6 +29,7 @@
      file.".local/bin".source = ./bin;
      file.".terraformrc".source = dotfiles/terraformrc;
      file.".terraform.d/plugin-cache/.empty".source = dotfiles/empty;
+     file.".config/run-or-raise/shortcuts.conf".source = dotfiles/shortcuts.conf;
 
      packages = [
       # Browser
@@ -37,6 +38,7 @@
       # Desktop
       pkgs.gnomeExtensions.paperwm              # The best tiling window manager
                                                 # and the reason I use Linux full-time
+      pkgs.gnomeExtensions.run-or-raise
 
       pkgs.flameshot                            # Fancy screenshot tool
       pkgs.gnomeExtensions.appindicator         # slack notifications
