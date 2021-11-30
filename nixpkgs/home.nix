@@ -27,32 +27,30 @@
 
      #file.".config/tuir/tuir.cfg".source = dotfiles/tuir.cfg;
      file.".local/bin".source = ./bin;
-     file.".terraformrc".source = dotfiles/terraformrc;
      file.".terraform.d/plugin-cache/.empty".source = dotfiles/empty;
      file.".config/run-or-raise/shortcuts.conf".source = dotfiles/shortcuts.conf;
+     file.".curlrc".source = dotfiles/curlrc;
 
      packages = [
       # Browser
       pkgs.google-chrome      # Helpful for --app mode
 
       # Desktop
-      pkgs.gnomeExtensions.paperwm              # The best tiling window manager
-                                                # and the reason I use Linux full-time
-      pkgs.gnomeExtensions.run-or-raise
-
+      #pkgs.gnomeExtensions.clipboard-indicator  # clipboard manager
+      #pkgs.gnomeExtensions.drop-down-terminal
+      #pkgs.gnomeExtensions.emoji-selector
       pkgs.flameshot                            # Fancy screenshot tool
+      pkgs.gnome3.gpaste
       pkgs.gnomeExtensions.appindicator         # slack notifications
       pkgs.gnomeExtensions.caffeine             # disable sleep on demand
       pkgs.gnomeExtensions.disable-workspace-switch-animation-for-gnome-40
-      #pkgs.gnomeExtensions.clipboard-indicator  # clipboard manager
-      pkgs.gnome3.gpaste
       pkgs.gnomeExtensions.gsconnect
-      #pkgs.gnomeExtensions.drop-down-terminal
-      #pkgs.gnomeExtensions.emoji-selector
+      pkgs.gnomeExtensions.paperwm              # The best tiling window manager
+      pkgs.gnomeExtensions.run-or-raise
       pkgs.wmctrl                               # Used to "focus or launch" apps
 
       # Terminals
-      pkgs.cool-retro-term    # play
+      #pkgs.cool-retro-term    # play
       pkgs.kitty              # work
       pkgs.nvimpager
 
@@ -60,14 +58,10 @@
       pkgs.aws-iam-authenticator
       pkgs.awscli2
       pkgs.curl
-      pkgs.dbeaver      # multi-db gui
       pkgs.dnsutils     # dig
       pkgs.helmfile
       pkgs.jq
-      pkgs.delta
       pkgs.kubectl
-      pkgs.krew         # kubectl plugin manager
-      pkgs.wireshark
       pkgs.kubectx
       pkgs.kubernetes-helm
       pkgs.ripgrep
@@ -77,6 +71,7 @@
       pkgs.terraform-docs
       pkgs.p7zip
       pkgs.wget
+      pkgs.vault
 
       # Work
       pkgs.zoom-us
