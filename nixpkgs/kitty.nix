@@ -38,7 +38,7 @@
         background_tint             = "0.75";
         copy_on_select              = true;
         enable_audio_bell           = false;
-        enabled_layouts             = "fat:bias=65,tall:bias=60,stack";
+        enabled_layouts             = "fat:bias=55,tall:bias=55,stack";
         font_size                   = "16.0";
         hide_window_decorations     = true ;
         inactive_text_alpha         = "0.5";

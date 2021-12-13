@@ -40,6 +40,7 @@
   services.tlp.enable = true;
   services.tlp.settings = {
     INTEL_GPU_MAX_FREQ_ON_AC        = "1100";
+    INTEL_GPU_MIN_FREQ_ON_BAT       = "100";
     INTEL_GPU_MAX_FREQ_ON_BAT       = "1100";
     INTEL_GPU_BOOST_FREQ_ON_AC      = "1100";
     INTEL_GPU_BOOST_FREQ_ON_BAT     = "1100";

@@ -87,17 +87,9 @@
         "/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom10/"
         "/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom11/"
 
-        # custom bindings 2x - chrome based/realted
-        "/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom20/"
-        "/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom21/"
-        "/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom22/"
-        "/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom23/"
-        "/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom24/"
-
         # custom bindings 9x - misc
         "/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom90/"
         "/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom91/"
-        "/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom92/"
         "/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom93/"
       ];
 
@@ -107,37 +99,6 @@
       binding = "<Shift><Super>backslash";
       command = "kitty --single-instance";
       name    = "kitty (new window)";
-    };
-
-    # custom bindings 2x - chrome based shortcuts
-    "org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom20" = {
-      binding = "<Super>x";
-      command = "bash -c \"wmctrl -xa chrome/work; [ \"$?\" == \"1\" ] && google-chrome-stable --user-data-dir=$HOME/.config/chrome/work\"";
-      name    = "chrome (work)";
-    };
-
-    "org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom21" = {
-      binding = "<Super>b";
-      command = "bash -c \"wmctrl -xa chrome/personal; [ \"$?\" == \"1\" ] && google-chrome-stable --user-data-dir=$HOME/.config/chrome/personal \"";
-      name    = "chrome (personal)";
-    };
-
-    "org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom22" = {
-      binding = "<Super>w";
-      command = "bash -c \"wmctrl -xa web.whatsapp; [ \"$?\" == \"1\" ] && google-chrome-stable -user-data-dir=$HOME/.config/chrome/whatsapp --app=https://web.whatsapp.com \"";
-      name    = "whatsapp";
-    };
-
-    "org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom23" = {
-      binding = "<Super>d";
-      command = "bash -c \"wmctrl -xa discord.com__app; [ \"$?\" == \"1\" ] && google-chrome-stable -user-data-dir=$HOME/.config/chrome/discord --app=https://discord.com/app \"";
-      name    = "discord";
-    };
-
-    "org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom24" = {
-      binding = "<Super>y";
-      command = "bash -c \"wmctrl -xa www.youtube.com; [ \"$?\" == \"1\" ] && google-chrome-stable -user-data-dir=$HOME/.config/chrome/personal --app=https://www.youtube.com \"";
-      name    = "youtube";
     };
 
     # custom bindings 9x - misc
@@ -151,13 +112,6 @@
       binding = "Print";
       command = "flameshot gui";
       name    = "flameshot screenshot";
-    };
-
-    "org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom92" = {
-      binding = "<Super>s";
-      #command = "bash -c \"wmctrl -a slack; [ \"$?\" == \"1\" ] && slack\"";
-      command = "bash -c \"wmctrl -xa apptentive.slack.com; [ \"$?\" == \"1\" ] && google-chrome-stable -user-data-dir=$HOME/.config/chrome/work --app=https://apptentive.slack.com \"";
-      name    = "slack";
     };
 
 

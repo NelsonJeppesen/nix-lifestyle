@@ -29,10 +29,12 @@
           # https://github.com/shaunsingh/nord.nvim
           #   "Neovim theme based off of the Nord Color Palette, written in lua with tree sitter support"
           #nord-nvim
-          { plugin = nord-vim;
+          { plugin = nord-nvim;
             config = ''
               set background=dark
               set termguicolors
+              let g:nord_contrast = v:true
+              "let g:nord_disable_background = v:true
               colorscheme nord
             '';
           }
