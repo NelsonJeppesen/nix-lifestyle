@@ -56,6 +56,7 @@
 
   # Remove gnome tools I don't use
   environment.gnome.excludePackages = with pkgs; [
+    gnome-tour
     gnome.cheese
     gnome.geary
     gnome.gnome-backgrounds
@@ -66,7 +67,9 @@
     gnome.gnome-music
     gnome.gnome-screenshot
     gnome.gnome-user-docs
+    gnome.gnome-video-effects
     gnome.gnome-weather
+    gnome.gnome-disk-utility
     gnome.gnome-online-accounts
     gnome.gnome-online-miners
   ];
