@@ -15,9 +15,9 @@
                 paperwm = super.gnomeExtensions.paperwm.overrideDerivation (old: {
                   version = "pre-41.0";
                   src = super.fetchFromGitHub {
-                    owner = "paperwm";
+                    owner = "PaperWM-community";
                     repo = "PaperWM";
-                    rev = "e9f714846b9eac8bdd5b33c3d33f1a9d2fbdecd4";
+                    rev = "3e4dcd1f4506670f626cd2176979ded2757235f0";
                     sha256 = "0wdigmlw4nlm9i4vr24kvhpdbgc6381j6y9nrwgy82mygkcx55l1";
                   };
                   patches = old.patches ++ [

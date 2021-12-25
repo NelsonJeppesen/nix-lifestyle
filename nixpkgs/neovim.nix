@@ -16,6 +16,10 @@
         with pkgs.vimPlugins; [
           # -------------------------------------- Lua Plugins -------------------------------------------------
 
+          # https://github.com/rebelot/kanagawa.nvim
+          #  "About NeoVim dark colorscheme inspired by the colors of the famous painting by Katsushika Hokusai.
+          # kanagawa.nvim # disabled, not in nixpkgs yet; manualy installed
+
           # https://github.com/karb94/neoscroll.nvim/
           #   "Smooth scrolling neovim plugin written in lua"
           { plugin = neoscroll-nvim;
@@ -25,23 +29,6 @@
           # https://github.com/SidOfc/mkdx/
           #   "A vim plugin that adds some nice extra's for working with markdown documents"
           mkdx
-
-          # https://github.com/shaunsingh/nord.nvim
-          #   "Neovim theme based off of the Nord Color Palette, written in lua with tree sitter support"
-          #nord-nvim
-          { plugin = nord-nvim;
-            config = ''
-              set background=dark
-              set termguicolors
-              let g:nord_contrast = v:true
-              "let g:nord_disable_background = v:true
-              colorscheme nord
-            '';
-          }
-
-          # https://github.com/eddyekofo94/gruvbox-flat.nvim/
-          #   "Another attempt of a flat Gruvbox theme for Neovim"
-          gruvbox-flat-nvim
 
           # https://github.com/nvim-telescope/telescope.nvim
           #   "highly extendable fuzzy finder over lists"
@@ -181,6 +168,10 @@
         ];
 
         extraConfig = ''
+          " mkdir ~/.config/nvim/pack/kanagawa/start/ -p
+          " manual install for now
+          colorscheme kanagawa
+
           " Hard mode
           " Remove newbie crutches in Command Mode
           cnoremap <Down> <Nop>
@@ -240,9 +231,6 @@
           " keep terminal in background
           set hidden
 
-
-
-          "
           " telescope-nvim fast, lisp-jit fuzy finder
           "
           " Fuzzy search through the output of `git ls-files` command in cwd of open file
