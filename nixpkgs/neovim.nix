@@ -166,7 +166,6 @@
             '';
           }
 
-
           # https://github.com/LnL7/vim-nix/
           #   "Vim configuration files for Nix"
           vim-nix
