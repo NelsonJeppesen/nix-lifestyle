@@ -17,7 +17,7 @@
           # -------------------------------------- Lua Plugins -------------------------------------------------
 
           # https://github.com/rebelot/kanagawa.nvim
-          #  "About NeoVim dark colorscheme inspired by the colors of the famous painting by Katsushika Hokusai.
+          #  "About NeoVim dark colorscheme inspired by the colors of the famous painting by Katsushika Hokusai"
           # kanagawa.nvim # disabled, not in nixpkgs yet; manualy installed
 
           # https://github.com/karb94/neoscroll.nvim/
