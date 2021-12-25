@@ -3,7 +3,6 @@
 
   home.file.".config/kitty/kitty.startup.session".text = ''
     new_tab
-    #cd ~/s
     launch
   '';
 
@@ -13,8 +12,8 @@
       enable = true;
 
       font = {
-        name    = "Lekton Nerd Font";
-        package = pkgs.nerdfonts.override { fonts = [ "Lekton"]; };
+        name    = "Hasklug Nerd Font Mono";
+        package = pkgs.nerdfonts.override { fonts = [ "Hasklig"]; };
       };
 
       keybindings = {
@@ -30,15 +29,12 @@
 
       settings = {
         #kitty_mod                  = "Super_L+shift";
-        background_image_linear     = "yes";
-        #background_image            = "~/s/nix-lifestyle/nixpkgs/dotfiles/kitty-background.png";
-        background_image_layout     = "scaled";
         background_opacity          = "1.0";
-        background_tint             = "0.75";
         copy_on_select              = true;
         enable_audio_bell           = false;
         enabled_layouts             = "fat:bias=55,tall:bias=55,stack";
         font_size                   = "16.0";
+        bold_font                   = "Hasklug Medium Nerd Font Complete Mono";
         hide_window_decorations     = true ;
         inactive_text_alpha         = "0.5";
         linux_display_server        = "wayland";
@@ -54,7 +50,7 @@
         window_margin_width         = "7";
 
         # https://github.com/rebelot/kanagawa.nvim/blob/master/extras/kanagawa.conf
-        background                  = "#2E2E37";  # modified to make vim and term bg different
+        background                  = "#2E2E34";  # modified to make vim and term bg different
 
         foreground                  = "#DCD7BA";
         selection_background        = "#2D4F67";
