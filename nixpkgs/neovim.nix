@@ -100,7 +100,6 @@
               lua << EOF
               require('lualine').setup {
                 options = {
-                  theme = "horizon",
                   section_separators = "",
                   component_separators = ""
                 }
