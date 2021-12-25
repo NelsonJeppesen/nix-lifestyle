@@ -20,6 +20,16 @@
           #  "About NeoVim dark colorscheme inspired by the colors of the famous painting by Katsushika Hokusai"
           # kanagawa.nvim # disabled, not in nixpkgs yet; manualy installed
 
+          # https://github.com/akinsho/bufferline.nvim
+          #  "A snazzy bufferline for Neovim"
+          { plugin = bufferline-nvim;
+            config = ''
+              lua require("bufferline").setup{}
+              nnoremap <silent> ,] :BufferLineCycleNext<CR>
+              nnoremap <silent> ,[ :BufferLineCyclePrev<CR>
+            '';
+          }
+
           # https://github.com/karb94/neoscroll.nvim/
           #   "Smooth scrolling neovim plugin written in lua"
           { plugin = neoscroll-nvim;
