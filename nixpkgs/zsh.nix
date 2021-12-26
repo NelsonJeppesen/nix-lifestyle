@@ -3,6 +3,7 @@
   programs = {
 
     direnv.enable = true;
+    fzf.enable    = true;
 
     # Clean prompt with the features I need
     starship = {
@@ -33,9 +34,6 @@
       enableAutosuggestions = true;
 
       initExtra = ''
-        bindkey -e
-        #unsetopt menucomplete
-
         # Set Kitty Terminal title of PWD
         function set-title-precmd() {
           printf "\e]2;%s\a" "''${PWD/#$HOME/~}"
