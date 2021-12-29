@@ -14,13 +14,16 @@
       # Install Vim Plugins, keep configuration local to install block if possible
       plugins =
         with pkgs.vimPlugins; [
-          # -------------------------------------- Lua Plugins -------------------------------------------------
+          #TODO
+          # https://github.com/stevearc/dressing.nvim
+          #  "Neovim plugin to improve the default vim.ui interfaces"
+          #{ plugin = dressing-nvim; }
 
           # https://github.com/rebelot/kanagawa.nvim
           #  "About NeoVim dark colorscheme inspired by the colors of the famous painting by Katsushika Hokusai"
-          #{ plugin = kanagawa-nvim;
-          #  config = "colorscheme kanagawa";
-          #}
+          #{ plugin = kanagawa-nvim; config = "colorscheme kanagawa"; }
+
+          # -------------------------------------- Lua Plugins -------------------------------------------------
           { plugin = nord-nvim;
             config = "colorscheme nord";
           }
