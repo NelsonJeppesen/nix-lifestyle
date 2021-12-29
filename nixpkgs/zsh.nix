@@ -30,8 +30,14 @@
         size = 999999;
       };
 
-      enableCompletion = true;
-      enableAutosuggestions = true;
+      enableAutosuggestions     = true;
+      enableCompletion          = true;
+      enableSyntaxHighlighting  = true;
+
+      initExtraFirst = ''
+        # Setup emacs keybindings before fzf bindings are added
+        bindkey -e
+      '';
 
       initExtra = ''
         # Set Kitty Terminal title of PWD
@@ -80,28 +86,39 @@
       };
 
       shellAliases = {
-        # Update nixos
-        update        = "sudo nixos-rebuild switch --upgrade && echo ------------ && nix-channel --update && echo ------------ && home-manager switch";
+        # Enable aliases from within `watch`
+        watch   = "watch ";
 
-        # allow watch to run aliases
-        watch         = "watch ";
+        # Google from the terminal
+        g       = "googler";
+        gg      = "googler --noprompt";
 
         # Kube
-        rst           = "kubectx -u; cd ~/s; clear";
-        uc            = "kubectx";
-        ucu           = "kubectx -u";
-        k             = "kubectl";
-        kd            = "kubectl describe";
-        kg            = "kubectl get";
-        kl            = "kubectl logs";
-        kgp           = "kubectl get pod";
-        ke            = "kubectl edit";
-        kns           = "kubens";
+        rst     = "kubectx -u; cd ~/s; clear";
+        uc      = "kubectx";
+        ucu     = "kubectx -u";
+        k       = "kubectl";
+        kd      = "kubectl describe";
+        kg      = "kubectl get";
+        kl      = "kubectl logs";
+        kgp     = "kubectl get pod";
+        ke      = "kubectl edit";
+        kns     = "kubens";
 
         # Notes
-        n             = "vim ~/s/notes/$(date +work-%Y-%W).md";
-        nw            = "vim ~/s/notes/$(date +work-%Y-%W -d 'next week').md";  # note for next week
-        s             = "vim ~/s/notes/scratch.md";
+        n       = "vim ~/s/notes/$(date +work-%Y-%W).md";
+        nw      = "vim ~/s/notes/$(date +work-%Y-%W -d 'next week').md";  # note for next week
+        s       = "vim ~/s/notes/scratch.md";
+
+        # Update nixos
+        update  = ''
+          echo ------------------- Update NixOS -------------   &&
+          sudo nixos-rebuild switch --upgrade                   &&
+          echo ------------------- Update Nix Channel--------   &&
+          nix-channel --update                                  &&
+          echo ------------------- Update Home-Manager--------  &&
+          home-manager switch
+        '';
       };
     };
   };

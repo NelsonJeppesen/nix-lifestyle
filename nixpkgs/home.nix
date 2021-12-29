@@ -59,6 +59,7 @@
       pkgs.awscli2
       pkgs.curl
       pkgs.dnsutils     # dig
+      pkgs.googler
       pkgs.helmfile
       pkgs.jq
       pkgs.kubectl

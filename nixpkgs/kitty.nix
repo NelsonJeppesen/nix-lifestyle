@@ -33,7 +33,7 @@
         copy_on_select              = true;
         enable_audio_bell           = false;
         enabled_layouts             = "fat:bias=55,tall:bias=55,stack";
-        font_size                   = "16.0";
+        font_size                   = "15.0";
         bold_font                   = "Hasklug Medium Nerd Font Complete Mono";
         hide_window_decorations     = true ;
         inactive_text_alpha         = "0.5";

@@ -18,7 +18,12 @@
 
           # https://github.com/rebelot/kanagawa.nvim
           #  "About NeoVim dark colorscheme inspired by the colors of the famous painting by Katsushika Hokusai"
-          # kanagawa.nvim # disabled, not in nixpkgs yet; manualy installed
+          #{ plugin = kanagawa-nvim;
+          #  config = "colorscheme kanagawa";
+          #}
+          { plugin = nord-nvim;
+            config = "colorscheme nord";
+          }
 
           # https://github.com/akinsho/bufferline.nvim
           #  "A snazzy bufferline for Neovim"
@@ -176,10 +181,6 @@
         ];
 
         extraConfig = ''
-          " mkdir ~/.config/nvim/pack/kanagawa/start/ -p
-          " manual install for now
-          colorscheme kanagawa
-
           " Hard mode
           " Remove newbie crutches in Command Mode
           cnoremap <Down> <Nop>
