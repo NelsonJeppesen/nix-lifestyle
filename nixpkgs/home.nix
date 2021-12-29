@@ -34,6 +34,7 @@
      packages = [
       # Browser
       pkgs.google-chrome      # Helpful for --app mode
+      pkgs.firefox
 
       # Desktop
       #pkgs.gnomeExtensions.clipboard-indicator  # clipboard manager
@@ -66,6 +67,7 @@
       pkgs.kubectx
       pkgs.kubernetes-helm
       pkgs.ripgrep
+      pkgs.slack
       pkgs.sops
       pkgs.ssm-session-manager-plugin
       pkgs.terraform

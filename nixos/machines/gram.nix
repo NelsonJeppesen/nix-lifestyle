@@ -28,13 +28,8 @@
     wantedBy = [ "multi-user.target" ];
   };
 
-
-  boot.loader.grub.devices = [ "nodev" ];
-  boot.loader.grub.efiSupport = true;
-  boot.loader.grub.enable = true;
-  boot.loader.grub.useOSProber = true;
-  boot.loader.grub.version = 2;
-  boot.loader.grub.gfxmodeEfi = "1024x768";
+  boot.loader.systemd-boot.enable = true;
+  boot.loader.grub.enable = false;
 
   boot.kernelModules = [ "kvm-intel" ];
 

@@ -19,11 +19,15 @@
           #  "Neovim plugin to improve the default vim.ui interfaces"
           #{ plugin = dressing-nvim; }
 
+          #nvim-nonicons
+
           # https://github.com/rebelot/kanagawa.nvim
           #  "About NeoVim dark colorscheme inspired by the colors of the famous painting by Katsushika Hokusai"
           #{ plugin = kanagawa-nvim; config = "colorscheme kanagawa"; }
 
           # -------------------------------------- Lua Plugins -------------------------------------------------
+          nvim-web-devicons
+
           { plugin = nord-nvim;
             config = "colorscheme nord";
           }

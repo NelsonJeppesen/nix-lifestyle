@@ -6,6 +6,10 @@
   documentation.enable        = false;    # I dont use local docs
   environment.defaultPackages = [];       # Remove default pacakges
 
+  environment.sessionVariables = rec {
+    MOZ_ENABLE_WAYLAND= "1";
+  };
+
   services.fwupd.enable = true;
 
   # Install neovim as the system's editor
