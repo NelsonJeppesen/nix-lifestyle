@@ -91,7 +91,10 @@
 
         # Google from the terminal
         g       = "googler";
+        gf      = "googler --first";
         gg      = "googler --noprompt";
+        gw      = "googler --site en.wikipedia.org";
+        gwf     = "googler --site en.wikipedia.org --first";
 
         # Kube
         rst     = "kubectx -u; cd ~/s; clear";
