@@ -20,7 +20,7 @@
         a      = "add";
         ap     = "add * --patch";
         co     = "checkout";
-        ct     = "commit -m";
+        c      = "commit -m";
         some   = "!git fetch -a && git pull";
         ps     = "push";
         psf    = "push --force-with-lease";
