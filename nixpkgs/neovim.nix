@@ -44,8 +44,8 @@
           { plugin = bufferline-nvim;
             config = ''
               lua require("bufferline").setup{}
-              nnoremap <silent> ,] :BufferLineCycleNext<CR>
-              nnoremap <silent> ,[ :BufferLineCyclePrev<CR>
+              nnoremap <silent> <C-h>  :BufferLineCyclePrev<CR>
+              nnoremap <silent> <C-l> :BufferLineCycleNext<CR>
             '';
           }
 
