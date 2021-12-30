@@ -28,6 +28,13 @@
           # -------------------------------------- Lua Plugins -------------------------------------------------
           nvim-web-devicons
 
+          # https://github.com/sudormrfbin/cheatsheet.nvim
+          #  "A cheatsheet plugin for neovim with bundled cheatsheets for the editor, multiple vim
+          #  plugins, nerd-fonts, regex, etc. with a Telescope fuzzy finder interface !"
+          #
+          # Provides <Leader>? help
+          cheatsheet-nvim
+
           { plugin = nord-nvim;
             config = "colorscheme nord";
           }
