@@ -10,6 +10,10 @@
     MOZ_ENABLE_WAYLAND= "1";
   };
 
+  nix.extraOptions = ''
+    experimental-features = nix-command flakes
+  '';
+
   services.fwupd.enable = true;
 
   # Install neovim as the system's editor
