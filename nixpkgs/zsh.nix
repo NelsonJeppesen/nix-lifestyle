@@ -101,8 +101,11 @@
         uc      = "kubectx";
         ucu     = "kubectx -u";
         k       = "kubectl";
-        kd      = "kubectl describe";
+
         kg      = "kubectl get";
+        kgs     = ''kubectl get --no-headers -o custom-columns=":metadata.name"'';
+
+        kd      = "kubectl describe";
         kl      = "kubectl logs";
         kgp     = "kubectl get pod";
         ke      = "kubectl edit";
