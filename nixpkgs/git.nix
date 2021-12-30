@@ -27,7 +27,7 @@
         ap    = "add * --patch";
         b     = "branch";
         co    = "checkout";
-        ct    = "commit";
+        ct    = "commit -m";
         some  = "!git fetch -a && git pull";
         ps    = "push";
         psf   = "push --force-with-lease";
