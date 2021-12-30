@@ -1,6 +1,5 @@
 { config, pkgs, ... }:
 {
-
   programs = {
     git = {
       enable = true;
@@ -13,41 +12,32 @@
       ];
 
       extraConfig = {
-        pull = {
-          ff       = "only";
-        };
-
-        push = {
-          default  = "current";
-        };
+        pull = { ff       = "only";     };
+        push = { default  = "current";  };
       };
 
       aliases = {
-        a     = "add";
-        ap    = "add * --patch";
-        b     = "branch";
-        co    = "checkout";
-        ct    = "commit -m";
-        some  = "!git fetch -a && git pull";
-        ps    = "push";
-        psf   = "push --force-with-lease";
-        s     = "status";
+        a      = "add";
+        ap     = "add * --patch";
+        co     = "checkout";
+        ct     = "commit -m";
+        some   = "!git fetch -a && git pull";
+        ps     = "push";
+        psf    = "push --force-with-lease";
+        s      = "status";
 
-        st    = "stash";
-        stp   = "stash pop";
-        stc   = "stash clear";
+        st     = "stash";
+        stp    = "stash pop";
+        stc    = "stash clear";
 
-        dmast = "diff origin/master";
-        dmain = "diff origin/main";
-        dcicd = "diff origin/cicd";
+        dfmast = "diff origin/master";
+        dfm    = "diff origin/main";
 
-        rbhead = "rebase -i HEAD~9";
-        rbmast = "rebase -i origin/master";
-        rbmain = "rebase -i origin/main";
-        rbcicd = "rebase -i origin/cicd";
-
-        rba   = "rebase --abort";
-        rbc   = "rebase --continue";
+        rbhead = "rebase --interactive HEAD~9";
+        rbmast = "rebase --interactive origin/master";
+        rb     = "rebase --interactive origin/main";
+        rba    = "rebase --abort";
+        rbc    = "rebase --continue";
       };
     };
   };
