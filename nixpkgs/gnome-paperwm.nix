@@ -53,9 +53,8 @@
       switch-right            = ["<Super>l"];
     };
 
-    "org/gnome/shell/keybindings" = {
-      toggle-application-view   = [ "<Super>space" ];
-      toggle-overview           = [];  # Free up <Super>S
+    "org/gnome" = {
+      toggle-overview         = [];  # Free up <Super>S
     };
 
     "org/gnome/desktop/wm/keybindings" = {
@@ -82,9 +81,10 @@
       volume-down = ["<Shift><Super>braceleft"];
       volume-up   = ["<Shift><Super>braceright"];
 
+      search      = [ "<Super>space" ];
+
       custom-keybindings = [
         # custom bindings 1x - terminal
-        "/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom10/"
         "/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom11/"
 
         # custom bindings 9x - misc
