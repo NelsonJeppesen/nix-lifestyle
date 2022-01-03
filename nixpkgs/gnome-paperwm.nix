@@ -92,7 +92,6 @@
         "/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom91/"
         "/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom93/"
       ];
-
     };
 
     "org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom11" = {
@@ -114,13 +113,10 @@
       name    = "flameshot screenshot";
     };
 
-
-
     "org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom93" = {
       binding = "<Super>z";
       command = "wmctrl -a 'Zoom Meeting'";
       name    = "focus zoom running zoom meeting";
     };
-
   };
 }
