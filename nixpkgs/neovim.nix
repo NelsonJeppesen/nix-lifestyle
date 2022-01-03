@@ -19,14 +19,12 @@
           #  "Neovim plugin to improve the default vim.ui interfaces"
           #{ plugin = dressing-nvim; }
 
-          #nvim-nonicons
+          # -------------------------------------- Lua Plugins -------------------------------------------------
+          nvim-web-devicons
 
           # https://github.com/rebelot/kanagawa.nvim
           #  "About NeoVim dark colorscheme inspired by the colors of the famous painting by Katsushika Hokusai"
-          #{ plugin = kanagawa-nvim; config = "colorscheme kanagawa"; }
-
-          # -------------------------------------- Lua Plugins -------------------------------------------------
-          nvim-web-devicons
+          { plugin = kanagawa-nvim; config = "colorscheme kanagawa"; }
 
           # https://github.com/sudormrfbin/cheatsheet.nvim
           #  "A cheatsheet plugin for neovim with bundled cheatsheets for the editor, multiple vim
@@ -34,10 +32,6 @@
           #
           # Provides <Leader>? help
           cheatsheet-nvim
-
-          { plugin = nord-nvim;
-            config = "colorscheme nord";
-          }
 
           # https://github.com/akinsho/bufferline.nvim
           #  "A snazzy bufferline for Neovim"
