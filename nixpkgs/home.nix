@@ -10,9 +10,7 @@
     ./zsh.nix
   ];
 
-  programs = {
-    home-manager.enable = true;
-  };
+  programs.home-manager.enable = true;
 
   # Add local scripts
   home.sessionPath = [ "/home/nelson/.local/bin" ];
@@ -21,34 +19,17 @@
   services.git-sync.repositories.notes.uri = "bogus";
   services.git-sync.repositories.notes.path = "/home/nelson/s/notes";
 
-  news.display = "show";
-
   home = {
 
      #file.".config/tuir/tuir.cfg".source = dotfiles/tuir.cfg;
      file.".local/bin".source = ./bin;
      file.".terraform.d/plugin-cache/.empty".source = dotfiles/empty;
-     file.".config/run-or-raise/shortcuts.conf".source = dotfiles/shortcuts.conf;
      file.".curlrc".source = dotfiles/curlrc;
 
      packages = [
       # Browser
       pkgs.google-chrome      # Helpful for --app mode
       pkgs.firefox
-
-      # Desktop
-      #pkgs.gnomeExtensions.clipboard-indicator  # clipboard manager
-      #pkgs.gnomeExtensions.drop-down-terminal
-      #pkgs.gnomeExtensions.emoji-selector
-      pkgs.flameshot                            # Fancy screenshot tool
-      pkgs.gnome3.gpaste
-      pkgs.gnomeExtensions.appindicator         # slack notifications
-      pkgs.gnomeExtensions.caffeine             # disable sleep on demand
-      pkgs.gnomeExtensions.disable-workspace-switch-animation-for-gnome-40
-      pkgs.gnomeExtensions.gsconnect
-      pkgs.gnomeExtensions.paperwm              # The best tiling window manager
-      pkgs.gnomeExtensions.run-or-raise
-      pkgs.wmctrl                               # Used to "focus or launch" apps
 
       # Terminals
       #pkgs.cool-retro-term    # play
@@ -59,7 +40,7 @@
       pkgs.aws-iam-authenticator
       pkgs.awscli2
       pkgs.curl
-      pkgs.dnsutils     # dig
+      pkgs.dnsutils
       pkgs.googler
       pkgs.helmfile
       pkgs.jq
@@ -78,7 +59,6 @@
 
       # Work
       pkgs.zoom-us
-      #pkgs.joplin
 
       # Games
       #pkgs.dosbox     # Simcity 2000

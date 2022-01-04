@@ -1,6 +1,21 @@
 { config, lib, pkgs, ... }:
 
 {
+  home.packages = [
+    pkgs.flameshot                            # Fancy screenshot tool
+    pkgs.gnome3.gpaste
+    pkgs.gnomeExtensions.appindicator         # slack notifications
+    pkgs.gnomeExtensions.caffeine             # disable sleep on demand
+    pkgs.gnomeExtensions.disable-workspace-switch-animation-for-gnome-40
+    pkgs.gnomeExtensions.gsconnect
+    pkgs.gnomeExtensions.paperwm              # The best tiling window manager
+    pkgs.gnomeExtensions.burn-my-windows
+    pkgs.gnomeExtensions.run-or-raise
+    pkgs.wmctrl                               # Used to "focus or launch" apps
+  ];
+
+  home.file.".config/run-or-raise/shortcuts.conf".source = dotfiles/shortcuts.conf;
+
   dconf.settings = {
 
     # Use capslock as super key
