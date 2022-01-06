@@ -60,5 +60,5 @@
   ];
 
   # really no downside to enable this
-  networking.firewall.enable = true;
+  networking.firewall.enable = false;
 }
