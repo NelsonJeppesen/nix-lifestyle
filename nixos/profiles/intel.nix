@@ -5,6 +5,8 @@
   services.xserver.videoDrivers = [ "modesetting" ];
   services.xserver.useGlamor = true;
 
+  services.thermald.enable = lib.mkDefault true;
+
   hardware.opengl.enable = true;
   hardware.opengl.extraPackages = with pkgs; [
     intel-media-driver

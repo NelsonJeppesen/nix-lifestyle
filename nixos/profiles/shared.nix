@@ -2,9 +2,11 @@
 
 {
   nixpkgs.config.allowUnfree  = true;     # Chrome, steam etc
-  boot.consoleLogLevel        = 3;        # hide ACPI error
-  documentation.enable        = false;    # I dont use local docs
-  environment.defaultPackages = [];       # Remove default pacakges
+  boot.consoleLogLevel        = lib.mkDefault 3;        # hide ACPI error
+  console.earlySetup          = lib.mkDefault true;     # Set virtual console options in initrd
+  documentation.enable        = lib.mkDefault false;    # I dont use local docs
+  environment.defaultPackages = lib.mkDefault [];       # Remove default pacakges
+  hardware.video.hidpi.enable = lib.mkDefault true;
 
   environment.sessionVariables = rec {
     MOZ_ENABLE_WAYLAND= "1";
@@ -14,51 +16,44 @@
     experimental-features = nix-command flakes
   '';
 
-  services.fwupd.enable = true;
+  services.fwupd.enable = lib.mkDefault true;
 
   # Install neovim as the system's editor
-  programs.neovim.enable        = true;
-  programs.neovim.defaultEditor = true;
-  programs.neovim.vimAlias      = true;
-  programs.neovim.viAlias       = true;
+  programs.neovim.enable        = lib.mkDefault true;
+  programs.neovim.defaultEditor = lib.mkDefault true;
+  programs.neovim.vimAlias      = lib.mkDefault true;
+  programs.neovim.viAlias       = lib.mkDefault true;
 
-  networking.useNetworkd    = true;
-  networking.dhcpcd.enable  = false;
-  systemd.network.enable    = true;
-
-  # Save battery, sync to disk max 30 seconds
-  #boot.kernel.sysctl = {
-  #  "vm.dirty_writeback_centisecs" = 3000;
-  #  "kernel.nmi_watchdog" = 1;
-  #  "vm.laptop_mode" = 5;
-  #};
+  networking.useNetworkd        = lib.mkDefault true;
+  networking.dhcpcd.enable      = lib.mkDefault false;
+  systemd.network.enable        = lib.mkDefault true;
 
   # trim deleted blocks from ssd
-  services.fstrim.enable = true;
+  services.fstrim.enable        = lib.mkDefault true;
 
-  # Hardlink files in nix store to save space
-  nix.autoOptimiseStore = true;
+  nix = {
+    # Hardlink files in nix store to save space
+    autoOptimiseStore = lib.mkDefault true;
 
-  # Cleanup un-refrenced packages in the Nix store older than 30 days
-  nix.gc.automatic = true;
-  nix.gc.dates     = "weekly";
-  nix.gc.options   = "--delete-older-than 30d";
+    gc = {
+      # Cleanup un-refrenced packages in the Nix store older than 30 days
+      automatic = lib.mkDefault true;
+      dates     = lib.mkDefault "weekly";
+      options   = lib.mkDefault "--delete-older-than 30d";
+    };
+  };
 
-  # Not often, but handy at times
-  services.sshd.enable = true;
+  services.sshd.enable    = lib.mkDefault true;
+  programs.zsh.enable     = lib.mkDefault true;
+  users.defaultUserShell  = pkgs.zsh;
 
-  users.defaultUserShell = pkgs.zsh;
-
-  users.users.nelson.isNormalUser = true;
-  users.users.nelson.extraGroups  = [ "wheel" "docker" "networkmanager"];
-
-  programs.zsh.enable = true;
+  users.users.nelson.isNormalUser = lib.mkDefault true;
+  users.users.nelson.extraGroups  = lib.mkDefault [ "wheel" "docker" "networkmanager"];
 
   # Core packages I use
   environment.systemPackages = with pkgs; [
     wget curl git
   ];
 
-  # really no downside to enable this
-  networking.firewall.enable = false;
+  networking.firewall.enable = lib.mkDefault true;
 }

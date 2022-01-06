@@ -81,5 +81,5 @@
   networking.firewall.allowedTCPPortRanges = [ { from = 1714; to = 1764; } ];
   networking.firewall.allowedUDPPortRanges = [ { from = 1714; to = 1764; } ];
 
-  system.stateVersion = "21.05"; # Did you read the comment?
+  system.stateVersion = lib.mkDefault "21.05"; # Did you read the comment?
 }
