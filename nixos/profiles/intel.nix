@@ -5,6 +5,11 @@
   services.xserver.videoDrivers = [ "modesetting" ];
   services.xserver.useGlamor = true;
 
+  hardware.opengl.enable = true;
+  hardware.opengl.extraPackages = with pkgs; [
+    intel-media-driver
+  ];
+
   # Update microcode when available
   hardware.cpu.intel.updateMicrocode =
     lib.mkDefault config.hardware.enableRedistributableFirmware;
