@@ -13,14 +13,24 @@
     ../profiles/x86_64.nix
   ];
 
+  boot.kernelPatches = lib.mkDefault [{
+    name = "xps17-9710-fix-sound";
+    patch = null;
+    extraConfig = ''
+      SND_SOC_INTEL_USER_FRIENDLY_LONG_NAMES y
+      SND_SOC_INTEL_SOUNDWIRE_SOF_MACH m
+    '';
+  }];
+
   networking.hostName         = "xps17";
   system.stateVersion         = "21.11";
   boot.kernelParams           = [ "mem_sleep_default=deep" ];
   boot.kernelModules          = [ "kvm-intel" ];
-  boot.initrd.luks.devices.crypt.device = "/dev/disk/by-uuid/";
-  fileSystems."/".device      = "/dev/disk/by-uuid/";
+  boot.initrd.luks.devices.crypt.device = "/dev/disk/by-uuid/a8e22006-dab1-467e-b3d9-05474903aa2d";
+  fileSystems."/".device      = "/dev/disk/by-uuid/4d559904-9470-4926-a90c-bbaf08e45e4c";
   fileSystems."/".fsType      = "btrfs";
-  fileSystems."/boot".device  = "/dev/disk/by-uuid/";
+  fileSystems."/".options     = [ "noatime" "nodiratime" ];
+  fileSystems."/boot".device  = "/dev/disk/by-uuid/8E00-9764";
 
   # Touchpad goes over i2c.
   # Without this we get errors in dmesg on boot and hangs when shutting down.
