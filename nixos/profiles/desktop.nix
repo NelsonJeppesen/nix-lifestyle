@@ -31,7 +31,7 @@
   services.xserver.desktopManager.gnome.enable = true;
   services.xserver.displayManager.gdm.enable   = true;
 
-  services.xserver.libinput.touchpad.accelProfile    = "flat";
+  #services.xserver.libinput.touchpad.accelProfile    = "flat";
   services.xserver.libinput.touchpad.tappingDragLock = false; # make less gltichy
   services.xserver.libinput.touchpad.tapping         = false; # make less gltichy
 
