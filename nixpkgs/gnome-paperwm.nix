@@ -68,11 +68,36 @@
       switch-right            = ["<Super>l"];
     };
 
+    "org/gnome/shell/extensions/paperwm/workspaces" = {
+      list = ["home" "media" "2" "3"];
+    };
+
+    "org/gnome/shell/extensions/paperwm/workspaces/home" = {
+      index = 0;
+      name  = "Home";
+    };
+
+    "org/gnome/shell/extensions/paperwm/workspaces/media" = {
+      index = 1;
+      name  = "Media";
+    };
+
+    "org/gnome/shell/extensions/paperwm/workspaces/2" = {
+      index = 2;
+      name  = "Misc 0";
+    };
+
+    "org/gnome/shell/extensions/paperwm/workspaces/3" = {
+      index = 3;
+      name  = "3";
+    };
+
     "org/gnome" = {
       toggle-overview         = [];  # Free up <Super>S
     };
 
     "org/gnome/desktop/wm/keybindings" = {
+      minimize                      = [];  # Free up <Super>h
       switch-input-source           = [];  # Free up <Super>space
       switch-input-source-backward  = [];  # Free up <Super><Shift>space
     };

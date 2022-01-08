@@ -3,25 +3,19 @@
 {
   services.resolved.enable = true;
   services.power-profiles-daemon.enable = false; # I'm using TLP right now
-  #services.ddccontrol.enable = true;
 
   # The start of the week *should* be Monday, not Sunday
   i18n.extraLocaleSettings = {
     LC_TIME = "en_GB.UTF-8";
   };
 
-  hardware.i2c.enable = true;
-  hardware.i2c.group = "users";
-
   hardware.bluetooth.enable = true;
-
   programs.gpaste.enable = true;
   programs.steam.enable = true;
 
-  sound.enable = true;
-
   # Pipewire stack with alsa/pulseaudio compat
   # Pipewire is the future
+  sound.enable                          = true;
   hardware.pulseaudio.enable            = false;  # Use pipewire with pulse compat
   services.pipewire.alsa.enable         = true;
   services.pipewire.alsa.support32Bit   = true;   # Steam support
