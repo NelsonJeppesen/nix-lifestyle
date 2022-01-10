@@ -49,6 +49,7 @@
       pkgs.kubernetes-helm
       pkgs.ripgrep
       pkgs.slack
+      pkgs.stern # tail multiple pod logs
       pkgs.sops
       pkgs.ssm-session-manager-plugin
       pkgs.terraform
