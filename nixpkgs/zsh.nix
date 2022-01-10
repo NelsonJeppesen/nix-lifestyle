@@ -97,7 +97,7 @@
         gwf     = "googler --site en.wikipedia.org --first";
 
         # Kube
-        rst     = "kubectx -u; cd ~/s; clear";
+        rst     = "cd ~/s; clear";
         uc      = "kubectx";
         ucu     = "kubectx -u";
         k       = "kubectl";

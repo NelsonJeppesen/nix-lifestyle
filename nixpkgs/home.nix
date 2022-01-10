@@ -27,52 +27,47 @@
      file.".curlrc".source = dotfiles/curlrc;
 
      packages = [
-      # Browser
-      pkgs.google-chrome      # Helpful for --app mode
+      # Core GUI apps
+      pkgs.google-chrome
       pkgs.firefox
+      pkgs.spotify
+      pkgs.kitty
 
-      # Terminals
-      #pkgs.cool-retro-term    # play
-      pkgs.kitty              # work
-      pkgs.nvimpager
-
-      # DevOps
-      pkgs.aws-iam-authenticator
+      # Cloud managment
       pkgs.awscli2
+      pkgs.ssm-session-manager-plugin
+      pkgs.terraform
+
+      # Basic shell tools
+      pkgs.nvimpager
       pkgs.curl
       pkgs.dnsutils
       pkgs.googler
-      pkgs.helmfile
       pkgs.jq
+      pkgs.p7zip
+      pkgs.ripgrep
+      pkgs.vault
+      pkgs.wget
+
+      # Kubernetes
+      pkgs.aws-iam-authenticator
+      pkgs.helmfile
       pkgs.kubectl
       pkgs.kubectx
       pkgs.kubernetes-helm
-      pkgs.ripgrep
-      pkgs.slack
-      pkgs.stern # tail multiple pod logs
       pkgs.sops
-      pkgs.ssm-session-manager-plugin
-      pkgs.terraform
-      pkgs.terraform-docs
-      pkgs.p7zip
-      pkgs.wget
-      pkgs.vault
+      pkgs.stern # tail multiple pod logs
 
       # Work
       pkgs.zoom-us
+      pkgs.slack
 
-      # Games
       #pkgs.dosbox     # Simcity 2000
       #pkgs.frotz      # Zork I
       #pkgs.vitetris   # CLI Tetris
       #pkgs.steam
-
-      # Music
       #pkgs.somafm-cli
       #pkgs.ncspot
-      pkgs.spotify
-
-      # Reddit
       #pkgs.tuir
     ];
   };
