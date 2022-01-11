@@ -1,0 +1,13 @@
+#!/usr/bin/env bash
+
+tput setaf 1; echo -e '\nUpdating NixOS channel [system]...\033[0m'
+sudo nix-channel --update
+
+tput setaf 1; echo -e '\nNixOS Switch [system]...\033[0m'
+sudo nixos-rebuild switch
+
+tput setaf 1; echo -e '\nUpdating NixOS channel [user]...\033[0m'
+nix-channel --update
+
+tput setaf 1; echo -e '\nHome-Manager Switch [user]...\033[0m'
+home-manager switch

@@ -99,32 +99,15 @@
         # Kube
         rst     = "cd ~/s; clear";
         uc      = "kubectx";
-        ucu     = "kubectx -u";
         k       = "kubectl";
-
+        kns     = "kubens";
         kg      = "kubectl get";
         kgs     = ''kubectl get --no-headers -o custom-columns=":metadata.name"'';
-
-        kd      = "kubectl describe";
-        kl      = "kubectl logs";
-        kgp     = "kubectl get pod";
-        ke      = "kubectl edit";
-        kns     = "kubens";
 
         # Notes
         n       = "vim ~/s/notes/$(date +work-%Y-%W).md";
         nw      = "vim ~/s/notes/$(date +work-%Y-%W -d 'next week').md";  # note for next week
         s       = "vim ~/s/notes/scratch.md";
-
-        # Update nixos
-        update  = ''
-          echo ------------------- Update NixOS -------------   &&
-          sudo nixos-rebuild switch --upgrade                   &&
-          echo ------------------- Update Nix Channel--------   &&
-          nix-channel --update                                  &&
-          echo ------------------- Update Home-Manager--------  &&
-          home-manager switch
-        '';
       };
     };
   };
