@@ -239,7 +239,7 @@
 
           set autoread
           let mapleader=","
-          nnoremap <silent>   <leader><leader>n   Go<cr><esc>:r! date<cr>I# <esc>o[ ]<space>
+          nnoremap <silent>   <leader><leader>n   Go<cr><esc>:r! date +\%Y-\%m-\%d<cr>I# <esc>o[ ]<space>
           nnoremap            <leader><leader>b   :GitBlameToggle<cr>
           nnoremap            <leader><leader>c   :%y+<cr>
           nnoremap            <leader><leader>d   :set background=dark<cr>
