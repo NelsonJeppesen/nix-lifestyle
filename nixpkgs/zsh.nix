@@ -105,8 +105,7 @@
         kgs     = ''kubectl get --no-headers -o custom-columns=":metadata.name"'';
 
         # Notes
-        n       = "vim ~/s/notes/$(date +work-%Y-%W).md";
-        nw      = "vim ~/s/notes/$(date +work-%Y-%W -d 'next week').md";  # note for next week
+        n       = "vim ~/s/notes/$(date +work-%Y-%q).md";
         s       = "vim ~/s/notes/scratch.md";
       };
     };

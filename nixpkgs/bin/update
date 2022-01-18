@@ -1,5 +1,9 @@
 #!/usr/bin/env bash
 
+tput setaf 1; echo -e '\nUpdating firmware [system]...\033[0m'
+sudo fwupdmgr refresh
+sudo fwupdmgr update
+
 tput setaf 1; echo -e '\nUpdating NixOS channel [system]...\033[0m'
 sudo nix-channel --update
 

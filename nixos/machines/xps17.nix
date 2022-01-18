@@ -6,7 +6,7 @@
     (modulesPath + "/installer/scan/not-detected.nix")
     ../profiles/desktop.nix
     ../profiles/encrypted_disk.nix
-    ../profiles/fingerprint.nix
+    #../profiles/fingerprint.nix
     ../profiles/intel.nix
     ../profiles/systemd-boot.nix
     ../profiles/shared.nix

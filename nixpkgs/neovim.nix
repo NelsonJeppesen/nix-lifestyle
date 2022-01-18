@@ -22,6 +22,12 @@
           # -------------------------------------- Lua Plugins -------------------------------------------------
           nvim-web-devicons
 
+          { plugin = surround-nvim ;
+            config = ''
+              lua require"surround".setup{}
+            '';
+          }
+
           # https://github.com/rebelot/kanagawa.nvim
           #  "About NeoVim dark colorscheme inspired by the colors of the famous painting by Katsushika Hokusai"
           { plugin = kanagawa-nvim; config = "colorscheme kanagawa"; }
@@ -233,7 +239,7 @@
 
           set autoread
           let mapleader=","
-          nnoremap <silent>   <leader><leader>n   Go<cr><esc>:r! date<cr>I# <esc>o##<space>
+          nnoremap <silent>   <leader><leader>n   Go<cr><esc>:r! date<cr>I# <esc>o[ ]<space>
           nnoremap            <leader><leader>b   :GitBlameToggle<cr>
           nnoremap            <leader><leader>c   :%y+<cr>
           nnoremap            <leader><leader>d   :set background=dark<cr>
