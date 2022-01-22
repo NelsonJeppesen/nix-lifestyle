@@ -22,6 +22,10 @@
         co     = "checkout";
         c      = "commit -m";
         some   = "!git fetch -a && git pull";
+
+        # Create reate a list of branches sorted by last updated with authorname
+        br     = ''!git branch --all --sort=authordate --format="%(color:blue)%(authordate:relative);%(color:red)%(authorname);%(color:white)%(color:bold)%(refname:short)" "$@" | column -s ";" -t'';
+
         ps     = "push";
         psf    = "push --force-with-lease";
         s      = "status";
