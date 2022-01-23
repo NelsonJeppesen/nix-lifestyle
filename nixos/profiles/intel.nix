@@ -44,14 +44,12 @@
     CPU_BOOST_ON_BAT                = "0";
     CPU_HWP_ON_AC                   = "balance_power";
     CPU_HWP_ON_BAT                  = "power";
-    CPU_MAX_PERF_ON_AC              = "75";
+    CPU_MAX_PERF_ON_AC              = "90";
     CPU_MAX_PERF_ON_BAT             = "50";
     CPU_MIN_PERF_ON_BAT             = "0";
     CPU_SCALING_GOVERNOR_ON_AC      = "powersave";
     CPU_SCALING_GOVERNOR_ON_BAT     = "powersave";
-    INTEL_GPU_BOOST_FREQ_ON_AC      = "700";
     INTEL_GPU_BOOST_FREQ_ON_BAT     = "700";
-    INTEL_GPU_MAX_FREQ_ON_AC        = "700";
     INTEL_GPU_MAX_FREQ_ON_BAT       = "700";
     INTEL_GPU_MIN_FREQ_ON_BAT       = "100";
     RESTORE_DEVICE_STATE_ON_STARTUP = "0";

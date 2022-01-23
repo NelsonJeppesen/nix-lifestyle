@@ -38,7 +38,7 @@
   services.xserver.libinput.touchpad.tapping         = false; # make less gltichy
 
   services.gnome.gnome-initial-setup.enable   = false;
-  services.gnome.gnome-online-accounts.enable = false;
+  #services.gnome.gnome-online-accounts.enable = false;
   #services.gnome.gnome-online-miners.enable   = false;
   services.gnome.gnome-remote-desktop.enable  = false;
   services.gnome.gnome-user-share.enable      = false;
@@ -53,8 +53,6 @@
   # Remove gnome tools I don't use
   environment.gnome.excludePackages = with pkgs; [
     gnome-tour
-    gnome.cheese
-    gnome.geary
     gnome.gnome-backgrounds
     gnome.gnome-contacts
     gnome.gnome-calendar
@@ -62,11 +60,11 @@
     gnome.gnome-maps
     gnome.gnome-music
     gnome.gnome-screenshot
-    gnome.gnome-user-docs
-    gnome.gnome-video-effects
+    gnome-user-docs
+    gnome-video-effects
     gnome.gnome-weather
     gnome.gnome-disk-utility
-    gnome.gnome-online-accounts
+    gnome-online-accounts
     gnome.gnome-online-miners
   ];
 
