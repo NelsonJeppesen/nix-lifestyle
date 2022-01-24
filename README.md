@@ -15,10 +15,10 @@ parted /dev/nvme0n1 -- mkpart ESP fat32 1MiB 1Gib
 parted /dev/nvme0n1 -- set 3 esp on
 
 # Create NixOS partition
-parted /dev/nvme0n1-- mkpart primary 1Gib -64Gib
+parted /dev/nvme0n1 -- mkpart primary 1Gib -64Gib
 
 # Leave 64Gib at the end of the drive for whatever
-parted /dev/nvme0n1-- mkpart primary -64GiB 100%
+parted /dev/nvme0n1 -- mkpart primary -64GiB 100%
 
 # format boot/EFI partition
 mkfs.fat -F 32 -n boot /dev/nvme0n1p1
