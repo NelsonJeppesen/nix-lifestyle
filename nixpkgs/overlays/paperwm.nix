@@ -6,7 +6,7 @@
         owner = "PaperWM-community";
         repo = "PaperWM";
         rev = "next-release";
-sha256 = "yjyZEL/a3D0jQQEelddWRAMaRLYrK3BapQ7x3+tzOw1=";
+        sha256 = "6AUUu63oWxRw9Wpxe0f7xvt7iilvQfhpAB8SYG4yP8Q=";
       };
       patches = old.patches ++ [
         ../patches/paperwm.patch
