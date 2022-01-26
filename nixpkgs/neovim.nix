@@ -181,7 +181,10 @@
           { plugin = vim-better-whitespace;
             config = ''
               let g:better_whitespace_guicolor='#556e87'
-              set list listchars=tab:▸▸,trail:·
+              let g:better_whitespace_operator=""
+              #let g:mkdx#settings = { 'tokens': { 'strike': '...'} }
+              nnoremap  ,,s   :StripWhitespace<cr>
+              set list listchars=tab:▸▸,trail:.
             '';
           }
 
@@ -239,12 +242,11 @@
 
           set autoread
           let mapleader=","
-          nnoremap <silent>   <leader><leader>n   Go<cr><esc>:r! date +\%Y-\%m-\%d<cr>I# <esc>o[ ]<space>
+          nnoremap <silent>   <leader><leader>n   Go<cr><esc>:r! date +\%Y-\%m-\%d<cr>I# <esc>o*<space>
           nnoremap            <leader><leader>b   :GitBlameToggle<cr>
           nnoremap            <leader><leader>c   :%y+<cr>
           nnoremap            <leader><leader>d   :set background=dark<cr>
           nnoremap            <leader><leader>l   :set background=light<cr>
-          nnoremap            <leader><leader>s   :StripWhitespace<cr>
           nnoremap  <silent>  <leader><leader>f   :Format<cr>
           nnoremap  <silent>  <leader><leader>a   :TableModeToggle<cr>
           nnoremap  <silent>  <leader><leader>z   :call ToggleHiddenAll()<cr>
