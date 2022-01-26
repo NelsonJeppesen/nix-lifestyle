@@ -92,7 +92,7 @@
       name  = "3";
     };
 
-    "org/gnome" = {
+    "org/gnome/shell/keybindings" = {
       toggle-overview         = [];  # Free up <Super>S
     };
 
