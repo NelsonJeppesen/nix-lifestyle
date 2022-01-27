@@ -182,7 +182,6 @@
             config = ''
               let g:better_whitespace_guicolor='#556e87'
               let g:better_whitespace_operator=""
-              #let g:mkdx#settings = { 'tokens': { 'strike': '...'} }
               nnoremap  ,,s   :StripWhitespace<cr>
               set list listchars=tab:▸▸,trail:.
             '';
