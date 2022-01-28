@@ -1,6 +1,9 @@
 { config, pkgs, ... }:
 {
+  home.file.".ssh/allowed_signers".text = "* ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIGXCxOtyuxSM3W1bY38x9GxuCFSe9VsN6NpamKxboJAW";
+
   programs = {
+
     git = {
       enable = true;
       userName = "Nelson Jeppesen";
@@ -12,6 +15,12 @@
       ];
 
       extraConfig = {
+        # Sign all commits using ssh key
+        commit.gpgsign = true;
+        gpg.format = "ssh";
+        gpg.ssh.allowedSignersFile = "~/.ssh/allowed_signers";
+        user.signingkey = "~/.ssh/id_ed25519.pub";
+
         pull = { ff       = "only";     };
         push = { default  = "current";  };
       };
