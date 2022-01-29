@@ -27,6 +27,9 @@
      file.".curlrc".source = dotfiles/curlrc;
 
      packages = [
+      # blog
+      pkgs.hugo
+
       # Core GUI apps
       pkgs.google-chrome
       pkgs.firefox

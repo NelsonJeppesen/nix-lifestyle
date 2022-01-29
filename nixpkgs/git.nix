@@ -1,6 +1,7 @@
 { config, pkgs, ... }:
 {
-  home.file.".ssh/allowed_signers".text = "* ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIGXCxOtyuxSM3W1bY38x9GxuCFSe9VsN6NpamKxboJAW";
+  home.file.".ssh/allowed_signers".text =
+    "* ${builtins.readFile /home/nelson/.ssh/id_ed25519.pub}";
 
   programs = {
 
