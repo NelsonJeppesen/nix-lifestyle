@@ -48,7 +48,7 @@
   users.defaultUserShell  = pkgs.zsh;
 
   users.users.nelson.isNormalUser = lib.mkDefault true;
-  users.users.nelson.extraGroups  = lib.mkDefault [ "wheel" "docker" "networkmanager"];
+  users.users.nelson.extraGroups  = lib.mkDefault [ "wheel" "networkmanager"];
 
   # Core packages I use
   environment.systemPackages = with pkgs; [
