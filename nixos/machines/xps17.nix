@@ -15,10 +15,10 @@
 
   networking.hostName         = "xps17";
   system.stateVersion         = "21.11";
-  boot.kernelModules          = [ "kvm-intel" ];
+  boot.kernelModules          = ["kvm-intel"];
   boot.initrd.luks.devices.root.device  = "/dev/disk/by-uuid/a8e22006-dab1-467e-b3d9-05474903aa2d";
   fileSystems."/".device      = "/dev/disk/by-uuid/4d559904-9470-4926-a90c-bbaf08e45e4c";
   fileSystems."/".fsType      = "btrfs";
-  fileSystems."/".options     = [ "noatime" "nodiratime" ];
+  fileSystems."/".options     = ["noatime" "nodiratime" "discard=async" "autodefrag"];
   fileSystems."/boot".device  = "/dev/disk/by-uuid/8E00-9764";
 }

@@ -10,10 +10,11 @@
 
     kitty = {
       enable = true;
+      theme  = "Galaxy";
 
       font = {
         name    = "Hasklug Nerd Font Mono";
-        package = pkgs.nerdfonts.override { fonts = [ "Hasklig"]; };
+        package = pkgs.nerdfonts.override {fonts = ["Hasklig"];};
       };
 
       keybindings = {
@@ -45,28 +46,6 @@
         update_check_interval       = "0";
         window_border_width         = "0.0pt";
         window_margin_width         = "7";
-
-        background = "#141414";
-        foreground = "#feffd3";
-        cursor = "#ffffff";
-        selection_background = "#303030";
-        color0 = "#141414";
-        color8 = "#262626";
-        color1 = "#c06c43";
-        color9 = "#dd7c4c";
-        color2 = "#afb979";
-        color10 = "#cbd88c";
-        color3 = "#c2a86c";
-        color11 = "#e1c47d";
-        color4 = "#444649";
-        color12 = "#5a5d61";
-        color5 = "#b4be7b";
-        color13 = "#d0db8e";
-        color6 = "#778284";
-        color14 = "#8a989a";
-        color7 = "#feffd3";
-        color15 = "#feffd3";
-        selection_foreground = "#141414";
       };
     };
   };
