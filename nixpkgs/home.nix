@@ -27,7 +27,7 @@
      file.".curlrc".source = dotfiles/curlrc;
 
      packages = [
-      # blog
+      # jeppesen.io
       pkgs.hugo
 
       # Core GUI apps
@@ -42,11 +42,12 @@
       pkgs.terraform
 
       # Basic shell tools
-      pkgs.nvimpager
+      pkgs.btop
       pkgs.curl
       pkgs.dnsutils
       pkgs.googler
       pkgs.jq
+      pkgs.nvimpager
       pkgs.p7zip
       pkgs.ripgrep
       pkgs.vault
