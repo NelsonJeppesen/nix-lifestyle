@@ -31,13 +31,14 @@
       pkgs.hugo
 
       # Core GUI apps
-      pkgs.google-chrome
       pkgs.firefox
-      pkgs.spotify
+      pkgs.google-chrome
       pkgs.kitty
+      pkgs.spotify
 
       # Cloud managment
       pkgs.awscli2
+      pkgs.google-cloud-sdk
       pkgs.ssm-session-manager-plugin
       pkgs.terraform
 
@@ -55,12 +56,13 @@
 
       # Kubernetes
       pkgs.aws-iam-authenticator
+      #pkgs.glooctl
       pkgs.helmfile
       pkgs.kubectl
       pkgs.kubectx
       pkgs.kubernetes-helm
       pkgs.sops
-      pkgs.stern # tail multiple pod logs
+      pkgs.stern
 
       # Work
       pkgs.zoom-us

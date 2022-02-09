@@ -42,7 +42,7 @@
         strip_trailing_spaces       = "smart";
         tab_bar_style               = "powerline";
         tab_powerline_style         = "slanted";
-        term                        = "xterm-256color";
+        #term                        = "xterm-256color";
         update_check_interval       = "0";
         window_border_width         = "0.0pt";
         window_margin_width         = "7";

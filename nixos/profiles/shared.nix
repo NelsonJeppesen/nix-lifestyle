@@ -32,9 +32,6 @@
   services.fstrim.enable        = lib.mkDefault true;
 
   nix = {
-    # Hardlink files in nix store to save space
-    autoOptimiseStore = lib.mkDefault true;
-
     gc = {
       # Cleanup un-refrenced packages in the Nix store older than 30 days
       automatic = lib.mkDefault true;
