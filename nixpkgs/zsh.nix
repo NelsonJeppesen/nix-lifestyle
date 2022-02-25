@@ -75,24 +75,33 @@
         # Enable aliases from within `watch`
         watch   = "watch ";
 
-        # Google from the terminal
-        g       = "googler";
-        gf      = "googler --first";
-        gg      = "googler --noprompt";
-        gw      = "googler --site en.wikipedia.org";
-        gwf     = "googler --site en.wikipedia.org --first";
+        # terraform
+        tf  = "terraform";
+        tfp = "terraform plan";
+        tfa = "terraform apply";
+        tss = "terraform state show $(terraform state list | fzf)";
+        tt  = "terraform taint $(terraform state list | fzf --multi)";
 
         # Kube
-        rst     = "cd ~/s; clear";
-        uc      = "kubectx";
-        k       = "kubectl";
-        kns     = "kubens";
-        kg      = "kubectl get";
-        kgs     = ''kubectl get --no-headers -o custom-columns=":metadata.name"'';
+        rst = "cd ~/s; clear";
+        uc  = "kubectx";
+        k   = "kubectl";
+        kns = "kubens";
+        kg  = "kubectl get";
+        kgs = ''kubectl get --no-headers -o custom-columns=":metadata.name"'';
+        kdp = "k delete pod $(kgs pod|fzf --multi)";
 
         # Notes
-        n       = "vim ~/s/notes/$(date +work-%Y-%q).md";
-        s       = "vim ~/s/notes/scratch.md";
+        n   = "vim ~/s/notes/$(date +work-%Y-%q).md";
+        s   = "vim ~/s/notes/scratch.md";
+
+        # interactive ripgrep
+        irg = ''INITIAL_QUERY=""
+          RG_PREFIX="rg --column --line-number --no-heading --color=always --smart-case " \
+          FZF_DEFAULT_COMMAND="$RG_PREFIX '$INITIAL_QUERY'"     \
+          fzf -m --bind "change:reload:$RG_PREFIX {q} || true"  \
+              --ansi --disabled --query "$INITIAL_QUERY"        \
+              --height=50% --layout=reverse'';
       };
     };
   };
