@@ -18,14 +18,15 @@
       };
 
       keybindings = {
-        "kitty_mod+backspace"  = "close_window";
-        "kitty_mod+j"          = "next_window";
-        "kitty_mod+k"          = "prev_window";
-        "kitty_mod+l"          = "next_tab";
-        "kitty_mod+h"          = "prev_tab";
-        "kitty_mod+right"      = "no-op";
-        "kitty_mod+left"       = "no-op";
-        "kitty_mod+s"          = "show_scrollback";
+        "kitty_mod+backspace" = "close_window";
+        "kitty_mod+j"         = "next_window";
+        "kitty_mod+k"         = "prev_window";
+        "kitty_mod+l"         = "next_tab";
+        "kitty_mod+h"         = "prev_tab";
+        "kitty_mod+right"     = "no-op";
+        "kitty_mod+left"      = "no-op";
+        "kitty_mod+s"         = "show_scrollback";
+        "kitty_mod+]"         = "next_layout";
       };
 
       settings = {
@@ -33,7 +34,14 @@
         bold_font                   = "Hasklug Medium Nerd Font Complete Mono";
         copy_on_select              = true;
         enable_audio_bell           = false;
-        enabled_layouts             = "fat:bias=55,tall:bias=55,stack";
+        enabled_layouts             = "vertical,fat,grid";
+        # Fat -- One (or optionally more) windows are shown full width on the top, the rest of the windows are shown side-by-side on the bottom
+        # Grid -- All windows are shown in a grid
+        # Horizontal -- All windows are shown side-by-side
+        # Splits -- Windows arranged in arbitrary patterns created using horizontal and vertical splits
+        # Stack -- Only a single maximized window is shown at a time
+        # Tall -- One (or optionally more) windows are shown full height on the left, the rest of the windows are shown one below the other on the right
+        # Vertical -- All windows are shown one below the other
         font_size                   = "15.0";
         hide_window_decorations     = true ;
         inactive_text_alpha         = "0.5";
