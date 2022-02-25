@@ -30,6 +30,9 @@
       # jeppesen.io
       pkgs.hugo
 
+      # nix
+      pkgs.nixpkgs-review
+
       # Core GUI apps
       pkgs.firefox
       pkgs.google-chrome
@@ -46,7 +49,6 @@
       pkgs.btop
       pkgs.curl
       pkgs.dnsutils
-      pkgs.googler
       pkgs.jq
       pkgs.nvimpager
       pkgs.p7zip
@@ -56,7 +58,7 @@
 
       # Kubernetes
       pkgs.aws-iam-authenticator
-      #pkgs.glooctl
+      pkgs.glooctl
       pkgs.helmfile
       pkgs.kubectl
       pkgs.kubectx
@@ -64,9 +66,13 @@
       pkgs.sops
       pkgs.stern
 
-      # Work
+      # github
+      pkgs.gh
+
+      # Comms
       pkgs.zoom-us
       pkgs.slack
+      pkgs.fractal
 
       #pkgs.dosbox     # Simcity 2000
       #pkgs.frotz      # Zork I
