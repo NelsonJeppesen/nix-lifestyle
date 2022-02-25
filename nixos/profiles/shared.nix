@@ -8,6 +8,22 @@
   environment.defaultPackages = lib.mkDefault [];       # Remove default pacakges
   hardware.video.hidpi.enable = lib.mkDefault true;
 
+  # Clean prompt with the features I need
+  programs.zsh.enable     = lib.mkDefault true;
+  users.defaultUserShell  = pkgs.zsh;
+  programs.starship = {
+    enable = lib.mkDefault true;
+    settings = {
+      # Disabled
+      aws.disabled        = true;
+      helm.disabled       = true;
+      terraform.disabled  = true;
+
+      # Enabled
+      kubernetes.disabled = false;
+    };
+  };
+
   environment.sessionVariables = rec {
     MOZ_ENABLE_WAYLAND= "1";
   };
@@ -41,11 +57,9 @@
   };
 
   services.sshd.enable    = lib.mkDefault true;
-  programs.zsh.enable     = lib.mkDefault true;
-  users.defaultUserShell  = pkgs.zsh;
 
   users.users.nelson.isNormalUser = lib.mkDefault true;
-  users.users.nelson.extraGroups  = lib.mkDefault [ "wheel" "networkmanager"];
+  users.users.nelson.extraGroups  = lib.mkDefault [ "wheel" "networkmanager" "docker"];
 
   # Core packages I use
   environment.systemPackages = with pkgs; [
