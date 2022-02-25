@@ -200,6 +200,8 @@
           " shortmess: I: don't give the intro message when starting Vim |:intro|
           set shortmess=I
 
+          imap jj <Esc>
+
           " Hard mode
           " Remove newbie crutches in Command Mode
           cnoremap <Down> <Nop>
