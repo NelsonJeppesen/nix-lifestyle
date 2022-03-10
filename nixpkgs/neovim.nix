@@ -57,7 +57,7 @@
 
           # https://github.com/SidOfc/mkdx/
           #   "A vim plugin that adds some nice extra's for working with markdown documents"
-          mkdx
+          #mkdx
 
           # https://github.com/nvim-telescope/telescope.nvim
           #   "highly extendable fuzzy finder over lists"
@@ -171,6 +171,14 @@
           train-nvim
 
           # ------------------------------------ Vimscript Plugins ---------------------------------------------
+
+          # https://github.com/hashivim/vim-terraform/
+          #   "basic vim/terraform integration"
+          vim-terraform
+
+          # https://github.com/towolf/vim-helm/
+          #   "vim syntax for helm templates (yaml + gotmpl + sprig + custom)"
+          vim-helm
 
           # https://github.com/farmergreg/vim-lastplace
           #   "Intelligently reopen files at your last edit position in Vim"

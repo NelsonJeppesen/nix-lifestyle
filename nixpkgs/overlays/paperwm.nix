@@ -5,7 +5,7 @@
       src = super.fetchFromGitHub {
         owner = "PaperWM-community";
         repo = "PaperWM";
-        rev = "next-release";
+        rev = "b66aaf13e8f4cdf0e2f9078fb3e75703535b822c";
         sha256 = "6AUUu63oWxRw9Wpxe0f7xvt7iilvQfhpAB8SYG4yP8Q=";
       };
       patches = old.patches ++ [

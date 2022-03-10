@@ -25,6 +25,7 @@
      file.".local/bin".source = ./bin;
      file.".terraform.d/plugin-cache/.empty".source = dotfiles/empty;
      file.".curlrc".source = dotfiles/curlrc;
+     file.".config/fend/config.toml".source = dotfiles/fend.toml;
 
      packages = [
       # jeppesen.io
@@ -49,6 +50,7 @@
       pkgs.btop
       pkgs.curl
       pkgs.dnsutils
+      pkgs.fend
       pkgs.jq
       pkgs.nvimpager
       pkgs.p7zip
