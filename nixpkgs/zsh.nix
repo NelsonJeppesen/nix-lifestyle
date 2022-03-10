@@ -89,8 +89,7 @@
         tss = "terraform state show $(terraform state list | fzf)";
         tt  = "terraform taint $(terraform state list | fzf --multi)";
 
-        # Kube
-        rst = "cd ~/s; clear";
+        # kube
         uc  = "kubectx";
         k   = "kubectl";
         kns = "kubens";
@@ -98,7 +97,7 @@
         kgs = ''kubectl get --no-headers -o custom-columns=":metadata.name"'';
         kdp = "k delete pod $(kgs pod|fzf --multi)";
 
-        # Notes
+        # notes
         n   = "vim ~/s/notes/$(date +work-%Y-%q).md";
         s   = "vim ~/s/notes/scratch.md";
 
