@@ -11,6 +11,7 @@
     ../profiles/systemd-boot.nix
     ../profiles/shared.nix
     ../profiles/x86_64.nix
+    ../profiles/software_defined_radio.nix
   ];
 
   networking.hostName         = "xps17";
