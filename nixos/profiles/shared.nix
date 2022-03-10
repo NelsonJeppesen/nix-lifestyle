@@ -51,7 +51,7 @@ in
 
   # Core packages I use
   environment.systemPackages = with pkgs; [
-    wget curl git
+    wget curl git comma btop
   ];
 
   networking.firewall.enable = lib.mkDefault true;
