@@ -75,6 +75,13 @@
         # Enable aliases from within `watch`
         watch   = "watch ";
 
+        # reset terminal
+        rst = "cd ~/s; clear";
+
+        # fend calculator
+        f  = "fend";
+        ff = "clear;fend";
+
         # terraform
         tf  = "terraform";
         tfp = "terraform plan";
