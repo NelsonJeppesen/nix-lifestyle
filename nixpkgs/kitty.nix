@@ -10,7 +10,8 @@
 
     kitty = {
       enable = true;
-      theme  = "Galaxy";
+      #theme  = "Galaxy";
+      theme  = "Spacedust";
 
       font = {
         name    = "Hasklug Nerd Font Mono";
