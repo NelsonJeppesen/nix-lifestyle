@@ -1,0 +1,11 @@
+enable-colors = 'always'
+max-history-size = 1000
+prompt = 'fend: '
+[colors]
+number = {foreground = 'yellow'}
+string = { foreground = 'yellow', bold = true }
+identifier = { foreground = 'white' }
+keyword = { foreground = 'blue', bold = true }
+built-in-function = { foreground = 'blue', bold = true }
+date = {}
+other = { foreground = 'blue'}
