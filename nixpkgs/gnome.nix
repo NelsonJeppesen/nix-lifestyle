@@ -2,14 +2,16 @@
 
 {
   home.packages = [
+    #pkgs.gnomeExtensions.bluetooth-battery
+    #pkgs.gnomeExtensions.burn-my-windows
+    #pkgs.gnomeExtensions.disable-workspace-switch-animation-for-gnome-40
+    #pkgs.gnomeExtensions.gsconnect
+    #pkgs.gnomeExtensions.paperwm              # The best tiling window manager
     pkgs.flameshot                            # Fancy screenshot tool
     pkgs.gnome3.gpaste
     pkgs.gnomeExtensions.appindicator         # slack notifications
     pkgs.gnomeExtensions.caffeine             # disable sleep on demand
-    pkgs.gnomeExtensions.disable-workspace-switch-animation-for-gnome-40
-    pkgs.gnomeExtensions.gsconnect
-    pkgs.gnomeExtensions.paperwm              # The best tiling window manager
-    pkgs.gnomeExtensions.burn-my-windows
+    pkgs.gnomeExtensions.material-shell
     pkgs.gnomeExtensions.run-or-raise
     pkgs.wmctrl                               # Used to "focus or launch" apps
   ];
@@ -29,13 +31,14 @@
 
     "org/gnome/shell" = {
       enabled-extensions = [
+        "GPaste@gnome-shell-extensions.gnome.org" # clipboard manager with img support
         "appindicatorsupport@rgcjonas.gmail.com"  # show notifications e.g. slack
         "caffeine@patapon.info"                   # top bar icon to prevent sleep
-        "GPaste@gnome-shell-extensions.gnome.org" # clipboard manager with img support
-        "gsconnect@andyholmes.github.io"          # connect to my phone
-        "paperwm@hedning:matrix.org"              # paperwm - best scrolling WM there is
-        "instantworkspaceswitcher@amalantony.net" # fix some UI glitches gnome40+paperwm
+        "material-shell@papyelgringo"
         "run-or-raise@edvard.cz"
+        #"gsconnect@andyholmes.github.io"          # connect to my phone
+        #"instantworkspaceswitcher@amalantony.net" # fix some UI glitches gnome40+paperwm
+        #"paperwm@hedning:matrix.org"              # paperwm - best scrolling WM there is
       ];
     };
 
@@ -100,6 +103,7 @@
       minimize                      = [];  # Free up <Super>h
       switch-input-source           = [];  # Free up <Super>space
       switch-input-source-backward  = [];  # Free up <Super><Shift>space
+      toggle-message-tray           = [];  # Free up <Super>m
     };
 
     "org/gnome/mutter" = {

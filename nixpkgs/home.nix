@@ -4,7 +4,7 @@
 
   imports = [
     ./git.nix
-    ./gnome-paperwm.nix
+    ./gnome.nix
     ./kitty.nix
     ./neovim.nix
     ./zsh.nix

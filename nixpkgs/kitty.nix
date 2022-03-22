@@ -31,6 +31,7 @@
       };
 
       settings = {
+        linux_display_server        = "x11";
         background_opacity          = "1.0";
         bold_font                   = "Hasklug Medium Nerd Font Complete Mono";
         copy_on_select              = true;
