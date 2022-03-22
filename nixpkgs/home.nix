@@ -28,6 +28,8 @@
      file.".config/fend/config.toml".source = dotfiles/fend.toml;
 
      packages = [
+      pkgs.libreoffice
+
       # jeppesen.io
       pkgs.hugo
 
