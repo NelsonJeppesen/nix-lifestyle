@@ -47,7 +47,7 @@ in
   services.sshd.enable    = lib.mkDefault true;
 
   users.users.nelson.isNormalUser = lib.mkDefault true;
-  users.users.nelson.extraGroups  = lib.mkDefault [ "wheel" "networkmanager" "docker"];
+  users.users.nelson.extraGroups  = lib.mkDefault [ "wheel" "networkmanager" "docker" "plugdev"];
 
   # Core packages I use
   environment.systemPackages = with pkgs; [
