@@ -48,6 +48,10 @@
       pkgs.ssm-session-manager-plugin
       pkgs.terraform
 
+      # better shell scripts
+      pkgs.shellcheck
+      pkgs.shfmt
+
       # Basic shell tools
       pkgs.btop
       pkgs.curl

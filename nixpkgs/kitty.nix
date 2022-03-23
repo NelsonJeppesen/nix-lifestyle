@@ -10,8 +10,9 @@
 
     kitty = {
       enable = true;
-      #theme  = "Galaxy";
-      theme  = "Spacedust";
+      theme  = "Galaxy";
+      #theme  = "Spacedust";
+      #theme  = "Seafoam Pastel";
 
       font = {
         name    = "Hasklug Nerd Font Mono";
@@ -44,7 +45,7 @@
         # Stack -- Only a single maximized window is shown at a time
         # Tall -- One (or optionally more) windows are shown full height on the left, the rest of the windows are shown one below the other on the right
         # Vertical -- All windows are shown one below the other
-        font_size                   = "15.0";
+        font_size                   = "13.0";
         hide_window_decorations     = true ;
         inactive_text_alpha         = "0.5";
         macos_show_window_title_in  = "none" ;

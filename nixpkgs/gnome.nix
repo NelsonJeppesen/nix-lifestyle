@@ -6,7 +6,6 @@
     #pkgs.gnomeExtensions.burn-my-windows
     #pkgs.gnomeExtensions.disable-workspace-switch-animation-for-gnome-40
     #pkgs.gnomeExtensions.gsconnect
-    #pkgs.gnomeExtensions.paperwm              # The best tiling window manager
     pkgs.flameshot                            # Fancy screenshot tool
     pkgs.gnome3.gpaste
     pkgs.gnomeExtensions.appindicator         # slack notifications
