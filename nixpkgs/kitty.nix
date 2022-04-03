@@ -21,12 +21,10 @@
 
       keybindings = {
         "kitty_mod+backspace" = "close_window";
-        "kitty_mod+j"         = "next_window";
-        "kitty_mod+k"         = "prev_window";
-        "kitty_mod+l"         = "next_tab";
-        "kitty_mod+h"         = "prev_tab";
-        "kitty_mod+right"     = "no-op";
-        "kitty_mod+left"      = "no-op";
+        "kitty_mod+down"      = "next_window";
+        "kitty_mod+up"        = "prev_window";
+        "kitty_mod+right"     = "next_tab";
+        "kitty_mod+left"      = "prev_tab";
         "kitty_mod+s"         = "show_scrollback";
         "kitty_mod+]"         = "next_layout";
       };
@@ -53,7 +51,7 @@
         strip_trailing_spaces       = "smart";
         tab_bar_style               = "powerline";
         tab_powerline_style         = "slanted";
-        #term                        = "xterm-256color";
+        term                        = "xterm-256color";
         update_check_interval       = "0";
         window_border_width         = "0.0pt";
         window_margin_width         = "7";

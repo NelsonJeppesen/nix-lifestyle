@@ -19,6 +19,57 @@
 
   dconf.settings = {
 
+    "org/gnome/shell/extensions/materialshell/binding" = {
+      app-launcher                = ["<Super>space"];
+      cycle-tiling-layout         = [];
+      focus-monitor-down          = [];
+      focus-monitor-left          = [];
+      focus-monitor-right         = [];
+      focus-monitor-up            = [];
+      kill-focused-window         = ["<Super>BackSpace"];
+      last-workspace              = [];
+      move-window-bottom          = ["<Control><Super>Down"];
+      move-window-left            = ["<Control><Super>Left"];
+      move-window-monitor-down    = [];
+      move-window-monitor-left    = [];
+      move-window-monitor-right   = [];
+      move-window-monitor-up      = [];
+      move-window-right           = ["<Control><Super>Right"];
+      move-window-top             = ["<Control><Super>Up"];
+      next-window                 = ["<Super>Right"];
+      next-workspace              = ["<Super>Down"];
+      previous-window             = ["<Super>Left"];
+      previous-workspace          = ["<Super>Up"];
+      resize-window-down          = [];
+      resize-window-left          = [];
+      resize-window-right         = [];
+      resize-window-up            = [];
+      reverse-cycle-tiling-layout = [];
+    };
+
+
+    "org/gnome/shell/extensions/materialshell/layouts" = {
+      screen-gap  = 0;
+    };
+
+    "org/gnome/shell/extensions/materialshell/theme" = {
+      clock-app-launcher      = false;
+      clock-horizontal        = false;
+      panel-icon-color        = false;
+      panel-icon-style        = "application";
+      panel-opacity           = 0;
+      panel-size              = 35;
+      primary-color           = "#1a5fb4";
+      surface-opacity         = 99;
+      taskbar-item-style      = "full";
+      vertical-panel-position = "left";
+    };
+
+    "org/gnome/shell/extensions/materialshell/tweaks" = {
+      cycle-through-windows     =true;
+      cycle-through-workspaces  =true;
+    };
+
     # Use capslock as super key
     "org/gnome/desktop/input-sources" = {
       xkb-options = [
@@ -65,37 +116,20 @@
       #cycle-width-steps       = [0.38195 0.6 0.8];
     };
 
-    "org/gnome/shell/extensions/paperwm/keybindings" = {
-      switch-left             = ["<Super>h"];
-      switch-right            = ["<Super>l"];
-    };
-
-    "org/gnome/shell/extensions/paperwm/workspaces" = {
-      list = ["home" "media" "2" "3"];
-    };
-
-    "org/gnome/shell/extensions/paperwm/workspaces/home" = {
-      index = 0;
-      name  = "Home";
-    };
-
-    "org/gnome/shell/extensions/paperwm/workspaces/media" = {
-      index = 1;
-      name  = "Media";
-    };
-
-    "org/gnome/shell/extensions/paperwm/workspaces/2" = {
-      index = 2;
-      name  = "Misc 0";
-    };
-
-    "org/gnome/shell/extensions/paperwm/workspaces/3" = {
-      index = 3;
-      name  = "3";
-    };
-
     "org/gnome/shell/keybindings" = {
-      toggle-overview         = [];  # Free up <Super>S
+      # free up keys used by material-shell
+      switch-to-application-1 = [];
+      switch-to-application-2 = [];
+      switch-to-application-3 = [];
+      switch-to-application-4 = [];
+      switch-to-application-5 = [];
+      switch-to-application-6 = [];
+      switch-to-application-7 = [];
+      switch-to-application-8 = [];
+      switch-to-application-9 = [];
+      toggle-application-view = [];
+      toggle-message-tray     = [];
+      toggle-overview         = [];
     };
 
     "org/gnome/desktop/wm/keybindings" = {
