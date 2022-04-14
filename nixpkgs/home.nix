@@ -7,7 +7,7 @@
     ./gnome.nix
     ./kitty.nix
     ./neovim.nix
-    ./zsh.nix
+    ./shell.nix
   ];
 
   programs.home-manager.enable = true;
@@ -54,10 +54,13 @@
 
       # Basic shell tools
       pkgs.btop
+      pkgs.choose
       pkgs.curl
       pkgs.dnsutils
       pkgs.fend
+      pkgs.glow
       pkgs.jq
+      pkgs.nushell
       pkgs.nvimpager
       pkgs.p7zip
       pkgs.ripgrep

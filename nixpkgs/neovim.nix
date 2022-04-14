@@ -20,6 +20,14 @@
           #{ plugin = dressing-nvim; }
 
           # -------------------------------------- Lua Plugins -------------------------------------------------
+
+          # https://github.com/ellisonleao/glow.nvim
+          #  "A markdown preview directly in your neovim"
+          glow-nvim
+
+          vimwiki
+
+          # TODO add notes
           nvim-web-devicons
 
           { plugin = surround-nvim ;
@@ -55,10 +63,10 @@
             config = "lua require('neoscroll').setup({})";
           }
 
+          # TODO broken in nixpkgs
           # https://github.com/SidOfc/mkdx/
           #   "A vim plugin that adds some nice extra's for working with markdown documents"
           #mkdx
-          vim-markdown
 
           # https://github.com/nvim-telescope/telescope.nvim
           #   "highly extendable fuzzy finder over lists"

@@ -2,9 +2,10 @@
 {
   programs = {
 
-    direnv.enable = true;
-    fzf.enable    = true;
-
+    direnv.enable  = true;
+    fzf.enable     = true;
+    nushell.enable = true;
+    zoxide.enable  = true;
 
     zsh = {
       enable = true;
@@ -72,6 +73,8 @@
       };
 
       shellAliases = {
+        cd = "echo 'hey! thats not z'";
+
         # Enable aliases from within `watch`
         watch   = "watch ";
 
@@ -86,6 +89,7 @@
         tf  = "terraform";
         tfp = "terraform plan";
         tfa = "terraform apply";
+        tsd = "terraform state rm $(terraform state list | fzf --multi)";
         tss = "terraform state show $(terraform state list | fzf)";
         tt  = "terraform taint $(terraform state list | fzf --multi)";
 
