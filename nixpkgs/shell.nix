@@ -79,14 +79,14 @@
         h        = "helmfile";
         #helmfile = "echo idiot";
 
-        # train to z and go up dir faster
-        cd      = "echo 'hey! thats not z'";
-        ".."    = "z ..";
-        "..."   = "z ../..";
-        "...."  = "z ../../..";
+        # use zoxide
+        cd     = "z";
+        ".."   = "z ..";
+        "..."  = "z ../..";
+        "...." = "z ../../..";
 
         # Enable aliases from within `watch`
-        watch   = "watch ";
+        watch = "watch ";
 
         # reset terminal
         rst = "cd ~/s; clear";
@@ -100,9 +100,9 @@
         ta  = "terraform apply";
         ti  = "terraform init";
         tp  = "terraform plan";
-        tsd = "terraform state rm $(terraform state list | fzf --multi)";
+        tsd = "terraform state rm   $(terraform state list | fzf --multi)";
         tss = "terraform state show $(terraform state list | fzf)";
-        tt  = "terraform taint $(terraform state list | fzf --multi)";
+        tt  = "terraform taint      $(terraform state list | fzf --multi)";
 
         # kube
         uc  = "kubectx";
