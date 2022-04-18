@@ -51,8 +51,8 @@
     CPU_SCALING_GOVERNOR_ON_BAT     = "powersave";
     INTEL_GPU_BOOST_FREQ_ON_BAT     = "700";
     INTEL_GPU_MAX_FREQ_ON_BAT       = "700";
-    INTEL_GPU_MIN_FREQ_ON_BAT       = "100";
+    #INTEL_GPU_MIN_FREQ_ON_BAT      = "100";
     RESTORE_DEVICE_STATE_ON_STARTUP = "0";
-    SCHED_POWERSAVE_ON_BAT = "1";
+    SCHED_POWERSAVE_ON_BAT          = "1";
   };
 }

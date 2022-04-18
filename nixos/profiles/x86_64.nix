@@ -1,15 +1,15 @@
 { config, pkgs, stdenv, lib, ... }:
 
 {
-  boot.kernelPackages           = pkgs.linuxPackages_latest;
+  boot.kernelPackages = pkgs.linuxPackages_latest;
 
   virtualisation = {
-    docker = {
-      enable = true;
-    };
+    #docker = {
+    #  enable = true;
+    #};
     podman = {
       enable = true;
-      dockerCompat = false;
+      dockerCompat = true;
     };
   };
 }

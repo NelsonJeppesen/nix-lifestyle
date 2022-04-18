@@ -51,21 +51,21 @@
   #hardware.sane.enable       = true;
 
   # Remove gnome tools I don't use
-  environment.gnome.excludePackages = with pkgs; [
-    gnome-tour
-    gnome.gnome-backgrounds
-    gnome.gnome-contacts
-    gnome.gnome-calendar
-    gnome.gnome-logs
-    gnome.gnome-maps
-    gnome.gnome-music
-    gnome.gnome-screenshot
-    gnome-user-docs
-    gnome-video-effects
-    gnome.gnome-weather
-    gnome.gnome-disk-utility
-    gnome-online-accounts
-    gnome.gnome-online-miners
+  environment.gnome.excludePackages = with pkgs.gnome; [
+    pkgs.gnome-online-accounts
+    pkgs.gnome-tour
+    pkgs.gnome-user-docs
+    pkgs.gnome-video-effects
+    gnome-backgrounds
+    gnome-calendar
+    gnome-contacts
+    gnome-disk-utility
+    gnome-logs
+    gnome-maps
+    gnome-music
+    gnome-online-miners
+    gnome-screenshot
+    gnome-weather
   ];
 
   # Configure keymap in X11
