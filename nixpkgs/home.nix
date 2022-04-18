@@ -1,5 +1,16 @@
-{ config, pkgs, ... }:
-{
+{ config, lib,pkgs, ... }:
+  # Add `openssh` to git-sync path so it can use sshkeys to sign my commits
+  let git-sync = pkgs.git-sync.overrideAttrs (oldAttrs: rec {
+    wrapperPath = with lib; makeBinPath [
+      pkgs.inotify-tools
+      pkgs.coreutils
+      pkgs.git
+      pkgs.gnugrep
+      pkgs.gnused
+      pkgs.openssh
+    ];
+  });
+in {
   nixpkgs.config.allowUnfree = true;
 
   imports = [
@@ -16,7 +27,8 @@
   home.sessionPath = [ "/home/nelson/.local/bin" ];
 
   services.git-sync.enable = true;
-  services.git-sync.repositories.notes.uri = "bogus";
+  services.git-sync.package = git-sync;  # use patched derivation
+  services.git-sync.repositories.notes.uri = "manualy-git-clone-the-repo";
   services.git-sync.repositories.notes.path = "/home/nelson/s/notes";
 
   home = {
