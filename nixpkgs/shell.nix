@@ -73,7 +73,17 @@
       };
 
       shellAliases = {
-        cd = "echo 'hey! thats not z'";
+        g   = "git";
+        #git = "echo idiot";
+
+        h        = "helmfile";
+        #helmfile = "echo idiot";
+
+        # train to z and go up dir faster
+        cd      = "echo 'hey! thats not z'";
+        ".."    = "z ..";
+        "..."   = "z ../..";
+        "...."  = "z ../../..";
 
         # Enable aliases from within `watch`
         watch   = "watch ";
@@ -86,9 +96,10 @@
         ff = "clear;fend";
 
         # terraform
-        tf  = "terraform";
-        tfp = "terraform plan";
-        tfa = "terraform apply";
+        t   = "terraform";
+        ta  = "terraform apply";
+        ti  = "terraform init";
+        tp  = "terraform plan";
         tsd = "terraform state rm $(terraform state list | fzf --multi)";
         tss = "terraform state show $(terraform state list | fzf)";
         tt  = "terraform taint $(terraform state list | fzf --multi)";

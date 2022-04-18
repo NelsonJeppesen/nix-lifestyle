@@ -68,6 +68,7 @@ in {
       pkgs.btop
       pkgs.choose
       pkgs.curl
+      pkgs.dasel
       pkgs.dnsutils
       pkgs.fend
       pkgs.glow
@@ -76,6 +77,7 @@ in {
       pkgs.nvimpager
       pkgs.p7zip
       pkgs.ripgrep
+      pkgs.up
       pkgs.vault
       pkgs.wget
 
