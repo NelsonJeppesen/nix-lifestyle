@@ -56,6 +56,7 @@ in {
 
       # Cloud managment
       pkgs.awscli2
+      pkgs.dbeaver
       pkgs.google-cloud-sdk
       pkgs.ssm-session-manager-plugin
       pkgs.terraform

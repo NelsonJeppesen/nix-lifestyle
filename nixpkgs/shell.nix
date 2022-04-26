@@ -73,11 +73,18 @@
       };
 
       shellAliases = {
-        g   = "git";
-        #git = "echo idiot";
+        # fuzzy open this nix config in neovim
+        mynix = ''vim $(find ~/s/play/nix-lifestyle|grep  '.nix$'|fzf)'';
 
-        h        = "helmfile";
-        #helmfile = "echo idiot";
+        # short 'n sweet
+        g = "~/.nix-profile/bin/git";
+        h = "~/.nix-profile/bin/helmfile";
+        n = "vim ~/s/notes/$(date +work-%Y-%q).md";
+        s = "vim ~/s/notes/scratch.md";
+
+        # retrain my old mind
+        git = "bad";
+        helmfile = "bad";
 
         # use zoxide
         cd     = "z";
@@ -104,6 +111,9 @@
         tss = "terraform state show $(terraform state list | fzf)";
         tt  = "terraform taint      $(terraform state list | fzf --multi)";
 
+        # use fuzzy finder to connect to one more more vpns quickly
+        vpn = "nmcli con|grep vpn|grep -- --|choose 0|fzf --multi|xargs --max-procs 9 -L1 nmcli con up id";
+
         # kube
         uc  = "kubectx";
         k   = "kubectl";
@@ -111,10 +121,6 @@
         kg  = "kubectl get";
         kgs = ''kubectl get --no-headers -o custom-columns=":metadata.name"'';
         kdp = "k delete pod $(kgs pod|fzf --multi)";
-
-        # notes
-        n   = "vim ~/s/notes/$(date +work-%Y-%q).md";
-        s   = "vim ~/s/notes/scratch.md";
 
         # interactive ripgrep
         irg = ''INITIAL_QUERY=""

@@ -29,29 +29,23 @@
       aliases = {
         a      = "add";
         ap     = "add * --patch";
-        co     = "checkout";
-        c      = "commit -m";
-        some   = "!git fetch -a && git pull";
-
-        # Create reate a list of branches sorted by last updated with authorname
         br     = ''!git branch --all --sort=authordate --format="%(color:blue)%(authordate:relative);%(color:red)%(authorname);%(color:white)%(color:bold)%(refname:short)" "$@" | column -s ";" -t'';
-
+        c      = "commit -m";
+        co     = "checkout";
+        dfm    = "diff origin/main";
+        dfmast = "diff origin/master";
         ps     = "push";
         psf    = "push --force-with-lease";
-        s      = "status";
-
-        st     = "stash";
-        stp    = "stash pop";
-        stc    = "stash clear";
-
-        dfmast = "diff origin/master";
-        dfm    = "diff origin/main";
-
-        rbhead = "rebase --interactive HEAD~9";
-        rbmast = "rebase --interactive origin/master";
         rb     = "rebase --interactive origin/main";
         rba    = "rebase --abort";
         rbc    = "rebase --continue";
+        rbhead = "rebase --interactive HEAD~9";
+        rbmast = "rebase --interactive origin/master";
+        s      = "status";
+        some   = "!git fetch -a && git pull";
+        st     = "stash";
+        stc    = "stash clear";
+        stp    = "stash pop";
       };
     };
   };
