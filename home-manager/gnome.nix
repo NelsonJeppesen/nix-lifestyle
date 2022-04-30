@@ -10,12 +10,12 @@
     pkgs.gnome3.gpaste
     pkgs.gnomeExtensions.appindicator         # slack notifications
     pkgs.gnomeExtensions.caffeine             # disable sleep on demand
-    pkgs.gnomeExtensions.material-shell
+    #pkgs.gnomeExtensions.material-shell
     pkgs.gnomeExtensions.run-or-raise
     pkgs.wmctrl                               # Used to "focus or launch" apps
   ];
 
-  home.file.".config/run-or-raise/shortcuts.conf".source = dotfiles/shortcuts.conf;
+  home.file.".config/run-or-raise/shortcuts.conf".source = ../dotfiles/shortcuts.conf;
 
   dconf.settings = {
 
@@ -80,6 +80,8 @@
     };
 
     "org/gnome/shell" = {
+      disable-user-extensions = false;
+
       enabled-extensions = [
         "GPaste@gnome-shell-extensions.gnome.org" # clipboard manager with img support
         "appindicatorsupport@rgcjonas.gmail.com"  # show notifications e.g. slack

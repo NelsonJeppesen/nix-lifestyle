@@ -16,9 +16,9 @@
   boot.extraModprobeConfig = ''
     #options snd_hda_intel power_save=2
     #options iwlwifi power_save=Y power_level=3
-    options iwlwifi power_save=1 d0i3_disable=0 uapsd_disable=0
-    options iwldvm force_cam=0
-    options iwlmvm power_scheme=3
+    #options iwlwifi power_save=1 d0i3_disable=0 uapsd_disable=0
+    #options iwldvm force_cam=0
+    #options iwlmvm power_scheme=3
   '';
 
   # Ensure modules used for efficent disk encryption are loaded

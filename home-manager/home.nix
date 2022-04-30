@@ -1,4 +1,4 @@
-{ config, lib,pkgs, ... }:
+{ config,lib,pkgs, ... }:
   # Add `openssh` to git-sync path so it can use sshkeys to sign my commits
   let git-sync = pkgs.git-sync.overrideAttrs (oldAttrs: rec {
     wrapperPath = with lib; makeBinPath [
@@ -13,13 +13,13 @@
 in {
   nixpkgs.config.allowUnfree = true;
 
-  imports = [
-    ./git.nix
-    ./gnome.nix
-    ./kitty.nix
-    ./neovim.nix
-    ./shell.nix
-  ];
+  #systemd.user.services.tilda  = {
+  #  serviceConfig.PassEnvironment = "DISPLAY";
+  #  script = ''
+  #    ${pkgs.tilda}/bin/tilda
+  #  '';
+  #  wantedBy = [ "multi-user.target" ]; # starts after login
+  #};
 
   programs.home-manager.enable = true;
 
@@ -34,10 +34,11 @@ in {
   home = {
 
      #file.".config/tuir/tuir.cfg".source = dotfiles/tuir.cfg;
-     file.".local/bin".source = ./bin;
-     file.".terraform.d/plugin-cache/.empty".source = dotfiles/empty;
-     file.".curlrc".source = dotfiles/curlrc;
-     file.".config/fend/config.toml".source = dotfiles/fend.toml;
+     file.".local/bin".source = ../bin;
+     file.".terraform.d/plugin-cache/.empty".source = ../dotfiles/empty;
+     file.".curlrc".source = ../dotfiles/curlrc;
+     file.".config/fend/config.toml".source = ../dotfiles/fend.toml;
+
 
      packages = [
       pkgs.libreoffice
@@ -52,6 +53,7 @@ in {
       pkgs.firefox
       pkgs.google-chrome
       pkgs.kitty
+      pkgs.tilda
       pkgs.spotify
 
       # Cloud managment

@@ -28,7 +28,7 @@ in
   programs.neovim.vimAlias      = lib.mkDefault true;
   programs.neovim.viAlias       = lib.mkDefault true;
 
-  networking.useNetworkd        = lib.mkDefault true;
+  #networking.useNetworkd        = lib.mkDefault true;
   networking.dhcpcd.enable      = lib.mkDefault false;
   systemd.network.enable        = lib.mkDefault true;
 
@@ -47,11 +47,11 @@ in
   services.sshd.enable    = lib.mkDefault true;
 
   users.users.nelson.isNormalUser = lib.mkDefault true;
-  users.users.nelson.extraGroups  = lib.mkDefault [ "wheel" "networkmanager" "docker"];
+  users.users.nelson.extraGroups  = lib.mkDefault [ "wheel" "networkmanager" "plugdev"];
 
   # Core packages I use
   environment.systemPackages = with pkgs; [
-    wget curl git
+    wget curl git comma btop
   ];
 
   networking.firewall.enable = lib.mkDefault true;

@@ -4,6 +4,7 @@
   boot.kernelPackages = pkgs.linuxPackages_latest;
 
   virtualisation = {
+    # dont think I'll go back to docker
     #docker = {
     #  enable = true;
     #};

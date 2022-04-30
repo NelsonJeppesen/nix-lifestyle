@@ -1,9 +1,12 @@
 # Dell XPS 17 2021 (9710) without nvidia
 { config, pkgs, stdenv, lib, modulesPath, ... }:
-
+let
+  home-manager = builtins.fetchTarball "https://github.com/nix-community/home-manager/archive/master.tar.gz";
+in
 {
   imports = [
     (modulesPath + "/installer/scan/not-detected.nix")
+    (import "${home-manager}/nixos")
     ../profiles/desktop.nix
     ../profiles/encrypted_disk.nix
     #../profiles/fingerprint.nix
@@ -28,5 +31,16 @@
   powerManagement.powerUpCommands   = "
     /bin/sh -c 'sleep 2'
     ${pkgs.util-linux}/bin/rfkill unblock bluetooth
-  ";
+    ";
+
+  home-manager.users.nelson = { config,lib,pkgs, ... }: {
+    imports = [
+      ../home-manager/home.nix
+      ../home-manager/git.nix
+      ../home-manager/gnome.nix
+      ../home-manager/kitty.nix
+      ../home-manager/neovim.nix
+      ../home-manager/shell.nix
+    ];
+  };
 }
