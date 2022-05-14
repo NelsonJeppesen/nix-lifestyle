@@ -4,13 +4,17 @@ let
   zsh = builtins.fetchurl "${base}/nixos/profiles/zsh.nix";
 in
 {
-  imports = [zsh];
+  #imports = [zsh];
   nixpkgs.config.allowUnfree  = true;     # Chrome, steam etc
   #boot.consoleLogLevel        = lib.mkDefault 3;        # hide ACPI error
   console.earlySetup          = lib.mkDefault true;     # Set virtual console options in initrd
   #documentation.enable        = lib.mkDefault false;    # I dont use local docs
   environment.defaultPackages = lib.mkDefault [];       # Remove default pacakges
   hardware.video.hidpi.enable = lib.mkDefault true;
+
+  security.sudo.extraConfig = ''
+    Defaults timestamp_timeout=600
+  '';
 
   environment.sessionVariables = rec {
     MOZ_ENABLE_WAYLAND= "1";

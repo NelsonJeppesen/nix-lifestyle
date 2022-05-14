@@ -21,6 +21,7 @@
   services.pipewire.alsa.support32Bit   = true;   # Steam support
   services.pipewire.enable              = true;
   services.pipewire.pulse.enable        = true;
+  services.pipewire.wireplumber.enable  = true;
 
   # vulkan 32bit and 64bit
   hardware.opengl.driSupport = true;
@@ -40,10 +41,10 @@
   services.gnome.gnome-initial-setup.enable   = false;
   #services.gnome.gnome-online-accounts.enable = false;
   #services.gnome.gnome-online-miners.enable   = false;
-  services.gnome.gnome-remote-desktop.enable  = false;
-  services.gnome.gnome-user-share.enable      = false;
-  services.gnome.tracker.enable               = false;
-  services.gnome.rygel.enable                 = false;
+  #services.gnome.gnome-remote-desktop.enable  = false;
+  #services.gnome.gnome-user-share.enable      = false;
+  #services.gnome.tracker.enable               = false;
+  #services.gnome.rygel.enable                 = false;
   #hardware.logitech.wireless.enable           = true;
 
   #services.printing.enable   = true;
@@ -51,22 +52,22 @@
   #hardware.sane.enable       = true;
 
   # Remove gnome tools I don't use
-  environment.gnome.excludePackages = with pkgs.gnome; [
-    pkgs.gnome-online-accounts
-    pkgs.gnome-tour
-    pkgs.gnome-user-docs
-    pkgs.gnome-video-effects
-    gnome-backgrounds
-    gnome-calendar
-    gnome-contacts
-    gnome-disk-utility
-    gnome-logs
-    gnome-maps
-    gnome-music
-    gnome-online-miners
-    gnome-screenshot
-    gnome-weather
-  ];
+  #environment.gnome.excludePackages = with pkgs.gnome; [
+  #  pkgs.gnome-online-accounts
+  #  pkgs.gnome-tour
+  #  pkgs.gnome-user-docs
+  #  pkgs.gnome-video-effects
+  #  gnome-backgrounds
+  #  gnome-calendar
+  #  gnome-contacts
+  #  gnome-disk-utility
+  #  gnome-logs
+  #  gnome-maps
+  #  gnome-music
+  #  gnome-online-miners
+  #  gnome-screenshot
+  #  gnome-weather
+  #];
 
   # Configure keymap in X11
   services.xserver.layout = "us";

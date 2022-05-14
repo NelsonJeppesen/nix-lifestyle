@@ -17,7 +17,7 @@
 
       extraConfig = {
         # Sign all commits using ssh key
-        #commit.gpgsign = true;
+        commit.gpgsign = true;
         gpg.format = "ssh";
         gpg.ssh.allowedSignersFile = "~/.ssh/allowed_signers";
         user.signingkey = "~/.ssh/id_ed25519.pub";
@@ -29,7 +29,7 @@
       aliases = {
         a      = "add";
         ap     = "add * --patch";
-        br     = ''!git branch --all --sort=authordate --format="%(color:blue)%(authordate:relative);%(color:red)%(authorname);%(color:white)%(color:bold)%(refname:short)" "$@" | column -s ";" -t'';
+        br     = ''!git co $(git branch --list --sort=-authordate |fzf --height 15)'';
         c      = "commit -m";
         co     = "checkout";
         dfm    = "diff origin/main";

@@ -21,6 +21,14 @@ in {
   #  wantedBy = [ "multi-user.target" ]; # starts after login
   #};
 
+  imports = [
+    ./git.nix
+    ./gnome.nix
+    ./kitty.nix
+    ./neovim.nix
+    ./shell.nix
+  ];
+
   programs.home-manager.enable = true;
 
   # Add local scripts
@@ -41,7 +49,7 @@ in {
 
 
      packages = [
-      pkgs.libreoffice
+      #pkgs.libreoffice
 
       # jeppesen.io
       pkgs.hugo

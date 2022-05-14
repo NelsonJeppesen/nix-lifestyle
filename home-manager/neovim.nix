@@ -179,6 +179,12 @@
           #   "Train yourself with vim motions and make your own train tracks :)"
           train-nvim
 
+          # https://github.com/nacro90/numb.nvim/
+          #   "Peek lines just when you intend"
+          { plugin = numb-nvim;
+            config = "lua require('numb').setup()";
+          }
+
           # ------------------------------------ Vimscript Plugins ---------------------------------------------
 
           # https://github.com/hashivim/vim-terraform/

@@ -4,7 +4,7 @@ let
   zsh = builtins.fetchurl "${base}/nixos/profiles/zsh.nix";
 in
 {
-  imports = [zsh];
+  #imports = [zsh];
   nixpkgs.config.allowUnfree  = true;     # Chrome, steam etc
   #boot.consoleLogLevel        = lib.mkDefault 3;        # hide ACPI error
   console.earlySetup          = lib.mkDefault true;     # Set virtual console options in initrd

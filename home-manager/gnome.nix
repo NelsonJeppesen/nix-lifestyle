@@ -2,16 +2,17 @@
 
 {
   home.packages = [
+    #pkgs.flameshot                            # Fancy screenshot tool
     #pkgs.gnomeExtensions.bluetooth-battery
     #pkgs.gnomeExtensions.burn-my-windows
     #pkgs.gnomeExtensions.disable-workspace-switch-animation-for-gnome-40
     #pkgs.gnomeExtensions.gsconnect
-    pkgs.flameshot                            # Fancy screenshot tool
     pkgs.gnome3.gpaste
     pkgs.gnomeExtensions.appindicator         # slack notifications
     pkgs.gnomeExtensions.caffeine             # disable sleep on demand
-    #pkgs.gnomeExtensions.material-shell
+    pkgs.gnomeExtensions.material-shell
     pkgs.gnomeExtensions.run-or-raise
+    pkgs.gnomeExtensions.github-notifications
     pkgs.wmctrl                               # Used to "focus or launch" apps
   ];
 
@@ -66,8 +67,8 @@
     };
 
     "org/gnome/shell/extensions/materialshell/tweaks" = {
-      cycle-through-windows     =true;
-      cycle-through-workspaces  =true;
+      cycle-through-windows    = true;
+      cycle-through-workspaces = true;
     };
 
     # Use capslock as super key
@@ -86,7 +87,7 @@
         "GPaste@gnome-shell-extensions.gnome.org" # clipboard manager with img support
         "appindicatorsupport@rgcjonas.gmail.com"  # show notifications e.g. slack
         "caffeine@patapon.info"                   # top bar icon to prevent sleep
-        "material-shell@papyelgringo"
+        #"material-shell@papyelgringo"
         "run-or-raise@edvard.cz"
         #"gsconnect@andyholmes.github.io"          # connect to my phone
         #"instantworkspaceswitcher@amalantony.net" # fix some UI glitches gnome40+paperwm
@@ -94,28 +95,27 @@
       ];
     };
 
+    "org/gnome/shell/extensions/appindicator" = {
+      tray-pos = "center";
+    };
+
     "org/gnome/GPaste" = {
-      "images-support"    = true;
-      "max-history-size"  = lib.hm.gvariant.mkUint64 2000;
-      "max-memory-usage"  = lib.hm.gvariant.mkUint64 100;
-      "trim-items"        = true;
+      images-support   = true;
+      max-history-size = lib.hm.gvariant.mkUint64 2000;
+      max-memory-usage = lib.hm.gvariant.mkUint64 100;
+      trim-items       = true;
     };
 
     "org/gnome/desktop/interface" = {
-      clock-format  = "12h";
+      clock-format            = "12h";
+      color-scheme            = "prefer-dark";
+      enable-hot-corners      = false;
+      show-battery-percentage = true;
     };
 
     "org/gnome/shell/extensions/caffeine" = {
       show-notifications      = false;
       user-enabled            = false;
-    };
-
-    "org/gnome/shell/extensions/paperwm" = {
-      horizontal-margin       = 0;
-      vertical-margin         = 0;
-      vertical-margin-bottom  = 0;
-      window-gap              = 0;
-      #cycle-width-steps       = [0.38195 0.6 0.8];
     };
 
     "org/gnome/shell/keybindings" = {
@@ -177,6 +177,11 @@
       binding = "<Shift><Super>backslash";
       command = "kitty --single-instance";
       name    = "kitty (new window)";
+    };
+
+    "org/gnome/mutter" = {
+      # active screen edge. Drag windows to edge of screen to resize
+      edge-tiling = true;
     };
 
     # custom bindings 9x - misc
