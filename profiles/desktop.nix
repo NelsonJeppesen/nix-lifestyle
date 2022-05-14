@@ -12,7 +12,7 @@
   system.activationScripts.setGnomeProfilePicture = ''
     mkdir -p /var/lib/AccountsService/icons
     if [[ ! -h /var/lib/AccountsService/icons/nelson ]]; then
-      ln -s /etc/nixos/nelson.jpeg /var/lib/AccountsService/icons/nelson
+      cp /etc/nixos/nelson.jpeg /var/lib/AccountsService/icons/nelson
     fi
   '';
 
