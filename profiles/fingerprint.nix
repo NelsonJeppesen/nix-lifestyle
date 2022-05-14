@@ -1,4 +1,4 @@
-{ config, pkgs, stdenv, lib,... }:
+{ config, pkgs, stdenv, lib, ... }:
 
 {
   # Enable fingerprint reader for login but not sudo

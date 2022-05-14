@@ -1,4 +1,4 @@
-{ config, pkgs, stdenv, lib,... }:
+{ config, pkgs, stdenv, lib, ... }:
 
 {
   hardware.rtl-sdr.enable = lib.mkDefault true;

@@ -6,9 +6,9 @@
   programs = {
 
     neovim = {
-      enable       = true;
-      viAlias      = true;
-      vimAlias     = true;
+      enable = true;
+      viAlias = true;
+      vimAlias = true;
       vimdiffAlias = true;
 
       # Install Vim Plugins, keep configuration local to install block if possible
@@ -30,7 +30,8 @@
           # TODO add notes
           nvim-web-devicons
 
-          { plugin = surround-nvim ;
+          {
+            plugin = surround-nvim;
             config = ''
               lua require"surround".setup{}
             '';
@@ -49,7 +50,8 @@
 
           # https://github.com/akinsho/bufferline.nvim
           #  "A snazzy bufferline for Neovim"
-          { plugin = bufferline-nvim;
+          {
+            plugin = bufferline-nvim;
             config = ''
               lua require("bufferline").setup{}
               nnoremap <silent> <C-h> :BufferLineCyclePrev<CR>
@@ -59,7 +61,8 @@
 
           # https://github.com/karb94/neoscroll.nvim/
           #   "Smooth scrolling neovim plugin written in lua"
-          { plugin = neoscroll-nvim;
+          {
+            plugin = neoscroll-nvim;
             config = "lua require('neoscroll').setup({})";
           }
 
@@ -74,7 +77,8 @@
 
           # https://github.com/akinsho/toggleterm.nvim
           #   "A neovim plugin to persist and toggle multiple terminals during an editing session"
-          { plugin = toggleterm-nvim;
+          {
+            plugin = toggleterm-nvim;
             config = ''
               lua << EOF
               require("toggleterm").setup{
@@ -91,7 +95,8 @@
 
           # https://github.com/mhartington/formatter.nvim
           #   "A format runner for neovim, written in lua"
-          { plugin = formatter-nvim;
+          {
+            plugin = formatter-nvim;
             config = ''
               lua << EOF
               require('formatter').setup({
@@ -127,13 +132,15 @@
 
           # https://github.com/lewis6991/gitsigns.nvim
           #   "Super fast git decorations implemented purely in lua/teal"
-          { plugin = gitsigns-nvim;
+          {
+            plugin = gitsigns-nvim;
             config = "lua require('gitsigns').setup()";
           }
 
           # https://github.com/hoob3rt/lualine.nvim
           #   "A blazing fast and easy to configure neovim statusline written in pure lua"
-          { plugin = lualine-nvim;
+          {
+            plugin = lualine-nvim;
             config = ''
               lua << EOF
               require('lualine').setup {
@@ -148,10 +155,11 @@
 
           # https://github.com/hrsh7th/nvim-cmp
           #   "A completion plugin for neovim coded in Lua"
-          cmp-path    # cmp plugin, file path
-          cmp-buffer  # cmp plugin, buffer
-          cmp-emoji   # cmp plugin, emoji
-          { plugin = nvim-cmp;
+          cmp-path # cmp plugin, file path
+          cmp-buffer # cmp plugin, buffer
+          cmp-emoji # cmp plugin, emoji
+          {
+            plugin = nvim-cmp;
             config = ''
               lua << EOF
               local cmp = require'cmp'
@@ -171,7 +179,8 @@
 
           # https://github.com/folke/which-key.nvim
           #   "displays a popup with possible keybindings of the command you started typing"
-          { plugin = which-key-nvim;
+          {
+            plugin = which-key-nvim;
             config = "lua require('which-key').setup()";
           }
 
@@ -181,7 +190,8 @@
 
           # https://github.com/nacro90/numb.nvim/
           #   "Peek lines just when you intend"
-          { plugin = numb-nvim;
+          {
+            plugin = numb-nvim;
             config = "lua require('numb').setup()";
           }
 
@@ -201,7 +211,8 @@
 
           # https://github.com/ntpeters/vim-better-whitespace
           #   "Better whitespace highlighting for Vim"
-          { plugin = vim-better-whitespace;
+          {
+            plugin = vim-better-whitespace;
             config = ''
               let g:better_whitespace_guicolor='#556e87'
               let g:better_whitespace_operator=""
@@ -219,149 +230,152 @@
           vim-table-mode
         ];
 
-        extraConfig = ''
-          " shortmess: I: don't give the intro message when starting Vim |:intro|
-          set shortmess=I
+      extraConfig = ''
+        " shortmess: I: don't give the intro message when starting Vim |:intro|
+        set shortmess=I
 
-          imap jj <Esc>
+        imap jj <Esc>
 
-          " Hard mode
-          " Remove newbie crutches in Command Mode
-          cnoremap <Down> <Nop>
-          cnoremap <Left> <Nop>
-          cnoremap <Right> <Nop>
-          cnoremap <Up> <Nop>
 
-          " Remove newbie crutches in Insert Mode
-          inoremap <Down> <Nop>
-          inoremap <Left> <Nop>
-          inoremap <Right> <Nop>
-          inoremap <Up> <Nop>
+        " Hard mode
+        " Remove newbie crutches in Command Mode
+        cnoremap <Down> <Nop>
+        cnoremap <Left> <Nop>
+        cnoremap <Right> <Nop>
+        cnoremap <Up> <Nop>
 
-          " Remove newbie crutches in Normal Mode
-          nnoremap <Down> <Nop>
-          nnoremap <Left> <Nop>
-          nnoremap <Right> <Nop>
-          nnoremap <Up> <Nop>
+        " Remove newbie crutches in Insert Mode
+        inoremap <Down> <Nop>
+        inoremap <Left> <Nop>
+        inoremap <Right> <Nop>
+        inoremap <Up> <Nop>
 
-          " Remove newbie crutches in Visual Mode
-          vnoremap <Down> <Nop>
-          vnoremap <Left> <Nop>
-          vnoremap <Right> <Nop>
-          vnoremap <Up> <Nop>
+        " Remove newbie crutches in Normal Mode
+        nnoremap <Down> <Nop>
+        nnoremap <Left> <Nop>
+        nnoremap <Right> <Nop>
+        nnoremap <Up> <Nop>
 
-          set signcolumn=yes " always show gutter
+        " Remove newbie crutches in Visual Mode
+        vnoremap <Down> <Nop>
+        vnoremap <Left> <Nop>
+        vnoremap <Right> <Nop>
+        vnoremap <Up> <Nop>
 
-          "function InsertIfEmpty()
-          "    if @% == ""
-          "        " No filename for current buffer
-          "        Telescope find_files
-          "    endif
-          "endfunction
+        set signcolumn=yes " always show gutter
 
-          " Show search/replace in real-time
-          set inccommand=nosplit
+        "function InsertIfEmpty()
+        "    if @% == ""
+        "        " No filename for current buffer
+        "        Telescope find_files
+        "    endif
+        "endfunction
 
-          "au VimEnter * call InsertIfEmpty()
+        " Show search/replace in real-time
+        set inccommand=nosplit
 
-          set autoread
-          let mapleader=","
-          nnoremap <silent>   <leader><leader>n   Go<cr><esc>:r! date +\%Y-\%m-\%d<cr>I# <esc>o*<space>
-          nnoremap            <leader><leader>b   :GitBlameToggle<cr>
-          nnoremap            <leader><leader>c   :%y+<cr>
-          nnoremap            <leader><leader>d   :set background=dark<cr>
-          nnoremap            <leader><leader>l   :set background=light<cr>
-          nnoremap  <silent>  <leader><leader>f   :Format<cr>
-          nnoremap  <silent>  <leader><leader>a   :TableModeToggle<cr>
-          nnoremap  <silent>  <leader><leader>z   :call ToggleHiddenAll()<cr>
+        "au VimEnter * call InsertIfEmpty()
 
-          " avoid using :
-          nnoremap  <silent>  <leader>qq          :q!<cr>
-          nnoremap  <silent>  <leader>ww          :w<cr>
-          nnoremap  <silent>  <leader>wq          :wq<cr>
+        set autoread
+        let mapleader=","
+        nnoremap <silent>   <leader><leader>n   Go<cr><esc>:r! date +\%Y-\%m-\%d<cr>I# <esc>o*<space>
+        nnoremap            <leader><leader>b   :GitBlameToggle<cr>
+        nnoremap            <leader><leader>c   :%y+<cr>
+        nnoremap            <leader><leader>d   :set background=dark<cr>
+        nnoremap            <leader><leader>l   :set background=light<cr>
+        nnoremap  <silent>  <leader><leader>f   :Format<cr>
+        nnoremap  <silent>  <leader><leader>a   :TableModeToggle<cr>
+        nnoremap  <silent>  <leader><leader>z   :call ToggleHiddenAll()<cr>
 
-          " keep terminal in background
-          set hidden
+        " avoid using :
+        nnoremap  <silent>  <leader>qq          :q!<cr>
+        nnoremap  <silent>  <leader>ww          :w<cr>
+        nnoremap  <silent>  <leader>wq          :wq<cr>
 
-          " telescope-nvim fast, lisp-jit fuzy finder
-          "
-          " Fuzzy search through the output of `git ls-files` command in cwd of open file
-          " Lists files in your current working directory, respects .gitignore
-          nnoremap            <leader>fg          :execute 'Telescope git_files cwd=' . expand('%:p:h')<cr>
+        " keep terminal in background
+        set hidden
 
-          nnoremap            <leader>ff          <cmd>lua require('telescope.builtin').find_files()<cr>
-          nnoremap            <leader>f/          <cmd>lua require('telescope.builtin').current_buffer_fuzzy_find()<cr>
-          nnoremap            <leader>fb          <cmd>lua require('telescope.builtin').buffers()<cr>
-          nnoremap            <leader>fo          <cmd>lua require('telescope.builtin').file_browser()<cr>
-          nnoremap            <leader>fh          <cmd>lua require('telescope.builtin').oldfiles()<cr>
-          nnoremap            <leader>fc          <cmd>lua require('telescope.builtin').colorscheme()<cr>
-          nnoremap            <leader>fr          <cmd>lua require('telescope.builtin').registers()<cr>
+        " telescope-nvim fast, lisp-jit fuzy finder
+        "
+        " Fuzzy search through the output of `git ls-files` command in cwd of open file
+        " Lists files in your current working directory, respects .gitignore
+        nnoremap            <leader>fg          :execute 'Telescope git_files cwd=' . expand('%:p:h')<cr>
 
-          " https://github.com/tjdevries/train.nvim/
-          nnoremap            <leader>tu          :TrainUpDown<cr>
-          nnoremap            <leader>tw          :TrainWord<cr>
-          nnoremap            <leader>to          :TrainTextObj<cr>
+        nnoremap            <leader>ff          <cmd>lua require('telescope.builtin').find_files()<cr>
+        nnoremap            <leader>f/          <cmd>lua require('telescope.builtin').current_buffer_fuzzy_find()<cr>
+        nnoremap            <leader>fb          <cmd>lua require('telescope.builtin').buffers()<cr>
+        nnoremap            <leader>fo          <cmd>lua require('telescope.builtin').file_browser()<cr>
+        nnoremap            <leader>fh          <cmd>lua require('telescope.builtin').oldfiles()<cr>
+        nnoremap            <leader>fc          <cmd>lua require('telescope.builtin').colorscheme()<cr>
+        nnoremap            <leader>fr          <cmd>lua require('telescope.builtin').registers()<cr>
 
-          let s:hidden_all = 0
-          function! ToggleHiddenAll()
-              if s:hidden_all  == 0
-                  let s:hidden_all = 1
-                  set noshowmode
-                  set noruler
-                  set laststatus=0
-                  set noshowcmd
-              else
-                  let s:hidden_all = 0
-                  set showmode
-                  set ruler
-                  set laststatus=2
-                  set showcmd
-              endif
-          endfunction
+        " https://github.com/tjdevries/train.nvim/
+        nnoremap            <leader>tu          :TrainUpDown<cr>
+        nnoremap            <leader>tw          :TrainWord<cr>
+        nnoremap            <leader>to          :TrainTextObj<cr>
 
-          "set colorcolumn=120
-          set number
-          set relativenumber
+        let s:hidden_all = 0
+        function! ToggleHiddenAll()
+            if s:hidden_all  == 0
+                let s:hidden_all = 1
+                set noshowmode
+                set noruler
+                set laststatus=0
+                set noshowcmd
+            else
+                let s:hidden_all = 0
+                set showmode
+                set ruler
+                set laststatus=2
+                set showcmd
+            endif
+        endfunction
 
-          let g:gitblame_enabled = 0
+        "set colorcolumn=120
+        set number
+        set relativenumber
 
-          " set title in Kitty term tab to just the filename
-          set titlestring=%t
-          set title
+        let g:gitblame_enabled = 0
 
-          " Copy all to clipboard
-          set clipboard=unnamedplus
+        " set title in Kitty term tab to just the filename
+        set titlestring=%t
+        set title
 
-          " Make tables github markdown compatable
-          let g:table_mode_corner='|'
+        " Copy all to clipboard
+        set clipboard=unnamedplus
 
-          " enable mouse
-          set mouse=a
-          set updatetime=75
+        " Make tables github markdown compatable
+        let g:table_mode_corner='|'
 
-          " Indentation settings for using 2 spaces instead of tabs.
-          set shiftwidth=2
-          set softtabstop=2
-          set expandtab
+        " enable mouse
+        set mouse=a
+        set updatetime=75
 
-          "Autosave file when working on markdown (my notes)
-          autocmd bufreadpre ~/s/notes/*  :autocmd  TextChanged,TextChangedI <buffer> silent write
-          autocmd bufreadpre ~/s/notes/*            :set noswapfile
-          autocmd bufreadpre ~/s/notes/*            setlocal shiftwidth=4
-          autocmd bufreadpre ~/s/notes/*            setlocal softtabstop=4
-          autocmd bufreadpre ~/s/notes/*            set signcolumn=no
+        " Indentation settings for using 2 spaces instead of tabs.
+        set shiftwidth=2
+        set softtabstop=2
+        set expandtab
 
-          " Use case-insensitive search
-          set ignorecase
+        command Nixfmt %!nixpkgs-fmt
 
-          " helpfull popup for shortcuts
-          set timeoutlen=500
+        "Autosave file when working on markdown (my notes)
+        autocmd bufreadpre ~/s/notes/*  :autocmd  TextChanged,TextChangedI <buffer> silent write
+        autocmd bufreadpre ~/s/notes/*            :set noswapfile
+        autocmd bufreadpre ~/s/notes/*            setlocal shiftwidth=4
+        autocmd bufreadpre ~/s/notes/*            setlocal softtabstop=4
+        autocmd bufreadpre ~/s/notes/*            set signcolumn=no
 
-          "set conceallevel=2
+        " Use case-insensitive search
+        set ignorecase
 
-          " cant spell
-          set spelllang=en
-        '';
+        " helpfull popup for shortcuts
+        set timeoutlen=500
+
+        "set conceallevel=2
+
+        " cant spell
+        set spelllang=en
+      '';
     };
   };
 }

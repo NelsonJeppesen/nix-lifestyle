@@ -22,30 +22,30 @@
         gpg.ssh.allowedSignersFile = "~/.ssh/allowed_signers";
         user.signingkey = "~/.ssh/id_ed25519.pub";
 
-        pull = { ff       = "only";     };
-        push = { default  = "current";  };
+        pull = { ff = "only"; };
+        push = { default = "current"; };
       };
 
       aliases = {
-        a      = "add";
-        ap     = "add * --patch";
-        br     = ''!git co $(git branch --list --sort=-authordate |fzf --height 15)'';
-        c      = "commit -m";
-        co     = "checkout";
-        dfm    = "diff origin/main";
+        a = "add";
+        ap = "add * --patch";
+        br = ''!git co $(git branch --list --sort=-authordate |fzf --height 15)'';
+        c = "commit -m";
+        co = "checkout";
+        dfm = "diff origin/main";
         dfmast = "diff origin/master";
-        ps     = "push";
-        psf    = "push --force-with-lease";
-        rb     = "rebase --interactive origin/main";
-        rba    = "rebase --abort";
-        rbc    = "rebase --continue";
+        ps = "push";
+        psf = "push --force-with-lease";
+        rb = "rebase --interactive origin/main";
+        rba = "rebase --abort";
+        rbc = "rebase --continue";
         rbhead = "rebase --interactive HEAD~9";
         rbmast = "rebase --interactive origin/master";
-        s      = "status";
-        some   = "!git fetch -a && git pull";
-        st     = "stash";
-        stc    = "stash clear";
-        stp    = "stash pop";
+        s = "status";
+        some = "!git fetch -a && git pull";
+        st = "stash";
+        stc = "stash clear";
+        stp = "stash pop";
       };
     };
   };

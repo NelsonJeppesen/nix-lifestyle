@@ -1,16 +1,17 @@
-{ config,lib,pkgs, ... }:
-  # Add `openssh` to git-sync path so it can use sshkeys to sign my commits
-  let git-sync = pkgs.git-sync.overrideAttrs (oldAttrs: rec {
-    wrapperPath = with lib; makeBinPath [
-      pkgs.inotify-tools
-      pkgs.coreutils
-      pkgs.git
-      pkgs.gnugrep
-      pkgs.gnused
-      pkgs.openssh
-    ];
-  });
-in {
+{ config, lib, pkgs, ... }:
+# Add `openssh` to git-sync path so it can use sshkeys to sign my commits
+let git-sync = pkgs.git-sync.overrideAttrs (oldAttrs: rec {
+  wrapperPath = with lib; makeBinPath [
+    pkgs.inotify-tools
+    pkgs.coreutils
+    pkgs.git
+    pkgs.gnugrep
+    pkgs.gnused
+    pkgs.openssh
+  ];
+});
+in
+{
   nixpkgs.config.allowUnfree = true;
 
   #systemd.user.services.tilda  = {
@@ -35,20 +36,20 @@ in {
   home.sessionPath = [ "/home/nelson/.local/bin" ];
 
   services.git-sync.enable = true;
-  services.git-sync.package = git-sync;  # use patched derivation
+  services.git-sync.package = git-sync; # use patched derivation
   services.git-sync.repositories.notes.uri = "manualy-git-clone-the-repo";
   services.git-sync.repositories.notes.path = "/home/nelson/s/notes";
 
   home = {
 
-     #file.".config/tuir/tuir.cfg".source = dotfiles/tuir.cfg;
-     file.".local/bin".source = ../bin;
-     file.".terraform.d/plugin-cache/.empty".source = ../dotfiles/empty;
-     file.".curlrc".source = ../dotfiles/curlrc;
-     file.".config/fend/config.toml".source = ../dotfiles/fend.toml;
+    #file.".config/tuir/tuir.cfg".source = dotfiles/tuir.cfg;
+    file.".local/bin".source = ../bin;
+    file.".terraform.d/plugin-cache/.empty".source = ../dotfiles/empty;
+    file.".curlrc".source = ../dotfiles/curlrc;
+    file.".config/fend/config.toml".source = ../dotfiles/fend.toml;
 
 
-     packages = [
+    packages = [
       #pkgs.libreoffice
 
       # jeppesen.io
@@ -56,6 +57,7 @@ in {
 
       # nix
       pkgs.nixpkgs-review
+      pkgs.nixpkgs-fmt
 
       # Core GUI apps
       pkgs.firefox
