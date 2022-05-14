@@ -14,18 +14,11 @@ in
 {
   nixpkgs.config.allowUnfree = true;
 
-  #systemd.user.services.tilda  = {
-  #  serviceConfig.PassEnvironment = "DISPLAY";
-  #  script = ''
-  #    ${pkgs.tilda}/bin/tilda
-  #  '';
-  #  wantedBy = [ "multi-user.target" ]; # starts after login
-  #};
-
   imports = [
     ./git.nix
     ./gnome.nix
     ./kitty.nix
+    ./tilda.nix
     ./neovim.nix
     ./shell.nix
   ];
@@ -48,7 +41,6 @@ in
     file.".curlrc".source = ../dotfiles/curlrc;
     file.".config/fend/config.toml".source = ../dotfiles/fend.toml;
 
-
     packages = [
       #pkgs.libreoffice
 
@@ -63,7 +55,6 @@ in
       pkgs.firefox
       pkgs.google-chrome
       pkgs.kitty
-      pkgs.tilda
       pkgs.spotify
 
       # Cloud managment
