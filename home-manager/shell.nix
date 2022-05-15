@@ -3,16 +3,16 @@
 
   programs = {
 
-    direnv.enable  = true;  # load .envrc files
-    fzf.enable     = true;  # fuzzy finder
-    mcfly.enable   = true;  # sqlite based shell history
+    direnv.enable = true; # load .envrc files
+    fzf.enable = true; # fuzzy finder
+    mcfly.enable = true; # sqlite based shell history
 
     zsh = {
       enable = true;
 
-      enableAutosuggestions     = true;
-      enableCompletion          = true;
-      enableSyntaxHighlighting  = true;
+      enableAutosuggestions = true;
+      enableCompletion = true;
+      enableSyntaxHighlighting = true;
 
       initExtraFirst = ''
         # Setup emacs keybindings before fzf bindings are added
@@ -54,25 +54,20 @@
       sessionVariables = {
         # Install non-free packages e.g. Steam
         NIXPKGS_ALLOW_UNFREE = "1";
-
         FZF_DEFAULT_OPTS = "--layout=reverse";
-
         # Autosuggest as orange
         ZSH_AUTOSUGGEST_HIGHLIGHT_STYLE = "fg=3";
-
-        MCFLY_FUZZY   = "true";
+        MCFLY_FUZZY = "true";
         MCFLY_RESULTS = "20";
-
         # Use NeoVim is my editor for all
         EDITOR = "nvim";
-
         # Use NemVim as my pager; enable copy into clipboard
         PAGER = "nvimpager -- --cmd 'set clipboard^=unnamed,unnamedplus'";
       };
 
       shellAliases = {
-        # fuzzy open this nix config in neovim
         mynix = ''vim $(find ~/s/play/nix-lifestyle|grep  '.nix$'|fzf)'';
+        weather = "${pkgs.curl}/bin/curl wttr.in/\\?format=4";
 
         # short 'n sweet
         g = "~/.nix-profile/bin/git";
@@ -85,8 +80,8 @@
         helmfile = "bad";
 
         # use zoxide
-        ".."   = "cd ..";
-        "..."  = "cd ../..";
+        ".." = "cd ..";
+        "..." = "cd ../..";
         "...." = "cd ../../..";
 
         # Enable aliases from within `watch`
@@ -96,26 +91,26 @@
         rst = "cd ~/s; clear";
 
         # fend calculator
-        f  = "fend";
+        f = "fend";
         ff = "clear;fend";
 
         # terraform
-        t   = "terraform";
-        ta  = "terraform apply";
-        ti  = "terraform init";
-        tp  = "terraform plan";
+        t = "terraform";
+        ta = "terraform apply";
+        ti = "terraform init";
+        tp = "terraform plan";
         tsd = "echo $(terraform state list|fzf --multi)|xargs -n1 terraform rm";
         tss = "terraform state show $(terraform state list|fzf)";
-        tt  = "echo $(terraform state list|fzf --multi)|xargs -n1 terraform taint";
+        tt = "echo $(terraform state list|fzf --multi)|xargs -n1 terraform taint";
 
         # use fuzzy finder to connect to one more more vpns quickly
         vpn = "nmcli con|grep vpn|grep -- --|choose 0|fzf --multi|xargs --max-procs 9 -L1 nmcli con up id";
 
         # kube
-        uc  = "kubectx";
-        k   = "kubectl";
+        uc = "kubectx";
+        k = "kubectl";
         kns = "kubens";
-        kg  = "kubectl get";
+        kg = "kubectl get";
         kgs = ''kubectl get --no-headers -o custom-columns=":metadata.name"'';
         kdp = "k delete pod $(kgs pod|fzf --multi)";
 
