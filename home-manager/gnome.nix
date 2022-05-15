@@ -8,12 +8,12 @@
     #pkgs.gnomeExtensions.disable-workspace-switch-animation-for-gnome-40
     #pkgs.gnomeExtensions.gsconnect
     pkgs.gnome3.gpaste
-    pkgs.gnomeExtensions.appindicator         # slack notifications
-    pkgs.gnomeExtensions.caffeine             # disable sleep on demand
+    pkgs.gnomeExtensions.appindicator # slack notifications
+    pkgs.gnomeExtensions.caffeine # disable sleep on demand
     pkgs.gnomeExtensions.material-shell
     pkgs.gnomeExtensions.run-or-raise
     pkgs.gnomeExtensions.github-notifications
-    pkgs.wmctrl                               # Used to "focus or launch" apps
+    pkgs.wmctrl # Used to "focus or launch" apps
   ];
 
   home.file.".config/run-or-raise/shortcuts.conf".source = ../dotfiles/shortcuts.conf;
@@ -21,61 +21,61 @@
   dconf.settings = {
 
     "org/gnome/shell/extensions/materialshell/binding" = {
-      app-launcher                = ["<Super>space"];
-      cycle-tiling-layout         = [];
-      focus-monitor-down          = [];
-      focus-monitor-left          = [];
-      focus-monitor-right         = [];
-      focus-monitor-up            = [];
-      kill-focused-window         = ["<Super>BackSpace"];
-      last-workspace              = [];
-      move-window-bottom          = ["<Control><Super>Down"];
-      move-window-left            = ["<Control><Super>Left"];
-      move-window-monitor-down    = [];
-      move-window-monitor-left    = [];
-      move-window-monitor-right   = [];
-      move-window-monitor-up      = [];
-      move-window-right           = ["<Control><Super>Right"];
-      move-window-top             = ["<Control><Super>Up"];
-      next-window                 = ["<Super>Right"];
-      next-workspace              = ["<Super>Down"];
-      previous-window             = ["<Super>Left"];
-      previous-workspace          = ["<Super>Up"];
-      resize-window-down          = [];
-      resize-window-left          = [];
-      resize-window-right         = [];
-      resize-window-up            = [];
-      reverse-cycle-tiling-layout = [];
+      app-launcher = [ "<Super>space" ];
+      cycle-tiling-layout = [ ];
+      focus-monitor-down = [ ];
+      focus-monitor-left = [ ];
+      focus-monitor-right = [ ];
+      focus-monitor-up = [ ];
+      kill-focused-window = [ "<Super>BackSpace" ];
+      last-workspace = [ ];
+      move-window-bottom = [ "<Control><Super>Down" ];
+      move-window-left = [ "<Control><Super>Left" ];
+      move-window-monitor-down = [ ];
+      move-window-monitor-left = [ ];
+      move-window-monitor-right = [ ];
+      move-window-monitor-up = [ ];
+      move-window-right = [ "<Control><Super>Right" ];
+      move-window-top = [ "<Control><Super>Up" ];
+      next-window = [ "<Super>Right" ];
+      next-workspace = [ "<Super>Down" ];
+      previous-window = [ "<Super>Left" ];
+      previous-workspace = [ "<Super>Up" ];
+      resize-window-down = [ ];
+      resize-window-left = [ ];
+      resize-window-right = [ ];
+      resize-window-up = [ ];
+      reverse-cycle-tiling-layout = [ ];
     };
 
 
     "org/gnome/shell/extensions/materialshell/layouts" = {
-      screen-gap  = 0;
+      screen-gap = 0;
     };
 
     "org/gnome/shell/extensions/materialshell/theme" = {
-      clock-app-launcher      = false;
-      clock-horizontal        = false;
-      panel-icon-color        = false;
-      panel-icon-style        = "application";
-      panel-opacity           = 0;
-      panel-size              = 35;
-      primary-color           = "#1a5fb4";
-      surface-opacity         = 99;
-      taskbar-item-style      = "full";
+      clock-app-launcher = false;
+      clock-horizontal = false;
+      panel-icon-color = false;
+      panel-icon-style = "application";
+      panel-opacity = 0;
+      panel-size = 35;
+      primary-color = "#1a5fb4";
+      surface-opacity = 99;
+      taskbar-item-style = "full";
       vertical-panel-position = "left";
     };
 
     "org/gnome/shell/extensions/materialshell/tweaks" = {
-      cycle-through-windows    = true;
+      cycle-through-windows = true;
       cycle-through-workspaces = true;
     };
 
     # Use capslock as super key
     "org/gnome/desktop/input-sources" = {
       xkb-options = [
-        "caps:super"  # map capslock to windows/mac key
-        "numpad:mac"  # always enable numlock
+        "caps:super" # map capslock to windows/mac key
+        "numpad:mac" # always enable numlock
         "f:XF86AudioRaiseVolume"
       ];
     };
@@ -85,8 +85,8 @@
 
       enabled-extensions = [
         "GPaste@gnome-shell-extensions.gnome.org" # clipboard manager with img support
-        "appindicatorsupport@rgcjonas.gmail.com"  # show notifications e.g. slack
-        "caffeine@patapon.info"                   # top bar icon to prevent sleep
+        "appindicatorsupport@rgcjonas.gmail.com" # show notifications e.g. slack
+        "caffeine@patapon.info" # top bar icon to prevent sleep
         #"material-shell@papyelgringo"
         "run-or-raise@edvard.cz"
         #"gsconnect@andyholmes.github.io"          # connect to my phone
@@ -100,45 +100,45 @@
     };
 
     "org/gnome/GPaste" = {
-      images-support   = true;
+      images-support = true;
       max-history-size = lib.hm.gvariant.mkUint64 2000;
       max-memory-usage = lib.hm.gvariant.mkUint64 100;
-      trim-items       = true;
+      trim-items = true;
     };
 
     "org/gnome/desktop/interface" = {
-      clock-format            = "12h";
-      color-scheme            = "prefer-dark";
-      enable-hot-corners      = false;
+      clock-format = "12h";
+      color-scheme = "prefer-dark";
+      enable-hot-corners = false;
       show-battery-percentage = true;
     };
 
     "org/gnome/shell/extensions/caffeine" = {
-      show-notifications      = false;
-      user-enabled            = false;
+      show-notifications = false;
+      user-enabled = false;
     };
 
     "org/gnome/shell/keybindings" = {
       # free up keys used by material-shell
-      switch-to-application-1 = [];
-      switch-to-application-2 = [];
-      switch-to-application-3 = [];
-      switch-to-application-4 = [];
-      switch-to-application-5 = [];
-      switch-to-application-6 = [];
-      switch-to-application-7 = [];
-      switch-to-application-8 = [];
-      switch-to-application-9 = [];
-      toggle-application-view = [];
-      toggle-message-tray     = [];
-      toggle-overview         = [];
+      switch-to-application-1 = [ ];
+      switch-to-application-2 = [ ];
+      switch-to-application-3 = [ ];
+      switch-to-application-4 = [ ];
+      switch-to-application-5 = [ ];
+      switch-to-application-6 = [ ];
+      switch-to-application-7 = [ ];
+      switch-to-application-8 = [ ];
+      switch-to-application-9 = [ ];
+      toggle-application-view = [ ];
+      toggle-message-tray = [ ];
+      toggle-overview = [ ];
     };
 
     "org/gnome/desktop/wm/keybindings" = {
-      minimize                      = [];  # Free up <Super>h
-      switch-input-source           = [];  # Free up <Super>space
-      switch-input-source-backward  = [];  # Free up <Super><Shift>space
-      toggle-message-tray           = [];  # Free up <Super>m
+      minimize = [ ]; # Free up <Super>h
+      switch-input-source = [ ]; # Free up <Super>space
+      switch-input-source-backward = [ ]; # Free up <Super><Shift>space
+      toggle-message-tray = [ ]; # Free up <Super>m
     };
 
     "org/gnome/mutter" = {
@@ -146,21 +146,21 @@
     };
 
     "org/gnome/desktop/interface" = {
-      gtk-theme   = "Adwaita-dark";
+      gtk-theme = "Adwaita-dark";
     };
 
     # map the mappings
     "org/gnome/settings-daemon/plugins/media-keys" = {
 
       # Unset default screenshot key, so I can rebind to flameshot
-      screenshot =  [];
+      screenshot = [ ];
 
-      next        = ["<Super>bracketright"];
-      previous    = ["<Super>bracketleft"];
-      volume-down = ["<Shift><Super>braceleft"];
-      volume-up   = ["<Shift><Super>braceright"];
+      next = [ "<Super>bracketright" ];
+      previous = [ "<Super>bracketleft" ];
+      volume-down = [ "<Shift><Super>braceleft" ];
+      volume-up = [ "<Shift><Super>braceright" ];
 
-      search      = [ "<Super>space" ];
+      search = [ "<Super>space" ];
 
       custom-keybindings = [
         # custom bindings 1x - terminal
@@ -176,7 +176,7 @@
     "org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom11" = {
       binding = "<Shift><Super>backslash";
       command = "kitty --single-instance";
-      name    = "kitty (new window)";
+      name = "kitty (new window)";
     };
 
     "org/gnome/mutter" = {
@@ -188,19 +188,19 @@
     "org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom90" = {
       binding = "<Super><Shift>s";
       command = "bash -c \"wmctrl -a spotify; [ \"$?\" == \"1\" ] && spotify\"";
-      name    = "ncspotify";
+      name = "ncspotify";
     };
 
     "org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom91" = {
       binding = "Print";
       command = "flameshot gui";
-      name    = "flameshot screenshot";
+      name = "flameshot screenshot";
     };
 
     "org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom93" = {
       binding = "<Super>z";
       command = "wmctrl -a 'Zoom Meeting'";
-      name    = "focus zoom running zoom meeting";
+      name = "focus zoom running zoom meeting";
     };
   };
 }

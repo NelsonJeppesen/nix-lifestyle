@@ -10,7 +10,8 @@
 
     kitty = {
       enable = true;
-      theme = "Galaxy";
+      #theme = "Galaxy";
+      theme = "duckbones";
       #theme  = "Spacedust";
       #theme  = "Seafoam Pastel";
 

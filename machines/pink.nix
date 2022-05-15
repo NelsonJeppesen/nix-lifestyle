@@ -1,11 +1,10 @@
-#
 # MacBook 12
-#
 { config, lib, pkgs, modulesPath, ... }:
 
 {
   imports =
-    [ (modulesPath + "/hardware/network/broadcom-43xx.nix")
+    [
+      (modulesPath + "/hardware/network/broadcom-43xx.nix")
       (modulesPath + "/installer/scan/not-detected.nix")
     ];
 
@@ -31,19 +30,21 @@
     "xhci_pci"
   ];
 
-  boot.initrd.kernelModules = [];
+  boot.initrd.kernelModules = [ ];
 
   boot.kernelModules = [ "kvm-intel" ];
   boot.extraModulePackages = [ ];
   fileSystems."/" =
-    { device = "/dev/disk/by-uuid/6c27deff-f5e4-4892-ab62-14efc03ac8f9";
+    {
+      device = "/dev/disk/by-uuid/6c27deff-f5e4-4892-ab62-14efc03ac8f9";
       fsType = "ext4";
     };
 
   boot.initrd.luks.devices."crypt".device = "/dev/disk/by-uuid/519d482b-c6f0-4727-ae1a-3ed347819d71";
 
   fileSystems."/boot" =
-    { device = "/dev/disk/by-uuid/5F66-17ED";
+    {
+      device = "/dev/disk/by-uuid/5F66-17ED";
       fsType = "vfat";
     };
 

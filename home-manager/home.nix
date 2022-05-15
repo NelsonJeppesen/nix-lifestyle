@@ -49,7 +49,6 @@ in
 
       # nix
       pkgs.nixpkgs-review
-      pkgs.nixpkgs-fmt
 
       # Core GUI apps
       pkgs.firefox
