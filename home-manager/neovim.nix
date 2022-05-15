@@ -1,6 +1,4 @@
 # NeoVim for daily work and daily notes
-# prefer Lua built NeoVim plugins when possible
-
 { config, pkgs, ... }:
 {
   programs = {
@@ -14,28 +12,11 @@
       # Install Vim Plugins, keep configuration local to install block if possible
       plugins =
         with pkgs.vimPlugins; [
-          #TODO
-          # https://github.com/stevearc/dressing.nvim
-          #  "Neovim plugin to improve the default vim.ui interfaces"
-          #{ plugin = dressing-nvim; }
-
-          # -------------------------------------- Lua Plugins -------------------------------------------------
+          # ---------------------------------- Lua Plugins (prefered) ------------------------------------------
 
           # https://github.com/ellisonleao/glow.nvim
           #  "A markdown preview directly in your neovim"
           glow-nvim
-
-          vimwiki
-
-          # TODO add notes
-          nvim-web-devicons
-
-          {
-            plugin = surround-nvim;
-            config = ''
-              lua require"surround".setup{}
-            '';
-          }
 
           # https://github.com/rebelot/kanagawa.nvim
           #  "About NeoVim dark colorscheme inspired by the colors of the famous painting by Katsushika Hokusai"
@@ -59,6 +40,10 @@
             '';
           }
 
+          # https://github.com/kyazdani42/nvim-web-devicons
+          #   "lua `fork` of vim-web-devicons for neovim"
+          nvim-web-devicons # used by bufferline-nvim
+
           # https://github.com/karb94/neoscroll.nvim/
           #   "Smooth scrolling neovim plugin written in lua"
           {
@@ -66,10 +51,21 @@
             config = "lua require('neoscroll').setup({})";
           }
 
-          # TODO broken in nixpkgs
           # https://github.com/SidOfc/mkdx/
           #   "A vim plugin that adds some nice extra's for working with markdown documents"
-          #mkdx
+          {
+            plugin = mkdx;
+            config = ''
+              let g:mkdx#settings = { 'enter': { 'shift': 1 } }
+
+              "Autosave file when working on markdown (my notes)
+              autocmd bufreadpre ~/s/notes/*  :autocmd  TextChanged,TextChangedI <buffer> silent write
+              autocmd bufreadpre ~/s/notes/*            :set noswapfile
+              autocmd bufreadpre ~/s/notes/*            setlocal shiftwidth=4
+              autocmd bufreadpre ~/s/notes/*            setlocal softtabstop=4
+              autocmd bufreadpre ~/s/notes/*            set signcolumn=no
+            '';
+          }
 
           # https://github.com/nvim-telescope/telescope.nvim
           #   "highly extendable fuzzy finder over lists"
@@ -99,29 +95,23 @@
             plugin = formatter-nvim;
             config = ''
               lua << EOF
-              require('formatter').setup({
-              logging = false,
-              filetype = {
-                tf = {
+              require('formatter').setup({logging = true,filetype = {
+                nix = {
                   function()
-                  return {
-                    exe = "terraform",
-                    args = {"fmt", '-'},
-                    stdin = true
-                  }
+                  return {exe = "${pkgs.nixpkgs-fmt}/bin/nixpkgs-fmt",stdin = true}
+                  end
+                },
+                terraform = {
+                  function()
+                  return {exe = "${pkgs.terraform}/bin/terraform",stdin = true,args = {"fmt","-"}}
                   end
                 },
                 yaml = {
                   function()
-                  return {
-                    exe = 'yq',
-                    args = {'--yaml-output','.'},
-                    stdin = true
-                  }
+                  return {exe = "${pkgs.yamlfix}/bin/yamlfix",stdin = true,args = {"-"}}
                   end
-                }
-              }
-              })
+                },
+              }})
               EOF
             '';
           }
@@ -134,7 +124,10 @@
           #   "Super fast git decorations implemented purely in lua/teal"
           {
             plugin = gitsigns-nvim;
-            config = "lua require('gitsigns').setup()";
+            config = ''
+              lua require('gitsigns').setup()
+              set signcolumn=yes " always show gutter
+            '';
           }
 
           # https://github.com/hoob3rt/lualine.nvim
@@ -155,9 +148,9 @@
 
           # https://github.com/hrsh7th/nvim-cmp
           #   "A completion plugin for neovim coded in Lua"
-          cmp-path # cmp plugin, file path
-          cmp-buffer # cmp plugin, buffer
-          cmp-emoji # cmp plugin, emoji
+          cmp-path
+          cmp-buffer
+          cmp-emoji
           {
             plugin = nvim-cmp;
             config = ''
@@ -174,6 +167,8 @@
                 }
               })
               EOF
+
+              nnoremap <silent> ,,f :Format<cr>
             '';
           }
 
@@ -227,7 +222,14 @@
 
           # https://github.com/dhruvasagar/vim-table-mode
           #   "VIM Table Mode for instant [ASCII] table creation"
-          vim-table-mode
+          {
+            plugin = vim-table-mode;
+            config = ''
+              " Make tables github markdown compatable
+              let g:table_mode_corner='|'
+              nnoremap  <silent>  ,,a   :TableModeToggle<cr>
+            '';
+          }
         ];
 
       extraConfig = ''
@@ -262,8 +264,6 @@
         vnoremap <Right> <Nop>
         vnoremap <Up> <Nop>
 
-        set signcolumn=yes " always show gutter
-
         "function InsertIfEmpty()
         "    if @% == ""
         "        " No filename for current buffer
@@ -283,8 +283,6 @@
         nnoremap            <leader><leader>c   :%y+<cr>
         nnoremap            <leader><leader>d   :set background=dark<cr>
         nnoremap            <leader><leader>l   :set background=light<cr>
-        nnoremap  <silent>  <leader><leader>f   :Format<cr>
-        nnoremap  <silent>  <leader><leader>a   :TableModeToggle<cr>
         nnoremap  <silent>  <leader><leader>z   :call ToggleHiddenAll()<cr>
 
         " avoid using :
@@ -344,9 +342,6 @@
         " Copy all to clipboard
         set clipboard=unnamedplus
 
-        " Make tables github markdown compatable
-        let g:table_mode_corner='|'
-
         " enable mouse
         set mouse=a
         set updatetime=75
@@ -355,15 +350,6 @@
         set shiftwidth=2
         set softtabstop=2
         set expandtab
-
-        command Nixfmt %!nixpkgs-fmt
-
-        "Autosave file when working on markdown (my notes)
-        autocmd bufreadpre ~/s/notes/*  :autocmd  TextChanged,TextChangedI <buffer> silent write
-        autocmd bufreadpre ~/s/notes/*            :set noswapfile
-        autocmd bufreadpre ~/s/notes/*            setlocal shiftwidth=4
-        autocmd bufreadpre ~/s/notes/*            setlocal softtabstop=4
-        autocmd bufreadpre ~/s/notes/*            set signcolumn=no
 
         " Use case-insensitive search
         set ignorecase
