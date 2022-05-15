@@ -13,6 +13,9 @@
       plugins =
         with pkgs.vimPlugins; [
           # ---------------------------------- Lua Plugins (prefered) ------------------------------------------
+          # TODO https://github.com/max-0406/autoclose.nvim
+          # TODO https://github.com/sQVe/sort.nvim
+          # TODO https://github.com/lukas-reineke/cmp-rg
 
           # https://github.com/ellisonleao/glow.nvim
           #  "A markdown preview directly in your neovim"
@@ -20,7 +23,8 @@
 
           # https://github.com/rebelot/kanagawa.nvim
           #  "About NeoVim dark colorscheme inspired by the colors of the famous painting by Katsushika Hokusai"
-          { plugin = kanagawa-nvim; config = "colorscheme kanagawa"; }
+          #{ plugin = kanagawa-nvim; config = "colorscheme kanagawa"; }
+          { plugin = neon; config = "colorscheme neon";}
 
           # https://github.com/sudormrfbin/cheatsheet.nvim
           #  "A cheatsheet plugin for neovim with bundled cheatsheets for the editor, multiple vim
@@ -138,8 +142,9 @@
               lua << EOF
               require('lualine').setup {
                 options = {
-                  section_separators = "",
-                  component_separators = ""
+                  theme = 'ayu_dark',
+                  section_separators = " ",
+                  component_separators = " "
                 }
               }
               EOF
