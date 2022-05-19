@@ -12,7 +12,7 @@
       # Install Vim Plugins, keep configuration local to install block if possible
       plugins =
         with pkgs.vimPlugins; [
-          # ---------------------------------- Lua Plugins (prefered) ------------------------------------------
+          # --------------------------Lua Plugins (prefered)
           # TODO https://github.com/max-0406/autoclose.nvim
           # TODO https://github.com/sQVe/sort.nvim
           # TODO https://github.com/lukas-reineke/cmp-rg
@@ -21,17 +21,19 @@
           #  "A markdown preview directly in your neovim"
           glow-nvim
 
+          editorconfig-nvim
+
           # https://github.com/rebelot/kanagawa.nvim
-          #  "About NeoVim dark colorscheme inspired by the colors of the famous painting by Katsushika Hokusai"
+          #  "About NeoVim dark colorscheme inspired by the colors of the famous
+          #   painting by Katsushika Hokusai"
           #{ plugin = kanagawa-nvim; config = "colorscheme kanagawa"; }
-          { plugin = neon; config = "colorscheme neon";}
+          { plugin = neon; config = "colorscheme neon"; }
 
           # https://github.com/sudormrfbin/cheatsheet.nvim
-          #  "A cheatsheet plugin for neovim with bundled cheatsheets for the editor, multiple vim
-          #  plugins, nerd-fonts, regex, etc. with a Telescope fuzzy finder interface !"
-          #
-          # Provides <Leader>? help
-          cheatsheet-nvim
+          #  "A cheatsheet plugin for neovim with bundled cheatsheets for the
+          #   editor, multiple vim plugins, nerd-fonts, regex, etc. with a
+          #   Telescope fuzzy finder interface!"
+          cheatsheet-nvim # Provides <Leader>? help
 
           # https://github.com/akinsho/bufferline.nvim
           #  "A snazzy bufferline for Neovim"
@@ -56,7 +58,8 @@
           }
 
           # https://github.com/SidOfc/mkdx/
-          #   "A vim plugin that adds some nice extra's for working with markdown documents"
+          #   "A vim plugin that adds some nice extra's for working with
+          #    markdown documents"
           {
             plugin = mkdx;
             config = ''
@@ -73,7 +76,19 @@
 
           # https://github.com/nvim-telescope/telescope.nvim
           #   "highly extendable fuzzy finder over lists"
-          telescope-nvim
+          {
+            plugin = telescope-nvim;
+            config = ''
+              nnoremap  ,fg  :execute 'Telescope git_files cwd=' . expand('%:p:h')<cr>
+              nnoremap  ,ff  <cmd>lua require('telescope.builtin').find_files()<cr>
+              nnoremap  ,f/  <cmd>lua require('telescope.builtin').current_buffer_fuzzy_find()<cr>
+              nnoremap  ,fb  <cmd>lua require('telescope.builtin').buffers()<cr>
+              nnoremap  ,fo  <cmd>lua require('telescope.builtin').file_browser()<cr>
+              nnoremap  ,fh  <cmd>lua require('telescope.builtin').oldfiles()<cr>
+              nnoremap  ,fc  <cmd>lua require('telescope.builtin').colorscheme()<cr>
+              nnoremap  ,fr  <cmd>lua require('telescope.builtin').registers()<cr>
+            '';
+          }
 
           # https://github.com/akinsho/toggleterm.nvim
           #   "A neovim plugin to persist and toggle multiple terminals during an editing session"
@@ -87,9 +102,9 @@
                 float_opts = {border = 'curved'}
               }
               EOF
-              nnoremap  <silent>  <c-\>      <cmd>execute 'ToggleTerm dir=' . expand('%:p:h')<cr>
-              inoremap  <silent>  <c-\> <esc><cmd>execute 'ToggleTerm dir=' . expand('%:p:h')<cr>
-              tnoremap  <silent>  <c-\> <esc><cmd>ToggleTerm<cr>
+              nnoremap <silent> <c-\>      <cmd>execute 'ToggleTerm dir=' . expand('%:p:h')<cr>
+              inoremap <silent> <c-\> <esc><cmd>execute 'ToggleTerm dir=' . expand('%:p:h')<cr>
+              tnoremap <silent> <c-\> <esc><cmd>ToggleTerm<cr>
             '';
           }
 
@@ -122,7 +137,13 @@
 
           # https://github.com/f-person/git-blame.nvim
           #   "A git blame plugin for Neovim written in Lua"
-          git-blame-nvim
+          {
+            plugin = git-blame-nvim;
+            config = ''
+              let g:gitblame_enabled = 0
+              nnoremap  ,,b  :GitBlameToggle<cr>
+            '';
+          }
 
           # https://github.com/lewis6991/gitsigns.nvim
           #   "Super fast git decorations implemented purely in lua/teal"
@@ -186,7 +207,14 @@
 
           # https://github.com/tjdevries/train.nvim
           #   "Train yourself with vim motions and make your own train tracks :)"
-          train-nvim
+          {
+            plugin = train-nvim;
+            config = ''
+              nnoremap  ,tu  :TrainUpDown<cr>
+              nnoremap  ,tw  :TrainWord<cr>
+              nnoremap  ,to  :TrainTextObj<cr>
+            '';
+          }
 
           # https://github.com/nacro90/numb.nvim/
           #   "Peek lines just when you intend"
@@ -196,6 +224,10 @@
           }
 
           # ------------------------------------ Vimscript Plugins ---------------------------------------------
+
+          # https://github.com/tpope/vim-sensible/
+          #   "Defaults everyone can agree on"
+          vim-sensible
 
           # https://github.com/hashivim/vim-terraform/
           #   "basic vim/terraform integration"
@@ -217,7 +249,7 @@
               let g:better_whitespace_guicolor='#556e87'
               let g:better_whitespace_operator=""
               nnoremap  ,,s   :StripWhitespace<cr>
-              set list listchars=tab:▸▸,trail:.
+              nnoremap  ,,f   :Format<cr>
             '';
           }
 
@@ -243,14 +275,7 @@
 
         imap jj <Esc>
 
-
         " Hard mode
-        " Remove newbie crutches in Command Mode
-        cnoremap <Down> <Nop>
-        cnoremap <Left> <Nop>
-        cnoremap <Right> <Nop>
-        cnoremap <Up> <Nop>
-
         " Remove newbie crutches in Insert Mode
         inoremap <Down> <Nop>
         inoremap <Left> <Nop>
@@ -284,38 +309,18 @@
         set autoread
         let mapleader=","
         nnoremap <silent>   <leader><leader>n   Go<cr><esc>:r! date +\%Y-\%m-\%d<cr>I# <esc>o*<space>
-        nnoremap            <leader><leader>b   :GitBlameToggle<cr>
         nnoremap            <leader><leader>c   :%y+<cr>
         nnoremap            <leader><leader>d   :set background=dark<cr>
         nnoremap            <leader><leader>l   :set background=light<cr>
         nnoremap  <silent>  <leader><leader>z   :call ToggleHiddenAll()<cr>
 
         " avoid using :
-        nnoremap  <silent>  <leader>qq          :q!<cr>
-        nnoremap  <silent>  <leader>ww          :w<cr>
-        nnoremap  <silent>  <leader>wq          :wq<cr>
+        nnoremap  <silent>  <leader>qq  :q!<cr>
+        nnoremap  <silent>  <leader>ww  :w<cr>
+        nnoremap  <silent>  <leader>wq  :wq<cr>
 
         " keep terminal in background
         set hidden
-
-        " telescope-nvim fast, lisp-jit fuzy finder
-        "
-        " Fuzzy search through the output of `git ls-files` command in cwd of open file
-        " Lists files in your current working directory, respects .gitignore
-        nnoremap            <leader>fg          :execute 'Telescope git_files cwd=' . expand('%:p:h')<cr>
-
-        nnoremap            <leader>ff          <cmd>lua require('telescope.builtin').find_files()<cr>
-        nnoremap            <leader>f/          <cmd>lua require('telescope.builtin').current_buffer_fuzzy_find()<cr>
-        nnoremap            <leader>fb          <cmd>lua require('telescope.builtin').buffers()<cr>
-        nnoremap            <leader>fo          <cmd>lua require('telescope.builtin').file_browser()<cr>
-        nnoremap            <leader>fh          <cmd>lua require('telescope.builtin').oldfiles()<cr>
-        nnoremap            <leader>fc          <cmd>lua require('telescope.builtin').colorscheme()<cr>
-        nnoremap            <leader>fr          <cmd>lua require('telescope.builtin').registers()<cr>
-
-        " https://github.com/tjdevries/train.nvim/
-        nnoremap            <leader>tu          :TrainUpDown<cr>
-        nnoremap            <leader>tw          :TrainWord<cr>
-        nnoremap            <leader>to          :TrainTextObj<cr>
 
         let s:hidden_all = 0
         function! ToggleHiddenAll()
@@ -334,11 +339,7 @@
             endif
         endfunction
 
-        "set colorcolumn=120
-        set number
         set relativenumber
-
-        let g:gitblame_enabled = 0
 
         " set title in Kitty term tab to just the filename
         set titlestring=%t
