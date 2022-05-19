@@ -99,7 +99,7 @@
         ta = "terraform apply";
         ti = "terraform init";
         tp = "terraform plan";
-        tsd = "echo $(terraform state list|fzf --multi)|xargs -n1 terraform rm";
+        tsd = "echo $(terraform state list|fzf --multi)|xargs -n1 terraform state rm";
         tss = "terraform state show $(terraform state list|fzf)";
         tt = "echo $(terraform state list|fzf --multi)|xargs -n1 terraform taint";
 
