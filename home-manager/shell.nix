@@ -1,11 +1,42 @@
 { config, pkgs, ... }:
 {
-
   programs = {
 
     direnv.enable = true; # load .envrc files
     fzf.enable = true; # fuzzy finder
     mcfly.enable = true; # sqlite based shell history
+
+    taskwarrior.enable = true;
+    taskwarrior.dataLocation = "$HOME/s/notes/taskwarrior";
+
+    starship = {
+      enable = true;
+      settings = {
+        # Disabled
+        aws.disabled = true;
+        helm.disabled = true;
+        terraform.disabled = true;
+
+        # Enabled
+        kubernetes.disabled = false;
+
+        custom.taskwarrior_pending = {
+          command = "${pkgs.taskwarrior}/bin/task count rc.gc=off rc.verbose=nothing status:pending";
+          description = "Count of pending Taskwarrior tasks";
+          symbol = "⇞";
+          style = "blue";
+          when = "which task";
+        };
+
+          custom.taskwarrior_complete_today= {
+          command = "${pkgs.taskwarrior}/bin/task count rc.gc=off rc.verbose=nothing status:completed end.after:yesterday";
+          description = "Count of pending Taskwarrior tasks";
+          symbol = "";
+          when = "which task";
+        };
+
+      };
+    };
 
     zsh = {
       enable = true;
@@ -70,16 +101,15 @@
         weather = "${pkgs.curl}/bin/curl wttr.in/\\?format=4";
 
         # short 'n sweet
-        g = "~/.nix-profile/bin/git";
-        h = "~/.nix-profile/bin/helmfile";
-        n = "vim ~/s/notes/$(date +work-%Y-%q).md";
-        s = "vim ~/s/notes/scratch.md";
+        g = "${pkgs.git}/bin/git";
+        h = "${pkgs.helmfile}/bin/helmfile";
+        n = "${pkgs.neovim}/bin/nvim ~/s/notes/$(date +work-%Y-%q).md";
+        s = "${pkgs.neovim}/bin/nvim ~/s/notes/scratch.md";
 
         # retrain my old mind
         git = "bad";
         helmfile = "bad";
 
-        # use zoxide
         ".." = "cd ..";
         "..." = "cd ../..";
         "...." = "cd ../../..";
@@ -94,14 +124,19 @@
         f = "fend";
         ff = "clear;fend";
 
+        # taskwarrior and taskwarrior-tui
+        twa = "${pkgs.taskwarrior}/bin/task add";
+        tw = "${pkgs.taskwarrior-tui}/bin/taskwarrior-tui";
+
         # terraform
-        t = "terraform";
-        ta = "terraform apply";
-        ti = "terraform init";
-        tp = "terraform plan";
-        tsd = "echo $(terraform state list|fzf --multi)|xargs -n1 terraform state rm";
-        tss = "terraform state show $(terraform state list|fzf)";
-        tt = "echo $(terraform state list|fzf --multi)|xargs -n1 terraform taint";
+        t = "${pkgs.terraform}/bin/terraform";
+        ta = "${pkgs.terraform}/bin/terraform apply";
+        ti = "${pkgs.terraform}/bin/terraform init";
+        tp = "${pkgs.terraform}/bin/terraform plan";
+        tsd = "echo $(${pkgs.terraform}/bin/terraform state list|fzf --multi)|xargs -n1 ${pkgs.terraform}/bin/terraform state rm";
+        tss = "${pkgs.terraform}/bin/terraform state show $(${pkgs.terraform}/bin/terraform state list|fzf)";
+        tt = "echo $(${pkgs.terraform}/bin/terraform state list|fzf --multi)|xargs -n1 ${pkgs.terraform}/bin/terraform taint";
+        terraform = "bad";
 
         # use fuzzy finder to connect to one more more vpns quickly
         vpn = "nmcli con|grep vpn|grep -- --|choose 0|fzf --multi|xargs --max-procs 9 -L1 nmcli con up id";
