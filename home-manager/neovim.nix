@@ -8,6 +8,8 @@
       viAlias = true;
       vimAlias = true;
       vimdiffAlias = true;
+      #coc.enable = true;
+      #withNodeJs = true;
 
       # Install Vim Plugins, keep configuration local to install block if possible
       plugins =
@@ -17,9 +19,9 @@
           # TODO https://github.com/sQVe/sort.nvim
           # TODO https://github.com/lukas-reineke/cmp-rg
 
-          # https://github.com/ellisonleao/glow.nvim
-          #  "A markdown preview directly in your neovim"
-          glow-nvim
+          # https://github.com/iamcco/markdown-preview.nvim/
+          #   "markdown preview plugin for (neo)vim"
+          markdown-preview-nvim
 
           editorconfig-nvim
 
@@ -224,6 +226,8 @@
           }
 
           # ------------------------------------ Vimscript Plugins ---------------------------------------------
+
+          #vim-markdown-composer
 
           # https://github.com/tpope/vim-sensible/
           #   "Defaults everyone can agree on"

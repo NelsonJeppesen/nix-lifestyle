@@ -6,8 +6,13 @@
     fzf.enable = true; # fuzzy finder
     mcfly.enable = true; # sqlite based shell history
 
-    taskwarrior.enable = true;
-    taskwarrior.dataLocation = "$HOME/s/notes/taskwarrior";
+    taskwarrior = {
+      enable = true;
+      dataLocation = "$HOME/s/notes/taskwarrior";
+      config = {
+        uda.taskwarrior-tui.task-report.show-info = false;
+      };
+    };
 
     starship = {
       enable = true;
@@ -28,7 +33,7 @@
           when = "which task";
         };
 
-          custom.taskwarrior_complete_today= {
+        custom.taskwarrior_complete_today = {
           command = "${pkgs.taskwarrior}/bin/task count rc.gc=off rc.verbose=nothing status:completed end.after:yesterday";
           description = "Count of pending Taskwarrior tasks";
           symbol = "";

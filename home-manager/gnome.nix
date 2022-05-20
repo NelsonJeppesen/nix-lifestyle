@@ -5,9 +5,10 @@
     pkgs.gnome3.gpaste
     pkgs.gnomeExtensions.appindicator
     pkgs.gnomeExtensions.caffeine
+    pkgs.gnomeExtensions.github-notifications
     pkgs.gnomeExtensions.material-shell
     pkgs.gnomeExtensions.run-or-raise
-    pkgs.gnomeExtensions.github-notifications
+    pkgs.gnomeExtensions.taskwhisperer
   ];
 
   home.file.".config/run-or-raise/shortcuts.conf".source = ../dotfiles/shortcuts.conf;
