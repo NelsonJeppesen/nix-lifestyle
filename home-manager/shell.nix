@@ -11,6 +11,7 @@
       dataLocation = "$HOME/s/notes/taskwarrior";
       config = {
         uda.taskwarrior-tui.task-report.show-info = false;
+        uda.taskwarrior-tui.task-report.next.filter = "(status:pending or status:waiting)";
       };
     };
 
@@ -111,9 +112,10 @@
         n = "${pkgs.neovim}/bin/nvim ~/s/notes/$(date +work-%Y-%q).md";
         s = "${pkgs.neovim}/bin/nvim ~/s/notes/scratch.md";
 
-        # retrain my old mind
+        # retrain my old mind; either to short name or better cli tools from gnu
         git = "bad";
         helmfile = "bad";
+        find = "bad";
 
         ".." = "cd ..";
         "..." = "cd ../..";

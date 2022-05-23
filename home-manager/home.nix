@@ -74,10 +74,9 @@ in
       pkgs.curl
       pkgs.dasel
       pkgs.dnsutils
+      pkgs.fd
       pkgs.fend
-      pkgs.glow
       pkgs.jq
-      pkgs.nushell
       pkgs.nvimpager
       pkgs.p7zip
       pkgs.ripgrep
