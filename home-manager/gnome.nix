@@ -1,14 +1,14 @@
 { config, lib, pkgs, ... }:
 {
   home.packages = [
-    #pkgs.gnomeExtensions.gsconnect
     pkgs.gnome3.gpaste
     pkgs.gnomeExtensions.appindicator
+    pkgs.gnomeExtensions.bluetooth-battery
     pkgs.gnomeExtensions.caffeine
     pkgs.gnomeExtensions.github-notifications
-    pkgs.gnomeExtensions.material-shell
+    #pkgs.gnomeExtensions.gsconnect
     pkgs.gnomeExtensions.run-or-raise
-    pkgs.gnomeExtensions.taskwhisperer
+    #pkgs.gnomeExtensions.taskwhisperer
   ];
 
   home.file.".config/run-or-raise/shortcuts.conf".source = ../dotfiles/shortcuts.conf;
@@ -25,6 +25,7 @@
     };
 
     "org/gnome/shell" = {
+      disable-extension-version-validation = true;
       disable-user-extensions = false;
       enabled-extensions = [
         "GPaste@gnome-shell-extensions.gnome.org" # clipboard manager with img support

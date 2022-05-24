@@ -8,9 +8,13 @@
 
     taskwarrior = {
       enable = true;
+      #colorTheme = "dark-gray-blue-256";
+      #colorTheme = "dark-blue-256";
+      colorTheme = "dark-violets-256";
       dataLocation = "$HOME/s/notes/taskwarrior";
       config = {
         uda.taskwarrior-tui.task-report.show-info = false;
+        uda.taskwarrior-tui.task-report.looping = false;
         uda.taskwarrior-tui.task-report.next.filter = "(status:pending or status:waiting)";
       };
     };
@@ -133,6 +137,7 @@
 
         # taskwarrior and taskwarrior-tui
         twa = "${pkgs.taskwarrior}/bin/task add";
+        twc = "${pkgs.taskwarrior}/bin/task completed end.after:today-8days";
         tw = "${pkgs.taskwarrior-tui}/bin/taskwarrior-tui";
 
         # terraform
