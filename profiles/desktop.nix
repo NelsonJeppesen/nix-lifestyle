@@ -34,10 +34,27 @@
   hardware.opengl.driSupport = true;
   hardware.opengl.driSupport32Bit = true; # Steam support
 
-  # Enable the GNOME Desktop Environment.
-  services.xserver.enable = true;
-  services.xserver.desktopManager.gnome.enable = true;
-  services.xserver.displayManager.gdm.enable = true;
+  services.xserver = {
+    enable = true;
+    desktopManager.gnome.enable = true;
+    displayManager.gdm.enable = true;
+  };
+    #= {
+    # Optionally, set a default session
+    #windowManager = {
+    #    default = "awesome";
+    #    awesome.enable = true;
+    #};
+
+#services.greetd = {
+#    enable = true;
+#    settings = {
+#      default_session = {
+#        command = "${pkgs.greetd.tuigreet}/bin/tuigreet --time --cmd 'dbus-run-session -- gnome-shell --display-server --wayland'";
+#        user = "nelson";
+#      };
+#    };
+#  };
 
   services.xserver.libinput.touchpad.accelProfile = "adaptive";
   services.xserver.libinput.touchpad.accelSpeed = "0.4";
