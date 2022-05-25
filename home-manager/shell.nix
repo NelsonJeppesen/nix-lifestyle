@@ -46,12 +46,12 @@
           when = "which task";
         };
 
-        custom.taskwarrior_complete_today = {
-          command = "${pkgs.taskwarrior}/bin/task count rc.gc=off rc.verbose=nothing status:completed end.after:yesterday";
-          description = "Count of pending Taskwarrior tasks";
-          symbol = "";
-          when = "which task";
-        };
+        #custom.taskwarrior_complete_today = {
+        #  command = "${pkgs.taskwarrior}/bin/task count rc.gc=off rc.verbose=nothing status:completed end.after:yesterday";
+        #  description = "Count of pending Taskwarrior tasks";
+        #  symbol = "";
+        #  when = "which task";
+        #};
 
       };
     };
