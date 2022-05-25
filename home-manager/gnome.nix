@@ -1,5 +1,7 @@
 { config, lib, pkgs, ... }:
 {
+  home.file.".config/run-or-raise/shortcuts.conf".source = ../dotfiles/shortcuts.conf;
+
   home.packages = [
     pkgs.gnome3.gpaste
     pkgs.gnomeExtensions.appindicator
@@ -8,22 +10,11 @@
     pkgs.gnomeExtensions.github-notifications
     #pkgs.gnomeExtensions.gsconnect
     pkgs.gnomeExtensions.run-or-raise
+    pkgs.gnomeExtensions.somafm-internet-radio
     #pkgs.gnomeExtensions.taskwhisperer
   ];
 
-  home.file.".config/run-or-raise/shortcuts.conf".source = ../dotfiles/shortcuts.conf;
-
   dconf.settings = {
-
-    # Use capslock as super key
-    "org/gnome/desktop/input-sources" = {
-      xkb-options = [
-        "caps:super" # map capslock to windows/mac key
-        "numpad:mac" # always enable numlock
-        "f:XF86AudioRaiseVolume"
-      ];
-    };
-
     "org/gnome/shell" = {
       disable-extension-version-validation = true;
       disable-user-extensions = false;
@@ -31,7 +22,23 @@
         "GPaste@gnome-shell-extensions.gnome.org" # clipboard manager with img support
         "appindicatorsupport@rgcjonas.gmail.com" # show notifications e.g. slack
         "caffeine@patapon.info" # top bar icon to prevent sleep
+        "github.notifications@alexandre.dufournet.gmail.com"
         "run-or-raise@edvard.cz"
+      ];
+    };
+
+    "org/gnome/shell/extensions/github-notifications" = {
+      handle = "NelsonJeppesen";
+      hide-widget = true;
+      refresh-interval = 61;
+    };
+
+    # Use capslock as super key
+    "org/gnome/desktop/input-sources" = {
+      xkb-options = [
+        "caps:super" # map capslock to windows/mac key
+        "numpad:mac" # always enable numlock
+        "f:XF86AudioRaiseVolume"
       ];
     };
 

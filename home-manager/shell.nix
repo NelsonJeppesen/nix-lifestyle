@@ -30,10 +30,18 @@
         # Enabled
         kubernetes.disabled = false;
 
-        custom.taskwarrior_pending = {
-          command = "${pkgs.taskwarrior}/bin/task count rc.gc=off rc.verbose=nothing status:pending";
+        custom.taskwarrior_pending_work = {
+          command = "${pkgs.taskwarrior}/bin/task count rc.gc=off rc.verbose=nothing status:pending project:work";
           description = "Count of pending Taskwarrior tasks";
           symbol = "⇞";
+          style = "blue";
+          when = "which task";
+        };
+
+        custom.taskwarrior_pending_personal = {
+          command = "${pkgs.taskwarrior}/bin/task count rc.gc=off rc.verbose=nothing status:pending project:personal";
+          description = "Count of pending Taskwarrior tasks";
+          symbol = "⨃";
           style = "blue";
           when = "which task";
         };
@@ -136,7 +144,8 @@
         ff = "clear;fend";
 
         # taskwarrior and taskwarrior-tui
-        twa = "${pkgs.taskwarrior}/bin/task add";
+        twaw = "${pkgs.taskwarrior}/bin/task add project:work";
+        twap = "${pkgs.taskwarrior}/bin/task add project:personal";
         twc = "${pkgs.taskwarrior}/bin/task completed end.after:today-8days";
         tw = "${pkgs.taskwarrior-tui}/bin/taskwarrior-tui";
 
