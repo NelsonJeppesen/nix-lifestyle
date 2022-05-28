@@ -13,6 +13,8 @@
       colorTheme = "dark-violets-256";
       dataLocation = "$HOME/s/notes/taskwarrior";
       config = {
+        report.work.filter = "project:work status:pending";
+        report.personal.filter = "project:personal stats:pending";
         uda.taskwarrior-tui.task-report.show-info = false;
         uda.taskwarrior-tui.task-report.looping = false;
         uda.taskwarrior-tui.task-report.next.filter = "(status:pending or status:waiting)";
@@ -22,6 +24,7 @@
     starship = {
       enable = true;
       settings = {
+
         # Disabled
         aws.disabled = true;
         helm.disabled = true;

@@ -8,9 +8,11 @@
     pkgs.gnomeExtensions.bluetooth-battery
     pkgs.gnomeExtensions.caffeine
     pkgs.gnomeExtensions.github-notifications
-    #pkgs.gnomeExtensions.gsconnect
     pkgs.gnomeExtensions.run-or-raise
-    pkgs.gnomeExtensions.somafm-internet-radio
+    pkgs.gnomeExtensions.spotify-tray
+
+    #pkgs.gnomeExtensions.gsconnect
+    #pkgs.gnomeExtensions.somafm-internet-radio
     #pkgs.gnomeExtensions.taskwhisperer
   ];
 
@@ -19,11 +21,12 @@
       disable-extension-version-validation = true;
       disable-user-extensions = false;
       enabled-extensions = [
-        "GPaste@gnome-shell-extensions.gnome.org" # clipboard manager with img support
-        "appindicatorsupport@rgcjonas.gmail.com" # show notifications e.g. slack
-        "caffeine@patapon.info" # top bar icon to prevent sleep
-        "github.notifications@alexandre.dufournet.gmail.com"
-        "run-or-raise@edvard.cz"
+        "GPaste@gnome-shell-extensions.gnome.org" # gpaste
+        "appindicatorsupport@rgcjonas.gmail.com" # appindicator
+        "caffeine@patapon.info" # caffeine
+        "github.notifications@alexandre.dufournet.gmail.com" #github-notifications
+        "run-or-raise@edvard.cz" # run-or-raise
+        "sp-tray@sp-tray.esenliyim.github.com" # spotify-tray
       ];
     };
 
@@ -82,10 +85,13 @@
     # map the mappings
     "org/gnome/settings-daemon/plugins/media-keys" = {
       next = [ "<Super>bracketright" ];
+      play = [ "<Super>backslash" ];
       previous = [ "<Super>bracketleft" ];
+
+      search = [ "<Super>space" ];
+
       volume-down = [ "<Shift><Super>braceleft" ];
       volume-up = [ "<Shift><Super>braceright" ];
-      search = [ "<Super>space" ];
     };
 
     "org/gnome/mutter" = {
