@@ -14,22 +14,36 @@
       # Install Vim Plugins, keep configuration local to install block if possible
       plugins =
         with pkgs.vimPlugins; [
-          # --------------------------Lua Plugins (prefered)
-          # TODO https://github.com/max-0406/autoclose.nvim
-          # TODO https://github.com/sQVe/sort.nvim
-          # TODO https://github.com/lukas-reineke/cmp-rg
+          # -------------------------- TODO -----------------------------------
+          # https://github.com/max-0406/autoclose.nvim
+          # https://github.com/sQVe/sort.nvim
+          # https://github.com/lukas-reineke/cmp-rg
 
+
+          # -------------------------- colorschemes ---------------------------
+          #{
+          #  plugin = kanagawa-nvim;
+          #  config = "colorscheme kanagawa";
+          #}
+          {
+            plugin = neon;
+            config = "colorscheme neon";
+          }
+
+
+          # --------------------------Lua Plugins (prefered) ------------------
           # https://github.com/iamcco/markdown-preview.nvim/
           #   "markdown preview plugin for (neo)vim"
           markdown-preview-nvim
 
+          # https://github.com/gpanders/editorconfig.nvim
+          #  "EditorConfig plugin for Neovim"
           editorconfig-nvim
 
-          # https://github.com/rebelot/kanagawa.nvim
-          #  "About NeoVim dark colorscheme inspired by the colors of the famous
-          #   painting by Katsushika Hokusai"
-          #{ plugin = kanagawa-nvim; config = "colorscheme kanagawa"; }
-          { plugin = neon; config = "colorscheme neon"; }
+          {
+            plugin = trouble-nvim;
+            config = "nnoremap  ,,t  :TroubleToggle<cr>";
+          }
 
           # https://github.com/sudormrfbin/cheatsheet.nvim
           #  "A cheatsheet plugin for neovim with bundled cheatsheets for the
@@ -179,6 +193,7 @@
           cmp-path
           cmp-buffer
           cmp-emoji
+          cmp-spell
           {
             plugin = nvim-cmp;
             config = ''
@@ -189,9 +204,17 @@
                   { name = 'buffer' },
                   { name = 'path'},
                   { name = 'emoji'},
+                  { name = 'spell' },
                 },
                 mapping = {
-                  ['<Tab>'] = cmp.mapping(cmp.mapping.select_next_item()),
+
+                ["<Tab>"] = cmp.mapping(function(fallback)
+                  if cmp.visible() then
+                    cmp.select_next_item()
+                  else
+                    cmp.complete()
+                  end
+                 end),
                 }
               })
               EOF
@@ -226,12 +249,6 @@
           }
 
           # ------------------------------------ Vimscript Plugins ---------------------------------------------
-
-          #vim-markdown-composer
-
-          # https://github.com/tpope/vim-sensible/
-          #   "Defaults everyone can agree on"
-          vim-sensible
 
           # https://github.com/hashivim/vim-terraform/
           #   "basic vim/terraform integration"
@@ -277,6 +294,8 @@
         " shortmess: I: don't give the intro message when starting Vim |:intro|
         set shortmess=I
 
+        set clipboard=unnamedplus
+
         imap jj <Esc>
 
         " Hard mode
@@ -298,17 +317,8 @@
         vnoremap <Right> <Nop>
         vnoremap <Up> <Nop>
 
-        "function InsertIfEmpty()
-        "    if @% == ""
-        "        " No filename for current buffer
-        "        Telescope find_files
-        "    endif
-        "endfunction
-
         " Show search/replace in real-time
         set inccommand=nosplit
-
-        "au VimEnter * call InsertIfEmpty()
 
         set autoread
         let mapleader=","
@@ -349,9 +359,6 @@
         set titlestring=%t
         set title
 
-        " Copy all to clipboard
-        set clipboard=unnamedplus
-
         " enable mouse
         set mouse=a
         set updatetime=75
@@ -370,6 +377,7 @@
         "set conceallevel=2
 
         " cant spell
+        set spell
         set spelllang=en
       '';
     };
