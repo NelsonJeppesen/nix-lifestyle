@@ -127,6 +127,9 @@
         n = "${pkgs.neovim}/bin/nvim ~/s/notes/$(date +work-%Y-%q).md";
         s = "${pkgs.neovim}/bin/nvim ~/s/notes/scratch.md";
 
+        # somafm fuzzy select
+        soma = "somafm channels|choose 0|sort|fzf|tee /dev/tty|somafm listen";
+
         # retrain my old mind; either to short name or better cli tools from gnu
         git = "bad";
         helmfile = "bad";

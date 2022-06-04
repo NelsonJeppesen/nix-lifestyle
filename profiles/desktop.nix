@@ -18,7 +18,7 @@
 
   hardware.bluetooth.enable = true;
   programs.gpaste.enable = true;
-  programs.steam.enable = true;
+  #programs.steam.enable = true;
 
   # Pipewire stack with alsa/pulseaudio compat
   # Pipewire is the future
@@ -56,8 +56,8 @@
 #    };
 #  };
 
-  services.xserver.libinput.touchpad.accelProfile = "adaptive";
-  services.xserver.libinput.touchpad.accelSpeed = "0.4";
+  #services.xserver.libinput.touchpad.accelProfile = "adaptive";
+  #services.xserver.libinput.touchpad.accelSpeed = "0.4";
 
   #services.xserver.libinput.touchpad.tappingDragLock = false; # make less gltichy
   services.xserver.libinput.touchpad.tapping = false; # make less gltichy
@@ -76,9 +76,9 @@
   #hardware.sane.enable       = true;
 
   # Remove gnome tools I don't use
-  #environment.gnome.excludePackages = with pkgs.gnome; [
+  environment.gnome.excludePackages = with pkgs.gnome; [
   #  pkgs.gnome-online-accounts
-  #  pkgs.gnome-tour
+    pkgs.gnome-tour
   #  pkgs.gnome-user-docs
   #  pkgs.gnome-video-effects
   #  gnome-backgrounds
@@ -91,7 +91,7 @@
   #  gnome-online-miners
   #  gnome-screenshot
   #  gnome-weather
-  #];
+  ];
 
   # Configure keymap in X11
   services.xserver.layout = "us";

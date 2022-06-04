@@ -190,38 +190,50 @@
 
           # https://github.com/hrsh7th/nvim-cmp
           #   "A completion plugin for neovim coded in Lua"
-          cmp-path
-          cmp-buffer
-          cmp-emoji
-          cmp-spell
-          {
-            plugin = nvim-cmp;
-            config = ''
-              lua << EOF
-              local cmp = require'cmp'
-              require('cmp').setup({
-                sources = {
-                  { name = 'buffer' },
-                  { name = 'path'},
-                  { name = 'emoji'},
-                  { name = 'spell' },
-                },
-                mapping = {
+          #cmp-path
+          #cmp-buffer
+          #cmp-emoji
+          #cmp-spell
+          #{
+          #  plugin = nvim-cmp;
+          #  config = ''
+          #    lua << EOF
+          #    local cmp = require'cmp'
+          #    require('cmp').setup({
+          #      sources = {
+          #        { name = 'buffer' },
+          #        { name = 'path'},
+          #        { name = 'emoji'},
+          #        { name = 'spell' },
+          #      },
+          #      mapping = {
+          #        ["<Tab>"] = cmp.mapping(function(fallback)
+          #              if cmp.visible() then
+          #                cmp.select_next_item()
+          #              elseif vim.fn["vsnip#available"](1) == 1 then
+          #                feedkey("<Plug>(vsnip-expand-or-jump)", "")
+          #              elseif has_words_before() then
+          #                cmp.complete()
+          #              else
+          #                fallback() -- The fallback function sends a already mapped key. In this case, it's probably `<Tab>`.
+          #              end
+          #            end, { "i", "s" }),
 
-                ["<Tab>"] = cmp.mapping(function(fallback)
-                  if cmp.visible() then
-                    cmp.select_next_item()
-                  else
-                    cmp.complete()
-                  end
-                 end),
-                }
-              })
-              EOF
+          #            ["<S-Tab>"] = cmp.mapping(function()
+          #              if cmp.visible() then
+          #                cmp.select_prev_item()
+          #              elseif vim.fn["vsnip#jumpable"](-1) == 1 then
+          #                feedkey("<Plug>(vsnip-jump-prev)", "")
+          #              end
+          #            end, { "i", "s" }),
 
-              nnoremap <silent> ,,f :Format<cr>
-            '';
-          }
+          #      }
+          #    })
+          #    EOF
+
+          #    nnoremap <silent> ,,f :Format<cr>
+          #  '';
+          #}
 
           # https://github.com/folke/which-key.nvim
           #   "displays a popup with possible keybindings of the command you started typing"

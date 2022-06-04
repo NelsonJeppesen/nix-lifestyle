@@ -36,28 +36,38 @@ in
 
   home = {
 
-    #file.".config/tuir/tuir.cfg".source = dotfiles/tuir.cfg;
     file.".local/bin".source = ../bin;
     file.".terraform.d/plugin-cache/.empty".source = ../dotfiles/empty;
     file.".curlrc".source = ../dotfiles/curlrc;
     file.".config/fend/config.toml".source = ../dotfiles/fend.toml;
 
     packages = [
-      #pkgs.libreoffice
-
       # jeppesen.io
       pkgs.hugo
 
-      # nix
+      # nixpkgs maintainer
       pkgs.nixpkgs-review
 
-      # Core GUI apps
-      pkgs.firefox
-      pkgs.google-chrome
-      pkgs.kitty
+      # fun
+      pkgs.mindustry
+      pkgs.vitetris
+      pkgs.wesnoth
+      pkgs.zeroad
+
+      # chill
+      pkgs.somafm-cli
       pkgs.spotify
 
-      # Cloud managment
+      # core GUI apps
+      pkgs.firefox
+      pkgs.fractal
+      pkgs.google-chrome
+      pkgs.kitty
+      pkgs.slack
+      pkgs.zoom-us
+      #pkgs.libreoffice
+
+      # cloud management
       pkgs.awscli2
       pkgs.dbeaver
       pkgs.google-cloud-sdk
@@ -68,21 +78,25 @@ in
       pkgs.shellcheck
       pkgs.shfmt
 
-      # Basic shell tools
+      # core shell tools
       pkgs.btop
       pkgs.choose
       pkgs.curl
       pkgs.dasel
       pkgs.dnsutils
+      pkgs.entr
       pkgs.fd
       pkgs.fend
+      pkgs.gh
       pkgs.jq
       pkgs.nvimpager
       pkgs.p7zip
       pkgs.ripgrep
+      pkgs.tig
       pkgs.up
       pkgs.vault
       pkgs.wget
+      pkgs.wl-clipboard
 
       # Kubernetes
       pkgs.aws-iam-authenticator
@@ -93,22 +107,6 @@ in
       pkgs.kubernetes-helm
       pkgs.sops
       pkgs.stern
-
-      # github
-      pkgs.gh
-
-      # Comms
-      pkgs.zoom-us
-      pkgs.slack
-      pkgs.fractal
-
-      #pkgs.dosbox     # Simcity 2000
-      #pkgs.frotz      # Zork I
-      #pkgs.vitetris   # CLI Tetris
-      #pkgs.steam
-      #pkgs.somafm-cli
-      #pkgs.ncspot
-      #pkgs.tuir
     ];
   };
 }

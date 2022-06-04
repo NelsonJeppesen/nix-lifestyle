@@ -5,12 +5,12 @@
 
   virtualisation = {
     # dont think I'll go back to docker
-    docker = {
-      enable = true;
-    };
+    #docker = {
+    #  enable = true;
+    #};
     podman = {
       enable = true;
-      #dockerCompat = true;
+      dockerCompat = true;
     };
   };
 }
