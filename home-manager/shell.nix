@@ -49,12 +49,12 @@
           when = "which task";
         };
 
-        #custom.taskwarrior_complete_today = {
-        #  command = "${pkgs.taskwarrior}/bin/task count rc.gc=off rc.verbose=nothing status:completed end.after:yesterday";
-        #  description = "Count of pending Taskwarrior tasks";
-        #  symbol = "";
-        #  when = "which task";
-        #};
+        custom.taskwarrior_complete_today = {
+          command = "${pkgs.taskwarrior}/bin/task count rc.gc=off rc.verbose=nothing status:completed end.after:yesterday";
+          description = "Count of pending Taskwarrior tasks";
+          symbol = "";
+          when = "which task";
+        };
 
       };
     };
@@ -114,7 +114,7 @@
         # Use NeoVim is my editor for all
         EDITOR = "nvim";
         # Use NemVim as my pager; enable copy into clipboard
-        PAGER = "nvimpager -- --cmd 'set clipboard^=unnamed,unnamedplus'";
+        #PAGER = "nvimpager -- --cmd 'set clipboard^=unnamed,unnamedplus'";
       };
 
       shellAliases = {
@@ -126,9 +126,6 @@
         h = "${pkgs.helmfile}/bin/helmfile";
         n = "${pkgs.neovim}/bin/nvim ~/s/notes/$(date +work-%Y-%q).md";
         s = "${pkgs.neovim}/bin/nvim ~/s/notes/scratch.md";
-
-        # somafm fuzzy select
-        soma = "somafm channels|choose 0|sort|fzf|tee /dev/tty|somafm listen";
 
         # retrain my old mind; either to short name or better cli tools from gnu
         git = "bad";

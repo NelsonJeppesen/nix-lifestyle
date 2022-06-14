@@ -1,6 +1,7 @@
 # NeoVim for daily work and daily notes
 { config, pkgs, ... }:
 {
+
   programs = {
 
     neovim = {
@@ -8,30 +9,66 @@
       viAlias = true;
       vimAlias = true;
       vimdiffAlias = true;
-      #coc.enable = true;
-      #withNodeJs = true;
 
       # Install Vim Plugins, keep configuration local to install block if possible
       plugins =
         with pkgs.vimPlugins; [
-          # -------------------------- TODO -----------------------------------
-          # https://github.com/max-0406/autoclose.nvim
-          # https://github.com/sQVe/sort.nvim
-          # https://github.com/lukas-reineke/cmp-rg
-
-
           # -------------------------- colorschemes ---------------------------
-          #{
-          #  plugin = kanagawa-nvim;
-          #  config = "colorscheme kanagawa";
-          #}
-          {
-            plugin = neon;
-            config = "colorscheme neon";
-          }
-
+          # highly customizable theme for vim and neovim with support for lsp, treesitter
+          # and a variety of plugins
+          #   https://github.com/EdenEast/nightfox.nvim
+          { plugin = nightfox-nvim; config = "colorscheme nightfox"; }
 
           # --------------------------Lua Plugins (prefered) ------------------
+
+          # Install tree-sitter with all the plugins/grammars
+          #   https://tree-sitter.github.io/tree-sitter
+          {
+            plugin = (nvim-treesitter.withPlugins (plugins: pkgs.tree-sitter.allGrammars));
+            config = ''
+              lua << EOF
+              require'nvim-treesitter.configs'.setup {
+                highlight = {
+                  enable = true,
+                  additional_vim_regex_highlighting = true
+                },
+                indent = {
+                  enable = true
+                },
+                incremental_selection = {
+                  enable = true,
+                  keymaps = {
+                    init_selection = "gnn",
+                    node_incremental = "grn",
+                    scope_incremental = "grc",
+                    node_decremental = "grm",
+                  },
+                },
+              }
+              EOF
+
+              set foldlevelstart=6
+              set foldmethod=expr
+              set foldexpr=nvim_treesitter#foldexpr()
+            '';
+          }
+
+          {
+            plugin = mini-nvim;
+            config = ''
+              lua << EOF
+              require('mini.completion').setup({})
+              require('mini.trailspace').setup({})
+              require('mini.surround').setup({})
+
+              vim.api.nvim_set_keymap('i', '<Tab>',   [[pumvisible() ? "\<C-n>" : "\<Tab>"]],   { noremap = true, expr = true })
+              vim.api.nvim_set_keymap('i', '<S-Tab>', [[pumvisible() ? "\<C-p>" : "\<S-Tab>"]], { noremap = true, expr = true })
+              MiniTrailspace.highlight()
+              EOF
+              nnoremap  ,,s   lua MiniTrailspace.trim()<cr>
+            '';
+          }
+
           # https://github.com/iamcco/markdown-preview.nvim/
           #   "markdown preview plugin for (neo)vim"
           markdown-preview-nvim
@@ -71,23 +108,6 @@
           {
             plugin = neoscroll-nvim;
             config = "lua require('neoscroll').setup({})";
-          }
-
-          # https://github.com/SidOfc/mkdx/
-          #   "A vim plugin that adds some nice extra's for working with
-          #    markdown documents"
-          {
-            plugin = mkdx;
-            config = ''
-              let g:mkdx#settings = { 'enter': { 'shift': 1 } }
-
-              "Autosave file when working on markdown (my notes)
-              autocmd bufreadpre ~/s/notes/*  :autocmd  TextChanged,TextChangedI <buffer> silent write
-              autocmd bufreadpre ~/s/notes/*            :set noswapfile
-              autocmd bufreadpre ~/s/notes/*            setlocal shiftwidth=4
-              autocmd bufreadpre ~/s/notes/*            setlocal softtabstop=4
-              autocmd bufreadpre ~/s/notes/*            set signcolumn=no
-            '';
           }
 
           # https://github.com/nvim-telescope/telescope.nvim
@@ -136,6 +156,11 @@
                   return {exe = "${pkgs.nixpkgs-fmt}/bin/nixpkgs-fmt",stdin = true}
                   end
                 },
+                hcl = {
+                  function()
+                  return {exe = "${pkgs.packer}/bin/packer",stdin = true,args = {"fmt","-"}}
+                  end
+                },
                 terraform = {
                   function()
                   return {exe = "${pkgs.terraform}/bin/terraform",stdin = true,args = {"fmt","-"}}
@@ -179,7 +204,6 @@
               lua << EOF
               require('lualine').setup {
                 options = {
-                  theme = 'ayu_dark',
                   section_separators = " ",
                   component_separators = " "
                 }
@@ -190,44 +214,42 @@
 
           # https://github.com/hrsh7th/nvim-cmp
           #   "A completion plugin for neovim coded in Lua"
-          #cmp-path
-          #cmp-buffer
           #cmp-emoji
+          #cmp-path
           #cmp-spell
+          #cmp-buffer
+          #cmp-treesitter
           #{
           #  plugin = nvim-cmp;
           #  config = ''
+          #    set completeopt=menu,menuone,noselect
+
           #    lua << EOF
           #    local cmp = require'cmp'
-          #    require('cmp').setup({
-          #      sources = {
-          #        { name = 'buffer' },
-          #        { name = 'path'},
-          #        { name = 'emoji'},
-          #        { name = 'spell' },
-          #      },
-          #      mapping = {
-          #        ["<Tab>"] = cmp.mapping(function(fallback)
-          #              if cmp.visible() then
-          #                cmp.select_next_item()
-          #              elseif vim.fn["vsnip#available"](1) == 1 then
-          #                feedkey("<Plug>(vsnip-expand-or-jump)", "")
-          #              elseif has_words_before() then
-          #                cmp.complete()
-          #              else
-          #                fallback() -- The fallback function sends a already mapped key. In this case, it's probably `<Tab>`.
-          #              end
-          #            end, { "i", "s" }),
-
-          #            ["<S-Tab>"] = cmp.mapping(function()
-          #              if cmp.visible() then
-          #                cmp.select_prev_item()
-          #              elseif vim.fn["vsnip#jumpable"](-1) == 1 then
-          #                feedkey("<Plug>(vsnip-jump-prev)", "")
-          #              end
-          #            end, { "i", "s" }),
-
-          #      }
+          #    cmp.setup({
+          #    sources = cmp.config.sources({
+          #      -- { name = 'nvim_lsp' },
+          #      -- { name = 'vsnip' }, -- For vsnip users.
+          #      -- { name = 'luasnip' }, -- For luasnip users.
+          #      -- { name = 'ultisnips' }, -- For ultisnips users.
+          #      -- { name = 'snippy' }, -- For snippy users.
+          #    }, {
+          #      { name = 'buffer' },
+          #    }),
+          #    window = {
+          #          completion = cmp.config.window.bordered(),
+          #          documentation = cmp.config.window.bordered(),
+          #        },
+          #      -- suuuources = {
+          #      --   -- { name = 'emoji'},
+          #      --   -- { name = 'path'},
+          #      --   -- { name = 'spell' },
+          #      --   { name = 'buffer' },
+          #      --   { name = 'treesitter' },
+          #      -- },
+          #      -- -- mapping = {
+          #      -- --   ['<Tab>'] = cmp.mapping(cmp.mapping.select_next_item()),
+          #      -- -- }
           #    })
           #    EOF
 
@@ -262,33 +284,9 @@
 
           # ------------------------------------ Vimscript Plugins ---------------------------------------------
 
-          # https://github.com/hashivim/vim-terraform/
-          #   "basic vim/terraform integration"
-          vim-terraform
-
-          # https://github.com/towolf/vim-helm/
-          #   "vim syntax for helm templates (yaml + gotmpl + sprig + custom)"
-          vim-helm
-
           # https://github.com/farmergreg/vim-lastplace
           #   "Intelligently reopen files at your last edit position in Vim"
           vim-lastplace
-
-          # https://github.com/ntpeters/vim-better-whitespace
-          #   "Better whitespace highlighting for Vim"
-          {
-            plugin = vim-better-whitespace;
-            config = ''
-              let g:better_whitespace_guicolor='#556e87'
-              let g:better_whitespace_operator=""
-              nnoremap  ,,s   :StripWhitespace<cr>
-              nnoremap  ,,f   :Format<cr>
-            '';
-          }
-
-          # https://github.com/LnL7/vim-nix/
-          #   "Vim configuration files for Nix"
-          vim-nix
 
           # https://github.com/dhruvasagar/vim-table-mode
           #   "VIM Table Mode for instant [ASCII] table creation"
@@ -329,16 +327,10 @@
         vnoremap <Right> <Nop>
         vnoremap <Up> <Nop>
 
-        " Show search/replace in real-time
-        set inccommand=nosplit
-
         set autoread
         let mapleader=","
         nnoremap <silent>   <leader><leader>n   Go<cr><esc>:r! date +\%Y-\%m-\%d<cr>I# <esc>o*<space>
         nnoremap            <leader><leader>c   :%y+<cr>
-        nnoremap            <leader><leader>d   :set background=dark<cr>
-        nnoremap            <leader><leader>l   :set background=light<cr>
-        nnoremap  <silent>  <leader><leader>z   :call ToggleHiddenAll()<cr>
 
         " avoid using :
         nnoremap  <silent>  <leader>qq  :q!<cr>
@@ -347,25 +339,6 @@
 
         " keep terminal in background
         set hidden
-
-        let s:hidden_all = 0
-        function! ToggleHiddenAll()
-            if s:hidden_all  == 0
-                let s:hidden_all = 1
-                set noshowmode
-                set noruler
-                set laststatus=0
-                set noshowcmd
-            else
-                let s:hidden_all = 0
-                set showmode
-                set ruler
-                set laststatus=2
-                set showcmd
-            endif
-        endfunction
-
-        set relativenumber
 
         " set title in Kitty term tab to just the filename
         set titlestring=%t
