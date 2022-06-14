@@ -18,7 +18,6 @@ in
     ./git.nix
     ./gnome.nix
     ./kitty.nix
-    ./tilda.nix
     ./neovim.nix
     ./shell.nix
   ];
@@ -71,6 +70,7 @@ in
       pkgs.awscli2
       pkgs.dbeaver
       pkgs.google-cloud-sdk
+      pkgs.packer
       pkgs.ssm-session-manager-plugin
       pkgs.terraform
 
@@ -89,7 +89,6 @@ in
       pkgs.fend
       pkgs.gh
       pkgs.jq
-      pkgs.nvimpager
       pkgs.p7zip
       pkgs.ripgrep
       pkgs.tig

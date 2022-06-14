@@ -7,11 +7,12 @@
     pkgs.gnomeExtensions.appindicator
     pkgs.gnomeExtensions.bluetooth-battery
     pkgs.gnomeExtensions.caffeine
+    pkgs.gnomeExtensions.ddterm
     pkgs.gnomeExtensions.github-notifications
+    pkgs.gnomeExtensions.gsconnect
     pkgs.gnomeExtensions.run-or-raise
     pkgs.gnomeExtensions.spotify-tray
 
-    #pkgs.gnomeExtensions.gsconnect
     #pkgs.gnomeExtensions.somafm-internet-radio
     #pkgs.gnomeExtensions.taskwhisperer
   ];
@@ -26,8 +27,25 @@
         "caffeine@patapon.info" # caffeine
         "github.notifications@alexandre.dufournet.gmail.com" #github-notifications
         "run-or-raise@edvard.cz" # run-or-raise
+        "ddterm@amezin.github.com" # ddterm drop down term
         "sp-tray@sp-tray.esenliyim.github.com" # spotify-tray
       ];
+    };
+
+    "com/github/amezin/ddterm" = {
+      background-color = "rgb(0x17, 0x14, 0x21)";
+      background-opacity = 1.0;
+      bold-is-bright = false;
+      custom-font = "Hasklug Nerd Font 14";
+      ddterm-toggle-hotkey = ["<Super>t"];
+      foreground-color = "rgb(0xd0, 0xcf, 0xcc)";
+      hide-when-focus-lost = true;
+      override-window-animation = true;
+      theme-variant = "light";
+      use-system-font = false;
+      use-theme-colors = false;
+      window-maximize = false;
+      window-size = 0.5;
     };
 
     "org/gnome/shell/extensions/github-notifications" = {
