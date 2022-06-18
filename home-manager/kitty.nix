@@ -10,11 +10,11 @@
 
     kitty = {
       enable = true;
+      theme = "Dark Pride";
+      #theme  = "Seafoam Pastel";
+      #theme  = "Spacedust";
       #theme = "Galaxy";
       #theme = "duckbones";
-      theme = "Dark Pride";
-      #theme  = "Spacedust";
-      #theme  = "Seafoam Pastel";
 
       font = {
         name = "Hasklug Nerd Font Mono";
@@ -22,13 +22,14 @@
       };
 
       keybindings = {
+        "kitty_mod+]" = "next_layout";
         "kitty_mod+backspace" = "close_window";
         "kitty_mod+down" = "next_window";
-        "kitty_mod+up" = "prev_window";
-        "kitty_mod+right" = "next_tab";
         "kitty_mod+left" = "prev_tab";
+        "kitty_mod+n" = "new_tab_with_cwd";
+        "kitty_mod+right" = "next_tab";
         "kitty_mod+s" = "show_scrollback";
-        "kitty_mod+]" = "next_layout";
+        "kitty_mod+up" = "prev_window";
       };
 
       settings = {

@@ -151,28 +151,36 @@
             config = ''
               lua << EOF
               require('formatter').setup({logging = true,filetype = {
+                sh = {
+                  function()
+                  return {ignore_exitcode = true, exe ="${pkgs.shfmt}/bin/shfmt ", stdin = true, args = {"-ci","-i 2","-"}}
+                  end
+                },
                 nix = {
                   function()
-                  return {exe = "${pkgs.nixpkgs-fmt}/bin/nixpkgs-fmt",stdin = true}
+                  return {ignore_exitcode = true, exe = "${pkgs.nixpkgs-fmt}/bin/nixpkgs-fmt",stdin = true}
                   end
                 },
                 hcl = {
                   function()
-                  return {exe = "${pkgs.packer}/bin/packer",stdin = true,args = {"fmt","-"}}
+                  return {ignore_exitcode = true, exe = "${pkgs.packer}/bin/packer",stdin = true,args = {"fmt","-"}}
                   end
                 },
                 terraform = {
                   function()
-                  return {exe = "${pkgs.terraform}/bin/terraform",stdin = true,args = {"fmt","-"}}
+                  return {ignore_exitcode = true, exe = "${pkgs.terraform}/bin/terraform",stdin = true,args = {"fmt","-"}}
                   end
                 },
                 yaml = {
                   function()
-                  return {exe = "${pkgs.yamlfix}/bin/yamlfix",stdin = true,args = {"-"}}
+                  return {ignore_exitcode = true, exe = "${pkgs.yamlfix}/bin/yamlfix",stdin = true,args = {"-"}}
                   end
                 },
               }})
               EOF
+
+              nnoremap <silent> ,f :Format<CR>
+              nnoremap <silent> ,F :FormatWrite<CR>
             '';
           }
 

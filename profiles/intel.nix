@@ -19,6 +19,9 @@
     #options iwlwifi power_save=1 d0i3_disable=0 uapsd_disable=0
     #options iwldvm force_cam=0
     #options iwlmvm power_scheme=3
+
+    options iwlmvm power_scheme=1
+    options cfg80211 cfg80211_disable_40mhz_24ghz=Y
   '';
 
   # Ensure modules used for efficent disk encryption are loaded

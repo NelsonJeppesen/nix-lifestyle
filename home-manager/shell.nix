@@ -162,9 +162,6 @@
         tt = "echo $(${pkgs.terraform}/bin/terraform state list|fzf --multi)|xargs -n1 ${pkgs.terraform}/bin/terraform taint";
         terraform = "bad";
 
-        # use fuzzy finder to connect to one more more vpns quickly
-        vpn = "nmcli con|grep vpn|grep -- --|choose 0|fzf --multi|xargs --max-procs 9 -L1 nmcli con up id";
-
         # kube
         uc = "kubectx";
         k = "kubectl";
