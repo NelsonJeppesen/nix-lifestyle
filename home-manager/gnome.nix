@@ -5,6 +5,7 @@
   home.packages = [
     pkgs.gnome3.gpaste
     pkgs.gnomeExtensions.appindicator
+    pkgs.gnomeExtensions.bluetooth-quick-connect
     pkgs.gnomeExtensions.caffeine
     pkgs.gnomeExtensions.ddterm
     pkgs.gnomeExtensions.github-notifications
@@ -23,6 +24,7 @@
       enabled-extensions = [
         "GPaste@gnome-shell-extensions.gnome.org" # gpaste
         "appindicatorsupport@rgcjonas.gmail.com" # appindicator
+        "bluetooth-quick-connect@bjarosze.gmail.com"
         "caffeine@patapon.info" # caffeine
         "ddterm@amezin.github.com" # ddterm drop down term
         "github.notifications@alexandre.dufournet.gmail.com" #github-notifications

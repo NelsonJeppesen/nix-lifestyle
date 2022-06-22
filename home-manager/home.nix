@@ -34,6 +34,9 @@ in
   services.git-sync.repositories.notes.path = "/home/nelson/s/notes";
 
   home = {
+    stateVersion = "22.05";
+    username = "nelson";
+    homeDirectory = "/home/nelson";
 
     file.".local/bin".source = ../bin;
     file.".terraform.d/plugin-cache/.empty".source = ../dotfiles/empty;
