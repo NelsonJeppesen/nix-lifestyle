@@ -137,7 +137,7 @@
         "...." = "cd ../../..";
 
         # Enable aliases from within `watch`
-        watch = "watch ";
+        watch = "${pkgs.viddy}/bin/viddy";
 
         # reset terminal
         rst = "cd ~/s; clear";
