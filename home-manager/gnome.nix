@@ -38,7 +38,7 @@
     "com/github/amezin/ddterm" = {
       audible-bell = false;
       background-color = "rgb(0,0,0)";
-      background-opacity = 0.7;
+      background-opacity = 1.0;
       bold-color = "rgb(205,171,143)";
       bold-color-same-as-fg = true;
       custom-font = "Hasklug Nerd Font 13";
@@ -91,23 +91,24 @@
       shortcut-window-size-inc = [ ];
 
       palette = [
-        "rgb(0x17, 0x14, 0x21)"
-        "rgb(0xc0, 0x1c, 0x28)"
-        "rgb(0x26, 0xa2, 0x69)"
-        "rgb(0xa2, 0x73, 0x4c)"
-        "rgb(0x12, 0x48, 0x8b)"
-        "rgb(0xa3, 0x47, 0xba)"
-        "rgb(0x2a, 0xa1, 0xb3)"
-        "rgb(0xd0, 0xcf, 0xcc)"
-        "rgb(0x5e, 0x5c, 0x64)"
-        "rgb(0xf6, 0x61, 0x51)"
-        "rgb(0x33, 0xd1, 0x7a)"
-        "rgb(0xe9, 0xad, 0x0c)"
-        "rgb(0x2a, 0x7b, 0xde)"
-        "rgb(0xc0, 0x61, 0xcb)"
-        "rgb(0x33, 0xc7, 0xde)"
-        "rgb(0xff, 0xff, 0xff)"
+        "rgb(23,20,33)"
+        "rgb(233,40,136)"
+        "rgb(78,201,176)"
+        "rgb(206,145,120)"
+        "rgb(87,155,213)"
+        "rgb(113,72,150)"
+        "rgb(42,161,179)"
+        "rgb(234,234,234)"
+        "rgb(121,121,121)"
+        "rgb(235,42,136)"
+        "rgb(26,214,156)"
+        "rgb(233,173,149)"
+        "rgb(156,220,254)"
+        "rgb(151,94,171)"
+        "rgb(43,196,226)"
+        "rgb(234,234,234)"
       ];
+
     };
 
     "org/gnome/shell/extensions/github-notifications" = {
