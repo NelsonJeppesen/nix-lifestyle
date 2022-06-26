@@ -57,12 +57,8 @@
             plugin = mini-nvim;
             config = ''
               lua << EOF
-              --require('mini.completion').setup({})
               require('mini.trailspace').setup({})
               require('mini.surround').setup({})
-
-              vim.api.nvim_set_keymap('i', '<Tab>',   [[pumvisible() ? "\<C-n>" : "\<Tab>"]],   { noremap = true, expr = true })
-              vim.api.nvim_set_keymap('i', '<S-Tab>', [[pumvisible() ? "\<C-p>" : "\<S-Tab>"]], { noremap = true, expr = true })
               MiniTrailspace.highlight()
               EOF
               nnoremap  ,,s   lua MiniTrailspace.trim()<cr>
@@ -262,26 +258,8 @@
                   },
 
                   mapping = {
-
-                    ["<Tab>"] = cmp.mapping(function(fallback)
-                      if cmp.visible() then
-                        cmp.select_next_item()
-                      elseif vim.fn["vsnip#available"](1) == 1 then
-                        feedkey("<Plug>(vsnip-expand-or-jump)", "")
-                      elseif has_words_before() then
-                        cmp.complete()
-                      else
-                        fallback() -- The fallback function sends a already mapped key. In this case, it's probably `<Tab>`.
-                      end
-                    end, { "i", "s" }),
-
-                    ["<S-Tab>"] = cmp.mapping(function()
-                      if cmp.visible() then
-                        cmp.select_prev_item()
-                      elseif vim.fn["vsnip#jumpable"](-1) == 1 then
-                        feedkey("<Plug>(vsnip-jump-prev)", "")
-                      end
-                    end, { "i", "s" }),
+                    ["<Tab>"] = cmp.mapping.select_next_item({ behavior = cmp.SelectBehavior.Insert }),
+                    ["<S-Tab>"] = cmp.mapping.select_prev_item({ behavior = cmp.SelectBehavior.Insert }),
                   },
                 })
               EOF
