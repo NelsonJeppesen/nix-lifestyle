@@ -12,9 +12,6 @@
     pkgs.gnomeExtensions.gsconnect
     pkgs.gnomeExtensions.run-or-raise
     pkgs.gnomeExtensions.spotify-tray
-
-    #pkgs.gnomeExtensions.somafm-internet-radio
-    #pkgs.gnomeExtensions.taskwhisperer
   ];
 
   dconf.settings = {
