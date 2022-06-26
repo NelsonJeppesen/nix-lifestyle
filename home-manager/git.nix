@@ -32,6 +32,7 @@
         br = ''!git co $(git branch --list --sort=-authordate |fzf --height 15)'';
         c = "commit -m";
         co = "checkout";
+        d = "diff";
         df = "diff origin/main";
         dfm = "diff origin/master";
         ps = "push";

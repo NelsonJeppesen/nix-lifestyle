@@ -61,7 +61,6 @@
               require('mini.surround').setup({})
               MiniTrailspace.highlight()
               EOF
-              nnoremap  ,,s   lua MiniTrailspace.trim()<cr>
             '';
           }
 
@@ -142,42 +141,8 @@
 
           # https://github.com/mhartington/formatter.nvim
           #   "A format runner for neovim, written in lua"
-          {
-            plugin = formatter-nvim;
-            config = ''
-              lua << EOF
-              require('formatter').setup({logging = true,filetype = {
-                sh = {
-                  function()
-                  return {ignore_exitcode = true, exe ="${pkgs.shfmt}/bin/shfmt ", stdin = true, args = {"-ci","-i 2","-"}}
-                  end
-                },
-                nix = {
-                  function()
-                  return {ignore_exitcode = true, exe = "${pkgs.nixpkgs-fmt}/bin/nixpkgs-fmt",stdin = true}
-                  end
-                },
-                hcl = {
-                  function()
-                  return {ignore_exitcode = true, exe = "${pkgs.packer}/bin/packer",stdin = true,args = {"fmt","-"}}
-                  end
-                },
-                terraform = {
-                  function()
-                  return {ignore_exitcode = true, exe = "${pkgs.terraform}/bin/terraform",stdin = true,args = {"fmt","-"}}
-                  end
-                },
-                yaml = {
-                  function()
-                  return {ignore_exitcode = true, exe = "${pkgs.yamlfix}/bin/yamlfix",stdin = true,args = {"-"}}
-                  end
-                },
-              }})
-              EOF
-
-              nnoremap <silent> ,f :Format<CR>
-              nnoremap <silent> ,F :FormatWrite<CR>
-            '';
+          { plugin  = neoformat;
+            config = "nnoremap ,a :Neoformat<CR>";
           }
 
           # https://github.com/f-person/git-blame.nvim
@@ -204,6 +169,7 @@
           #   "A blazing fast and easy to configure neovim statusline written in pure lua"
           {
             plugin = lualine-nvim;
+
             config = ''
               lua << EOF
               require('lualine').setup {
@@ -312,8 +278,7 @@
         ];
 
       extraConfig = ''
-        " shortmess: I: don't give the intro message when starting Vim |:intro|
-        set shortmess=I
+        set shortmess=I  " dont show intro message on empty buffer
 
         set clipboard=unnamedplus
 

@@ -1,15 +1,16 @@
 { config, lib, pkgs, ... }:
 # Add `openssh` to git-sync path so it can use sshkeys to sign my commits
-let git-sync = pkgs.git-sync.overrideAttrs (oldAttrs: rec {
-  wrapperPath = with lib; makeBinPath [
-    pkgs.inotify-tools
-    pkgs.coreutils
-    pkgs.git
-    pkgs.gnugrep
-    pkgs.gnused
-    pkgs.openssh
-  ];
-});
+let
+  git-sync = pkgs.git-sync.overrideAttrs (oldAttrs: rec {
+    wrapperPath = with lib; makeBinPath [
+      pkgs.inotify-tools
+      pkgs.coreutils
+      pkgs.git
+      pkgs.gnugrep
+      pkgs.gnused
+      pkgs.openssh
+    ];
+  });
 in
 {
   nixpkgs.config.allowUnfree = true;
@@ -55,6 +56,10 @@ in
       pkgs.vitetris
       pkgs.wesnoth
       pkgs.zeroad
+
+      # formaters
+      pkgs.shfmt
+      pkgs.nixpkgs-fmt
 
       # chill
       pkgs.somafm-cli
