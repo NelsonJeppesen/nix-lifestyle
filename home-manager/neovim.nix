@@ -1,7 +1,6 @@
 # NeoVim for daily work and daily notes
 { config, pkgs, ... }:
 {
-
   programs = {
 
     neovim = {
@@ -13,6 +12,7 @@
       # Install Vim Plugins, keep configuration local to install block if possible
       plugins =
         with pkgs.vimPlugins; [
+
           # -------------------------- colorschemes ---------------------------
           # highly customizable theme for vim and neovim with support for lsp, treesitter
           # and a variety of plugins
@@ -57,7 +57,7 @@
             plugin = mini-nvim;
             config = ''
               lua << EOF
-              require('mini.completion').setup({})
+              --require('mini.completion').setup({})
               require('mini.trailspace').setup({})
               require('mini.surround').setup({})
 
@@ -222,48 +222,54 @@
 
           # https://github.com/hrsh7th/nvim-cmp
           #   "A completion plugin for neovim coded in Lua"
-          #cmp-emoji
-          #cmp-path
-          #cmp-spell
-          #cmp-buffer
-          #cmp-treesitter
-          #{
-          #  plugin = nvim-cmp;
-          #  config = ''
-          #    set completeopt=menu,menuone,noselect
+          cmp-buffer
+          cmp-emoji
+          cmp-path
+          cmp-spell
+          cmp-treesitter
+          {
+            plugin = nvim-cmp;
+            config = ''
+              set completeopt=menu,menuone,noselect
 
-          #    lua << EOF
-          #    local cmp = require'cmp'
-          #    cmp.setup({
-          #    sources = cmp.config.sources({
-          #      -- { name = 'nvim_lsp' },
-          #      -- { name = 'vsnip' }, -- For vsnip users.
-          #      -- { name = 'luasnip' }, -- For luasnip users.
-          #      -- { name = 'ultisnips' }, -- For ultisnips users.
-          #      -- { name = 'snippy' }, -- For snippy users.
-          #    }, {
-          #      { name = 'buffer' },
-          #    }),
-          #    window = {
-          #          completion = cmp.config.window.bordered(),
-          #          documentation = cmp.config.window.bordered(),
-          #        },
-          #      -- suuuources = {
-          #      --   -- { name = 'emoji'},
-          #      --   -- { name = 'path'},
-          #      --   -- { name = 'spell' },
-          #      --   { name = 'buffer' },
-          #      --   { name = 'treesitter' },
-          #      -- },
-          #      -- -- mapping = {
-          #      -- --   ['<Tab>'] = cmp.mapping(cmp.mapping.select_next_item()),
-          #      -- -- }
-          #    })
-          #    EOF
+              lua << EOF
+                local cmp = require'cmp'
+                cmp.setup({
 
-          #    nnoremap <silent> ,,f :Format<cr>
-          #  '';
-          #}
+                  sources = cmp.config.sources({
+                   { name = 'buffer'      },
+                   { name = 'emoji',      option = { insert = true }},
+                   { name = 'path'        },
+                -- { name = 'spell',      keyword_length = 4},
+                   { name = 'treesitter'  },
+                  }),
+
+                  window = {
+                    completion    = cmp.config.window.bordered(),
+                    documentation = cmp.config.window.bordered(),
+                  },
+
+                  formatting = {
+                    format = function(entry, vim_item)
+                      vim_item.menu = ({
+                        buffer      = "[buffer]",
+                        path        = "[path]",
+                        spell       = "[spell]",
+                        treesitter  = "[treesitter]",
+                      })[entry.source.name]
+                      return vim_item
+                    end
+                  },
+
+                  mapping = {
+                    ['<Tab>'] = cmp.mapping(cmp.mapping.select_next_item()),
+                  },
+                })
+              EOF
+
+              nnoremap <silent> ,,f :Format<cr>
+            '';
+          }
 
           # https://github.com/folke/which-key.nvim
           #   "displays a popup with possible keybindings of the command you started typing"
@@ -348,10 +354,6 @@
         " keep terminal in background
         set hidden
 
-        " set title in Kitty term tab to just the filename
-        set titlestring=%t
-        set title
-
         " enable mouse
         set mouse=a
         set updatetime=75
@@ -366,8 +368,6 @@
 
         " helpfull popup for shortcuts
         set timeoutlen=500
-
-        "set conceallevel=2
 
         " cant spell
         set spell
