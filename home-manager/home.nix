@@ -45,6 +45,8 @@ in
     file.".config/fend/config.toml".source = ../dotfiles/fend.toml;
 
     packages = [
+      pkgs.flameshot
+
       # jeppesen.io
       pkgs.hugo
 
@@ -54,18 +56,20 @@ in
       # fun
       pkgs.mindustry
       pkgs.vitetris
-      pkgs.wesnoth
-      pkgs.zeroad
+      #pkgs.wesnoth
+      #pkgs.zeroad
 
       # formaters
       pkgs.shfmt
       pkgs.nixpkgs-fmt
 
       # chill
-      pkgs.somafm-cli
+      pkgs.go-chromecast
+      #pkgs.somafm-cli forked
       pkgs.spotify
 
       # core GUI apps
+      pkgs.bitwarden
       pkgs.firefox
       pkgs.fractal
       pkgs.google-chrome
@@ -76,9 +80,10 @@ in
 
       # cloud management
       pkgs.awscli2
-      pkgs.dbeaver
+      #pkgs.dbeaver
       pkgs.google-cloud-sdk
       pkgs.packer
+      #pkgs.vagrant
       pkgs.ssm-session-manager-plugin
       pkgs.terraform
 
@@ -96,9 +101,12 @@ in
       pkgs.fd
       pkgs.fend
       pkgs.gh
+      pkgs.gomplate
+      pkgs.ipcalc
       pkgs.jq
       pkgs.p7zip
       pkgs.ripgrep
+      pkgs.t-rec
       pkgs.tig
       pkgs.up
       pkgs.vault

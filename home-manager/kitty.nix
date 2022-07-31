@@ -22,6 +22,7 @@
       };
 
       keybindings = {
+        "space+enter" = "toggle_fullscreen";
         "kitty_mod+]" = "next_layout";
         "kitty_mod+backspace" = "close_window";
         "kitty_mod+down" = "next_window";
@@ -30,6 +31,7 @@
         "kitty_mod+right" = "next_tab";
         "kitty_mod+s" = "show_scrollback";
         "kitty_mod+up" = "prev_window";
+        "kitty_mod+enter" = "launch --cwd=current";
       };
 
       settings = {
@@ -48,7 +50,7 @@
         # Vertical -- All windows are shown one below the other
         font_size = "13.0";
         hide_window_decorations = true;
-        inactive_text_alpha = "0.5";
+        inactive_text_alpha = "0.65";
         macos_show_window_title_in = "none";
         scrollback_lines = "30000";
         strip_trailing_spaces = "smart";

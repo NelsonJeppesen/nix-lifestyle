@@ -5,9 +5,7 @@
 
     neovim = {
       enable = true;
-      viAlias = true;
       vimAlias = true;
-      vimdiffAlias = true;
 
       # Install Vim Plugins, keep configuration local to install block if possible
       plugins =
@@ -17,9 +15,18 @@
           # highly customizable theme for vim and neovim with support for lsp, treesitter
           # and a variety of plugins
           #   https://github.com/EdenEast/nightfox.nvim
-          { plugin = nightfox-nvim; config = "colorscheme nightfox"; }
+          {
+            plugin = nightfox-nvim;
+            config = ''
+              colorscheme nightfox
+              let mapleader=","
+            '';
+          }
 
           # --------------------------Lua Plugins (prefered) ------------------
+
+          #twilight-nvim;
+          { plugin = zen-mode-nvim; config = "nnoremap <leader>z :ZenMode<CR>"; }
 
           # Install tree-sitter with all the plugins/grammars
           #   https://tree-sitter.github.io/tree-sitter
@@ -118,6 +125,23 @@
               nnoremap  ,fh  <cmd>lua require('telescope.builtin').oldfiles()<cr>
               nnoremap  ,fc  <cmd>lua require('telescope.builtin').colorscheme()<cr>
               nnoremap  ,fr  <cmd>lua require('telescope.builtin').registers()<cr>
+
+              lua << EOF
+                _G.open_telescope = function()
+                  local first_arg = vim.v.argv[2]
+                  if first_arg and vim.fn.isdirectory(first_arg) == 1 then
+                    vim.g.loaded_netrw = true
+                    require("telescope.builtin").find_files({search_dirs = {first_arg}})
+                  end
+                end
+
+                vim.api.nvim_exec([[
+                  augroup TelescopeOnEnter
+                    autocmd!
+                    autocmd VimEnter * lua open_telescope()
+                  augroup END
+                ]], false)
+              EOF
             '';
           }
 
@@ -141,7 +165,8 @@
 
           # https://github.com/mhartington/formatter.nvim
           #   "A format runner for neovim, written in lua"
-          { plugin  = neoformat;
+          {
+            plugin = neoformat;
             config = "nnoremap ,a :Neoformat<CR>";
           }
 
@@ -229,8 +254,6 @@
                   },
                 })
               EOF
-
-              nnoremap <silent> ,,f :Format<cr>
             '';
           }
 

@@ -33,11 +33,11 @@
         c = "commit -m";
         co = "checkout";
         d = "diff";
-        df = "diff origin/main";
-        dfm = "diff origin/master";
+        dfm = "diff origin/main";
+        dfmast = "diff origin/master";
         ps = "push";
         psf = "push --force-with-lease";
-        rb = " rebase --interactive origin/main";
+        rb = "rebase --interactive origin/main";
         rbm = "rebase --interactive origin/master";
         rba = "rebase --abort";
         rbc = "rebase --continue";

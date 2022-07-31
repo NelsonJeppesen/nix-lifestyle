@@ -10,6 +10,7 @@
     pkgs.gnomeExtensions.ddterm
     pkgs.gnomeExtensions.github-notifications
     pkgs.gnomeExtensions.gsconnect
+    pkgs.gnomeExtensions.hue-lights
     pkgs.gnomeExtensions.run-or-raise
     pkgs.gnomeExtensions.spotify-tray
   ];
@@ -28,40 +29,30 @@
         "gsconnect@andyholmes.github.io"
         "run-or-raise@edvard.cz" # run-or-raise
         "sp-tray@sp-tray.esenliyim.github.com" # spotify-tray
+        "hue-lights@chlumskyvaclav.gmail.com" # hue-lights
       ];
     };
 
     # drop down menu for somafm, vpn and fend
     "com/github/amezin/ddterm" = {
+
       audible-bell = false;
-      background-color = "rgb(0,0,0)";
       background-opacity = 1.0;
-      bold-color = "rgb(205,171,143)";
+      background-color="rgb(25,15,26)";
       bold-color-same-as-fg = true;
+      bold-is-bright = false;
       custom-font = "Hasklug Nerd Font 13";
       ddterm-toggle-hotkey = [ "<Super>t" ];
-      foreground-color = "rgb(153,193,241)";
+      hide-animation = "ease-in-out-back";
+      hide-animation-duration = 0.2;
       hide-when-focus-lost = true;
       new-tab-button = false;
       notebook-border = false;
-      panel-icon-type = "toggle-button";
+      override-window-animation = true;
+      panel-icon-type = "none";
       scroll-on-output = true;
-      show-scrollbar = false;
-      tab-close-buttons = false;
-      tab-expand = false;
-      tab-label-width = 0.1;
-      tab-policy = "always";
-      tab-position = "top";
-      tab-switcher-popup = false;
-      theme-variant = "dark";
-      transparent-background = true;
-      use-system-font = false;
-      use-theme-colors = false;
-      window-maximize = false;
-      window-position = "top";
-      window-size = 0.4;
-
-      shortcuts-enabled = true;
+      shortcut-background-opacity-dec = [ "<Primary>underscore" ];
+      shortcut-background-opacity-inc = [ "<Primary>plus" ];
       shortcut-find = [ "<Primary><Shift>s" ];
       shortcut-find-next = [ ];
       shortcut-find-prev = [ ];
@@ -70,9 +61,8 @@
       shortcut-next-tab = [ "<Primary><Shift>Right" ];
       shortcut-page-close = [ "<Primary>BackSpace" ];
       shortcut-prev-tab = [ "<Primary><Shift>Left" ];
-      shortcut-background-opacity-dec = [ "<Primary>underscore" ];
-      shortcut-background-opacity-inc = [ "<Primary>plus" ];
       shortcut-switch-to-tab-1 = [ ];
+      shortcut-switch-to-tab-10 = [ ];
       shortcut-switch-to-tab-2 = [ ];
       shortcut-switch-to-tab-3 = [ ];
       shortcut-switch-to-tab-4 = [ ];
@@ -81,11 +71,32 @@
       shortcut-switch-to-tab-7 = [ ];
       shortcut-switch-to-tab-8 = [ ];
       shortcut-switch-to-tab-9 = [ ];
-      shortcut-switch-to-tab-10 = [ ];
       shortcut-toggle-maximize = [ ];
       shortcut-window-hide = [ ];
       shortcut-window-size-dec = [ ];
       shortcut-window-size-inc = [ ];
+      shortcuts-enabled = true;
+      show-animation = "ease-in-out-back";
+      show-animation-duration = 0.2;
+      show-scrollbar = false;
+      tab-close-buttons = false;
+      tab-expand = false;
+      tab-label-ellipsize-mode = "middle";
+      tab-label-width = 0.1;
+      tab-policy = "automatic";
+      tab-position = "top";
+      tab-switcher-popup = false;
+      theme-variant = "dark";
+      transparent-background = true;
+      use-system-font = false;
+      use-theme-colors = false;
+      window-above = true;
+      window-maximize = false;
+      window-monitor = "primary";
+      window-position = "top";
+      window-resizable = false;
+      window-size = "0.5";
+      window-skip-taskbar = false;
 
       palette = [
         "rgb(23,20,33)"
