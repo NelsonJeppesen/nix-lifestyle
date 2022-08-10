@@ -157,9 +157,11 @@
                 float_opts = {border = 'curved'}
               }
               EOF
-              nnoremap <silent> <c-\>      <cmd>execute 'ToggleTerm dir=' . expand('%:p:h')<cr>
-              inoremap <silent> <c-\> <esc><cmd>execute 'ToggleTerm dir=' . expand('%:p:h')<cr>
-              tnoremap <silent> <c-\> <esc><cmd>ToggleTerm<cr>
+              nnoremap <silent> <c-\>     <cmd>execute 'ToggleTerm direction=float      dir=' . expand('%:p:h')<cr>
+              nnoremap <silent> <S-c-\>   <cmd>execute 'ToggleTerm direction=horizontal dir=' . expand('%:p:h')<cr>
+              inoremap <silent> <c-\>     <esc><cmd>execute 'ToggleTerm dir=' . expand('%:p:h')<cr>
+              tnoremap <silent> <c-\>     <esc><cmd>ToggleTerm<cr>
+              tnoremap <silent> <S-c-\>   <esc><cmd>ToggleTerm<cr>
             '';
           }
 
@@ -283,6 +285,10 @@
           }
 
           # ------------------------------------ Vimscript Plugins ---------------------------------------------
+          # https://github.com/lambdalisue/vim-manpager
+          #  "Use Vim as a MANPAGER program"
+          # see shell.nix
+          vim-manpager
 
           # https://github.com/farmergreg/vim-lastplace
           #   "Intelligently reopen files at your last edit position in Vim"

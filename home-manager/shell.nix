@@ -104,15 +104,21 @@
       '';
 
       sessionVariables = {
+        # use vim-manpager vim plugin in nvim for man pages
+        MANPAGER = "nvim -c ASMANPAGER -";
+
         # Install non-free packages e.g. Steam
         NIXPKGS_ALLOW_UNFREE = "1";
         FZF_DEFAULT_OPTS = "--layout=reverse";
+
         # Autosuggest as orange
         ZSH_AUTOSUGGEST_HIGHLIGHT_STYLE = "fg=3";
         MCFLY_FUZZY = "true";
         MCFLY_RESULTS = "20";
+
         # Use NeoVim is my editor for all
         EDITOR = "nvim";
+
         # Use NemVim as my pager; enable copy into clipboard
         #PAGER = "nvimpager -- --cmd 'set clipboard^=unnamed,unnamedplus'";
       };

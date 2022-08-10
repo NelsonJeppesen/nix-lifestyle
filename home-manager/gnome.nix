@@ -38,7 +38,7 @@
 
       audible-bell = false;
       background-opacity = 1.0;
-      background-color="rgb(25,15,26)";
+      background-color = "rgb(25,15,26)";
       bold-color-same-as-fg = true;
       bold-is-bright = false;
       custom-font = "Hasklug Nerd Font 13";
@@ -152,6 +152,10 @@
       show-battery-percentage = true;
     };
 
+    "org/gnome/shell/keybindings" = {
+      toggle-message-tray = [ "<Super>v" ];
+    };
+
     "org/gnome/shell/extensions/caffeine" = {
       show-notifications = false;
       user-enabled = false;
@@ -159,7 +163,7 @@
     "org/gnome/desktop/wm/keybindings" = {
       switch-input-source = [ ]; # Free up <Super>space
       switch-input-source-backward = [ ]; # Free up <Super><Shift>space
-      toggle-message-tray = [ ]; # Free up <Super>m
+      toggle-message-tray = [ "<Super>v" ]; # Free up <Super>m
       close = [ "<Super>BackSpace" ];
     };
 
