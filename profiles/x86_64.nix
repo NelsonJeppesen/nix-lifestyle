@@ -10,7 +10,7 @@
     };
     podman = {
       enable = true;
-    #  dockerCompat = true;
+      #dockerCompat = true;
     };
   };
 }

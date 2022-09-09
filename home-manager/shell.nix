@@ -33,28 +33,28 @@
         # Enabled
         kubernetes.disabled = false;
 
-        custom.taskwarrior_pending_work = {
-          command = "${pkgs.taskwarrior}/bin/task count rc.gc=off rc.verbose=nothing status:pending project:work";
-          description = "Count of pending Taskwarrior tasks";
-          symbol = "⇞";
-          style = "blue";
-          when = "which task";
-        };
+        #custom.taskwarrior_pending_work = {
+        #  command = "${pkgs.taskwarrior}/bin/task count rc.gc=off rc.verbose=nothing status:pending project:work";
+        #  description = "Count of pending Taskwarrior tasks";
+        #  symbol = "⇞";
+        #  style = "blue";
+        #  when = "which task";
+        #};
 
-        custom.taskwarrior_pending_personal = {
-          command = "${pkgs.taskwarrior}/bin/task count rc.gc=off rc.verbose=nothing status:pending project:personal";
-          description = "Count of pending Taskwarrior tasks";
-          symbol = "⨃";
-          style = "blue";
-          when = "which task";
-        };
+        #custom.taskwarrior_pending_personal = {
+        #  command = "${pkgs.taskwarrior}/bin/task count rc.gc=off rc.verbose=nothing status:pending project:personal";
+        #  description = "Count of pending Taskwarrior tasks";
+        #  symbol = "⨃";
+        #  style = "blue";
+        #  when = "which task";
+        #};
 
-        custom.taskwarrior_complete_today = {
-          command = "${pkgs.taskwarrior}/bin/task count rc.gc=off rc.verbose=nothing status:completed end.after:yesterday";
-          description = "Count of pending Taskwarrior tasks";
-          symbol = "";
-          when = "which task";
-        };
+        #custom.taskwarrior_complete_today = {
+        #  command = "${pkgs.taskwarrior}/bin/task count rc.gc=off rc.verbose=nothing status:completed end.after:yesterday";
+        #  description = "Count of pending Taskwarrior tasks";
+        #  symbol = "";
+        #  when = "which task";
+        #};
 
       };
     };
@@ -115,6 +115,7 @@
         ZSH_AUTOSUGGEST_HIGHLIGHT_STYLE = "fg=3";
         MCFLY_FUZZY = "true";
         MCFLY_RESULTS = "20";
+        MCFLY_RESULTS_SORT = "LAST_RUN";
 
         # Use NeoVim is my editor for all
         EDITOR = "nvim";
@@ -126,6 +127,12 @@
       shellAliases = {
         mynix = ''vim $(find ~/s/play/nix-lifestyle|grep  '.nix$'|fzf)'';
         weather = "${pkgs.curl}/bin/curl wttr.in/\\?format=4";
+
+        c = "curl";
+        ch = "curl  -X get --head";
+        chv = "curl -X get --head --verbose";
+        cs = "curl --silent";
+        cv = "curl --verbose";
 
         # short 'n sweet
         g = "${pkgs.git}/bin/git";

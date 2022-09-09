@@ -17,6 +17,7 @@
           #   https://github.com/EdenEast/nightfox.nvim
           {
             plugin = nightfox-nvim;
+            type = "viml";
             config = ''
               colorscheme nightfox
               let mapleader=","
@@ -32,7 +33,9 @@
           #   https://tree-sitter.github.io/tree-sitter
           {
             plugin = (nvim-treesitter.withPlugins (plugins: pkgs.tree-sitter.allGrammars));
+            type = "viml";
             config = ''
+              set foldlevelstart=6
               lua << EOF
               require'nvim-treesitter.configs'.setup {
                 highlight = {
@@ -62,12 +65,11 @@
 
           {
             plugin = mini-nvim;
+            type = "lua";
             config = ''
-              lua << EOF
               require('mini.trailspace').setup({})
               require('mini.surround').setup({})
               MiniTrailspace.highlight()
-              EOF
             '';
           }
 
@@ -79,11 +81,6 @@
           #  "EditorConfig plugin for Neovim"
           editorconfig-nvim
 
-          {
-            plugin = trouble-nvim;
-            config = "nnoremap  ,,t  :TroubleToggle<cr>";
-          }
-
           # https://github.com/sudormrfbin/cheatsheet.nvim
           #  "A cheatsheet plugin for neovim with bundled cheatsheets for the
           #   editor, multiple vim plugins, nerd-fonts, regex, etc. with a
@@ -94,6 +91,7 @@
           #  "A snazzy bufferline for Neovim"
           {
             plugin = bufferline-nvim;
+            type = "viml";
             config = ''
               lua require("bufferline").setup{}
               nnoremap <silent> <C-h> :BufferLineCyclePrev<CR>
@@ -109,13 +107,16 @@
           #   "Smooth scrolling neovim plugin written in lua"
           {
             plugin = neoscroll-nvim;
-            config = "lua require('neoscroll').setup({})";
+            type = "lua";
+            config = "require('neoscroll').setup({})
+            ";
           }
 
           # https://github.com/nvim-telescope/telescope.nvim
           #   "highly extendable fuzzy finder over lists"
           {
             plugin = telescope-nvim;
+            type = "viml";
             config = ''
               nnoremap  ,fg  :execute 'Telescope git_files cwd=' . expand('%:p:h')<cr>
               nnoremap  ,ff  <cmd>lua require('telescope.builtin').find_files()<cr>
@@ -149,6 +150,7 @@
           #   "A neovim plugin to persist and toggle multiple terminals during an editing session"
           {
             plugin = toggleterm-nvim;
+            type = "viml";
             config = ''
               lua << EOF
               require("toggleterm").setup{
@@ -169,16 +171,18 @@
           #   "A format runner for neovim, written in lua"
           {
             plugin = neoformat;
-            config = "nnoremap ,a :Neoformat<CR>";
+            type = "lua";
+            config = "vim.api.nvim_set_keymap('n', ',a', ':Neoformat<cr>',{noremap = true})";
           }
 
           # https://github.com/f-person/git-blame.nvim
           #   "A git blame plugin for Neovim written in Lua"
           {
             plugin = git-blame-nvim;
+            type = "lua";
             config = ''
-              let g:gitblame_enabled = 0
-              nnoremap  ,,b  :GitBlameToggle<cr>
+              vim.g["gitblame_enabled"] = 0
+              vim.api.nvim_set_keymap('n', ',,b', ':GitBlameToggle<cr>',{noremap = true})
             '';
           }
 
@@ -186,6 +190,7 @@
           #   "Super fast git decorations implemented purely in lua/teal"
           {
             plugin = gitsigns-nvim;
+            type = "viml";
             config = ''
               lua require('gitsigns').setup()
               set signcolumn=yes " always show gutter
@@ -196,16 +201,14 @@
           #   "A blazing fast and easy to configure neovim statusline written in pure lua"
           {
             plugin = lualine-nvim;
-
+            type = "lua";
             config = ''
-              lua << EOF
               require('lualine').setup {
                 options = {
                   section_separators = " ",
                   component_separators = " "
                 }
               }
-              EOF
             '';
           }
 
@@ -218,6 +221,7 @@
           cmp-treesitter
           {
             plugin = nvim-cmp;
+            type = "viml";
             config = ''
               set completeopt=menu,menuone,noselect
 
@@ -263,13 +267,15 @@
           #   "displays a popup with possible keybindings of the command you started typing"
           {
             plugin = which-key-nvim;
-            config = "lua require('which-key').setup()";
+            type = "lua";
+            config = "require('which-key').setup()";
           }
 
           # https://github.com/tjdevries/train.nvim
           #   "Train yourself with vim motions and make your own train tracks :)"
           {
             plugin = train-nvim;
+            type = "viml";
             config = ''
               nnoremap  ,tu  :TrainUpDown<cr>
               nnoremap  ,tw  :TrainWord<cr>
@@ -281,14 +287,15 @@
           #   "Peek lines just when you intend"
           {
             plugin = numb-nvim;
-            config = "lua require('numb').setup()";
+            type = "lua";
+            config = "require('numb').setup()";
           }
 
           # ------------------------------------ Vimscript Plugins ---------------------------------------------
           # https://github.com/lambdalisue/vim-manpager
           #  "Use Vim as a MANPAGER program"
           # see shell.nix
-          vim-manpager
+          #vim-manpager
 
           # https://github.com/farmergreg/vim-lastplace
           #   "Intelligently reopen files at your last edit position in Vim"
@@ -298,6 +305,7 @@
           #   "VIM Table Mode for instant [ASCII] table creation"
           {
             plugin = vim-table-mode;
+            type = "viml";
             config = ''
               " Make tables github markdown compatable
               let g:table_mode_corner='|'
@@ -308,6 +316,8 @@
 
       extraConfig = ''
         set shortmess=I  " dont show intro message on empty buffer
+
+        " fix map  https://github.com/neovim/neovim/pull/18443#issuecomment-1119924227
 
         set clipboard=unnamedplus
 
@@ -336,6 +346,7 @@
         let mapleader=","
         nnoremap <silent>   <leader><leader>n   Go<cr><esc>:r! date +\%Y-\%m-\%d<cr>I# <esc>o*<space>
         nnoremap            <leader><leader>c   :%y+<cr>
+        nnoremap            <leader>d           :% !base64 -d<cr>
 
         " avoid using :
         nnoremap  <silent>  <leader>qq  :q!<cr>
@@ -343,7 +354,7 @@
         nnoremap  <silent>  <leader>wq  :wq<cr>
 
         " keep terminal in background
-        set hidden
+        "set hidden
 
         " enable mouse
         set mouse=a

@@ -26,6 +26,11 @@ in
 
   programs.home-manager.enable = true;
 
+  programs.helix.enable = true;
+  programs.helix.settings = {
+    theme = "drucula";
+  };
+
   # Add local scripts
   home.sessionPath = [ "/home/nelson/.local/bin" ];
 
@@ -41,11 +46,11 @@ in
 
     file.".local/bin".source = ../bin;
     file.".terraform.d/plugin-cache/.empty".source = ../dotfiles/empty;
-    file.".curlrc".source = ../dotfiles/curlrc;
     file.".config/fend/config.toml".source = ../dotfiles/fend.toml;
 
     packages = [
       pkgs.flameshot
+      pkgs.ddcutil
 
       # jeppesen.io
       pkgs.hugo
@@ -92,6 +97,7 @@ in
       pkgs.shfmt
 
       # core shell tools
+      pkgs.asdf-vm
       pkgs.btop
       pkgs.choose
       pkgs.curl
@@ -122,6 +128,7 @@ in
       pkgs.kubernetes-helm
       pkgs.sops
       pkgs.stern
+      pkgs.velero
     ];
   };
 }

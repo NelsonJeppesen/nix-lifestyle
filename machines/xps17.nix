@@ -14,6 +14,7 @@
   ];
 
   networking.hostName = "xps17";
+  networking.enableIPv6 = false;
   system.stateVersion = "21.11";
   boot.kernelModules = [ "kvm-intel" ];
   boot.initrd.luks.devices.root.device = "/dev/disk/by-uuid/a8e22006-dab1-467e-b3d9-05474903aa2d";

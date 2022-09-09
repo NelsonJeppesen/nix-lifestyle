@@ -16,6 +16,9 @@ in
     Defaults timestamp_timeout=600
   '';
 
+  #ddc monitor control
+  hardware.i2c.enable = true;
+
   environment.sessionVariables = rec {
     MOZ_ENABLE_WAYLAND = "1";
   };
@@ -51,10 +54,11 @@ in
   services.sshd.enable = lib.mkDefault true;
 
   users.users.nelson.isNormalUser = lib.mkDefault true;
-  users.users.nelson.extraGroups = lib.mkDefault [ "wheel" "docker" "networkmanager" "plugdev" ];
+  users.users.nelson.extraGroups = lib.mkDefault [ "i2c" "wheel" "docker" "networkmanager" "plugdev" ];
 
   # Core packages I use
   environment.systemPackages = with pkgs; [
+    webcamoid
     wget
     curl
     git
