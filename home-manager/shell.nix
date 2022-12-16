@@ -4,20 +4,25 @@
 
     direnv.enable = true; # load .envrc files
     fzf.enable = true; # fuzzy finder
-    mcfly.enable = true; # sqlite based shell history
+    #mcfly.enable = true; # sqlite based shell history
+    atuin.enable = true;
+    atuin.settings = {
+      auto_sync = false;
+      style = "compact";
+      search_node = "fuzzy";
+    };
+
 
     taskwarrior = {
-      enable = true;
-      #colorTheme = "dark-gray-blue-256";
-      #colorTheme = "dark-blue-256";
       colorTheme = "dark-violets-256";
       dataLocation = "$HOME/s/notes/taskwarrior";
+      enable = true;
       config = {
-        report.work.filter = "project:work status:pending";
         report.personal.filter = "project:personal stats:pending";
-        uda.taskwarrior-tui.task-report.show-info = false;
+        report.work.filter = "project:work status:pending";
         uda.taskwarrior-tui.task-report.looping = false;
         uda.taskwarrior-tui.task-report.next.filter = "(status:pending or status:waiting)";
+        uda.taskwarrior-tui.task-report.show-info = false;
       };
     };
 
@@ -71,6 +76,14 @@
         bindkey -e
       '';
 
+      profileExtra = ''
+        # revert to default uparrow instead of atuin
+      '';
+
+      loginExtra = ''
+        bindkey "^[OA" up-line-or-history
+      '';
+
       initExtra = ''
         # Set Kitty Terminal title of PWD
         function set-title-precmd() {
@@ -101,11 +114,12 @@
             clear
           fi
         fi
+        bindkey "^[OA" up-line-or-history
       '';
 
       sessionVariables = {
         # use vim-manpager vim plugin in nvim for man pages
-        MANPAGER = "nvim -c ASMANPAGER -";
+        MANPAGER = "nvim +Man!";
 
         # Install non-free packages e.g. Steam
         NIXPKGS_ALLOW_UNFREE = "1";
@@ -114,7 +128,8 @@
         # Autosuggest as orange
         ZSH_AUTOSUGGEST_HIGHLIGHT_STYLE = "fg=3";
         MCFLY_FUZZY = "true";
-        MCFLY_RESULTS = "20";
+        MCFLY_DISABLE_MENU = "true";
+        MCFLY_RESULTS = "20"; # default: 10
         MCFLY_RESULTS_SORT = "LAST_RUN";
 
         # Use NeoVim is my editor for all
@@ -128,6 +143,8 @@
         mynix = ''vim $(find ~/s/play/nix-lifestyle|grep  '.nix$'|fzf)'';
         weather = "${pkgs.curl}/bin/curl wttr.in/\\?format=4";
 
+        cb ="${pkgs.xsel}/bin/xsel --clipboard";
+
         c = "curl";
         ch = "curl  -X get --head";
         chv = "curl -X get --head --verbose";
@@ -137,13 +154,8 @@
         # short 'n sweet
         g = "${pkgs.git}/bin/git";
         h = "${pkgs.helmfile}/bin/helmfile";
-        n = "${pkgs.neovim}/bin/nvim ~/s/notes/$(date +work-%Y-%q).md";
-        s = "${pkgs.neovim}/bin/nvim ~/s/notes/scratch.md";
-
-        # retrain my old mind; either to short name or better cli tools from gnu
-        git = "bad";
-        helmfile = "bad";
-        find = "bad";
+        n = "nvim ~/s/notes/$(date +work-%Y-%q).md";
+        s = "nvim ~/s/notes/scratch.md";
 
         ".." = "cd ..";
         "..." = "cd ../..";
@@ -173,7 +185,6 @@
         tsd = "echo $(${pkgs.terraform}/bin/terraform state list|fzf --multi)|xargs -n1 ${pkgs.terraform}/bin/terraform state rm";
         tss = "${pkgs.terraform}/bin/terraform state show $(${pkgs.terraform}/bin/terraform state list|fzf)";
         tt = "echo $(${pkgs.terraform}/bin/terraform state list|fzf --multi)|xargs -n1 ${pkgs.terraform}/bin/terraform taint";
-        terraform = "bad";
 
         # kube
         uc = "kubectx";

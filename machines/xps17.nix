@@ -13,16 +13,37 @@
     ../profiles/zsh.nix
   ];
 
+  #boot.plymouth.enable = true;
+
+  environment.sessionVariables = rec {
+    MOZ_ENABLE_WAYLAND = "1";
+    SDL_VIDEODRIVER = "wayland";
+  };
+
+  # Core packages I use
+  environment.systemPackages = with pkgs; [
+    wget
+    curl
+    git
+    virtualbox
+    vagrant
+  ];
+
+  #boot.initrd.systemd.enable = true;
+
+  #virtualisation.virtualbox.guest.enable = true;
+  #virtualisation.virtualbox.host.enable = true;
+  #virtualisation.virtualbox.host.enableExtensionPack = true;
+
   networking.hostName = "xps17";
-  networking.enableIPv6 = false;
-  system.stateVersion = "21.11";
+  system.stateVersion = "22.05";
   boot.kernelModules = [ "kvm-intel" ];
   boot.initrd.luks.devices.root.device = "/dev/disk/by-uuid/a8e22006-dab1-467e-b3d9-05474903aa2d";
 
   fileSystems."/".device = "/dev/disk/by-uuid/4d559904-9470-4926-a90c-bbaf08e45e4c";
   fileSystems."/".fsType = "btrfs";
   fileSystems."/".options = [ "noatime" "nodiratime" "discard=async" "autodefrag" ];
-  fileSystems."/boot".device = "/dev/disk/by-uuid/8E00-9764";
+  fileSystems."/boot".device = "/dev/disk/by-uuid/B4AB-2120";
 
   # fix issues with bluetooth preventing sleep
   powerManagement.powerDownCommands = "${pkgs.util-linux}/bin/rfkill block bluetooth";

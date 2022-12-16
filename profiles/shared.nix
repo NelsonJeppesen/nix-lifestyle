@@ -8,7 +8,6 @@ in
   nixpkgs.config.allowUnfree = true; # Chrome, steam etc
   #boot.consoleLogLevel        = lib.mkDefault 3;        # hide ACPI error
   console.earlySetup = lib.mkDefault true; # Set virtual console options in initrd
-  #documentation.enable        = lib.mkDefault false;    # I dont use local docs
   environment.defaultPackages = lib.mkDefault [ ]; # Remove default pacakges
   hardware.video.hidpi.enable = lib.mkDefault true;
 
@@ -17,7 +16,7 @@ in
   '';
 
   #ddc monitor control
-  hardware.i2c.enable = true;
+  #hardware.i2c.enable = true;
 
   environment.sessionVariables = rec {
     MOZ_ENABLE_WAYLAND = "1";
@@ -62,7 +61,7 @@ in
     wget
     curl
     git
-    comma
+    #comma
     btop
   ];
 

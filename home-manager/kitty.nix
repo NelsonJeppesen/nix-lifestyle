@@ -13,8 +13,13 @@
       #theme = "Dark Pride";
       #theme  = "Seafoam Pastel";
       #theme  = "Spacedust";
-      theme = "Galaxy";
+      #theme = "Galaxy";
       #theme = "duckbones";
+      #theme = "Rosé Pine Dawn";
+      theme = "Pencil Light";
+      #theme = "Dark One Nuanced";
+      #theme = "neobones_light";
+      #theme = "Belafonte Day";
 
       font = {
         name = "Hasklug Nerd Font Mono";
@@ -35,7 +40,7 @@
       };
 
       settings = {
-        linux_display_server = "x11";
+        linux_display_server = "wayland";
         background_opacity = "1.0";
         bold_font = "Hasklug Medium Nerd Font Complete Mono";
         copy_on_select = true;

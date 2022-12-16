@@ -39,10 +39,33 @@ in
   services.git-sync.repositories.notes.uri = "manualy-git-clone-the-repo";
   services.git-sync.repositories.notes.path = "/home/nelson/s/notes";
 
+  programs.firefox = {
+    enable = true;
+    profiles = {
+      home = {
+        id = 0;
+        name = "home";
+        userChrome = "
+          #TabsToolbar
+          { visibility: collapse; }
+        ";
+        settings = {
+          "toolkit.legacyUserProfileCustomizations.stylesheets" = true;
+          "layers.acceleration.force-enabled" = true;
+          "gfx.webrender.all" = true;
+          "gfx.webrender.enabled" = true;
+          "layout.css.backdrop-filter.enabled" = true;
+          "svg.context-properties.content.enabled" = true;
+        };
+      };
+    };
+  };
+
   home = {
     stateVersion = "22.05";
     username = "nelson";
     homeDirectory = "/home/nelson";
+
 
     file.".local/bin".source = ../bin;
     file.".terraform.d/plugin-cache/.empty".source = ../dotfiles/empty;
@@ -50,16 +73,16 @@ in
 
     packages = [
       pkgs.flameshot
-      pkgs.ddcutil
+      #pkgs.ddcutil
 
       # jeppesen.io
-      pkgs.hugo
+      #pkgs.hugo
 
       # nixpkgs maintainer
-      pkgs.nixpkgs-review
+      #pkgs.nixpkgs-review
 
       # fun
-      pkgs.mindustry
+      #pkgs.mindustry
       pkgs.vitetris
       #pkgs.wesnoth
       #pkgs.zeroad
@@ -69,15 +92,13 @@ in
       pkgs.nixpkgs-fmt
 
       # chill
-      pkgs.go-chromecast
       #pkgs.somafm-cli forked
       pkgs.spotify
 
       # core GUI apps
       pkgs.bitwarden
-      pkgs.firefox
       pkgs.fractal
-      pkgs.google-chrome
+      #pkgs.google-chrome
       pkgs.kitty
       pkgs.slack
       pkgs.zoom-us
@@ -86,8 +107,8 @@ in
       # cloud management
       pkgs.awscli2
       #pkgs.dbeaver
-      pkgs.google-cloud-sdk
-      pkgs.packer
+      #pkgs.google-cloud-sdk
+      #pkgs.packer
       #pkgs.vagrant
       pkgs.ssm-session-manager-plugin
       pkgs.terraform
@@ -106,13 +127,13 @@ in
       pkgs.entr
       pkgs.fd
       pkgs.fend
-      pkgs.gh
+      #pkgs.gh
       pkgs.gomplate
       pkgs.ipcalc
       pkgs.jq
       pkgs.p7zip
       pkgs.ripgrep
-      pkgs.t-rec
+      #pkgs.t-rec
       pkgs.tig
       pkgs.up
       pkgs.vault

@@ -67,6 +67,7 @@
             plugin = mini-nvim;
             type = "lua";
             config = ''
+
               require('mini.trailspace').setup({})
               require('mini.surround').setup({})
               MiniTrailspace.highlight()
@@ -300,6 +301,7 @@
           # https://github.com/farmergreg/vim-lastplace
           #   "Intelligently reopen files at your last edit position in Vim"
           vim-lastplace
+          undotree
 
           # https://github.com/dhruvasagar/vim-table-mode
           #   "VIM Table Mode for instant [ASCII] table creation"
@@ -317,13 +319,14 @@
       extraConfig = ''
         set shortmess=I  " dont show intro message on empty buffer
 
-        " fix map  https://github.com/neovim/neovim/pull/18443#issuecomment-1119924227
-
+        let theme =  system('dconf read /org/gnome/desktop/interface/color-scheme')
+        if theme =~ ".*default.*"
+          colorscheme dayfox
+        end
         set clipboard=unnamedplus
 
         imap jj <Esc>
 
-        " Hard mode
         " Remove newbie crutches in Insert Mode
         inoremap <Down> <Nop>
         inoremap <Left> <Nop>

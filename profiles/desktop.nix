@@ -1,8 +1,8 @@
 { config, pkgs, stdenv, lib, ... }:
 
 {
-  services.resolved.enable = true;
-  services.power-profiles-daemon.enable = false; # I'm using TLP right now
+  #services.resolved.enable = false;
+  #services.power-profiles-daemon.enable = false; # I'm using TLP right now
 
   # The start of the week *should* be Monday, not Sunday
   i18n.extraLocaleSettings = {
@@ -18,21 +18,13 @@
 
   hardware.bluetooth.enable = true;
   programs.gpaste.enable = true;
-  #programs.steam.enable = true;
 
   # Pipewire stack with alsa/pulseaudio compat
-  # Pipewire is the future
   sound.enable = true;
   hardware.pulseaudio.enable = false; # Use pipewire with pulse compat
   services.pipewire.alsa.enable = true;
-  services.pipewire.alsa.support32Bit = true; # Steam support
   services.pipewire.enable = true;
   services.pipewire.pulse.enable = true;
-  services.pipewire.wireplumber.enable = true;
-
-  # vulkan 32bit and 64bit
-  hardware.opengl.driSupport = true;
-  hardware.opengl.driSupport32Bit = true; # Steam support
 
   services.xserver = {
     enable = true;
@@ -63,6 +55,11 @@
   services.xserver.libinput.touchpad.tapping = false; # make less gltichy
 
   services.gnome.gnome-initial-setup.enable = false;
+  services.gnome.sushi.enable = false;
+  services.gnome.rygel.enable = false;
+  services.gnome.games.enable = false;
+  #services.gnome.gnome-online-accounts.enable = false;
+  #services.gnome.gnome-online-miners.enable = false;
   #services.gnome.gnome-online-accounts.enable = false;
   #services.gnome.gnome-online-miners.enable   = false;
   #services.gnome.gnome-remote-desktop.enable  = false;
@@ -79,9 +76,9 @@
   environment.gnome.excludePackages = with pkgs.gnome; [
   #  pkgs.gnome-online-accounts
     pkgs.gnome-tour
-  #  pkgs.gnome-user-docs
-  #  pkgs.gnome-video-effects
-  #  gnome-backgrounds
+    pkgs.gnome-user-docs
+    pkgs.gnome-video-effects
+    gnome-backgrounds
   #  gnome-calendar
   #  gnome-contacts
   #  gnome-disk-utility
@@ -97,8 +94,8 @@
   services.xserver.layout = "us";
 
   # Open KDE Connect
-  networking.firewall.allowedTCPPortRanges = [{ from = 1714; to = 1764; }];
-  networking.firewall.allowedUDPPortRanges = [{ from = 1714; to = 1764; }];
+  #networking.firewall.allowedTCPPortRanges = [{ from = 1714; to = 1764; }];
+  #networking.firewall.allowedUDPPortRanges = [{ from = 1714; to = 1764; }];
 
   system.stateVersion = lib.mkDefault "21.05"; # Did you read the comment?
 }

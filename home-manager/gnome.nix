@@ -3,143 +3,52 @@
   home.file.".config/run-or-raise/shortcuts.conf".source = ../dotfiles/shortcuts.conf;
 
   home.packages = [
+    #pkgs.gnome3.gpaste
     #pkgs.gnomeExtensions.adjust-display-brightness
     #pkgs.gnomeExtensions.brightness-control-using-ddcutil
     #pkgs.gnomeExtensions.brightness-panel-menu-indicator
     #pkgs.gnomeExtensions.display-ddc-brightness-volume
-    #pkgs.gnome3.gpaste
+    #pkgs.gnomeExtensions.gsconnect
     pkgs.gnomeExtensions.appindicator
     pkgs.gnomeExtensions.bluetooth-quick-connect
     pkgs.gnomeExtensions.caffeine
     pkgs.gnomeExtensions.ddterm
     pkgs.gnomeExtensions.github-notifications
-    pkgs.gnomeExtensions.gsconnect
+    pkgs.gnomeExtensions.nasa-apod
     pkgs.gnomeExtensions.hue-lights
+    pkgs.gnomeExtensions.bing-wallpaper-changer
+    pkgs.gnomeExtensions.pano
+    pkgs.gnomeExtensions.pingindic
+    pkgs.gnomeExtensions.pip-on-top
+    pkgs.gnomeExtensions.quick-settings-tweaker
     pkgs.gnomeExtensions.run-or-raise
     pkgs.gnomeExtensions.spotify-tray
-    #pkgs.gnomeExtensions.pano
   ];
-
-
-nixpkgs.overlays = [ (
-self: super:
-
-let
-  version = "v3";
-  uuid = "pano@elhan.io";
-in
-{
-  gnome = super.gnome // {
-    gnome-shell = super.gnome.gnome-shell.overrideAttrs (oldAttrs: {
-      buildInputs = oldAttrs.buildInputs ++ [ super.libgda ];
-    });
-  };
-
-  gnomeExtensions = super.gnomeExtensions // {
-    pano = super.stdenv.mkDerivation rec {
-      pname = "gnome-shell-extension-pano";
-      inherit version;
-
-      src = super.fetchFromGitHub {
-        owner = "oae";
-        repo = "gnome-shell-pano";
-        rev = version;
-        hash = "sha256-LVEtxh/+Zjx0TXcP2+7SeW7jKDw9baoea35MQpNfnmQ=";
-      };
-
-      nativeBuildInputs = with super; [
-        nodePackages.rollup
-      ];
-
-      buildInputs = with super; [
-        atk
-        cogl
-        glib
-        gnome.gnome-shell
-        gnome.mutter
-        gtk3
-        libgda
-        pango
-      ];
-
-      nodeModules = super.mkYarnModules {
-        inherit pname version; # it is vitally important the the package.json has name and version fields
-        name = "gnome-shell-extension-pano-modules-${version}";
-        packageJSON = ./deps/gnome-shell-extensions/pano/package.json;
-        yarnLock = ./deps/gnome-shell-extensions/pano/yarn.lock;
-        yarnNix = ./deps/gnome-shell-extensions/pano/yarn.nix;
-      };
-
-      buildPhase =
-        let
-          dataDirPaths = super.lib.concatStringsSep ":" [
-            "${super.atk.dev}/share/gir-1.0"
-            "${super.gnome.gnome-shell}/share/gnome-shell"
-            "${super.gnome.mutter}/lib/mutter-10"
-            "${super.gtk3.dev}/share/gir-1.0"
-            "${super.libgda}/share/gir-1.0"
-            "${super.pango.dev}/share/gir-1.0"
-          ];
-        in
-        ''
-          runHook preBuild
-
-          ln -sv "${nodeModules}/node_modules" node_modules
-          XDG_DATA_DIRS="$XDG_DATA_DIRS:${dataDirPaths}" \
-              node_modules/@gi.ts/cli/bin/run config --lock
-          node_modules/@gi.ts/cli/bin/run generate
-          rollup -c
-          glib-compile-schemas ./resources/schemas --targetdir=./dist/schemas/
-
-          runHook postBuild
-        '';
-
-      passthru = {
-        extensionUuid = uuid;
-        extensionPortalSlug = "pano";
-      };
-
-      installPhase = ''
-        runHook preInstall
-        mkdir -p "$out/share/gnome-shell/extensions/${uuid}"
-        cp -r dist/* "$out/share/gnome-shell/extensions/${uuid}/"
-        runHook postInstall
-      '';
-
-      meta = with super.lib; {
-        description = "Next-gen Clipboard Manager for Gnome Shell";
-        license = licenses.gpl2;
-        platforms = platforms.linux;
-        maintainers = [ maintainers.michojel ];
-        homepage = "https://github.com/oae/gnome-shell-pano";
-      };
-    };
-  };
-}
-
-)];
 
   dconf.settings = {
     "org/gnome/shell" = {
       disable-extension-version-validation = true;
       disable-user-extensions = false;
       enabled-extensions = [
-        "GPaste@gnome-shell-extensions.gnome.org" # gpaste
-        "appindicatorsupport@rgcjonas.gmail.com" # appindicator
+        "BingWallpaper@ineffable-gmail.com"
+        #"nasa_apod@elinvention.ovh"
+        "GPaste@gnome-shell-extensions.gnome.org"
+        "appindicatorsupport@rgcjonas.gmail.com"
         "bluetooth-quick-connect@bjarosze.gmail.com"
-        "caffeine@patapon.info" # caffeine
-        "ddterm@amezin.github.com" # ddterm drop down term
-        "github.notifications@alexandre.dufournet.gmail.com" #github-notifications
+        "caffeine@patapon.info"
+        #"ddterm@amezin.github.com"
+        "github.notifications@alexandre.dufournet.gmail.com"
         "gsconnect@andyholmes.github.io"
-        "hue-lights@chlumskyvaclav.gmail.com" # hue-lights
-        "run-or-raise@edvard.cz" # run-or-raise
-        "sp-tray@sp-tray.esenliyim.github.com" # spotify-tray
+        "hue-lights@chlumskyvaclav.gmail.com"
+        #"pano@elhan.io"
+        "pip-on-top@rafostar.github.com"
+        "run-or-raise@edvard.cz"
+        "sp-tray@sp-tray.esenliyim.github.com"
       ];
     };
 
     # drop down menu for somafm, vpn and fend
     "com/github/amezin/ddterm" = {
-
       audible-bell = false;
       background-opacity = 1.0;
       background-color = "rgb(25,15,26)";
@@ -190,7 +99,6 @@ in
       tab-policy = "automatic";
       tab-position = "top";
       tab-switcher-popup = false;
-      theme-variant = "dark";
       transparent-background = true;
       use-system-font = false;
       use-theme-colors = false;
@@ -251,13 +159,13 @@ in
 
     "org/gnome/desktop/interface" = {
       clock-format = "12h";
-      color-scheme = "prefer-dark";
       enable-hot-corners = false;
       show-battery-percentage = true;
     };
 
     "org/gnome/shell/keybindings" = {
       toggle-message-tray = [ "<Super>v" ];
+      toggle-overview = [ ]; # free super-s
     };
 
     "org/gnome/shell/extensions/caffeine" = {
@@ -273,10 +181,6 @@ in
 
     "org/gnome/mutter" = {
       overlay-key = "Super_R";
-    };
-
-    "org/gnome/desktop/interface" = {
-      gtk-theme = "Adwaita-dark";
     };
 
     # map the mappings
