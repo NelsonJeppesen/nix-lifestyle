@@ -35,12 +35,12 @@
             plugin = (nvim-treesitter.withPlugins (plugins: pkgs.tree-sitter.allGrammars));
             type = "viml";
             config = ''
-              set foldlevelstart=6
+              set foldlevelstart=7
               lua << EOF
               require'nvim-treesitter.configs'.setup {
                 highlight = {
                   enable = true,
-                  additional_vim_regex_highlighting = true
+                  additional_vim_regex_highlighting = false
                 },
                 indent = {
                   enable = true

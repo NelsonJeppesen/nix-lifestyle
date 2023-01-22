@@ -23,7 +23,6 @@ in
     ./shell.nix
   ];
 
-
   programs.home-manager.enable = true;
 
   programs.helix.enable = true;
@@ -79,7 +78,7 @@ in
       #pkgs.hugo
 
       # nixpkgs maintainer
-      #pkgs.nixpkgs-review
+      pkgs.nixpkgs-review
 
       # fun
       #pkgs.mindustry

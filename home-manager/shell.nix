@@ -1,5 +1,21 @@
 { config, pkgs, ... }:
 {
+
+  editorconfig = {
+    enable = true;
+    settings = {
+      "*" = {
+        charset = "utf-8";
+        end_of_line = "lf";
+        trim_trailing_whitespace = true;
+        insert_final_newline = true;
+        max_line_width = 0;
+        indent_style = "space";
+        indent_size = 2;
+      };
+    };
+  };
+
   programs = {
 
     direnv.enable = true; # load .envrc files
@@ -11,7 +27,6 @@
       style = "compact";
       search_node = "fuzzy";
     };
-
 
     taskwarrior = {
       colorTheme = "dark-violets-256";
@@ -143,7 +158,7 @@
         mynix = ''vim $(find ~/s/play/nix-lifestyle|grep  '.nix$'|fzf)'';
         weather = "${pkgs.curl}/bin/curl wttr.in/\\?format=4";
 
-        cb ="${pkgs.xsel}/bin/xsel --clipboard";
+        cb = "${pkgs.xsel}/bin/xsel --clipboard";
 
         c = "curl";
         ch = "curl  -X get --head";
