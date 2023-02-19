@@ -76,7 +76,7 @@
 
           # https://github.com/iamcco/markdown-preview.nvim/
           #   "markdown preview plugin for (neo)vim"
-          markdown-preview-nvim
+          #markdown-preview-nvim
 
           # https://github.com/gpanders/editorconfig.nvim
           #  "EditorConfig plugin for Neovim"
