@@ -15,13 +15,13 @@
 {
   nixpkgs.config.allowUnfree = true;
 
-  #imports = [
-  #  ./git.nix
+  imports = [
+    ./git.nix
   #  ./gnome.nix
   #  ./kitty.nix
-  #  ./neovim.nix
-  #  ./shell.nix
-  #];
+    ./neovim.nix
+    ./shell.nix
+  ];
 
   programs.home-manager.enable = true;
 
