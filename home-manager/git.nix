@@ -1,7 +1,7 @@
 { config, pkgs, ... }:
 {
-  home.file.".ssh/allowed_signers".text =
-    "* ${builtins.readFile /home/nelson/.ssh/id_ed25519.pub}";
+  #home.file.".ssh/allowed_signers".text =
+  #  "* ${builtins.readFile /home/nelson/.ssh/id_ed25519.pub}";
 
   programs = {
 
