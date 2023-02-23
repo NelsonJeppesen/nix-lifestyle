@@ -1,1 +1,1 @@
-machines/xps17.nix
+machines/gram14.nix
