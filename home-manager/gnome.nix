@@ -20,6 +20,7 @@
     pkgs.gnomeExtensions.appindicator
     pkgs.gnomeExtensions.bluetooth-quick-connect
     pkgs.gnomeExtensions.caffeine
+    pkgs.gnomeExtensions.control-blur-effect-on-lock-screen
     pkgs.gnomeExtensions.ddterm
     pkgs.gnomeExtensions.google-earth-wallpaper
     pkgs.gnomeExtensions.pano
@@ -33,6 +34,7 @@
       disable-extension-version-validation = true;
       disable-user-extensions = false;
       enabled-extensions = [
+        "ControlBlurEffectOnLockScreen@pratap.fastmail.fm"
         "GoogleEarthWallpaper@neffo.github.com"
         "appindicatorsupport@rgcjonas.gmail.com"
         "bluetooth-quick-connect@bjarosze.gmail.com"
@@ -198,6 +200,10 @@
     "org/gnome/mutter" = {
       # active screen edge. Drag windows to edge of screen to resize
       edge-tiling = true;
+    };
+
+    "org/gnome/shell/extensions/googleearthwallpaper" = {
+      hide = true;
     };
   };
 }
