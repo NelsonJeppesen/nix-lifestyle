@@ -172,8 +172,12 @@
     };
 
     "org/gnome/shell/extensions/caffeine" = {
+      indicator-position = -1;
+      indicator-position-index = -1;
+      screen-blank = "always";
+      show-indicator = "only-active";
       show-notifications = false;
-      user-enabled = false;
+      toggle-shortcut = [ "<Super>c" ];
     };
 
     "org/gnome/desktop/wm/keybindings" = {
