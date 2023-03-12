@@ -158,6 +158,7 @@
     "org/gnome/shell/extensions/pano" = {
       history-length = 500;
       play-audio-on-copy = false;
+      show-indicator = false;
     };
 
     "org/gnome/desktop/interface" = {
