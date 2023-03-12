@@ -55,10 +55,11 @@
     # drop down menu for somafm, vpn and fend
     "com/github/amezin/ddterm" = {
       audible-bell = false;
-      background-opacity = 0.7;
       background-color = "rgb(25,15,26)";
+      background-opacity = 0.75;
       bold-color-same-as-fg = true;
       bold-is-bright = false;
+      custom-command = "bash -c 'nvim /home/nelson/s/notes/$(date +work-%Y-%q).md'";
       custom-font = "Hasklug Nerd Font 13";
       ddterm-toggle-hotkey = [ "<Super>t" ];
       hide-animation = "ease-in-out-back";
@@ -114,26 +115,6 @@
       window-resizable = false;
       window-size = 0.29999999999999999;
       window-skip-taskbar = false;
-
-      palette = [
-        "rgb(23,20,33)"
-        "rgb(233,40,136)"
-        "rgb(78,201,176)"
-        "rgb(206,145,120)"
-        "rgb(87,155,213)"
-        "rgb(113,72,150)"
-        "rgb(42,161,179)"
-        "rgb(234,234,234)"
-        "rgb(121,121,121)"
-        "rgb(235,42,136)"
-        "rgb(26,214,156)"
-        "rgb(233,173,149)"
-        "rgb(156,220,254)"
-        "rgb(151,94,171)"
-        "rgb(43,196,226)"
-        "rgb(234,234,234)"
-      ];
-
     };
 
     "org/gnome/shell/extensions/github-notifications" = {
