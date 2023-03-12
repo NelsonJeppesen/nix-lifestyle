@@ -21,7 +21,7 @@
   services.libreddit.address = "127.0.0.2";
 
   hardware.bluetooth.enable = true;
-  programs.gpaste.enable = true;
+  #programs.gpaste.enable = true;
 
   # Pipewire stack with alsa/pulseaudio compat
   sound.enable = true;

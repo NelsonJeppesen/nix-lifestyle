@@ -13,13 +13,6 @@
     ../profiles/zsh.nix
   ];
 
-  #boot.plymouth.enable = true;
-
-  environment.sessionVariables = rec {
-    MOZ_ENABLE_WAYLAND = "1";
-    SDL_VIDEODRIVER = "wayland";
-  };
-
   # Core packages I use
   environment.systemPackages = with pkgs; [
     wget
@@ -44,6 +37,15 @@
   fileSystems."/".fsType = "btrfs";
   fileSystems."/".options = [ "noatime" "nodiratime" "discard=async" "autodefrag" ];
   fileSystems."/boot".device = "/dev/disk/by-uuid/E7AF-1131";
+  swapDevices = [ { device = "/dev/disk/by-uuid/c09b6f9b-c7ad-4672-91c2-895a40de81b5"; } ];
+
+  systemd.services.enable_fn_lock= {
+    script = ''
+      # Enable fn-lock
+      echo 1 > /sys/devices/platform/lg-laptop/fn_lock
+    '';
+    wantedBy = [ "multi-user.target" ];
+  };
 
   # fix issues with bluetooth preventing sleep
 #  powerManagement.powerDownCommands = "${pkgs.util-linux}/bin/rfkill block bluetooth";

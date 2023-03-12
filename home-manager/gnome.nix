@@ -5,22 +5,25 @@
   home.packages = [
     #pkgs.gnome3.gpaste
     #pkgs.gnomeExtensions.adjust-display-brightness
+    #pkgs.gnomeExtensions.bing-wallpaper-changer
     #pkgs.gnomeExtensions.brightness-control-using-ddcutil
     #pkgs.gnomeExtensions.brightness-panel-menu-indicator
     #pkgs.gnomeExtensions.display-ddc-brightness-volume
+    #pkgs.gnomeExtensions.github-notifications
     #pkgs.gnomeExtensions.gsconnect
+    #pkgs.gnomeExtensions.hue-lights
+    #pkgs.gnomeExtensions.nasa-apod
+    #pkgs.gnomeExtensions.pingindic
+    #pkgs.gnomeExtensions.quick-settings-tweaker
+    #pkgs.gnomeExtensions.random-wallpaper
+    #pkgs.gnomeExtensions.shu-zhi
     pkgs.gnomeExtensions.appindicator
     pkgs.gnomeExtensions.bluetooth-quick-connect
     pkgs.gnomeExtensions.caffeine
     pkgs.gnomeExtensions.ddterm
-    pkgs.gnomeExtensions.github-notifications
-    pkgs.gnomeExtensions.nasa-apod
-    pkgs.gnomeExtensions.hue-lights
-    pkgs.gnomeExtensions.bing-wallpaper-changer
+    pkgs.gnomeExtensions.google-earth-wallpaper
     pkgs.gnomeExtensions.pano
-    pkgs.gnomeExtensions.pingindic
     pkgs.gnomeExtensions.pip-on-top
-    pkgs.gnomeExtensions.quick-settings-tweaker
     pkgs.gnomeExtensions.run-or-raise
     pkgs.gnomeExtensions.spotify-tray
   ];
@@ -30,27 +33,29 @@
       disable-extension-version-validation = true;
       disable-user-extensions = false;
       enabled-extensions = [
-        "BingWallpaper@ineffable-gmail.com"
-        #"nasa_apod@elinvention.ovh"
-        "GPaste@gnome-shell-extensions.gnome.org"
+        "GoogleEarthWallpaper@neffo.github.com"
         "appindicatorsupport@rgcjonas.gmail.com"
         "bluetooth-quick-connect@bjarosze.gmail.com"
         "caffeine@patapon.info"
-        #"ddterm@amezin.github.com"
-        "github.notifications@alexandre.dufournet.gmail.com"
-        "gsconnect@andyholmes.github.io"
-        "hue-lights@chlumskyvaclav.gmail.com"
-        #"pano@elhan.io"
+        "ddterm@amezin.github.com"
+        "pano@elhan.io"
         "pip-on-top@rafostar.github.com"
         "run-or-raise@edvard.cz"
         "sp-tray@sp-tray.esenliyim.github.com"
+        #"BingWallpaper@ineffable-gmail.com"
+        #"GPaste@gnome-shell-extensions.gnome.org"
+        #"github.notifications@alexandre.dufournet.gmail.com"
+        #"gsconnect@andyholmes.github.io"
+        #"hue-lights@chlumskyvaclav.gmail.com"
+        #"nasa_apod@elinvention.ovh"
+        #"shuzhi@tuberry"
       ];
     };
 
     # drop down menu for somafm, vpn and fend
     "com/github/amezin/ddterm" = {
       audible-bell = false;
-      background-opacity = 1.0;
+      background-opacity = 0.7;
       background-color = "rgb(25,15,26)";
       bold-color-same-as-fg = true;
       bold-is-bright = false;
@@ -105,9 +110,9 @@
       window-above = true;
       window-maximize = false;
       window-monitor = "primary";
-      window-position = "top";
+      window-position = "right";
       window-resizable = false;
-      window-size = "0.5";
+      window-size = 0.29999999999999999;
       window-skip-taskbar = false;
 
       palette = [
@@ -150,11 +155,9 @@
       tray-pos = "center";
     };
 
-    "org/gnome/GPaste" = {
-      images-support = true;
-      max-history-size = lib.hm.gvariant.mkUint64 2000;
-      max-memory-usage = lib.hm.gvariant.mkUint64 100;
-      trim-items = true;
+    "org/gnome/shell/extensions/pano" = {
+      history-length = 500;
+      play-audio-on-copy = false;
     };
 
     "org/gnome/desktop/interface" = {
@@ -172,6 +175,7 @@
       show-notifications = false;
       user-enabled = false;
     };
+
     "org/gnome/desktop/wm/keybindings" = {
       switch-input-source = [ ]; # Free up <Super>space
       switch-input-source-backward = [ ]; # Free up <Super><Shift>space

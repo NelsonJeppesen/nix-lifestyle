@@ -13,7 +13,8 @@
       #theme = "Dark Pride";
       #theme  = "Seafoam Pastel";
       #theme  = "Spacedust";
-      theme = "Galaxy";
+      #theme = "Galaxy";
+      theme = "Forest Night";
       #theme = "duckbones";
       #theme = "Rosé Pine Dawn";
       #theme = "Pencil Light";
