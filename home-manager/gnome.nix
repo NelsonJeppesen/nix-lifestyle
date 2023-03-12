@@ -59,6 +59,7 @@
       background-opacity = 0.75;
       bold-color-same-as-fg = true;
       bold-is-bright = false;
+      command = "custom-command";
       custom-command = "bash -c 'nvim /home/nelson/s/notes/$(date +work-%Y-%q).md'";
       custom-font = "Hasklug Nerd Font 13";
       ddterm-toggle-hotkey = [ "<Super>t" ];
