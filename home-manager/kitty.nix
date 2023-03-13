@@ -9,18 +9,18 @@
   programs = {
 
     kitty = {
-      enable = true;
-      #theme = "Dark Pride";
       #theme  = "Seafoam Pastel";
       #theme  = "Spacedust";
-      #theme = "Galaxy";
-      theme = "Forest Night";
-      #theme = "duckbones";
-      #theme = "Rosé Pine Dawn";
-      #theme = "Pencil Light";
-      #theme = "Dark One Nuanced";
-      #theme = "neobones_light";
       #theme = "Belafonte Day";
+      #theme = "Dark One Nuanced";
+      #theme = "Dark Pride";
+      #theme = "Galaxy";
+      #theme = "Pencil Light";
+      #theme = "Rosé Pine Dawn";
+      #theme = "duckbones";
+      #theme = "neobones_light";
+      enable = true;
+      theme = "Forest Night";
 
       font = {
         name = "Hasklug Nerd Font Mono";
@@ -28,7 +28,6 @@
       };
 
       keybindings = {
-        "space+enter" = "toggle_fullscreen";
         "kitty_mod+]" = "next_layout";
         "kitty_mod+backspace" = "close_window";
         "kitty_mod+down" = "next_window";

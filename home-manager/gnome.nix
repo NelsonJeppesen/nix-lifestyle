@@ -23,6 +23,7 @@
     pkgs.gnomeExtensions.control-blur-effect-on-lock-screen
     pkgs.gnomeExtensions.ddterm
     pkgs.gnomeExtensions.google-earth-wallpaper
+    pkgs.gnomeExtensions.one-thing
     pkgs.gnomeExtensions.pano
     pkgs.gnomeExtensions.pip-on-top
     pkgs.gnomeExtensions.run-or-raise
@@ -40,6 +41,7 @@
         "bluetooth-quick-connect@bjarosze.gmail.com"
         "caffeine@patapon.info"
         "ddterm@amezin.github.com"
+        "one-thing@github.com"
         "pano@elhan.io"
         "pip-on-top@rafostar.github.com"
         "run-or-raise@edvard.cz"
@@ -136,7 +138,12 @@
     };
 
     "org/gnome/shell/extensions/appindicator" = {
-      tray-pos = "center";
+      icon-brightness = -0.10000000000000001;
+      icon-opacity = 255;
+      icon-saturation = 0.80000000000000004;
+      icon-size = 18;
+      tray-pos = "right";
+
     };
 
     "org/gnome/shell/extensions/pano" = {
@@ -205,5 +212,12 @@
     "org/gnome/shell/extensions/googleearthwallpaper" = {
       hide = true;
     };
+
+    "org/gnome/shell/extensions/one-thing" = {
+      index-in-status-bar = 0;
+      location-in-status-bar = 1;
+      show-settings-button-on-popup = false;
+    };
+
   };
 }
