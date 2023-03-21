@@ -11,6 +11,16 @@
       plugins =
         with pkgs.vimPlugins; [
 
+          {
+            plugin = auto-save-nvim;
+            type = "lua";
+            config = ''
+              require("auto-save").setup {
+                  enabled = true,
+              	}
+            '';
+          }
+
           # -------------------------- colorschemes ---------------------------
           # highly customizable theme for vim and neovim with support for lsp, treesitter
           # and a variety of plugins
@@ -31,37 +41,37 @@
 
           # Install tree-sitter with all the plugins/grammars
           #   https://tree-sitter.github.io/tree-sitter
-          {
-            plugin = (nvim-treesitter.withPlugins (plugins: pkgs.tree-sitter.allGrammars));
-            type = "viml";
-            config = ''
-              set foldlevelstart=7
-              lua << EOF
-              require'nvim-treesitter.configs'.setup {
-                highlight = {
-                  enable = true,
-                  additional_vim_regex_highlighting = false
-                },
-                indent = {
-                  enable = true
-                },
-                incremental_selection = {
-                  enable = true,
-                  keymaps = {
-                    init_selection = "gnn",
-                    node_incremental = "grn",
-                    scope_incremental = "grc",
-                    node_decremental = "grm",
-                  },
-                },
-              }
-              EOF
+          #{
+          #  plugin = (nvim-treesitter.withPlugins (plugins: pkgs.tree-sitter.allGrammars));
+          #  type = "viml";
+          #  config = ''
+          #    set foldlevelstart=7
+          #    lua << EOF
+          #    require'nvim-treesitter.configs'.setup {
+          #      highlight = {
+          #        enable = true,
+          #        additional_vim_regex_highlighting = false
+          #      },
+          #      indent = {
+          #        enable = true
+          #      },
+          #      incremental_selection = {
+          #        enable = true,
+          #        keymaps = {
+          #          init_selection = "gnn",
+          #          node_incremental = "grn",
+          #          scope_incremental = "grc",
+          #          node_decremental = "grm",
+          #        },
+          #      },
+          #    }
+          #    EOF
 
-              set foldlevelstart=6
-              set foldmethod=expr
-              set foldexpr=nvim_treesitter#foldexpr()
-            '';
-          }
+          #    set foldlevelstart=6
+          #    set foldmethod=expr
+          #    set foldexpr=nvim_treesitter#foldexpr()
+          #  '';
+          #}
 
           {
             plugin = mini-nvim;
@@ -356,6 +366,13 @@
         nnoremap  <silent>  <leader>ww  :w<cr>
         nnoremap  <silent>  <leader>wq  :wq<cr>
 
+        " persistent undo
+        if !isdirectory($HOME."/.config/nvim/undo")
+            call mkdir($HOME."/.config/nvim/undo", "", 0700)
+        endif
+        set undodir=~/.config/nvim/undo
+        set undofile
+
         " keep terminal in background
         "set hidden
 
@@ -377,6 +394,9 @@
         " cant spell
         set spell
         set spelllang=en
+
+        " disable swp
+        set noswapfile
       '';
     };
   };

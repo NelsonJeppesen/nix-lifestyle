@@ -6,26 +6,17 @@ in
 {
   #imports = [zsh];
   nixpkgs.config.allowUnfree = true; # Chrome, steam etc
-  #boot.consoleLogLevel        = lib.mkDefault 3;        # hide ACPI error
   console.earlySetup = lib.mkDefault true; # Set virtual console options in initrd
   environment.defaultPackages = lib.mkDefault [ ]; # Remove default pacakges
   hardware.video.hidpi.enable = lib.mkDefault true;
 
-  security.sudo.extraConfig = ''
-    Defaults timestamp_timeout=600
-  '';
+  security.sudo.extraConfig = ''Defaults timestamp_timeout=600'';
 
   #ddc monitor control
   #hardware.i2c.enable = true;
 
-  environment.sessionVariables = rec {
-    MOZ_ENABLE_WAYLAND = "1";
-  };
-
-  nix.extraOptions = ''
-    experimental-features = nix-command flakes
-  '';
-
+  environment.sessionVariables = rec { MOZ_ENABLE_WAYLAND = "1"; };
+  nix.extraOptions = ''experimental-features = nix-command flakes'';
   services.fwupd.enable = lib.mkDefault true;
 
   # Install neovim as the system's editor
@@ -43,7 +34,6 @@ in
 
   nix = {
     gc = {
-      # Cleanup un-refrenced packages in the Nix store older than 30 days
       automatic = lib.mkDefault true;
       dates = lib.mkDefault "weekly";
       options = lib.mkDefault "--delete-older-than 30d";
@@ -51,19 +41,8 @@ in
   };
 
   services.sshd.enable = lib.mkDefault true;
-
   users.users.nelson.isNormalUser = lib.mkDefault true;
   users.users.nelson.extraGroups = lib.mkDefault [ "i2c" "wheel" "docker" "networkmanager" "plugdev" ];
-
-  # Core packages I use
-  environment.systemPackages = with pkgs; [
-    webcamoid
-    wget
-    curl
-    git
-    #comma
-    btop
-  ];
-
+  environment.systemPackages = with pkgs; [ wget curl git btop corefonts ];
   networking.firewall.enable = lib.mkDefault true;
 }

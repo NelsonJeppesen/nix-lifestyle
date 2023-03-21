@@ -157,6 +157,7 @@
       shellAliases = {
         mynix = ''vim $(find ~/s/play/nix-lifestyle|grep  '.nix$'|fzf)'';
         weather = "${pkgs.curl}/bin/curl wttr.in/\\?format=4";
+        bios = "systemctl reboot --firmware-setup";
 
         cb = "${pkgs.xsel}/bin/xsel --clipboard";
 

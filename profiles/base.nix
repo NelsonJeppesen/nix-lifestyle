@@ -50,12 +50,7 @@ in
   users.users.nelson.isNormalUser = lib.mkDefault true;
   users.users.nelson.extraGroups = lib.mkDefault [ "wheel" "networkmanager" "docker" ];
 
-  # Core packages I use
-  environment.systemPackages = with pkgs; [
-    wget
-    curl
-    git
-  ];
-
+  # Core packages
+  environment.systemPackages = with pkgs; [ wget curl git corefonts ];
   networking.firewall.enable = lib.mkDefault true;
 }

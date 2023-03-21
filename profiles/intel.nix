@@ -14,8 +14,8 @@
 
   boot.extraModprobeConfig = ''
     #options snd_hda_intel power_save=2
-    options iwlwifi bt_coex_active=0 disable_11ac=1 swcrypto=1 uapsd_disable=1
-    options iwlmvm power_scheme=1
+    #options iwlwifi bt_coex_active=0 disable_11ac=1 swcrypto=1 uapsd_disable=1
+    #options iwlmvm power_scheme=1
     #options cfg80211 cfg80211_disable_40mhz_24ghz=
   '';
 
