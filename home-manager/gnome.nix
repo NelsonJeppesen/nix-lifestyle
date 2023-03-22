@@ -1,6 +1,6 @@
 { config, lib, pkgs, ... }:
 {
-  home.file.".config/run-or-raise/shortcuts.conf".source = ../dotfiles/shortcuts.conf;
+  home.file.".config/run-or-raise/shortcuts.conf".source = ./dotfiles/shortcuts.conf;
 
   home.packages = [
     #pkgs.gnome3.gpaste
@@ -126,6 +126,12 @@
       history-length = 500;
       play-audio-on-copy = false;
       show-indicator = false;
+      send-notification-on-copy = false;
+
+    };
+
+    "org/gnome/shell/extensions/pano/text-item" = {
+      body-bg-color = "rgb(153,193,241)";
     };
 
     "org/gnome/desktop/interface" = {

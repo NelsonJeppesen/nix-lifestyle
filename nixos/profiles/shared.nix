@@ -6,21 +6,18 @@ in
 {
   #imports = [zsh];
   nixpkgs.config.allowUnfree = true; # Chrome, steam etc
-  boot.consoleLogLevel = lib.mkDefault 6; # hide ACPI error
   console.earlySetup = lib.mkDefault true; # Set virtual console options in initrd
-  #documentation.enable        = lib.mkDefault false;    # I dont use local docs
   environment.defaultPackages = lib.mkDefault [ ]; # Remove default pacakges
-  hardware.video.hidpi.enable = lib.mkDefault true;
+  #hardware.video.hidpi.enable = lib.mkDefault true;
+  #fonts.optimizeForVeryHighDPI = true;
 
-  environment.sessionVariables = rec {
-    MOZ_ENABLE_WAYLAND = "1";
-    SDL_VIDEODRIVER = "wayland";
-  };
+  security.sudo.extraConfig = ''Defaults timestamp_timeout=600'';
 
-  nix.extraOptions = ''
-    experimental-features = nix-command flakes
-  '';
+  #ddc monitor control
+  #hardware.i2c.enable = true;
 
+  environment.sessionVariables = rec { MOZ_ENABLE_WAYLAND = "1"; };
+  nix.extraOptions = ''experimental-features = nix-command flakes'';
   services.fwupd.enable = lib.mkDefault true;
 
   # Install neovim as the system's editor
@@ -38,7 +35,6 @@ in
 
   nix = {
     gc = {
-      # Cleanup un-refrenced packages in the Nix store older than 30 days
       automatic = lib.mkDefault true;
       dates = lib.mkDefault "weekly";
       options = lib.mkDefault "--delete-older-than 30d";
@@ -46,11 +42,8 @@ in
   };
 
   services.sshd.enable = lib.mkDefault true;
-
   users.users.nelson.isNormalUser = lib.mkDefault true;
-  users.users.nelson.extraGroups = lib.mkDefault [ "wheel" "networkmanager" "docker" ];
-
-  # Core packages
-  environment.systemPackages = with pkgs; [ wget curl git corefonts ];
+  users.users.nelson.extraGroups = lib.mkDefault [ "i2c" "wheel" "docker" "networkmanager" "plugdev" ];
+  environment.systemPackages = with pkgs; [ wget curl git btop ];
   networking.firewall.enable = lib.mkDefault true;
 }

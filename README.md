@@ -1,8 +1,8 @@
 # Living the nix[os] lifestyle
 
 ### structure
-* **nixos** system NixOS configuration
-* **nixpkgs** home-manager configuration
+* **nixos** system NixOS (system) configuration
+* **home-manager** home-manager (user) configuration
 
 ### ./nixos/
 #### luks encrypted nixos
@@ -39,7 +39,7 @@ mount /dev/disk/by-label/boot /mnt/boot
 ```
 ```
 sudo ln -s nixos /etc/nixos
-# create symlink for this host 
+# create symlink for this host
 ln -s nixos/pink.nix nixos/configuration.nix
 sudo nixos-rebuilt swich --upgrade
 ```

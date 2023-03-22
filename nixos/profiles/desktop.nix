@@ -35,22 +35,22 @@
     desktopManager.gnome.enable = true;
     displayManager.gdm.enable = true;
   };
-    #= {
-    # Optionally, set a default session
-    #windowManager = {
-    #    default = "awesome";
-    #    awesome.enable = true;
-    #};
+  #= {
+  # Optionally, set a default session
+  #windowManager = {
+  #    default = "awesome";
+  #    awesome.enable = true;
+  #};
 
-#services.greetd = {
-#    enable = true;
-#    settings = {
-#      default_session = {
-#        command = "${pkgs.greetd.tuigreet}/bin/tuigreet --time --cmd 'dbus-run-session -- gnome-shell --display-server --wayland'";
-#        user = "nelson";
-#      };
-#    };
-#  };
+  #services.greetd = {
+  #    enable = true;
+  #    settings = {
+  #      default_session = {
+  #        command = "${pkgs.greetd.tuigreet}/bin/tuigreet --time --cmd 'dbus-run-session -- gnome-shell --display-server --wayland'";
+  #        user = "nelson";
+  #      };
+  #    };
+  #  };
 
   #services.xserver.libinput.touchpad.accelProfile = "adaptive";
   #services.xserver.libinput.touchpad.accelSpeed = "0.4";
@@ -78,20 +78,20 @@
 
   # Remove gnome tools I don't use
   environment.gnome.excludePackages = with pkgs.gnome; [
-  #  pkgs.gnome-online-accounts
+    #  pkgs.gnome-online-accounts
+    #  gnome-calendar
+    #  gnome-contacts
+    #  gnome-disk-utility
+    #  gnome-logs
+    #  gnome-online-miners
+    #  gnome-screenshot
+    #  gnome-weather
+    gnome-backgrounds
+    gnome-maps
+    gnome-music
     pkgs.gnome-tour
     pkgs.gnome-user-docs
     pkgs.gnome-video-effects
-    gnome-backgrounds
-  #  gnome-calendar
-  #  gnome-contacts
-  #  gnome-disk-utility
-  #  gnome-logs
-  #  gnome-maps
-  #  gnome-music
-  #  gnome-online-miners
-  #  gnome-screenshot
-  #  gnome-weather
   ];
 
   # Configure keymap in X11
