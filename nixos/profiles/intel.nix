@@ -44,18 +44,11 @@
     CPU_ENERGY_PERF_POLICY_ON_AC = "balance_power";
     CPU_ENERGY_PERF_POLICY_ON_BAT = "power";
     CPU_MAX_PERF_ON_AC = "90";
-    CPU_MAX_PERF_ON_BAT = "50";
+    CPU_MAX_PERF_ON_BAT = "60";
     CPU_MIN_PERF_ON_BAT = "0";
     CPU_SCALING_GOVERNOR_ON_AC = "powersave";
     CPU_SCALING_GOVERNOR_ON_BAT = "powersave";
-
-    #  INTEL_GPU_BOOST_FREQ_ON_BAT = "700";
-    #  INTEL_GPU_MAX_FREQ_ON_BAT = "700";
-    #  INTEL_GPU_MIN_FREQ_ON_AC = "350";
-    #  INTEL_GPU_MIN_FREQ_ON_BAT = "350";
-
-    #  RESTORE_DEVICE_STATE_ON_STARTUP = "0";
     SCHED_POWERSAVE_ON_BAT = "1";
-    #  WOL_DISABLE = "Y";
+    WOL_DISABLE = "Y";
   };
 }
