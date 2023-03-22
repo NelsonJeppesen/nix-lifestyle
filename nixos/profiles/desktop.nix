@@ -1,13 +1,7 @@
 { config, pkgs, stdenv, lib, ... }:
-
 {
-  #services.resolved.enable = false;
-  #services.power-profiles-daemon.enable = false; # I'm using TLP right now
-
-  # The start of the week *should* be Monday, not Sunday
-  i18n.extraLocaleSettings = {
-    LC_TIME = "en_GB.UTF-8";
-  };
+  # The start of the week *should* be Monday
+  i18n.extraLocaleSettings = { LC_TIME = "en_GB.UTF-8"; };
 
   system.activationScripts.setGnomeProfilePicture = ''
     mkdir -p /var/lib/AccountsService/icons
@@ -21,56 +15,28 @@
   services.libreddit.address = "127.0.0.2";
 
   hardware.bluetooth.enable = true;
-  #programs.gpaste.enable = true;
 
-  # Pipewire stack with alsa/pulseaudio compat
+  # Pipewire
   sound.enable = true;
-  hardware.pulseaudio.enable = false; # Use pipewire with pulse compat
-  services.pipewire.alsa.enable = true;
-  services.pipewire.enable = true;
-  services.pipewire.pulse.enable = true;
+  hardware.pulseaudio.enable = false;
+  services.pipewire = {
+    alsa.enable = true;
+    enable = true;
+    pulse.enable = true;
+  };
 
   services.xserver = {
     enable = true;
     desktopManager.gnome.enable = true;
     displayManager.gdm.enable = true;
+    layout = "us";
+    libinput = { touchpad.tapping = false; };
   };
-  #= {
-  # Optionally, set a default session
-  #windowManager = {
-  #    default = "awesome";
-  #    awesome.enable = true;
-  #};
-
-  #services.greetd = {
-  #    enable = true;
-  #    settings = {
-  #      default_session = {
-  #        command = "${pkgs.greetd.tuigreet}/bin/tuigreet --time --cmd 'dbus-run-session -- gnome-shell --display-server --wayland'";
-  #        user = "nelson";
-  #      };
-  #    };
-  #  };
-
-  #services.xserver.libinput.touchpad.accelProfile = "adaptive";
-  #services.xserver.libinput.touchpad.accelSpeed = "0.4";
-
-  #services.xserver.libinput.touchpad.tappingDragLock = false; # make less gltichy
-  services.xserver.libinput.touchpad.tapping = false; # make less gltichy
 
   services.gnome.gnome-initial-setup.enable = false;
   services.gnome.sushi.enable = false;
   services.gnome.rygel.enable = false;
   services.gnome.games.enable = false;
-  #services.gnome.gnome-online-accounts.enable = false;
-  #services.gnome.gnome-online-miners.enable = false;
-  #services.gnome.gnome-online-accounts.enable = false;
-  #services.gnome.gnome-online-miners.enable   = false;
-  #services.gnome.gnome-remote-desktop.enable  = false;
-  #services.gnome.gnome-user-share.enable      = false;
-  #services.gnome.tracker.enable               = false;
-  #services.gnome.rygel.enable                 = false;
-  #hardware.logitech.wireless.enable           = true;
 
   #services.printing.enable   = true;
   #services.printing.drivers  = [ pkgs.hplip];
@@ -78,14 +44,6 @@
 
   # Remove gnome tools I don't use
   environment.gnome.excludePackages = with pkgs.gnome; [
-    #  pkgs.gnome-online-accounts
-    #  gnome-calendar
-    #  gnome-contacts
-    #  gnome-disk-utility
-    #  gnome-logs
-    #  gnome-online-miners
-    #  gnome-screenshot
-    #  gnome-weather
     gnome-backgrounds
     gnome-maps
     gnome-music
@@ -94,12 +52,7 @@
     pkgs.gnome-video-effects
   ];
 
-  # Configure keymap in X11
-  services.xserver.layout = "us";
-
   # Open KDE Connect
-  #networking.firewall.allowedTCPPortRanges = [{ from = 1714; to = 1764; }];
-  #networking.firewall.allowedUDPPortRanges = [{ from = 1714; to = 1764; }];
-
-  system.stateVersion = lib.mkDefault "21.05"; # Did you read the comment?
+  networking.firewall.allowedTCPPortRanges = [{ from = 1714; to = 1764; }];
+  networking.firewall.allowedUDPPortRanges = [{ from = 1714; to = 1764; }];
 }
