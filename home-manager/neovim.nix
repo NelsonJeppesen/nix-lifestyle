@@ -42,7 +42,7 @@
           # Install tree-sitter with all the plugins/grammars
           #   https://tree-sitter.github.io/tree-sitter
           {
-            plugin = (nvim-treesitter.withPlugins (plugins: pkgs.tree-sitter.allGrammars));
+            plugin = nvim-treesitter.withAllGrammars;
             type = "lua";
             config = ''
               require'nvim-treesitter.configs'.setup {
