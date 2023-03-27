@@ -66,7 +66,7 @@
       pkgs.spotify
 
       # core GUI apps
-      pkgs.fractal
+      #pkgs.fractal
       #pkgs.google-chrome
       pkgs.kitty
       pkgs.slack

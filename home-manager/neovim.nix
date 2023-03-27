@@ -26,13 +26,13 @@
           # and a variety of plugins
           #   https://github.com/EdenEast/nightfox.nvim
           {
-            plugin = nightfox-nvim;
-            type = "viml";
+            plugin = zephyr-nvim;
+            type = "lua";
             config = ''
-              colorscheme nightfox
-              let mapleader=","
+              require('zephyr')
             '';
           }
+
 
           # --------------------------Lua Plugins (prefered) ------------------
 
@@ -41,39 +41,48 @@
 
           # Install tree-sitter with all the plugins/grammars
           #   https://tree-sitter.github.io/tree-sitter
-          #{
-          #  plugin = (nvim-treesitter.withPlugins (plugins: pkgs.tree-sitter.allGrammars));
-          #  type = "viml";
-          #  config = ''
-          #    set foldlevelstart=7
-          #    lua << EOF
-          #    require'nvim-treesitter.configs'.setup {
-          #      highlight = {
-          #        enable = true,
-          #        additional_vim_regex_highlighting = false
-          #      },
-          #      indent = {
-          #        enable = true
-          #      },
-          #      incremental_selection = {
-          #        enable = true,
-          #        keymaps = {
-          #          init_selection = "gnn",
-          #          node_incremental = "grn",
-          #          scope_incremental = "grc",
-          #          node_decremental = "grm",
-          #        },
-          #      },
-          #    }
-          #    EOF
-
-          #    set foldlevelstart=6
-          #    set foldmethod=expr
-          #    set foldexpr=nvim_treesitter#foldexpr()
-          #  '';
-          #}
-
           {
+            plugin = (nvim-treesitter.withPlugins (plugins: pkgs.tree-sitter.allGrammars));
+            type = "lua";
+            config = ''
+              require'nvim-treesitter.configs'.setup {
+               highlight = {
+                 enable = true,
+                 additional_vim_regex_highlighting = false
+               }
+               }
+            '';
+            }
+            #  config = ''
+            #    set foldlevelstart=7
+            #    lua << EOF
+            #    require'nvim-treesitter.configs'.setup {
+            #      highlight = {
+            #        enable = true,
+            #        additional_vim_regex_highlighting = false
+            #      },
+            #      indent = {
+            #        enable = true
+            #      },
+            #      incremental_selection = {
+            #        enable = true,
+            #        keymaps = {
+            #          init_selection = "gnn",
+            #          node_incremental = "grn",
+            #          scope_incremental = "grc",
+            #          node_decremental = "grm",
+            #        },
+            #      },
+            #    }
+            #    EOF
+
+            #    set foldlevelstart=6
+            #    set foldmethod=expr
+            #    set foldexpr=nvim_treesitter#foldexpr()
+            #  '';
+            #}
+
+            {
             plugin = mini-nvim;
             type = "lua";
             config = ''
@@ -229,7 +238,7 @@
           cmp-emoji
           cmp-path
           cmp-spell
-          cmp-treesitter
+          #cmp-treesitter
           {
             plugin = nvim-cmp;
             type = "viml";

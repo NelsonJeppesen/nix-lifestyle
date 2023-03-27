@@ -20,7 +20,12 @@
       #theme = "duckbones";
       #theme = "neobones_light";
       enable = true;
-      theme = "Forest Night";
+      #theme = "Forest Night";
+      #theme = "Wizzy Bright";
+      #theme = "shadotheme";
+      #theme = "Sea Shells";
+      theme = "Ic Orange Ppl";
+
 
       font = {
         name = "Hasklug Nerd Font Mono";
