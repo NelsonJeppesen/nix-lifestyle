@@ -1,17 +1,12 @@
 { config, pkgs, stdenv, lib, ... }:
-let
-  base = "https://raw.githubusercontent.com/NelsonJeppesen/nix-lifestyle/main";
-  zsh = builtins.fetchurl "${base}/nixos/profiles/zsh.nix";
-in
 {
-  #imports = [zsh];
   nixpkgs.config.allowUnfree = true; # Chrome, steam etc
   console.earlySetup = lib.mkDefault true; # Set virtual console options in initrd
   environment.defaultPackages = lib.mkDefault [ ]; # Remove default pacakges
-  #hardware.video.hidpi.enable = lib.mkDefault true;
-  #fonts.optimizeForVeryHighDPI = true;
-
   security.sudo.extraConfig = ''Defaults timestamp_timeout=600'';
+
+  programs.zsh.enable = true;
+  users.defaultUserShell = pkgs.zsh;
 
   #ddc monitor control
   #hardware.i2c.enable = true;
@@ -26,7 +21,6 @@ in
   programs.neovim.vimAlias = lib.mkDefault true;
   programs.neovim.viAlias = lib.mkDefault true;
 
-  #networking.useNetworkd        = lib.mkDefault true;
   networking.dhcpcd.enable = lib.mkDefault false;
   systemd.network.enable = lib.mkDefault true;
 
