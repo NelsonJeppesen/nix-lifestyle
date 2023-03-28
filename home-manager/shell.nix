@@ -46,7 +46,6 @@
       settings = {
 
         # Disabled
-        aws.disabled = true;
         helm.disabled = true;
         terraform.disabled = true;
 
@@ -159,6 +158,10 @@
         weather = "${pkgs.curl}/bin/curl wttr.in/\\?format=4";
         bios = "systemctl reboot --firmware-setup";
 
+        ap = ''export AWS_PROFILE="$(${pkgs.awscli2}/bin/aws configure list-profiles|${pkgs.fzf}/bin/fzf)"'';
+        al = "aws sso login";
+
+
         cb = "${pkgs.xsel}/bin/xsel --clipboard";
 
         c = "curl";
@@ -181,7 +184,8 @@
         watch = "${pkgs.viddy}/bin/viddy";
 
         # reset terminal
-        rst = "cd ~/s; clear";
+        rst = "cd ~/s;
+        clear";
 
         # fend calculator
         f = "fend";
@@ -212,9 +216,11 @@
 
         # interactive ripgrep
         irg = ''INITIAL_QUERY=""
-          RG_PREFIX="rg --column --line-number --no-heading --color=always --smart-case " \
-          FZF_DEFAULT_COMMAND="$RG_PREFIX '$INITIAL_QUERY'"     \
-          fzf -m --bind "change:reload:$RG_PREFIX {q} || true"  \
+          RG_PREFIX="rg --column --line-number --no-heading --color = always - -smart-case " \
+          FZF_DEFAULT_COMMAND="$
+          RG_PREFIX '$
+          INITIAL_QUERY' "     \
+          fzf -m --bind " change:reload:$RG_PREFIX { q } || true"  \
               --ansi --disabled --query "$INITIAL_QUERY"        \
               --height=50% --layout=reverse'';
       };
