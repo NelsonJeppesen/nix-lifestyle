@@ -104,6 +104,10 @@
       refresh-interval = 61;
     };
 
+    "org/gnome/desktop/sound" = {
+      event-sounds = false;
+    };
+
     # Use capslock as super key
     "org/gnome/desktop/input-sources" = {
       xkb-options = [
