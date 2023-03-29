@@ -32,6 +32,7 @@
       settings.helm.disabled = true;
       settings.terraform.disabled = true;
       settings.kubernetes.disabled = false;
+      settings.aws.format = "on [$profile $duration]($style)";
     };
 
     zsh = {
