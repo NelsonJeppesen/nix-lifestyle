@@ -7,7 +7,7 @@
     ./gnome.nix
     ./kitty.nix
     ./neovim.nix
-    ./shell.nix
+    ./zsh.nix
   ];
 
   programs.home-manager.enable = true;
@@ -26,12 +26,12 @@
           { visibility: collapse; }
         ";
         settings = {
-          "toolkit.legacyUserProfileCustomizations.stylesheets" = true;
-          "layers.acceleration.force-enabled" = true;
           "gfx.webrender.all" = true;
           "gfx.webrender.enabled" = true;
+          "layers.acceleration.force-enabled" = true;
           "layout.css.backdrop-filter.enabled" = true;
           "svg.context-properties.content.enabled" = true;
+          "toolkit.legacyUserProfileCustomizations.stylesheets" = true;
         };
       };
     };
@@ -41,7 +41,6 @@
     stateVersion = "22.05";
     username = "nelson";
     homeDirectory = "/home/nelson";
-
 
     file.".local/bin".source = ./bin;
     file.".terraform.d/plugin-cache/.empty".source = ./dotfiles/empty;
