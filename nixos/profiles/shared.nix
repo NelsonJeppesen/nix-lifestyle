@@ -5,6 +5,7 @@
   environment.defaultPackages = lib.mkDefault [ ]; # Remove default pacakges
   security.sudo.extraConfig = ''Defaults timestamp_timeout=600'';
 
+  programs.starship.enable = true;
   programs.zsh.enable = true;
   users.defaultUserShell = pkgs.zsh;
 
@@ -38,6 +39,6 @@
   services.sshd.enable = lib.mkDefault true;
   users.users.nelson.isNormalUser = lib.mkDefault true;
   users.users.nelson.extraGroups = lib.mkDefault [ "i2c" "wheel" "docker" "networkmanager" "plugdev" ];
-  environment.systemPackages = with pkgs; [ wget curl git btop starship ];
+  environment.systemPackages = with pkgs; [ wget curl git btop ];
   networking.firewall.enable = lib.mkDefault true;
 }
