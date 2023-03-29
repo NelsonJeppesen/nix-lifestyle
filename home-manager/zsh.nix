@@ -29,25 +29,28 @@
 
     starship = {
       enable = true;
-      settings.helm.disabled = true;
-      settings.terraform.disabled = true;
-      settings.kubernetes.disabled = false;
-      settings.aws.format = "on [$profile $duration]($style)";
+      settings = {
+        aws.format = "on [$profile $duration]($style)";
+        cmd_duration.disabled = true;
+        helm.disabled = true;
+        kubernetes.disabled = false;
+        terraform.disabled = true;
+      };
     };
 
     zsh = {
       enable = true;
+
+      defaultKeymap = "emacs";
       enableAutosuggestions = true;
       enableCompletion = true;
       enableSyntaxHighlighting = true;
+
 
       initExtra = ''
         # alt + [left|right]
         bindkey "^[[1;3C" forward-word
         bindkey "^[[1;3D" backward-word
-
-        # ctrl + p
-        bindkey "^P" up-line-or-search
 
         # kitty tab title to $PWD
         function set-title-precmd() {   printf "\e]2;%s\a" "''${PWD/*\//}"}

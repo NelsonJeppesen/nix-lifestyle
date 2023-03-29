@@ -38,6 +38,6 @@
   services.sshd.enable = lib.mkDefault true;
   users.users.nelson.isNormalUser = lib.mkDefault true;
   users.users.nelson.extraGroups = lib.mkDefault [ "i2c" "wheel" "docker" "networkmanager" "plugdev" ];
-  environment.systemPackages = with pkgs; [ wget curl git btop ];
+  environment.systemPackages = with pkgs; [ wget curl git btop starship ];
   networking.firewall.enable = lib.mkDefault true;
 }
