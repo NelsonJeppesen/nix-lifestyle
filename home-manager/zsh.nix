@@ -89,7 +89,7 @@
         reboot-bios = "systemctl reboot --firmware-setup";
 
         # aws cli
-        ap = ''export AWS_PROFILE="$(${pkgs.awscli2}/bin/aws configure list-profiles|${pkgs.fzf}/bin/fzf)"'';
+        ap = ''(){export AWS_PROFILE="$(${pkgs.awscli2}/bin/aws configure list-profiles|${pkgs.fzf}/bin/fzf --query=$1 --select-1)";}'';
         al = "aws sso login";
 
         cb = "${pkgs.xsel}/bin/xsel --clipboard";
@@ -105,7 +105,7 @@
 
         # fend calculator
         f = "fend";
-        ff = "clear;fend";
+        fc = "clear;fend";
 
         # terraform
         t = "${pkgs.terraform}/bin/terraform";
