@@ -18,7 +18,11 @@
   programs = {
     broot.enable = true;
     direnv.enable = true;
-    fzf.enable = true;
+
+    fzf = {
+      enable = true;
+      defaultOptions = [ "--layout=reverse" ];
+    };
 
     atuin.settings = {
       enable = true;
@@ -78,7 +82,6 @@
       sessionVariables = {
         MANPAGER = "nvim +Man!";
         NIXPKGS_ALLOW_UNFREE = "1";
-        FZF_DEFAULT_OPTS = "--layout=reverse";
         EDITOR = "nvim";
       };
 
