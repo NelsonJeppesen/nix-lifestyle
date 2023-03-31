@@ -41,11 +41,18 @@
     zsh = {
       enable = true;
 
+      plugins = [
+        {
+          file = "share/fzf-tab/fzf-tab.plugin.zsh";
+          name = "fzf-tab";
+          src = pkgs.zsh-fzf-tab;
+        }
+      ];
+
       defaultKeymap = "emacs";
       enableAutosuggestions = true;
       enableCompletion = true;
       enableSyntaxHighlighting = true;
-
 
       initExtra = ''
         # alt + [left|right]
@@ -60,14 +67,6 @@
         function set-title-preexec() {printf "\e]2;%s\a" "$1"}
         add-zsh-hook preexec set-title-preexec
 
-        # autocomplete menu
-        #   https://stackoverflow.com/questions/13613698/zsh-history-completion-menu
-        zstyle ':completion:*' menu yes select
-
-        # https://superuser.com/questions/160750/can-zsh-do-2-stage-completion
-        zstyle ':completion:*' menu select=1
-        zstyle ':completion:*' select-prompt %SScrolling active: current selection at %p%s
-
         # If opening a new terminal, switch to ~s and clear the screen
         if [ "$TERM" != "linux" ]; then
           if [ "$(pwd)" = "$HOME" ]; then
@@ -80,7 +79,6 @@
         MANPAGER = "nvim +Man!";
         NIXPKGS_ALLOW_UNFREE = "1";
         FZF_DEFAULT_OPTS = "--layout=reverse";
-        ZSH_AUTOSUGGEST_HIGHLIGHT_STYLE = "fg=3";
         EDITOR = "nvim";
       };
 
