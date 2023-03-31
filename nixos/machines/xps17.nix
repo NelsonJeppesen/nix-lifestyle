@@ -21,11 +21,4 @@
   fileSystems."/".fsType = "btrfs";
   fileSystems."/".options = [ "noatime" "nodiratime" "discard=async" "autodefrag" ];
   fileSystems."/boot".device = "/dev/disk/by-uuid/B4AB-2120";
-
-  # fix issues with bluetooth preventing sleep
-  powerManagement.powerDownCommands = "${pkgs.util-linux}/bin/rfkill block bluetooth";
-  powerManagement.powerUpCommands = "
-    /bin/sh -c 'sleep 2'
-    ${pkgs.util-linux}/bin/rfkill unblock bluetooth
-    ";
 }
