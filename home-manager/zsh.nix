@@ -98,10 +98,10 @@
         n = "${pkgs.neovim}/bin/nvim ~/s/notes/$(date +work-%Y-%q).md";
         s = "${pkgs.neovim}/bin/nvim ~/s/notes/scratch.md";
 
-        # reset terminal
+        # reset
         rst = "cd ~/s; clear";
 
-        # fend calculator
+        # calculator
         f = "fend";
         fc = "clear;fend";
 
@@ -116,9 +116,6 @@
 
         # kube
         k = "kubectl";
-        kdp = "k delete pod $(kgs pod|fzf --multi)";
-        kg = "kubectl get";
-        kgs = ''kubectl get --no-headers -o custom-columns=":metadata.name"'';
         kns = "kubens";
         uc = "kubectx";
       };
