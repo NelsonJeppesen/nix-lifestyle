@@ -40,7 +40,7 @@ mount /dev/disk/by-label/boot /mnt/boot
 ```
 sudo ln -s nixos /etc/nixos
 # create symlink for this host
-ln -s nixos/pink.nix nixos/configuration.nix
+ln -s nixos/machines/gram14.nix nixos/configuration.nix
 sudo nixos-rebuilt swich --upgrade
 ```
 
@@ -53,7 +53,7 @@ cd ~/s
 git clone git@github.com:NelsonJeppesen/nix-lifestyle.git
 
 mkdir -p ~/.config
-ln -s ~/s/nix-lifestyle/nixpkgs ~/.config/nixpkgs
+ln -s ~/s/nix-lifestyle/home-manager ~/.config/home-manager
 
 nix-channel --add https://github.com/nix-community/home-manager/archive/master.tar.gz home-manager
 nix-channel --update
