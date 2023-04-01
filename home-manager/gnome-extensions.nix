@@ -22,6 +22,7 @@
     pkgs.gnomeExtensions.control-blur-effect-on-lock-screen
     pkgs.gnomeExtensions.ddterm
     pkgs.gnomeExtensions.google-earth-wallpaper
+    pkgs.gnomeExtensions.just-perfection
     pkgs.gnomeExtensions.one-thing
     pkgs.gnomeExtensions.pano
     pkgs.gnomeExtensions.pip-on-top
@@ -39,6 +40,7 @@
         "bluetooth-quick-connect@bjarosze.gmail.com"
         "caffeine@patapon.info"
         "ddterm@amezin.github.com"
+        "just-perfection-desktop@just-perfection"
         "one-thing@github.com"
         "pano@elhan.io"
         "pip-on-top@rafostar.github.com"
@@ -72,6 +74,21 @@
       toggle-shortcut = [ "<Super>c" ];
     };
 
+    "org/gnome/shell/extensions/just-perfection" = {
+      activities-button = false;
+      animation = 2;
+      app-menu = false;
+      calendar = false;
+      clock-menu-position = 2;
+      dash = false;
+      events-button = false;
+      hot-corner = false;
+      show-apps-button = true;
+      startup-status = 0;
+      type-to-search = false;
+      world-clock = false;
+    };
+
     "org/gnome/shell/extensions/github-notifications" = {
       handle = "NelsonJeppesen";
       hide-widget = true;
@@ -84,8 +101,8 @@
     };
 
     "org/gnome/shell/extensions/one-thing" = {
-      index-in-status-bar = 0;
-      location-in-status-bar = 1;
+      index-in-status-bar = 1;
+      location-in-status-bar = 0;
       show-settings-button-on-popup = false;
     };
 
