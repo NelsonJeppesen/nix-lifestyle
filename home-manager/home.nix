@@ -5,6 +5,7 @@
   imports = [
     ./git.nix
     ./gnome.nix
+    ./gnome-extensions.nix
     ./kitty.nix
     ./neovim.nix
     ./zsh.nix
