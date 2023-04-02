@@ -4,8 +4,6 @@
   console.earlySetup = lib.mkDefault true; # Set virtual console options in initrd
   environment.defaultPackages = lib.mkDefault [ ]; # Remove default pacakges
   security.sudo.extraConfig = ''Defaults timestamp_timeout=600'';
-
-  programs.starship.enable = true;
   programs.zsh.enable = true;
   users.defaultUserShell = pkgs.zsh;
 

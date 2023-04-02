@@ -12,32 +12,22 @@
         with pkgs.vimPlugins; [
 
           {
-            plugin = auto-save-nvim;
+            plugin = mini-nvim;
             type = "lua";
             config = ''
-              require("auto-save").setup {
-                  enabled = true,
-              	}
+              require('mini.animate').setup()
+              require('mini.basics').setup({ options = { extra_ui = true }})
+              require('mini.comment').setup()
+              require('mini.surround').setup()
+              require('mini.trailspace').setup()
             '';
           }
 
-          # -------------------------- colorschemes ---------------------------
-          # highly customizable theme for vim and neovim with support for lsp, treesitter
-          # and a variety of plugins
-          #   https://github.com/EdenEast/nightfox.nvim
           {
             plugin = zephyr-nvim;
             type = "lua";
-            config = ''
-              require('zephyr')
-            '';
+            config = "require('zephyr')";
           }
-
-
-          # --------------------------Lua Plugins (prefered) ------------------
-
-          #twilight-nvim;
-          { plugin = zen-mode-nvim; config = "nnoremap <leader>z :ZenMode<CR>"; }
 
           # Install tree-sitter with all the plugins/grammars
           #   https://tree-sitter.github.io/tree-sitter
@@ -46,50 +36,8 @@
             type = "lua";
             config = ''
               require'nvim-treesitter.configs'.setup {
-               highlight = {
-                 enable = true,
-                 additional_vim_regex_highlighting = false
+                highlight = {enable = true, additional_vim_regex_highlighting = false}
                }
-               }
-            '';
-            }
-            #  config = ''
-            #    set foldlevelstart=7
-            #    lua << EOF
-            #    require'nvim-treesitter.configs'.setup {
-            #      highlight = {
-            #        enable = true,
-            #        additional_vim_regex_highlighting = false
-            #      },
-            #      indent = {
-            #        enable = true
-            #      },
-            #      incremental_selection = {
-            #        enable = true,
-            #        keymaps = {
-            #          init_selection = "gnn",
-            #          node_incremental = "grn",
-            #          scope_incremental = "grc",
-            #          node_decremental = "grm",
-            #        },
-            #      },
-            #    }
-            #    EOF
-
-            #    set foldlevelstart=6
-            #    set foldmethod=expr
-            #    set foldexpr=nvim_treesitter#foldexpr()
-            #  '';
-            #}
-
-            {
-            plugin = mini-nvim;
-            type = "lua";
-            config = ''
-
-              require('mini.trailspace').setup({})
-              require('mini.surround').setup({})
-              MiniTrailspace.highlight()
             '';
           }
 
@@ -122,15 +70,6 @@
           # https://github.com/kyazdani42/nvim-web-devicons
           #   "lua `fork` of vim-web-devicons for neovim"
           nvim-web-devicons # used by bufferline-nvim
-
-          # https://github.com/karb94/neoscroll.nvim/
-          #   "Smooth scrolling neovim plugin written in lua"
-          {
-            plugin = neoscroll-nvim;
-            type = "lua";
-            config = "require('neoscroll').setup({})
-            ";
-          }
 
           # https://github.com/nvim-telescope/telescope.nvim
           #   "highly extendable fuzzy finder over lists"
@@ -211,10 +150,7 @@
           {
             plugin = gitsigns-nvim;
             type = "viml";
-            config = ''
-              lua require('gitsigns').setup()
-              set signcolumn=yes " always show gutter
-            '';
+            config = "lua require('gitsigns').setup()";
           }
 
           # https://github.com/hoob3rt/lualine.nvim
@@ -243,8 +179,6 @@
             plugin = nvim-cmp;
             type = "viml";
             config = ''
-              set completeopt=menu,menuone,noselect
-
               lua << EOF
                 local cmp = require'cmp'
                 cmp.setup({
@@ -320,7 +254,12 @@
           # https://github.com/farmergreg/vim-lastplace
           #   "Intelligently reopen files at your last edit position in Vim"
           vim-lastplace
-          undotree
+
+          {
+            plugin = undotree;
+            type = "lua";
+            config = "vim.keymap.set('n', '<leader>u', vim.cmd.UndotreeToggle)";
+          }
 
           # https://github.com/dhruvasagar/vim-table-mode
           #   "VIM Table Mode for instant [ASCII] table creation"
@@ -336,15 +275,12 @@
         ];
 
       extraConfig = ''
-        set shortmess=I  " dont show intro message on empty buffer
-
         let theme =  system('dconf read /org/gnome/desktop/interface/color-scheme')
         if theme =~ ".*default.*"
           colorscheme dayfox
         end
-        set clipboard=unnamedplus
 
-        imap jj <Esc>
+        set clipboard=unnamedplus
 
         " Remove newbie crutches in Insert Mode
         inoremap <Down> <Nop>
@@ -370,32 +306,19 @@
         nnoremap            <leader><leader>c   :%y+<cr>
         nnoremap            <leader>d           :% !base64 -d<cr>
 
-        " avoid using :
-        nnoremap  <silent>  <leader>qq  :q!<cr>
-        nnoremap  <silent>  <leader>ww  :w<cr>
-        nnoremap  <silent>  <leader>wq  :wq<cr>
-
         " persistent undo
         if !isdirectory($HOME."/.config/nvim/undo")
             call mkdir($HOME."/.config/nvim/undo", "", 0700)
         endif
         set undodir=~/.config/nvim/undo
-        set undofile
-
-        " keep terminal in background
-        "set hidden
 
         " enable mouse
-        set mouse=a
         set updatetime=75
 
         " Indentation settings for using 2 spaces instead of tabs.
         set shiftwidth=2
         set softtabstop=2
         set expandtab
-
-        " Use case-insensitive search
-        set ignorecase
 
         " helpfull popup for shortcuts
         set timeoutlen=500
