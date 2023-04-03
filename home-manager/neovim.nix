@@ -71,6 +71,13 @@
           #   "lua `fork` of vim-web-devicons for neovim"
           nvim-web-devicons # used by bufferline-nvim
 
+
+          {
+            plugin = nvim-neoclip-lua;
+            type = "lua";
+            config = "require('neoclip').setup()";
+          }
+
           # https://github.com/nvim-telescope/telescope.nvim
           #   "highly extendable fuzzy finder over lists"
           {
@@ -85,6 +92,7 @@
               nnoremap  ,fh  <cmd>lua require('telescope.builtin').oldfiles()<cr>
               nnoremap  ,fc  <cmd>lua require('telescope.builtin').colorscheme()<cr>
               nnoremap  ,fr  <cmd>lua require('telescope.builtin').registers()<cr>
+              nnoremap  ,p   <cmd>Telescope neoclip<cr>
 
               lua << EOF
                 _G.open_telescope = function()
@@ -101,6 +109,8 @@
                     autocmd VimEnter * lua open_telescope()
                   augroup END
                 ]], false)
+
+                require('telescope').load_extension('neoclip')
               EOF
             '';
           }
