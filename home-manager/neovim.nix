@@ -196,10 +196,14 @@
           cmp-nvim-lsp
           cmp-path
           cmp-treesitter
+          copilot-cmp
+          copilot-lua
           {
             plugin = nvim-cmp;
             type = "lua";
             config = ''
+              require("copilot").setup({suggestion={enabled=false}, panel={enabled=false}})
+              require("copilot_cmp").setup()
               local cmp = require'cmp'
 
               cmp.setup({
