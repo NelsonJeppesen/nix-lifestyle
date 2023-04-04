@@ -1,54 +1,64 @@
 { config, pkgs, ... }:
 {
+  home = {
+    file = {
+      ".config/kitty/kitty.startup.session".text = ''
+        new_tab
+        launch
+      '';
 
-  home.file.".config/kitty/kitty.startup.session".text = ''
-    new_tab
-    launch
-  '';
+      "/home/nelson/kitty-colorscheme" = {
+        executable = true;
+        text = ''
+          #!/usr/bin/env bash
+          # set color scheme dending if Gnome is set to dark or not
+
+          THEME_PATH="${pkgs.kitty-themes}/share/kitty-themes/themes"
+          GNOME_THEME="$(dconf read /org/gnome/desktop/interface/color-scheme | tr -d "'")"
+
+          if [[ "$GNOME_THEME" == "default" ]]; then
+            kitty -c ~/.config/kitty/kitty.conf -c $THEME_PATH/rose-pine-dawn.conf
+          else
+            kitty -c ~/.config/kitty/kitty.conf -c $THEME_PATH/rose-pine-moon.conf
+          fi
+        '';
+      };
+    };
+  };
 
   programs = {
-
     kitty = {
-      #theme  = "Seafoam Pastel";
-      #theme  = "Spacedust";
-      #theme = "Belafonte Day";
-      #theme = "Dark One Nuanced";
-      #theme = "Dark Pride";
-      #theme = "Forest Night";
-      #theme = "Galaxy";
-      #theme = "Pencil Light";
-      #theme = "Rosé Pine Dawn";
-      #theme = "Sea Shells";
-      #theme = "Wizzy Bright";
-      #theme = "duckbones";
-      #theme = "neobones_light";
-      #theme = "shadotheme";
       enable = true;
-      theme = "Ic Orange Ppl";
-
 
       font = {
-        name = "Hasklug Nerd Font Mono";
-        package = pkgs.nerdfonts.override { fonts = [ "Hasklig" ]; };
+        package = pkgs.nerdfonts;
+        name = "SauceCodePro Nerd Font Mono";
       };
 
       keybindings = {
         "kitty_mod+]" = "next_layout";
+
+        # new windows inside existing tab
+        "ctrl+alt+up" = "move_window_backward";
+        "ctrl+alt+down" = "move_window_forward";
         "kitty_mod+backspace" = "close_window";
-        "kitty_mod+down" = "next_window";
-        "kitty_mod+left" = "prev_tab";
-        "kitty_mod+n" = "new_tab_with_cwd";
-        "kitty_mod+right" = "next_tab";
-        "kitty_mod+s" = "show_scrollback";
-        "kitty_mod+up" = "prev_window";
         "kitty_mod+enter" = "launch --cwd=current";
+        "kitty_mod+up" = "prev_window";
+        "kitty_mod+down" = "next_window";
+
+        # more tabs
+        "kitty_mod+left" = "prev_tab";
+        "kitty_mod+right" = "next_tab";
+        "kitty_mod+n" = "new_tab_with_cwd";
+
+        # search
+        "kitty_mod+s" = "show_scrollback";
       };
 
       settings = {
-        bold_font = "Hasklug Medium Nerd Font Complete Mono";
         copy_on_select = true;
         enable_audio_bell = false;
-        font_size = "13.0";
+        font_size = "14.0";
         hide_window_decorations = true;
         inactive_text_alpha = "0.65";
         linux_display_server = "wayland";
@@ -62,7 +72,7 @@
         window_border_width = "0.0pt";
         window_margin_width = "7";
 
-        enabled_layouts = "fat,grid";
+        enabled_layouts = "vertical,horizontal,grid";
         # Fat -- One (or optionally more) windows are shown full width on the top, the rest of the windows are shown side-by-side on the bottom
         # Grid -- All windows are shown in a grid
         # Horizontal -- All windows are shown side-by-side

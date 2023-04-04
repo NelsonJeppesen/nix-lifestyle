@@ -20,7 +20,7 @@
     pkgs.gnomeExtensions.bluetooth-quick-connect
     pkgs.gnomeExtensions.caffeine
     pkgs.gnomeExtensions.control-blur-effect-on-lock-screen
-    pkgs.gnomeExtensions.ddterm
+    #pkgs.gnomeExtensions.ddterm
     pkgs.gnomeExtensions.google-earth-wallpaper
     pkgs.gnomeExtensions.just-perfection
     pkgs.gnomeExtensions.media-controls
@@ -40,7 +40,7 @@
         "appindicatorsupport@rgcjonas.gmail.com"
         "bluetooth-quick-connect@bjarosze.gmail.com"
         "caffeine@patapon.info"
-        "ddterm@amezin.github.com"
+        #"ddterm@amezin.github.com"
         "just-perfection-desktop@just-perfection"
         "mediacontrols@cliffniff.github.com"
         "one-thing@github.com"
@@ -133,46 +133,46 @@
     };
 
     # drop down menu for somafm, vpn and fend
-    "com/github/amezin/ddterm" = {
-      audible-bell = false;
-      background-color = "rgb(25,15,26)";
-      background-opacity = 0.75;
-      bold-color-same-as-fg = true;
-      bold-is-bright = false;
-      command = "custom-command";
-      custom-command = "bash -c 'nvim /home/nelson/s/notes/$(date +work-%Y-%q).md'";
-      custom-font = "Hasklug Nerd Font 13";
-      ddterm-toggle-hotkey = [ "<Super>t" ];
-      hide-animation = "ease-in-out-back";
-      hide-animation-duration = 0.2;
-      hide-when-focus-lost = false;
-      new-tab-button = false;
-      notebook-border = false;
-      override-window-animation = true;
-      panel-icon-type = "none";
-      scroll-on-output = true;
-      shortcuts-enabled = false;
-      show-animation = "ease-in-out-back";
-      show-animation-duration = 0.2;
-      show-scrollbar = false;
-      tab-close-buttons = false;
-      tab-expand = false;
-      tab-label-ellipsize-mode = "middle";
-      tab-label-width = 0.1;
-      tab-policy = "automatic";
-      tab-position = "top";
-      tab-switcher-popup = false;
-      transparent-background = true;
-      use-system-font = false;
-      use-theme-colors = false;
-      window-above = true;
-      window-maximize = false;
-      window-monitor = "primary";
-      window-position = "right";
-      window-resizable = false;
-      window-size = 0.29999999999999999;
-      window-skip-taskbar = false;
-    };
+    #"com/github/amezin/ddterm" = {
+    #  audible-bell = false;
+    #  background-color = "rgb(25,15,26)";
+    #  background-opacity = 0.75;
+    #  bold-color-same-as-fg = true;
+    #  bold-is-bright = false;
+    #  command = "custom-command";
+    #  custom-command = "bash -c 'nvim /home/nelson/s/notes/$(date +work-%Y-%q).md'";
+    #  custom-font = "Hasklug Nerd Font 13";
+    #  ddterm-toggle-hotkey = [ "<Super>t" ];
+    #  hide-animation = "ease-in-out-back";
+    #  hide-animation-duration = 0.2;
+    #  hide-when-focus-lost = false;
+    #  new-tab-button = false;
+    #  notebook-border = false;
+    #  override-window-animation = true;
+    #  panel-icon-type = "none";
+    #  scroll-on-output = true;
+    #  shortcuts-enabled = false;
+    #  show-animation = "ease-in-out-back";
+    #  show-animation-duration = 0.2;
+    #  show-scrollbar = false;
+    #  tab-close-buttons = false;
+    #  tab-expand = false;
+    #  tab-label-ellipsize-mode = "middle";
+    #  tab-label-width = 0.1;
+    #  tab-policy = "automatic";
+    #  tab-position = "top";
+    #  tab-switcher-popup = false;
+    #  transparent-background = true;
+    #  use-system-font = false;
+    #  use-theme-colors = false;
+    #  window-above = true;
+    #  window-maximize = false;
+    #  window-monitor = "primary";
+    #  window-position = "right";
+    #  window-resizable = false;
+    #  window-size = 0.29999999999999999;
+    #  window-skip-taskbar = false;
+    #};
 
   };
 }

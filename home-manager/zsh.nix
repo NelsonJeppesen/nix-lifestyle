@@ -34,11 +34,16 @@
     starship = {
       enable = true;
       settings = {
-        aws.format = "on [$profile $duration]($style)";
+        aws.format = "on [$profile $source_profile $duration]($style)";
+
         cmd_duration.disabled = true;
         helm.disabled = true;
-        kubernetes.disabled = false;
         terraform.disabled = true;
+
+        kubernetes = {
+          disabled = false;
+          context_aliases = { "arn.*:cluster/(?P<cluster>.*)" = "$cluster"; };  # keep only eks suffix
+        };
       };
     };
 
@@ -90,7 +95,7 @@
         reboot-bios = "systemctl reboot --firmware-setup";
 
         # aws cli
-        ap = ''(){export AWS_PROFILE="$(${pkgs.awscli2}/bin/aws configure list-profiles|${pkgs.fzf}/bin/fzf --query=$1 --select-1)";}'';
+        ap = ''(){echo export AWS_PROFILE="$(${pkgs.awscli2}/bin/aws configure list-profiles|${pkgs.fzf}/bin/fzf --query=$1 --select-1)" > ~/.aws/sticky.profile;source ~/.aws/sticky.profile}'';
         al = "aws sso login";
 
         cb = "${pkgs.xsel}/bin/xsel --clipboard";
@@ -102,7 +107,7 @@
         s = "${pkgs.neovim}/bin/nvim ~/s/notes/scratch.md";
 
         # reset
-        rst = "cd ~/s; clear";
+        rst = "cd ~/s;kubectx --unset; echo > ~/.aws/sticky.profile;unset AWS_PROFILE; clear";
 
         # calculator
         f = "fend";

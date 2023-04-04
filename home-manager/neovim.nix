@@ -12,19 +12,6 @@
       plugins =
         with pkgs.vimPlugins; [
 
-          copilot-cmp
-          {
-            plugin = copilot-lua;
-            type = "lua";
-            config = ''
-              require("copilot").setup({
-                suggestion = { enabled = false },
-                panel = { enabled = false },
-              })
-              require("copilot_cmp").setup()
-            '';
-          }
-
           {
             plugin = mini-nvim;
             type = "lua";
@@ -38,9 +25,24 @@
           }
 
           {
-            plugin = zephyr-nvim;
-            type = "lua";
-            config = "require('zephyr')";
+            plugin = rose-pine;
+            type = "viml";
+            config = ''
+              " read Gnome light/dark setting
+              let theme =  system('dconf read /org/gnome/desktop/interface/color-scheme')
+
+              " set vim color scheme
+              if theme =~ ".*default.*"
+                " light vim color
+                set background=light
+                colorscheme rose-pine-dawn
+              else
+                " if dark color scheme
+                set background=dark
+                colorscheme rose-pine-moon
+              end
+              lua require('rose-pine').setup({dim_nc_background = true})
+            '';
           }
 
           # Install tree-sitter with all the plugins/grammars
@@ -58,10 +60,6 @@
           # https://github.com/iamcco/markdown-preview.nvim/
           #   "markdown preview plugin for (neo)vim"
           markdown-preview-nvim
-
-          # https://github.com/gpanders/editorconfig.nvim
-          #  "EditorConfig plugin for Neovim"
-          editorconfig-nvim
 
           # https://github.com/sudormrfbin/cheatsheet.nvim
           #  "A cheatsheet plugin for neovim with bundled cheatsheets for the
@@ -85,7 +83,6 @@
           #   "lua `fork` of vim-web-devicons for neovim"
           nvim-web-devicons # used by bufferline-nvim
 
-
           {
             plugin = nvim-neoclip-lua;
             type = "lua";
@@ -98,8 +95,8 @@
             plugin = telescope-nvim;
             type = "viml";
             config = ''
-              nnoremap  ,fg  :execute 'Telescope git_files cwd=' . expand('%:p:h')<cr>
-              nnoremap  ,ff  <cmd>lua require('telescope.builtin').find_files()<cr>
+              nnoremap  ,ff  :execute 'Telescope git_files cwd=' . expand('%:p:h')<cr>
+              nnoremap  ,fg  <cmd>lua require('telescope.builtin').find_files()<cr>
               nnoremap  ,f/  <cmd>lua require('telescope.builtin').current_buffer_fuzzy_find()<cr>
               nnoremap  ,fb  <cmd>lua require('telescope.builtin').buffers()<cr>
               nnoremap  ,fo  <cmd>lua require('telescope.builtin').file_browser()<cr>
@@ -198,19 +195,25 @@
           cmp-nvim-lsp
           cmp-path
           cmp-treesitter
+          copilot-cmp
+          copilot-lua
           {
             plugin = nvim-cmp;
             type = "lua";
             config = ''
+              require("copilot").setup({suggestion={enabled=false}, panel={enabled=false}})
+              require("copilot_cmp").setup()
               local cmp = require'cmp'
-              cmp.setup({
 
+              cmp.setup({
                 sources = cmp.config.sources({
-                 { name = "copilot"     },
-                 { name = 'buffer'      },
-                 { name = 'path'        },
-                 { name = 'treesitter'  },
+                 {name = "copilot"    },
+                 {name = 'buffer'     },
+                 {name = 'path'       },
+                 {name = 'treesitter' },
                 }),
+
+                view = {entries = "native"},
 
                 window = {
                   completion    = cmp.config.window.bordered(),
@@ -220,9 +223,9 @@
                 formatters = { insert_text = require("copilot_cmp.format").remove_existing},
 
                 mapping = {
-                  ["<Tab>"] = cmp.mapping.select_next_item({ behavior = cmp.SelectBehavior.Insert }),
-                  ["<S-Tab>"] = cmp.mapping.select_prev_item({ behavior = cmp.SelectBehavior.Insert }),
-                  ["<CR>"] = cmp.mapping.confirm({behavior = cmp.ConfirmBehavior.Replace,select = false}),
+                  ["<CR>"]    = cmp.mapping.confirm(          { behavior = cmp.ConfirmBehavior.Replace,select = false }),
+                  ["<S-Tab>"] = cmp.mapping.select_prev_item( { behavior = cmp.SelectBehavior.Insert }),
+                  ["<Tab>"]   = cmp.mapping.select_next_item( { behavior = cmp.SelectBehavior.Insert }),
                 },
               })
             '';
@@ -234,18 +237,6 @@
             plugin = which-key-nvim;
             type = "lua";
             config = "require('which-key').setup()";
-          }
-
-          # https://github.com/tjdevries/train.nvim
-          #   "Train yourself with vim motions and make your own train tracks :)"
-          {
-            plugin = train-nvim;
-            type = "viml";
-            config = ''
-              nnoremap  ,tu  :TrainUpDown<cr>
-              nnoremap  ,tw  :TrainWord<cr>
-              nnoremap  ,to  :TrainTextObj<cr>
-            '';
           }
 
           # https://github.com/nacro90/numb.nvim/
@@ -286,11 +277,6 @@
         ];
 
       extraConfig = ''
-        let theme =  system('dconf read /org/gnome/desktop/interface/color-scheme')
-        if theme =~ ".*default.*"
-          colorscheme dayfox
-        end
-
         set clipboard=unnamedplus
 
         " Remove newbie crutches in Insert Mode
@@ -323,7 +309,6 @@
         endif
         set undodir=~/.config/nvim/undo
 
-        " enable mouse
         set updatetime=75
 
         " Indentation settings for using 2 spaces instead of tabs.
