@@ -6,10 +6,24 @@
     neovim = {
       enable = true;
       vimAlias = true;
+      withNodeJs = true;
 
       # Install Vim Plugins, keep configuration local to install block if possible
       plugins =
         with pkgs.vimPlugins; [
+
+          copilot-cmp
+          {
+            plugin = copilot-lua;
+            type = "lua";
+            config = ''
+              require("copilot").setup({
+                suggestion = { enabled = false },
+                panel = { enabled = false },
+              })
+              require("copilot_cmp").setup()
+            '';
+          }
 
           {
             plugin = mini-nvim;
@@ -181,49 +195,36 @@
           # https://github.com/hrsh7th/nvim-cmp
           #   "A completion plugin for neovim coded in Lua"
           cmp-buffer
-          cmp-emoji
+          cmp-nvim-lsp
           cmp-path
-          cmp-spell
-          #cmp-treesitter
+          cmp-treesitter
           {
             plugin = nvim-cmp;
-            type = "viml";
+            type = "lua";
             config = ''
-              lua << EOF
-                local cmp = require'cmp'
-                cmp.setup({
+              local cmp = require'cmp'
+              cmp.setup({
 
-                  sources = cmp.config.sources({
-                   { name = 'buffer'      },
-                   { name = 'emoji',      option = { insert = true }},
-                   { name = 'path'        },
-                -- { name = 'spell',      keyword_length = 4},
-                   { name = 'treesitter'  },
-                  }),
+                sources = cmp.config.sources({
+                 { name = "copilot"     },
+                 { name = 'buffer'      },
+                 { name = 'path'        },
+                 { name = 'treesitter'  },
+                }),
 
-                  window = {
-                    completion    = cmp.config.window.bordered(),
-                    documentation = cmp.config.window.bordered(),
-                  },
+                window = {
+                  completion    = cmp.config.window.bordered(),
+                  documentation = cmp.config.window.bordered(),
+                },
 
-                  formatting = {
-                    format = function(entry, vim_item)
-                      vim_item.menu = ({
-                        buffer      = "[buffer]",
-                        path        = "[path]",
-                        spell       = "[spell]",
-                        treesitter  = "[treesitter]",
-                      })[entry.source.name]
-                      return vim_item
-                    end
-                  },
+                formatters = { insert_text = require("copilot_cmp.format").remove_existing},
 
-                  mapping = {
-                    ["<Tab>"] = cmp.mapping.select_next_item({ behavior = cmp.SelectBehavior.Insert }),
-                    ["<S-Tab>"] = cmp.mapping.select_prev_item({ behavior = cmp.SelectBehavior.Insert }),
-                  },
-                })
-              EOF
+                mapping = {
+                  ["<Tab>"] = cmp.mapping.select_next_item({ behavior = cmp.SelectBehavior.Insert }),
+                  ["<S-Tab>"] = cmp.mapping.select_prev_item({ behavior = cmp.SelectBehavior.Insert }),
+                  ["<CR>"] = cmp.mapping.confirm({behavior = cmp.ConfirmBehavior.Replace,select = false}),
+                },
+              })
             '';
           }
 
