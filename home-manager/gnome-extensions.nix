@@ -23,11 +23,12 @@
     pkgs.gnomeExtensions.ddterm
     pkgs.gnomeExtensions.google-earth-wallpaper
     pkgs.gnomeExtensions.just-perfection
+    pkgs.gnomeExtensions.media-controls
     pkgs.gnomeExtensions.one-thing
     pkgs.gnomeExtensions.pano
     pkgs.gnomeExtensions.pip-on-top
     pkgs.gnomeExtensions.run-or-raise
-    pkgs.gnomeExtensions.spotify-tray
+    pkgs.gnomeExtensions.unblank
   ];
 
   dconf.settings = {
@@ -41,15 +42,25 @@
         "caffeine@patapon.info"
         "ddterm@amezin.github.com"
         "just-perfection-desktop@just-perfection"
+        "mediacontrols@cliffniff.github.com"
         "one-thing@github.com"
         "pano@elhan.io"
         "pip-on-top@rafostar.github.com"
         "run-or-raise@edvard.cz"
-        "sp-tray@sp-tray.esenliyim.github.com"
+        "unblank@sun.wxg@gmail.com"
         #"github.notifications@alexandre.dufournet.gmail.com"
         #"gsconnect@andyholmes.github.io"
         #"hue-lights@chlumskyvaclav.gmail.com"
       ];
+    };
+
+    "org/gnome/shell/extensions/mediacontrols" = {
+      extension-position = "center";
+      max-widget-width = 500;
+      mouse-actions = [ "toggle_play" "toggle_menu" "none" "none" "none" "none" "none" "none" ];
+      show-control-icons = false;
+      show-seperators = false;
+      track-label = [ "track" "-" "artist" ];
     };
 
     "org/gnome/shell/extensions/blur" = {
@@ -95,7 +106,6 @@
       refresh-interval = 61;
     };
 
-
     "org/gnome/shell/extensions/googleearthwallpaper" = {
       hide = true;
     };
@@ -115,6 +125,11 @@
 
     "org/gnome/shell/extensions/pano/text-item" = {
       body-bg-color = "rgb(153,193,241)";
+    };
+
+    "org/gnome/shell/extensions/unblank" = {
+      power = false;
+      time = 1800;
     };
 
     # drop down menu for somafm, vpn and fend
