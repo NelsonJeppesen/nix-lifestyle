@@ -54,8 +54,11 @@
       };
 
       settings = {
+<<<<<<< HEAD
         remote_control_password =''"" *-colors'';
         allow_remote_control="password";
+=======
+>>>>>>> c77500f (tidy)
         copy_on_select = true;
         enable_audio_bell = false;
         font_size = "14.0";
