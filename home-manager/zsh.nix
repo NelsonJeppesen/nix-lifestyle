@@ -103,8 +103,9 @@
         # short 'n sweet
         g = "${pkgs.git}/bin/git";
         h = "${pkgs.helmfile}/bin/helmfile";
-        n = "${pkgs.neovim}/bin/nvim ~/s/notes/$(date +work-%Y-%q).md";
-        s = "${pkgs.neovim}/bin/nvim ~/s/notes/scratch.md";
+        j = "${pkgs.joplin}/bin/joplin";
+        #n = "${pkgs.neovim}/bin/nvim ~/s/notes/$(date +work-%Y-%q).md";
+        #s = "${pkgs.neovim}/bin/nvim ~/s/notes/scratch.md";
 
         # reset
         rst = "cd ~/s;kubectx --unset; echo > ~/.aws/sticky.profile;unset AWS_PROFILE; clear";
