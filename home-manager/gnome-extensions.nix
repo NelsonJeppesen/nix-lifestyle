@@ -8,6 +8,7 @@
     #pkgs.gnomeExtensions.bing-wallpaper-changer
     #pkgs.gnomeExtensions.brightness-control-using-ddcutil
     #pkgs.gnomeExtensions.brightness-panel-menu-indicator
+    #pkgs.gnomeExtensions.ddterm
     #pkgs.gnomeExtensions.display-ddc-brightness-volume
     #pkgs.gnomeExtensions.github-notifications
     #pkgs.gnomeExtensions.gsconnect
@@ -19,8 +20,6 @@
     pkgs.gnomeExtensions.appindicator
     pkgs.gnomeExtensions.bluetooth-quick-connect
     pkgs.gnomeExtensions.caffeine
-    pkgs.gnomeExtensions.control-blur-effect-on-lock-screen
-    #pkgs.gnomeExtensions.ddterm
     pkgs.gnomeExtensions.google-earth-wallpaper
     pkgs.gnomeExtensions.just-perfection
     pkgs.gnomeExtensions.media-controls
@@ -35,12 +34,11 @@
 
     "org/gnome/shell" = {
       enabled-extensions = [
-        "ControlBlurEffectOnLockScreen@pratap.fastmail.fm"
         "GoogleEarthWallpaper@neffo.github.com"
         "appindicatorsupport@rgcjonas.gmail.com"
         "bluetooth-quick-connect@bjarosze.gmail.com"
         "caffeine@patapon.info"
-        #"ddterm@amezin.github.com"
+        "ddterm@amezin.github.com"
         "just-perfection-desktop@just-perfection"
         "mediacontrols@cliffniff.github.com"
         "one-thing@github.com"
@@ -61,11 +59,6 @@
       show-control-icons = false;
       show-seperators = false;
       track-label = [ "track" "-" "artist" ];
-    };
-
-    "org/gnome/shell/extensions/blur" = {
-      brightness = 0.2;
-      sigma = 1;
     };
 
     "org/gnome/shell/extensions/appindicator" = {
@@ -173,6 +166,5 @@
     #  window-size = 0.29999999999999999;
     #  window-skip-taskbar = false;
     #};
-
   };
 }

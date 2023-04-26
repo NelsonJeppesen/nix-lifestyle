@@ -50,6 +50,10 @@
     packages = [
       pkgs.flameshot
 
+      # notes
+      pkgs.joplin
+      pkgs.joplin-desktop
+
       # nixpkgs maintainer
       pkgs.nixpkgs-review
 
