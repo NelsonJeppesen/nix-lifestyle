@@ -42,7 +42,7 @@
 
         kubernetes = {
           disabled = false;
-          context_aliases = { "arn.*:cluster/(?P<cluster>.*)" = "$cluster"; };  # keep only eks suffix
+          context_aliases = { "arn.*:cluster/(?P<cluster>.*)" = "$cluster"; }; # keep only eks suffix
         };
       };
     };
@@ -64,6 +64,9 @@
       enableSyntaxHighlighting = true;
 
       initExtra = ''
+        # unset broken trash zsh comp
+        unset '_comps[trash]'
+
         # alt + [left|right]
         bindkey "^[[1;3C" forward-word
         bindkey "^[[1;3D" backward-word
@@ -106,6 +109,8 @@
         j = "${pkgs.joplin}/bin/joplin";
         #n = "${pkgs.neovim}/bin/nvim ~/s/notes/$(date +work-%Y-%q).md";
         #s = "${pkgs.neovim}/bin/nvim ~/s/notes/scratch.md";
+
+        ls = "ls --almost-all --group-directories-first --color=auto";
 
         # reset
         rst = "cd ~/s;kubectx --unset; echo > ~/.aws/sticky.profile;unset AWS_PROFILE; clear";

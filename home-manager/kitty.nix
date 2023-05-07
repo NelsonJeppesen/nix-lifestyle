@@ -39,8 +39,6 @@
         "kitty_mod+]" = "next_layout";
 
         # new windows inside existing tab
-        "ctrl+alt+up" = "move_window_backward";
-        "ctrl+alt+down" = "move_window_forward";
         "kitty_mod+backspace" = "close_window";
         "kitty_mod+enter" = "launch --cwd=current";
         "kitty_mod+up" = "prev_window";

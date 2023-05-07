@@ -14,7 +14,7 @@
   ];
 
   networking.hostName = "gram14";
-  system.stateVersion = "22.05";
+  system.stateVersion = "22.11";
   boot.kernelModules = [ "kvm-intel" ];
 
   # Fix ACPI errors

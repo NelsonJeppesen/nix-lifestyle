@@ -39,7 +39,7 @@
   };
 
   home = {
-    stateVersion = "22.05";
+    stateVersion = "22.11";
     username = "nelson";
     homeDirectory = "/home/nelson";
 
@@ -93,14 +93,18 @@
       pkgs.entr
       pkgs.fd
       pkgs.fend
+      pkgs.gh
       pkgs.gomplate
       pkgs.ipcalc
       pkgs.jq
       pkgs.p7zip
       pkgs.ripgrep
+      pkgs.trashy
       pkgs.vault
       pkgs.wget
+      pkgs.whois
       pkgs.wl-clipboard
+      pkgs.yq
 
       # Kubernetes
       pkgs.glooctl
