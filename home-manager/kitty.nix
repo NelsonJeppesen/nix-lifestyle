@@ -54,6 +54,8 @@
       };
 
       settings = {
+        remote_control_password =''"" *-colors'';
+        allow_remote_control="password";
         copy_on_select = true;
         enable_audio_bell = false;
         font_size = "14.0";

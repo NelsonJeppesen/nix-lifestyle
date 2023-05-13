@@ -1,5 +1,4 @@
-{ config, pkgs, ... }:
-{
+{ config, pkgs, ... }: {
   home.file.".ssh/allowed_signers".text =
     "* ${builtins.readFile /home/nelson/.ssh/id_ed25519.pub}";
 
@@ -29,9 +28,14 @@
       aliases = {
         a = "add";
         ap = "add * --patch";
-        br = ''!git co $(git branch --list --sort=-authordate |fzf --height 15)'';
+        br = "!git co $(git branch --list --sort=-authordate |fzf --height 15)";
         c = "commit -m";
         co = "checkout";
+
+        cp = "cherry-pick";
+        cpa = "cherry-pick --abort";
+        cpc = "cherry-pick --continue";
+
         d = "diff";
         dfm = "diff origin/main";
         dfmast = "diff origin/master";

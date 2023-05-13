@@ -192,23 +192,20 @@
           # https://github.com/hrsh7th/nvim-cmp
           #   "A completion plugin for neovim coded in Lua"
           cmp-buffer
+          nvim-lspconfig
           cmp-nvim-lsp
           cmp-path
           cmp-treesitter
-          copilot-cmp
-          copilot-lua
           {
             plugin = nvim-cmp;
             type = "lua";
             config = ''
-              require("copilot").setup({suggestion={enabled=false}, panel={enabled=false}})
-              require("copilot_cmp").setup()
               local cmp = require'cmp'
 
               cmp.setup({
                 sources = cmp.config.sources({
-                 {name = "copilot"    },
                  {name = 'buffer'     },
+                 {name = 'nvim_lsp'   },
                  {name = 'path'       },
                  {name = 'treesitter' },
                 }),
@@ -220,14 +217,22 @@
                   documentation = cmp.config.window.bordered(),
                 },
 
-                formatters = { insert_text = require("copilot_cmp.format").remove_existing},
-
                 mapping = {
                   ["<CR>"]    = cmp.mapping.confirm(          { behavior = cmp.ConfirmBehavior.Replace,select = false }),
                   ["<S-Tab>"] = cmp.mapping.select_prev_item( { behavior = cmp.SelectBehavior.Insert }),
                   ["<Tab>"]   = cmp.mapping.select_next_item( { behavior = cmp.SelectBehavior.Insert }),
                 },
               })
+
+              -- The nvim-cmp almost supports LSP's capabilities so You should advertise it to LSP servers..
+              local capabilities = require('cmp_nvim_lsp').default_capabilities()
+
+              -- advertise capabilities and enable plugins
+              require'lspconfig'
+              require'lspconfig'.terraformls.setup{
+                cmd = {'${pkgs.terraform-ls}/bin/terraform-ls', 'serve'},
+                capabilities = capabilities,
+              }
             '';
           }
 

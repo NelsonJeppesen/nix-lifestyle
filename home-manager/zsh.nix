@@ -21,14 +21,21 @@
 
     fzf = {
       enable = true;
-      defaultOptions = [ "--layout=reverse" ];
+      defaultOptions = [
+        "--color=bw"
+        "--layout=reverse"
+      ];
     };
 
-    atuin.settings = {
+    atuin = {
       enable = true;
-      auto_sync = false;
-      style = "compact";
-      search_node = "fuzzy";
+      flags = [ "--disable-up-arrow" ];
+      settings = {
+        auto_sync = false;
+        inline_height = 13;
+        search_node = "fulltext";
+        style = "full";
+      };
     };
 
     starship = {
@@ -88,9 +95,9 @@
       '';
 
       sessionVariables = {
+        EDITOR = "nvim";
         MANPAGER = "nvim +Man!";
         NIXPKGS_ALLOW_UNFREE = "1";
-        EDITOR = "nvim";
       };
 
       shellAliases = {
@@ -111,6 +118,7 @@
         #s = "${pkgs.neovim}/bin/nvim ~/s/notes/scratch.md";
 
         ls = "ls --almost-all --group-directories-first --color=auto";
+        l = "ls --almost-all --group-directories-first --color=auto -1";
 
         # reset
         rst = "cd ~/s;kubectx --unset; echo > ~/.aws/sticky.profile;unset AWS_PROFILE; clear";
@@ -118,6 +126,8 @@
         # calculator
         f = "fend";
         fc = "clear;fend";
+
+        random-theme = ''precmd() {a=$(find /nix/store/3a0j7pdbj8hi0lzfmahxqp37rq3d6swp-kitty-themes-unstable-2023-03-08/share/kitty-themes/themes/*.conf | sort -R |head -n1);kitty @ set-colors --all $a;basename $a}'';
 
         # terraform
         t = "${pkgs.terraform}/bin/terraform";

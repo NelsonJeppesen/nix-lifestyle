@@ -23,6 +23,7 @@
     pkgs.gnomeExtensions.google-earth-wallpaper
     pkgs.gnomeExtensions.just-perfection
     pkgs.gnomeExtensions.media-controls
+    pkgs.gnomeExtensions.night-theme-switcher
     pkgs.gnomeExtensions.one-thing
     pkgs.gnomeExtensions.pano
     pkgs.gnomeExtensions.pip-on-top
