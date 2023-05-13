@@ -32,8 +32,9 @@
         c = "commit -m";
         co = "checkout";
 
-        de = "git diff --name-only | uniq | xargs vim";
-        aa = "git diff --name-only | uniq | xargs git add";
+        de = "!git diff --name-only | uniq | xargs vim";
+        da = "!git diff --name-only | uniq | xargs git add";
+        dap = "!git diff --name-only | uniq | xargs git add --patch";
 
         cp = "cherry-pick";
         cpa = "cherry-pick --abort";
