@@ -11,7 +11,6 @@
     #pkgs.gnomeExtensions.ddterm
     #pkgs.gnomeExtensions.display-ddc-brightness-volume
     #pkgs.gnomeExtensions.github-notifications
-    #pkgs.gnomeExtensions.gsconnect
     #pkgs.gnomeExtensions.hue-lights
     #pkgs.gnomeExtensions.nasa-apod
     #pkgs.gnomeExtensions.pingindic
@@ -21,6 +20,7 @@
     pkgs.gnomeExtensions.bluetooth-quick-connect
     pkgs.gnomeExtensions.caffeine
     pkgs.gnomeExtensions.google-earth-wallpaper
+    pkgs.gnomeExtensions.gsconnect
     pkgs.gnomeExtensions.just-perfection
     pkgs.gnomeExtensions.media-controls
     pkgs.gnomeExtensions.night-theme-switcher
@@ -40,6 +40,7 @@
         "bluetooth-quick-connect@bjarosze.gmail.com"
         "caffeine@patapon.info"
         "ddterm@amezin.github.com"
+        "gsconnect@andyholmes.github.io"
         "just-perfection-desktop@just-perfection"
         "mediacontrols@cliffniff.github.com"
         "one-thing@github.com"
@@ -48,7 +49,6 @@
         "run-or-raise@edvard.cz"
         "unblank@sun.wxg@gmail.com"
         #"github.notifications@alexandre.dufournet.gmail.com"
-        #"gsconnect@andyholmes.github.io"
         #"hue-lights@chlumskyvaclav.gmail.com"
       ];
     };

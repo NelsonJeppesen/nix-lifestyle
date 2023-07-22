@@ -4,14 +4,16 @@
 
   imports = [
     ./git.nix
-    ./gnome.nix
     ./gnome-extensions.nix
+    ./gnome.nix
     ./kitty.nix
     ./neovim.nix
     ./zsh.nix
   ];
 
   programs.home-manager.enable = true;
+
+  fonts.fontconfig.enable = true;
 
   # Add local scripts
   home.sessionPath = [ "/home/nelson/.local/bin" ];
@@ -25,6 +27,9 @@
         userChrome = "
           #TabsToolbar
           { visibility: collapse; }
+          #sidebar-box #sidebar-header {
+            display: none !important;
+          }
         ";
         settings = {
           "gfx.webrender.all" = true;
@@ -61,6 +66,11 @@
       pkgs.mindustry
       pkgs.vitetris
 
+      (pkgs.nerdfonts.override { fonts = [ "NerdFontsSymbolsOnly" ]; })
+      pkgs.hasklig
+      pkgs.noto-fonts
+      pkgs.source-code-pro
+
       # formaters
       pkgs.shfmt
       pkgs.nixpkgs-fmt
@@ -75,6 +85,7 @@
       pkgs.kitty
       pkgs.slack
       pkgs.zoom-us
+      #(pkgs.python3.withPackages my-python-packages)
 
       # cloud management
       pkgs.awscli2
@@ -85,6 +96,10 @@
       pkgs.shellcheck
       pkgs.shfmt
 
+      # try out gpt
+      pkgs.chatgpt-cli
+      pkgs.shell_gpt
+
       # core shell tools
       pkgs.btop
       pkgs.choose
@@ -94,6 +109,7 @@
       pkgs.fd
       pkgs.fend
       pkgs.gh
+      pkgs.git-workspace
       pkgs.gomplate
       pkgs.ipcalc
       pkgs.jq

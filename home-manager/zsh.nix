@@ -17,6 +17,7 @@
 
   programs = {
     broot.enable = true;
+    zoxide.enable = true;
     direnv.enable = true;
 
     fzf = {
@@ -41,15 +42,26 @@
     starship = {
       enable = true;
       settings = {
-        aws.format = "on [$profile $source_profile $duration]($style)";
 
         cmd_duration.disabled = true;
         helm.disabled = true;
+        python.disabled = true;
         terraform.disabled = true;
 
+        aws = {
+          format = "on [$region:$profile $source_profile $duration]($style)";
+          region_aliases = {
+            ap-southeast-2 = "apse2";
+            ca-central-1 = "cac1";
+            eu-central-1 = "euc1";
+            us-east-1 = "use1";
+          };
+        };
+
         kubernetes = {
+          # $region:$acount:$cluserName
+          context_aliases = { "arn:aws:eks:(?P<aws>.*)cluster/(?P<cluster>.*)" = "$aws$cluster"; };
           disabled = false;
-          context_aliases = { "arn.*:cluster/(?P<cluster>.*)" = "$cluster"; }; # keep only eks suffix
         };
       };
     };
@@ -68,7 +80,7 @@
       defaultKeymap = "emacs";
       enableAutosuggestions = true;
       enableCompletion = true;
-      enableSyntaxHighlighting = true;
+      syntaxHighlighting.enable = true;
 
       initExtra = ''
         # unset broken trash zsh comp
@@ -89,13 +101,14 @@
         # If opening a new terminal, switch to ~s and clear the screen
         if [ "$TERM" != "linux" ]; then
           if [ "$(pwd)" = "$HOME" ]; then
-            cd ~/s; clear
+            cd ~/git-workspace; clear
           fi
         fi
       '';
 
       sessionVariables = {
         EDITOR = "nvim";
+        GIT_WORKSPACE = "~/git-workspace";
         MANPAGER = "nvim +Man!";
         NIXPKGS_ALLOW_UNFREE = "1";
       };
@@ -104,8 +117,13 @@
         # reboot into uefi bios
         reboot-bios = "systemctl reboot --firmware-setup";
 
-        # aws cli
+        # fuzzy find aws profile
         ap = ''(){echo export AWS_PROFILE="$(${pkgs.awscli2}/bin/aws configure list-profiles|${pkgs.fzf}/bin/fzf --query=$1 --select-1)" > ~/.aws/sticky.profile;source ~/.aws/sticky.profile}'';
+
+        # fuzzy find aws region
+        ar = ''export AWS_REGION="$(echo 'us-east-1\nca-central-1\neu-central-1\nap-southeast-2'|${pkgs.fzf}/bin/fzf --query=$1 --select-1)"'';
+
+        # login via aws sso
         al = "aws sso login";
 
         cb = "${pkgs.xsel}/bin/xsel --clipboard";
@@ -121,7 +139,7 @@
         l = "ls --almost-all --group-directories-first --color=auto -1";
 
         # reset
-        rst = "cd ~/s;kubectx --unset; echo > ~/.aws/sticky.profile;unset AWS_PROFILE; clear";
+        rst = "cd ~/git-workspace;kubectx --unset; echo > ~/.aws/sticky.profile;unset AWS_PROFILE; clear";
 
         # calculator
         f = "fend";
@@ -142,6 +160,7 @@
         k = "kubectl";
         kns = "kubens";
         uc = "kubectx";
+        ucu = "kubectx --unset";
       };
     };
   };
