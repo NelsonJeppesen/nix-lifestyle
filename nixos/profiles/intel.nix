@@ -43,8 +43,8 @@
     CPU_BOOST_ON_BAT = "0";
     CPU_ENERGY_PERF_POLICY_ON_AC = "balance_power";
     CPU_ENERGY_PERF_POLICY_ON_BAT = "power";
-    CPU_MAX_PERF_ON_AC = "90";
-    CPU_MAX_PERF_ON_BAT = "65";
+    CPU_MAX_PERF_ON_AC = "85";
+    CPU_MAX_PERF_ON_BAT = "75";
     CPU_MIN_PERF_ON_BAT = "0";
     CPU_SCALING_GOVERNOR_ON_AC = "powersave";
     CPU_SCALING_GOVERNOR_ON_BAT = "powersave";

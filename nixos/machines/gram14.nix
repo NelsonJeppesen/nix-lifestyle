@@ -1,11 +1,13 @@
 # LG Gram 14 14Z90Q-K.ARW5U1  Intel 12th Gen
-{ config, pkgs, stdenv, lib, modulesPath, ... }:
+{ fetchurl, fetchgit, fetchhg, config, pkgs, stdenv, lib, modulesPath, ... }:
 {
   imports = [
     (modulesPath + "/installer/scan/not-detected.nix")
     #../profiles/software_defined_radio.nix
     ../profiles/desktop.nix
+    ../c.nix
     ../profiles/encrypted_disk.nix
+    #../modules/falcon-sensor
     ../profiles/intel.nix
     ../profiles/shared.nix
     ../profiles/systemd-boot.nix
@@ -13,10 +15,18 @@
     ../profiles/zsh.nix
   ];
 
+  nixpkgs.overlays = [
+    (
+      self: super: {
+        falcon-sensor = super.callPackage ../overlays/falcon-sensor.nix { };
+      }
+    )
+  ];
+  #programs.hyprland.enable = true;
   networking.hostName = "gram14";
   system.stateVersion = "22.11";
-  boot.kernelModules = [ "kvm-intel" ];
-
+  #boot.kernelModules = [ "kvm-intel" ];
+  services.fprintd.enable = true;
   # Fix ACPI errors
   #
   #   ACPI Error: No handler for Region [XIN1] (000000005158740d) [UserDefinedRegion] (20221020/evregion-130)

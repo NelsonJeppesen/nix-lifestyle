@@ -3,27 +3,17 @@
   home.file.".config/run-or-raise/shortcuts.conf".source = ./dotfiles/shortcuts.conf;
 
   home.packages = [
-    #pkgs.gnome3.gpaste
-    #pkgs.gnomeExtensions.adjust-display-brightness
-    #pkgs.gnomeExtensions.bing-wallpaper-changer
-    #pkgs.gnomeExtensions.brightness-control-using-ddcutil
-    #pkgs.gnomeExtensions.brightness-panel-menu-indicator
-    #pkgs.gnomeExtensions.ddterm
-    #pkgs.gnomeExtensions.display-ddc-brightness-volume
-    #pkgs.gnomeExtensions.github-notifications
-    #pkgs.gnomeExtensions.hue-lights
-    #pkgs.gnomeExtensions.nasa-apod
-    #pkgs.gnomeExtensions.pingindic
-    #pkgs.gnomeExtensions.quick-settings-tweaker
 
+    #pkgs.gnomeExtensions.ddterm
+    #pkgs.gnomeExtensions.hue-lights
     pkgs.gnomeExtensions.appindicator
     pkgs.gnomeExtensions.bluetooth-quick-connect
     pkgs.gnomeExtensions.caffeine
+    pkgs.gnomeExtensions.github-notifications
     pkgs.gnomeExtensions.google-earth-wallpaper
     pkgs.gnomeExtensions.gsconnect
     pkgs.gnomeExtensions.just-perfection
     pkgs.gnomeExtensions.media-controls
-    pkgs.gnomeExtensions.night-theme-switcher
     pkgs.gnomeExtensions.one-thing
     pkgs.gnomeExtensions.pano
     pkgs.gnomeExtensions.pip-on-top
@@ -40,6 +30,7 @@
         "bluetooth-quick-connect@bjarosze.gmail.com"
         "caffeine@patapon.info"
         "ddterm@amezin.github.com"
+        "github.notifications@alexandre.dufournet.gmail.com"
         "gsconnect@andyholmes.github.io"
         "just-perfection-desktop@just-perfection"
         "mediacontrols@cliffniff.github.com"
@@ -48,7 +39,6 @@
         "pip-on-top@rafostar.github.com"
         "run-or-raise@edvard.cz"
         "unblank@sun.wxg@gmail.com"
-        #"github.notifications@alexandre.dufournet.gmail.com"
         #"hue-lights@chlumskyvaclav.gmail.com"
       ];
     };

@@ -24,6 +24,7 @@
       home = {
         id = 0;
         name = "home";
+        # Hide tab bar and side bar header
         userChrome = "
           #TabsToolbar
           { visibility: collapse; }
@@ -67,8 +68,6 @@
       pkgs.vitetris
 
       (pkgs.nerdfonts.override { fonts = [ "NerdFontsSymbolsOnly" ]; })
-      pkgs.hasklig
-      pkgs.noto-fonts
       pkgs.source-code-pro
 
       # formaters
