@@ -14,6 +14,7 @@
     pkgs.gnomeExtensions.gsconnect
     pkgs.gnomeExtensions.just-perfection
     pkgs.gnomeExtensions.media-controls
+    pkgs.gnomeExtensions.blur-my-shell
     pkgs.gnomeExtensions.one-thing
     pkgs.gnomeExtensions.pano
     pkgs.gnomeExtensions.pip-on-top
@@ -31,10 +32,10 @@
         "caffeine@patapon.info"
         "ddterm@amezin.github.com"
         "github.notifications@alexandre.dufournet.gmail.com"
-        "gsconnect@andyholmes.github.io"
+        #"gsconnect@andyholmes.github.io"
         "just-perfection-desktop@just-perfection"
-        "mediacontrols@cliffniff.github.com"
-        "one-thing@github.com"
+        #"mediacontrols@cliffniff.github.com"
+        #"one-thing@github.com"
         "pano@elhan.io"
         "pip-on-top@rafostar.github.com"
         "run-or-raise@edvard.cz"
