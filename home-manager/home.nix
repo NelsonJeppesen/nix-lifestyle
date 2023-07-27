@@ -56,10 +56,6 @@
     packages = [
       pkgs.flameshot
 
-      # notes
-      pkgs.joplin
-      pkgs.joplin-desktop
-
       # nixpkgs maintainer
       pkgs.nixpkgs-review
 
@@ -79,12 +75,11 @@
       pkgs.spotify
 
       # core GUI apps
-      #pkgs.fractal
+      pkgs.fractal
       #pkgs.google-chrome
       pkgs.kitty
       pkgs.slack
       pkgs.zoom-us
-      #(pkgs.python3.withPackages my-python-packages)
 
       # cloud management
       pkgs.awscli2
@@ -104,17 +99,13 @@
       pkgs.choose
       pkgs.curl
       pkgs.dnsutils
-      pkgs.entr
       pkgs.fd
       pkgs.fend
       pkgs.gh
-      pkgs.git-workspace
-      pkgs.gomplate
       pkgs.ipcalc
       pkgs.jq
       pkgs.p7zip
       pkgs.ripgrep
-      pkgs.trashy
       pkgs.vault
       pkgs.wget
       pkgs.whois
@@ -129,7 +120,6 @@
       pkgs.kubernetes-helm
       pkgs.sops
       pkgs.stern
-      pkgs.velero
     ];
   };
 }

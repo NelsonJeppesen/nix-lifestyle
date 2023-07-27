@@ -22,15 +22,13 @@
 
     fzf = {
       enable = true;
-      defaultOptions = [
-        "--color=bw"
-        "--layout=reverse"
-      ];
+      defaultOptions = [ "--layout=reverse" ];
     };
 
     atuin = {
       enable = true;
       flags = [ "--disable-up-arrow" ];
+
       settings = {
         auto_sync = false;
         inline_height = 13;
@@ -42,7 +40,6 @@
     starship = {
       enable = true;
       settings = {
-
         cmd_duration.disabled = true;
         helm.disabled = true;
         python.disabled = true;
@@ -69,13 +66,11 @@
     zsh = {
       enable = true;
 
-      plugins = [
-        {
-          file = "share/fzf-tab/fzf-tab.plugin.zsh";
-          name = "fzf-tab";
-          src = pkgs.zsh-fzf-tab;
-        }
-      ];
+      plugins = [{
+        file = "share/fzf-tab/fzf-tab.plugin.zsh";
+        name = "fzf-tab";
+        src = pkgs.zsh-fzf-tab;
+      }];
 
       defaultKeymap = "emacs";
       enableAutosuggestions = true;
@@ -83,32 +78,28 @@
       syntaxHighlighting.enable = true;
 
       initExtra = ''
-        # unset broken trash zsh comp
-        unset '_comps[trash]'
-
         # alt + [left|right]
         bindkey "^[[1;3C" forward-word
         bindkey "^[[1;3D" backward-word
 
         # kitty tab title to $PWD
-        function set-title-precmd() {   printf "\e]2;%s\a" "''${PWD/*\//}"}
+        function set-title-precmd() {printf "\e]2;%s\a" "''${PWD/*\//}"}
         add-zsh-hook precmd set-title-precmd
 
         # kitty tab title to running command
         function set-title-preexec() {printf "\e]2;%s\a" "$1"}
         add-zsh-hook preexec set-title-preexec
 
-        # If opening a new terminal, switch to ~s and clear the screen
-        if [ "$TERM" != "linux" ]; then
-          if [ "$(pwd)" = "$HOME" ]; then
-            cd ~/git-workspace; clear
-          fi
+        # If opening a new terminal, switch to repo dir
+        if [[ "$TERM" != "linux" && "$(pwd)" = "$HOME" ]]; then
+          cd ~/Documents
+          clear
         fi
       '';
 
       sessionVariables = {
+        DIRENV_LOG_FORMAT = ""; # silence direnv
         EDITOR = "nvim";
-        GIT_WORKSPACE = "~/git-workspace";
         MANPAGER = "nvim +Man!";
         NIXPKGS_ALLOW_UNFREE = "1";
       };
@@ -131,15 +122,22 @@
         # short 'n sweet
         g = "${pkgs.git}/bin/git";
         h = "${pkgs.helmfile}/bin/helmfile";
-        j = "${pkgs.joplin}/bin/joplin";
-        #n = "${pkgs.neovim}/bin/nvim ~/s/notes/$(date +work-%Y-%q).md";
-        #s = "${pkgs.neovim}/bin/nvim ~/s/notes/scratch.md";
+
+        # Quick notes
+        n = "nvim ~/Documents/notes-$(date +%Y-%q).md";
+        s = "nvim ~/Documents/scratch.md";
 
         ls = "ls --almost-all --group-directories-first --color=auto";
         l = "ls --almost-all --group-directories-first --color=auto -1";
 
         # reset
-        rst = "cd ~/git-workspace;kubectx --unset; echo > ~/.aws/sticky.profile;unset AWS_PROFILE; clear";
+        rst = ''
+          cd ~/Documents
+          kubectx --unset
+          echo > ~/.aws/sticky.profile
+          unset AWS_PROFILE
+          clear
+       '';
 
         # calculator
         f = "fend";
