@@ -54,10 +54,10 @@
       settings = {
 
         # Set fonts; disable bold
-        bold_font = "Source Code Pro Medium";
-        bold_italic_font = "Source Code Pro Medium Italic";
-        italic_font = "Source Code Pro Medium Italic";
-        font_family = "Source Code Pro Medium";
+        bold_font = "Red Hat Mono Medium";
+        bold_italic_font = "Red Hat Mono Medium Italic";
+        italic_font = "Red Hat Mono Medium Italic";
+        font_family = "Red Hat Mono Medium";
         font_size = "15.0";
 
         window_border_width = "1.0pt";

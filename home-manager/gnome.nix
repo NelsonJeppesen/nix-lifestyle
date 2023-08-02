@@ -7,6 +7,7 @@
       show-battery-percentage = false;
     };
 
+
     # Use capslock as super key
     "org/gnome/desktop/input-sources" = {
       xkb-options = [
@@ -17,6 +18,7 @@
     };
 
     "org/gnome/desktop/sound" = {
+      allow-volume-above-100-percent = true;
       event-sounds = false;
     };
 
@@ -34,6 +36,7 @@
 
     "org/gnome/shell/keybindings" = {
       toggle-message-tray = [ "<Super>v" ];
+      show-screenshot-ui = [ ]; # free up Print
       toggle-overview = [ ]; # free super-s
     };
 

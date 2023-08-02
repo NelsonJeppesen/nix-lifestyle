@@ -64,7 +64,10 @@
       pkgs.vitetris
 
       (pkgs.nerdfonts.override { fonts = [ "NerdFontsSymbolsOnly" ]; })
+      pkgs.redhat-official-fonts
       pkgs.source-code-pro
+      #pkgs.meslo-lg
+      #pkgs.roboto-mono
 
       # formaters
       pkgs.shfmt
