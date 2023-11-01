@@ -79,6 +79,7 @@
       dash = false;
       events-button = false;
       hot-corner = false;
+      power-icon = false;
       show-apps-button = true;
       startup-status = 0;
       type-to-search = false;

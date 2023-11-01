@@ -10,10 +10,6 @@
     fi
   '';
 
-  services.libreddit.port = 80;
-  services.libreddit.enable = true;
-  services.libreddit.address = "127.0.0.2";
-
   hardware.bluetooth.enable = true;
 
   # Pipewire

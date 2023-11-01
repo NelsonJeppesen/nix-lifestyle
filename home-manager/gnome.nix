@@ -4,7 +4,7 @@
     "org/gnome/desktop/interface" = {
       clock-format = "12h";
       enable-hot-corners = false;
-      show-battery-percentage = false;
+      show-battery-percentage = true;
     };
 
 
@@ -17,6 +17,10 @@
       ];
     };
 
+    "org/gnome/desktop/notifications" = {
+      show-in-lock-screen = false;
+    };
+
     "org/gnome/desktop/sound" = {
       allow-volume-above-100-percent = true;
       event-sounds = false;
@@ -27,6 +31,7 @@
       switch-input-source-backward = [ ]; # Free up <Super><Shift>space
       toggle-message-tray = [ "<Super>v" ]; # Free up <Super>m
       close = [ "<Super>BackSpace" ];
+      toggle-fullscreen = [ "<Super>Print" ];
     };
 
     "org/gnome/mutter" = {

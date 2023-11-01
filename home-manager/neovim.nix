@@ -101,7 +101,7 @@
               nnoremap  ,fb  <cmd>lua require('telescope.builtin').buffers()<cr>
               nnoremap  ,fo  <cmd>lua require('telescope.builtin').file_browser()<cr>
               nnoremap  ,fh  <cmd>lua require('telescope.builtin').oldfiles()<cr>
-              nnoremap  ,fc  <cmd>lua require('telescope.builtin').colorscheme()<cr>
+              nnoremap  ,fc  <cmd>lua require('telescope.builtin').command_history()<cr>
               nnoremap  ,fr  <cmd>lua require('telescope.builtin').registers()<cr>
               nnoremap  ,p   <cmd>Telescope neoclip<cr>
 
@@ -228,6 +228,7 @@
               local capabilities = require('cmp_nvim_lsp').default_capabilities()
 
               -- advertise capabilities and enable plugins
+              vim.lsp.set_log_level("off")
               require'lspconfig'
               require'lspconfig'.terraformls.setup{
                 cmd = {'${pkgs.terraform-ls}/bin/terraform-ls', 'serve'},

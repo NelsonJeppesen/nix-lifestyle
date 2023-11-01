@@ -20,7 +20,7 @@
             #kitty -c ~/.config/kitty/kitty.conf -c $THEME_PATH/Belafonte_Day.conf
             kitty -c ~/.config/kitty/kitty.conf -c $THEME_PATH/Solarized_Light.conf
           else
-            kitty -c ~/.config/kitty/kitty.conf -c $THEME_PATH/rose-pine-moon.conf
+            kitty -c ~/.config/kitty/kitty.conf -c $THEME_PATH/Doom_Vibrant.conf
           fi
         '';
       };
@@ -87,7 +87,7 @@
         term = "xterm-256color";
         update_check_interval = "0";
 
-        enabled_layouts = "vertical,horizontal,grid,stack";
+        enabled_layouts = "vertical,tall,grid,stack";
         # Fat -- One (or optionally more) windows are shown full width on the top, the rest of the windows are shown side-by-side on the bottom
         # Grid -- All windows are shown in a grid
         # Horizontal -- All windows are shown side-by-side

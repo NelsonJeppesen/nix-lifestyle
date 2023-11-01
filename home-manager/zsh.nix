@@ -109,10 +109,10 @@
         reboot-bios = "systemctl reboot --firmware-setup";
 
         # fuzzy find aws profile
-        ap = ''(){echo export AWS_PROFILE="$(${pkgs.awscli2}/bin/aws configure list-profiles|${pkgs.fzf}/bin/fzf --query=$1 --select-1)" > ~/.aws/sticky.profile;source ~/.aws/sticky.profile}'';
+        ap = ''(){echo export AWS_PROFILE="$(${pkgs.awscli2}/bin/aws configure list-profiles|${pkgs.fzf}/bin/fzf --exact --query=$1 --select-1)" > ~/.aws/sticky.profile;source ~/.aws/sticky.profile}'';
 
         # fuzzy find aws region
-        ar = ''export AWS_REGION="$(echo 'us-east-1\nca-central-1\neu-central-1\nap-southeast-2'|${pkgs.fzf}/bin/fzf --query=$1 --select-1)"'';
+        ar = ''(){echo export AWS_REGION="$(echo 'us-east-1\nca-central-1\neu-central-1\nap-southeast-2'|${pkgs.fzf}/bin/fzf --exact --query=$1 --select-1)" > ~/.aws/sticky.region;source ~/.aws/sticky.region}'';
 
         # login via aws sso
         al = "aws sso login";
@@ -124,8 +124,8 @@
         h = "${pkgs.helmfile}/bin/helmfile";
 
         # Quick notes
-        n = "nvim ~/Documents/notes-$(date +%Y-%q).md";
-        s = "nvim ~/Documents/scratch.md";
+        n = "nb edit work-$(date +%Y-%q)     2>/dev/null || nb add --title work-$(date +%Y-%q)";
+        np = "nb edit personal-$(date +%Y-%q) 2>/dev/null || nb add --title personal-$(date +%Y-%q)";
 
         ls = "ls --almost-all --group-directories-first --color=auto";
         l = "ls --almost-all --group-directories-first --color=auto -1";
@@ -137,11 +137,13 @@
           echo > ~/.aws/sticky.profile
           unset AWS_PROFILE
           clear
-       '';
+        '';
 
         # calculator
         f = "fend";
         fc = "clear;fend";
+
+        w = "walk";
 
         random-theme = ''precmd() {a=$(find /nix/store/3a0j7pdbj8hi0lzfmahxqp37rq3d6swp-kitty-themes-unstable-2023-03-08/share/kitty-themes/themes/*.conf | sort -R |head -n1);kitty @ set-colors --all $a;basename $a}'';
 

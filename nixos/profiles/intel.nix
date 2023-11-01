@@ -12,13 +12,6 @@
   hardware.cpu.intel.updateMicrocode =
     lib.mkDefault config.hardware.enableRedistributableFirmware;
 
-  boot.extraModprobeConfig = ''
-    #options snd_hda_intel power_save=2
-    #options iwlwifi bt_coex_active=0 disable_11ac=1 swcrypto=1 uapsd_disable=1
-    #options iwlmvm power_scheme=1
-    #options cfg80211 cfg80211_disable_40mhz_24ghz=
-  '';
-
   # Ensure modules used for efficent disk encryption are loaded
   # early in the boot process
   boot.initrd.availableKernelModules = [ "xhci_pci" "nvme" "usb_storage" "sd_mod" "aesni_intel" "cryptd" ];
@@ -43,7 +36,7 @@
     CPU_BOOST_ON_BAT = "0";
     CPU_ENERGY_PERF_POLICY_ON_AC = "balance_power";
     CPU_ENERGY_PERF_POLICY_ON_BAT = "power";
-    CPU_MAX_PERF_ON_AC = "85";
+    CPU_MAX_PERF_ON_AC = "100";
     CPU_MAX_PERF_ON_BAT = "75";
     CPU_MIN_PERF_ON_BAT = "0";
     CPU_SCALING_GOVERNOR_ON_AC = "powersave";

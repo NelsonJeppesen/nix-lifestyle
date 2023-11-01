@@ -15,6 +15,8 @@
     ../profiles/zsh.nix
   ];
 
+  boot.kernel.sysctl = { "vm.swappiness" = 10;};
+
   nixpkgs.overlays = [
     (
       self: super: {
@@ -22,6 +24,8 @@
       }
     )
   ];
+  boot.kernelParams = [ "acpi_mask_gpe=0x6E" ];
+
   #programs.hyprland.enable = true;
   networking.hostName = "gram14";
   system.stateVersion = "22.11";
@@ -45,6 +49,9 @@
     script = ''
       # Enable fn-lock
       echo 1 > /sys/devices/platform/lg-laptop/fn_lock
+
+      #  fix high cpu on TB
+      #echo unmask > /sys/firmware/acpi/interrupts/gpe6E
     '';
     wantedBy = [ "multi-user.target" ];
   };

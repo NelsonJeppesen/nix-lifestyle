@@ -64,6 +64,8 @@
       pkgs.vitetris
 
       (pkgs.nerdfonts.override { fonts = [ "NerdFontsSymbolsOnly" ]; })
+      pkgs.b612
+      pkgs.atkinson-hyperlegible
       pkgs.redhat-official-fonts
       pkgs.source-code-pro
       #pkgs.meslo-lg
@@ -73,9 +75,12 @@
       pkgs.shfmt
       pkgs.nixpkgs-fmt
 
+      pkgs.gpxsee-qt6
+
       # chill
       #pkgs.somafm-cli forked
       pkgs.spotify
+      pkgs.vivaldi
 
       # core GUI apps
       pkgs.fractal
@@ -105,11 +110,14 @@
       pkgs.fd
       pkgs.fend
       pkgs.gh
+      pkgs.gron
       pkgs.ipcalc
       pkgs.jq
+      pkgs.nb
       pkgs.p7zip
       pkgs.ripgrep
       pkgs.vault
+      pkgs.walk
       pkgs.wget
       pkgs.whois
       pkgs.wl-clipboard

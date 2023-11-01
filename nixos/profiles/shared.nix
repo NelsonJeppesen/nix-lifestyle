@@ -1,39 +1,11 @@
-let
-  my-python-packages = ps: with ps; [
-    # ...
-    (
-      buildPythonPackage rec {
-        pname = "okta-awscli";
-        version = "0.5.4";
-        src = fetchPypi {
-          inherit pname version;
-          sha256 = "sha256-UJkho43txvoUJPBuW7lKW7NZRjkSxFIYq99glbOqyCE=";
-        };
-        doCheck = false;
-        propagatedBuildInputs = [
-          # Specify dependencies
-          pkgs.python3Packages.configparser
-          pkgs.python3Packages.beautifulsoup4
-          pkgs.python3Packages.boto3
-          pkgs.python3Packages.click
-          pkgs.python3Packages.requests
-          pkgs.python3Packages.validators
-        ];
-      }
-    )
-  ];
-in
 { config, pkgs, stdenv, lib, ... }:
 {
-  nixpkgs.config.allowUnfree = true; # Chrome, steam etc
   console.earlySetup = lib.mkDefault true; # Set virtual console options in initrd
   environment.defaultPackages = lib.mkDefault [ ]; # Remove default pacakges
-  security.sudo.extraConfig = ''Defaults timestamp_timeout=600'';
+  nixpkgs.config.allowUnfree = true; # Chrome, steam etc
   programs.zsh.enable = true;
+  security.sudo.extraConfig = ''Defaults timestamp_timeout=600'';
   users.defaultUserShell = pkgs.zsh;
-
-  #ddc monitor control
-  #hardware.i2c.enable = true;
 
   environment.sessionVariables = rec { MOZ_ENABLE_WAYLAND = "1"; };
   nix.extraOptions = ''experimental-features = nix-command flakes'';
@@ -61,9 +33,17 @@ in
 
   services.sshd.enable = lib.mkDefault true;
   users.users.nelson.isNormalUser = lib.mkDefault true;
-  users.users.nelson.extraGroups = lib.mkDefault [ "i2c" "dialout" "wheel" "docker" "networkmanager" "plugdev" ];
+
+  users.users.nelson.extraGroups = lib.mkDefault [
+    "i2c"
+    "dialout"
+    "wheel"
+    "docker"
+    "networkmanager"
+    "plugdev"
+  ];
+
   environment.systemPackages = with pkgs; [
-    #(python3.withPackages (ps: with ps; [ okta-awscli ]))
     wget
     curl
     git
