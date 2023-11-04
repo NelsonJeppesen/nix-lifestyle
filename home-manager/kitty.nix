@@ -20,7 +20,7 @@
             #kitty -c ~/.config/kitty/kitty.conf -c $THEME_PATH/Belafonte_Day.conf
             kitty -c ~/.config/kitty/kitty.conf -c $THEME_PATH/Solarized_Light.conf
           else
-            kitty -c ~/.config/kitty/kitty.conf -c $THEME_PATH/Doom_Vibrant.conf
+            kitty -c ~/.config/kitty/kitty.conf -c $THEME_PATH/rose-pine-moon.conf
           fi
         '';
       };

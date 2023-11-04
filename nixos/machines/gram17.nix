@@ -3,8 +3,10 @@
 {
   imports = [
     (modulesPath + "/installer/scan/not-detected.nix")
+    #../c.nix
+    #../modules/falcon-sensor
     #../profiles/software_defined_radio.nix
-    ../falcon/falcon.nix
+
     ../profiles/desktop.nix
     ../profiles/encrypted_disk.nix
     ../profiles/intel.nix
@@ -14,22 +16,10 @@
     ../profiles/zsh.nix
   ];
 
-  boot.kernel.sysctl = { "vm.swappiness" = 10;};
-
-  nixpkgs.overlays = [
-    (
-      self: super: {
-        falcon-sensor = super.callPackage ../overlays/falcon-sensor.nix { };
-      }
-    )
-  ];
   boot.kernelParams = [ "acpi_mask_gpe=0x6E" ];
+  networking.hostName = "gram17";
+  system.stateVersion = "23.05";
 
-  #programs.hyprland.enable = true;
-  networking.hostName = "gram14";
-  system.stateVersion = "22.11";
-  #boot.kernelModules = [ "kvm-intel" ];
-  services.fprintd.enable = true;
   # Fix ACPI errors
   #
   #   ACPI Error: No handler for Region [XIN1] (000000005158740d) [UserDefinedRegion] (20221020/evregion-130)
@@ -48,9 +38,6 @@
     script = ''
       # Enable fn-lock
       echo 1 > /sys/devices/platform/lg-laptop/fn_lock
-
-      #  fix high cpu on TB
-      #echo unmask > /sys/firmware/acpi/interrupts/gpe6E
     '';
     wantedBy = [ "multi-user.target" ];
   };
