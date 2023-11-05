@@ -115,6 +115,7 @@
       pkgs.ipcalc
       pkgs.jq
       pkgs.nb
+      pkgs.nvimpager
       pkgs.p7zip
       pkgs.ripgrep
       pkgs.vault

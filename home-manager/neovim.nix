@@ -8,9 +8,21 @@
       vimAlias = true;
       withNodeJs = true;
 
+      extraLuaPackages = luaPkgs: with luaPkgs; [
+        middleclass # used by windows-nvim
+      ];
+
       # Install Vim Plugins, keep configuration local to install block if possible
       plugins =
         with pkgs.vimPlugins; [
+          {
+            plugin = windows-nvim;
+            type = "lua";
+            config = ''
+              require('windows').setup()
+            '';
+          }
+
           {
             plugin = mini-nvim;
             type = "lua";
@@ -73,8 +85,10 @@
             type = "viml";
             config = ''
               lua require("bufferline").setup{}
-              nnoremap <silent> <C-h> :BufferLineCyclePrev<CR>
-              nnoremap <silent> <C-l> :BufferLineCycleNext<CR>
+              nnoremap <silent> <C-left>  :BufferLineCyclePrev<CR>
+              nnoremap <silent> <C-right> :BufferLineCycleNext<CR>
+              nnoremap <silent> <C-up>    <C-w>w
+              nnoremap <silent> <C-down>  <C-w>w
             '';
           }
 
@@ -94,15 +108,15 @@
             plugin = telescope-nvim;
             type = "viml";
             config = ''
-              nnoremap  ,ff  :execute 'Telescope git_files cwd=' . expand('%:p:h')<cr>
-              nnoremap  ,fg  <cmd>lua require('telescope.builtin').find_files()<cr>
-              nnoremap  ,f/  <cmd>lua require('telescope.builtin').current_buffer_fuzzy_find()<cr>
-              nnoremap  ,fb  <cmd>lua require('telescope.builtin').buffers()<cr>
-              nnoremap  ,fo  <cmd>lua require('telescope.builtin').file_browser()<cr>
-              nnoremap  ,fh  <cmd>lua require('telescope.builtin').oldfiles()<cr>
-              nnoremap  ,fc  <cmd>lua require('telescope.builtin').command_history()<cr>
-              nnoremap  ,fr  <cmd>lua require('telescope.builtin').registers()<cr>
-              nnoremap  ,p   <cmd>Telescope neoclip<cr>
+              nnoremap  ,ff  :execute 'Telescope git_files cwd=' . expand('%:p:h')<CR>
+              nnoremap  ,fg  <cmd>lua require('telescope.builtin').find_files()<CR>
+              nnoremap  ,f/  <cmd>lua require('telescope.builtin').current_buffer_fuzzy_find()<CR>
+              nnoremap  ,fb  <cmd>lua require('telescope.builtin').buffers()<CR>
+              nnoremap  ,fo  <cmd>lua require('telescope.builtin').file_browser()<CR>
+              nnoremap  ,fh  <cmd>lua require('telescope.builtin').oldfiles()<CR>
+              nnoremap  ,fc  <cmd>lua require('telescope.builtin').command_history()<CR>
+              nnoremap  ,fr  <cmd>lua require('telescope.builtin').registers()<CR>
+              nnoremap  ,p   <cmd>Telescope neoclip<CR>
 
               lua << EOF
                 _G.open_telescope = function()
@@ -138,11 +152,11 @@
                 float_opts = {border = 'curved'}
               }
               EOF
-              nnoremap <silent> <c-\>     <cmd>execute 'ToggleTerm direction=float      dir=' . expand('%:p:h')<cr>
-              nnoremap <silent> <S-c-\>   <cmd>execute 'ToggleTerm direction=horizontal dir=' . expand('%:p:h')<cr>
-              inoremap <silent> <c-\>     <esc><cmd>execute 'ToggleTerm dir=' . expand('%:p:h')<cr>
-              tnoremap <silent> <c-\>     <esc><cmd>ToggleTerm<cr>
-              tnoremap <silent> <S-c-\>   <esc><cmd>ToggleTerm<cr>
+              nnoremap <silent> <c-\>     <cmd>execute 'ToggleTerm direction=float      dir=' . expand('%:p:h')<CR>
+              nnoremap <silent> <S-c-\>   <cmd>execute 'ToggleTerm direction=horizontal dir=' . expand('%:p:h')<CR>
+              inoremap <silent> <c-\>     <esc><cmd>execute 'ToggleTerm dir=' . expand('%:p:h')<CR>
+              tnoremap <silent> <c-\>     <esc><cmd>ToggleTerm<CR>
+              tnoremap <silent> <S-c-\>   <esc><cmd>ToggleTerm<CR>
             '';
           }
 
@@ -151,7 +165,7 @@
           {
             plugin = neoformat;
             type = "lua";
-            config = "vim.api.nvim_set_keymap('n', ',a', ':Neoformat<cr>',{noremap = true})";
+            config = "vim.api.nvim_set_keymap('n', ',a', ':Neoformat<CR>',{noremap = true})";
           }
 
           # https://github.com/f-person/git-blame.nvim
@@ -160,9 +174,14 @@
             plugin = git-blame-nvim;
             type = "lua";
             config = ''
-              vim.g.gitblame_enabled = 0
-              vim.api.nvim_set_keymap('n', ',bt', ':GitBlameToggle<cr>',{noremap = true})
-              vim.api.nvim_set_keymap('n', ',bo', ':GitBlameOpenCommitURL<cr>',{noremap = true})
+              require('gitblame').setup {
+                enabled = false,
+                virtual_text_column = 60,
+                date_format = "%r",
+              }
+
+              vim.api.nvim_set_keymap('n', ',bm', ':GitBlameToggle<CR>',{noremap = true})
+              vim.api.nvim_set_keymap('n', ',bo', ':GitBlameOpenCommitURL<CR>',{noremap = true})
             '';
           }
 
@@ -242,7 +261,16 @@
           {
             plugin = which-key-nvim;
             type = "lua";
-            config = "require('which-key').setup()";
+            config = ''
+              require('which-key').setup({
+                window = {
+                  border    = "none",
+                  position  = "top",
+                  margin    = { .25, .25, .25, .25 },
+                  padding   = {   0,   0,   0,   0 },
+                }
+              })
+            '';
           }
 
           # https://github.com/nacro90/numb.nvim/
@@ -254,11 +282,6 @@
           }
 
           # ------------------------------------ Vimscript Plugins ---------------------------------------------
-          # https://github.com/lambdalisue/vim-manpager
-          #  "Use Vim as a MANPAGER program"
-          # see shell.nix
-          #vim-manpager
-
           # https://github.com/farmergreg/vim-lastplace
           #   "Intelligently reopen files at your last edit position in Vim"
           vim-lastplace
@@ -274,11 +297,8 @@
           {
             plugin = vim-table-mode;
             type = "viml";
-            config = ''
-              " Make tables github markdown compatable
-              let g:table_mode_corner='|'
-              nnoremap  <silent>  ,,a   :TableModeToggle<cr>
-            '';
+            config = ''let g:table_mode_corner='|' ''; # GitHub markdown
+
           }
         ];
 
@@ -305,9 +325,9 @@
 
         set autoread
         let mapleader=","
-        nnoremap <silent>   <leader><leader>n   Go<cr><esc>:r! date +\%Y-\%m-\%d<cr>I# <esc>o*<space>
-        nnoremap            <leader><leader>c   :%y+<cr>
-        nnoremap            <leader>d           :% !base64 -d<cr>
+        nnoremap <silent>   <leader><leader>n   Go<CR><esc>:r! date +\%Y-\%m-\%d<CR>I# <esc>o*<space>
+        nnoremap            <leader><leader>c   :%y+<CR>
+        nnoremap            <leader>d           :% !base64 -d<CR>
 
         " persistent undo
         if !isdirectory($HOME."/.config/nvim/undo")

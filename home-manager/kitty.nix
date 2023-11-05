@@ -48,6 +48,7 @@
         "kitty_mod+s" = "show_scrollback";
 
         "f11" = "toggle_fullscreen";
+        "f1" = "launch --stdin-source=@screen_scrollback --stdin-add-formatting ${pkgs.nvimpager}/bin/nvimpager";
       };
 
       settings = {
