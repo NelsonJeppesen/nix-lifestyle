@@ -58,7 +58,7 @@
         bold_italic_font = "Red Hat Mono Medium Italic";
         italic_font = "Red Hat Mono Medium Italic";
         font_family = "Red Hat Mono Medium";
-        font_size = "15.0";
+        font_size = "14.0";
 
         window_border_width = "1.0pt";
         window_margin_width = "7";
