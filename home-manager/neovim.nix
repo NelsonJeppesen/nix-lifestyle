@@ -11,7 +11,6 @@
       # Install Vim Plugins, keep configuration local to install block if possible
       plugins =
         with pkgs.vimPlugins; [
-
           {
             plugin = mini-nvim;
             type = "lua";
@@ -34,6 +33,7 @@
               " set vim color scheme
               if theme =~ ".*default.*"
                 " light vim color
+                lua require('rose-pine').setup({groups = {background = 'ffffff'}})
                 set background=light
                 colorscheme rose-pine-dawn
               else
@@ -41,7 +41,6 @@
                 set background=dark
                 colorscheme rose-pine-moon
               end
-              lua require('rose-pine').setup({dim_nc_background = true})
             '';
           }
 
@@ -161,8 +160,9 @@
             plugin = git-blame-nvim;
             type = "lua";
             config = ''
-              vim.g["gitblame_enabled"] = 0
-              vim.api.nvim_set_keymap('n', ',,b', ':GitBlameToggle<cr>',{noremap = true})
+              vim.g.gitblame_enabled = 0
+              vim.api.nvim_set_keymap('n', ',bt', ':GitBlameToggle<cr>',{noremap = true})
+              vim.api.nvim_set_keymap('n', ',bo', ':GitBlameOpenCommitURL<cr>',{noremap = true})
             '';
           }
 
