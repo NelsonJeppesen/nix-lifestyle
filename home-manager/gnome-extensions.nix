@@ -3,18 +3,18 @@
   home.file.".config/run-or-raise/shortcuts.conf".source = ./dotfiles/shortcuts.conf;
 
   home.packages = [
-
+    #pkgs.gnomeExtensions.blur-my-shell
     #pkgs.gnomeExtensions.ddterm
+    #pkgs.gnomeExtensions.github-notifications
+    #pkgs.gnomeExtensions.gsconnect
     #pkgs.gnomeExtensions.hue-lights
+    #pkgs.gnomeExtensions.media-controls
     pkgs.gnomeExtensions.appindicator
     pkgs.gnomeExtensions.bluetooth-quick-connect
     pkgs.gnomeExtensions.caffeine
-    pkgs.gnomeExtensions.github-notifications
     pkgs.gnomeExtensions.google-earth-wallpaper
-    pkgs.gnomeExtensions.gsconnect
     pkgs.gnomeExtensions.just-perfection
-    pkgs.gnomeExtensions.media-controls
-    pkgs.gnomeExtensions.blur-my-shell
+    pkgs.gnomeExtensions.night-theme-switcher
     pkgs.gnomeExtensions.one-thing
     pkgs.gnomeExtensions.pano
     pkgs.gnomeExtensions.pip-on-top
@@ -31,16 +31,18 @@
         "bluetooth-quick-connect@bjarosze.gmail.com"
         "caffeine@patapon.info"
         "ddterm@amezin.github.com"
-        "github.notifications@alexandre.dufournet.gmail.com"
-        #"gsconnect@andyholmes.github.io"
         "just-perfection-desktop@just-perfection"
-        #"mediacontrols@cliffniff.github.com"
-        #"one-thing@github.com"
+        "nightthemeswitcher@romainvigier.fr"
+        "one-thing@github.com"
         "pano@elhan.io"
         "pip-on-top@rafostar.github.com"
         "run-or-raise@edvard.cz"
         "unblank@sun.wxg@gmail.com"
+        #"github.notifications@alexandre.dufournet.gmail.com"
+        #"gsconnect@andyholmes.github.io"
         #"hue-lights@chlumskyvaclav.gmail.com"
+        #"lightshell@dikasp.gitlab"
+        #"mediacontrols@cliffniff.github.com"
       ];
     };
 
@@ -90,6 +92,18 @@
       handle = "NelsonJeppesen";
       hide-widget = true;
       refresh-interval = 61;
+    };
+
+    "org/gnome/shell/extensions/nightthemeswitcher/commands" = {
+      enabled = true;
+      sunset = "kitty @ --to unix:/tmp/kitty set-colors --all /nix/store/3a0j7pdbj8hi0lzfmahxqp37rq3d6swp-kitty-themes-unstable-2023-03-08/share/kitty-themes/themes/rose-pine-moon.conf";
+      sunrise = "kitty @ --to unix:/tmp/kitty set-colors --all /nix/store/3a0j7pdbj8hi0lzfmahxqp37rq3d6swp-kitty-themes-unstable-2023-03-08/share/kitty-themes/themes/PencilLight.conf";
+    };
+
+    "org/gnome/shell/extensions/nightthemeswitcher/shell-variants" = {
+      enabled = true;
+      day = "LightShell";
+      night = "";
     };
 
     "org/gnome/shell/extensions/googleearthwallpaper" = {

@@ -99,6 +99,7 @@
       pkgs.shfmt
 
       # try out gpt
+      pkgs.chatblade
       pkgs.chatgpt-cli
       pkgs.shell_gpt
 

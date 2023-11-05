@@ -117,7 +117,12 @@
         # login via aws sso
         al = "aws sso login";
 
-        cb = "${pkgs.xsel}/bin/xsel --clipboard";
+        clipboard = "${pkgs.xsel}/bin/xsel --clipboard";
+
+        # Chat GPT chatbot
+        cb = "chatblade";
+        cb3 = "chatblade -c 4";
+        cb4 = "chatblade -c 3.5";
 
         # short 'n sweet
         g = "${pkgs.git}/bin/git";
@@ -135,7 +140,9 @@
           cd ~/Documents
           kubectx --unset
           echo > ~/.aws/sticky.profile
+          echo > ~/.aws/sticky.region
           unset AWS_PROFILE
+          unset AWS_REGION
           clear
         '';
 
