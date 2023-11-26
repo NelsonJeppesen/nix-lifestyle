@@ -349,6 +349,9 @@
         set spell
         set spelllang=en
 
+
+        set list listchars=tab:→\ ,
+
         " disable swp
         set noswapfile
       '';

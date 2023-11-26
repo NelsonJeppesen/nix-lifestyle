@@ -3,20 +3,21 @@
   home.file.".config/run-or-raise/shortcuts.conf".source = ./dotfiles/shortcuts.conf;
 
   home.packages = [
+    #pkgs.gnomeExtensions.bluetooth-quick-connect
     #pkgs.gnomeExtensions.blur-my-shell
     #pkgs.gnomeExtensions.ddterm
     #pkgs.gnomeExtensions.github-notifications
     #pkgs.gnomeExtensions.gsconnect
     #pkgs.gnomeExtensions.hue-lights
+    #pkgs.gnomeExtensions.just-perfection
     #pkgs.gnomeExtensions.media-controls
+    #pkgs.gnomeExtensions.night-theme-switcher
+    #pkgs.gnomeExtensions.one-thing
+    #pkgs.gnomeExtensions.pano
     pkgs.gnomeExtensions.appindicator
-    pkgs.gnomeExtensions.bluetooth-quick-connect
     pkgs.gnomeExtensions.caffeine
     pkgs.gnomeExtensions.google-earth-wallpaper
-    pkgs.gnomeExtensions.just-perfection
-    pkgs.gnomeExtensions.night-theme-switcher
-    pkgs.gnomeExtensions.one-thing
-    pkgs.gnomeExtensions.pano
+    pkgs.gnomeExtensions.light-style
     pkgs.gnomeExtensions.pip-on-top
     pkgs.gnomeExtensions.run-or-raise
     pkgs.gnomeExtensions.unblank

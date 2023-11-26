@@ -39,6 +39,8 @@
         "kitty_mod+up" = "prev_window";
         "kitty_mod+down" = "next_window";
 
+        "kitty_mod+w" = "new_os_window_with_cwd";
+
         # more tabs
         "kitty_mod+left" = "prev_tab";
         "kitty_mod+right" = "next_tab";

@@ -119,6 +119,8 @@
 
         clipboard = "${pkgs.xsel}/bin/xsel --clipboard";
 
+        hh = ''${pkgs.atuin}/bin/atuin history list --cwd --format "{time}\t{command}"'';
+
         # Chat GPT chatbot
         cb = "chatblade";
         cb3 = "chatblade -c 4";

@@ -80,7 +80,7 @@
       # chill
       #pkgs.somafm-cli forked
       pkgs.spotify
-      pkgs.vivaldi
+      #pkgs.vivaldi
 
       # core GUI apps
       pkgs.fractal
@@ -118,6 +118,7 @@
       pkgs.nvimpager
       pkgs.p7zip
       pkgs.ripgrep
+      pkgs.terminal-stocks
       pkgs.vault
       pkgs.walk
       pkgs.wget

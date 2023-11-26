@@ -40,9 +40,9 @@
     };
 
     "org/gnome/shell/keybindings" = {
-      toggle-message-tray = [ "<Super>v" ];
       show-screenshot-ui = [ ]; # free up Print
-      toggle-overview = [ ]; # free super-s
+      toggle-message-tray = [ "<Super>v" ];
+      toggle-quick-settings = []; # free up super-s
     };
 
     # map the mappings
