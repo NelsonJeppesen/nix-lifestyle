@@ -13,11 +13,11 @@
     #pkgs.gnomeExtensions.media-controls
     #pkgs.gnomeExtensions.night-theme-switcher
     #pkgs.gnomeExtensions.one-thing
-    #pkgs.gnomeExtensions.pano
     pkgs.gnomeExtensions.appindicator
     pkgs.gnomeExtensions.caffeine
     pkgs.gnomeExtensions.google-earth-wallpaper
     pkgs.gnomeExtensions.light-style
+    pkgs.gnomeExtensions.pano
     pkgs.gnomeExtensions.pip-on-top
     pkgs.gnomeExtensions.run-or-raise
     pkgs.gnomeExtensions.unblank
@@ -33,6 +33,7 @@
         "caffeine@patapon.info"
         "ddterm@amezin.github.com"
         "just-perfection-desktop@just-perfection"
+        "light-style@gnome-shell-extensions.gcampax.github.com"
         "nightthemeswitcher@romainvigier.fr"
         "one-thing@github.com"
         "pano@elhan.io"
@@ -119,9 +120,12 @@
 
     "org/gnome/shell/extensions/pano" = {
       history-length = 500;
+      keep-search-entry = false;
+      open-links-in-browser = false;
       play-audio-on-copy = false;
-      show-indicator = false;
       send-notification-on-copy = false;
+      show-indicator = false;
+      window-position = lib.hm.gvariant.mkUint32 (1); # right side of the screen
     };
 
     "org/gnome/shell/extensions/pano/text-item" = {

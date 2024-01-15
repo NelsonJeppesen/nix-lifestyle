@@ -131,8 +131,8 @@
         h = "${pkgs.helmfile}/bin/helmfile";
 
         # Quick notes
-        n = "nb edit work-$(date +%Y-%q)     2>/dev/null || nb add --title work-$(date +%Y-%q)";
-        np = "nb edit personal-$(date +%Y-%q) 2>/dev/null || nb add --title personal-$(date +%Y-%q)";
+        n = "nb edit work-$(date +%Y-%q).md      2>/dev/null || nb add --title work-$(date +%Y-%q)";
+        np = "nb edit personal-$(date +%Y-%q).md 2>/dev/null || nb add --title personal-$(date +%Y-%q)";
 
         ls = "ls --almost-all --group-directories-first --color=auto";
         l = "ls --almost-all --group-directories-first --color=auto -1";
@@ -151,6 +151,11 @@
         # calculator
         f = "fend";
         fc = "clear;fend";
+
+        # grep json; sometimes with color
+        fg = "fastgron";
+        fggc = "fastgron --color|grep --color=never";
+        fgg = "fastgron|grep --color=always";
 
         w = "walk";
 

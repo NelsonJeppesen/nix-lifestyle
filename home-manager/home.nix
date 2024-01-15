@@ -75,15 +75,16 @@
       pkgs.shfmt
       pkgs.nixpkgs-fmt
 
-      pkgs.gpxsee-qt6
+      #pkgs.gpxsee-qt6
 
       # chill
       #pkgs.somafm-cli forked
       pkgs.spotify
       #pkgs.vivaldi
+      pkgs.fx
 
       # core GUI apps
-      pkgs.fractal
+      #pkgs.fractal
       #pkgs.google-chrome
       pkgs.kitty
       pkgs.slack
@@ -103,7 +104,13 @@
       pkgs.chatgpt-cli
       pkgs.shell_gpt
 
+      # yaml/json tools
+      pkgs.jq
+      pkgs.fastgron
+      pkgs.yq
+
       # core shell tools
+      #pkgs.terminal-stocks
       pkgs.btop
       pkgs.choose
       pkgs.curl
@@ -111,20 +118,18 @@
       pkgs.fd
       pkgs.fend
       pkgs.gh
-      pkgs.gron
+      pkgs.gh-dash
       pkgs.ipcalc
-      pkgs.jq
       pkgs.nb
       pkgs.nvimpager
       pkgs.p7zip
       pkgs.ripgrep
-      pkgs.terminal-stocks
+      pkgs.sd
       pkgs.vault
       pkgs.walk
       pkgs.wget
       pkgs.whois
       pkgs.wl-clipboard
-      pkgs.yq
 
       # Kubernetes
       pkgs.glooctl

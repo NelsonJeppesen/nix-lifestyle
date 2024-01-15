@@ -16,11 +16,27 @@
       plugins =
         with pkgs.vimPlugins; [
           {
-            plugin = windows-nvim;
+            plugin = treesj;
             type = "lua";
-            config = ''
-              require('windows').setup()
-            '';
+            config = ''require('treesj').setup()'';
+          }
+
+          {
+            plugin = comment-nvim;
+            type = "lua";
+            config = ''require('Comment').setup()'';
+          }
+
+          #{
+          #  plugin = windows-nvim;
+          #  type = "lua";
+          #  config = ''require('windows').setup()'';
+          #}
+
+          {
+            plugin = nvim-surround;
+            type = "lua";
+            config = ''require("nvim-surround").setup({})'';
           }
 
           {
@@ -29,8 +45,6 @@
             config = ''
               require('mini.animate').setup()
               require('mini.basics').setup({ options = { extra_ui = true }})
-              require('mini.comment').setup()
-              require('mini.surround').setup()
               require('mini.trailspace').setup()
             '';
           }

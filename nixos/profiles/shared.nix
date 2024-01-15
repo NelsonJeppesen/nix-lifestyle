@@ -5,6 +5,7 @@
   nixpkgs.config.allowUnfree = true; # Chrome, steam etc
   programs.zsh.enable = true;
   security.sudo.extraConfig = ''Defaults timestamp_timeout=600'';
+  services.dbus.implementation = "broker";
   users.defaultUserShell = pkgs.zsh;
 
   environment.sessionVariables = rec { MOZ_ENABLE_WAYLAND = "1"; };
