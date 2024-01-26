@@ -26,7 +26,6 @@
   boot.kernelParams = [ "acpi_mask_gpe=0x6E" ];
 
   #programs.hyprland.enable = true;
-  networking.hostName = "gram14";
   system.stateVersion = "22.11";
   #boot.kernelModules = [ "kvm-intel" ];
   services.fprintd.enable = true;

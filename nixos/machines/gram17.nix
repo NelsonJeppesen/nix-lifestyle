@@ -17,7 +17,6 @@
   ];
 
   boot.kernelParams = [ "acpi_mask_gpe=0x6E" ];
-  networking.hostName = "gram17";
   system.stateVersion = "23.05";
 
   # Fix ACPI errors
