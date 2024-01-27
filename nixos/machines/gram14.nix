@@ -5,25 +5,24 @@
     (modulesPath + "/installer/scan/not-detected.nix")
     #../profiles/software_defined_radio.nix
     ../falcon/falcon.nix
+
     ../profiles/desktop.nix
     ../profiles/encrypted_disk.nix
     ../profiles/intel.nix
+    ../profiles/networking.nix
     ../profiles/shared.nix
     ../profiles/systemd-boot.nix
     ../profiles/x86_64.nix
     ../profiles/zsh.nix
   ];
 
-  boot.kernel.sysctl = { "vm.swappiness" = 10;};
+  boot.kernel.sysctl = { "vm.swappiness" = 10; };
 
   nixpkgs.overlays = [
     (
-      self: super: {
-        falcon-sensor = super.callPackage ../overlays/falcon-sensor.nix { };
-      }
+      self: super: { falcon-sensor = super.callPackage ../overlays/falcon-sensor.nix { }; }
     )
   ];
-  boot.kernelParams = [ "acpi_mask_gpe=0x6E" ];
 
   #programs.hyprland.enable = true;
   system.stateVersion = "22.11";
@@ -43,14 +42,16 @@
   fileSystems."/boot".device = "/dev/disk/by-uuid/E7AF-1131";
   swapDevices = [{ device = "/dev/disk/by-uuid/c09b6f9b-c7ad-4672-91c2-895a40de81b5"; }];
 
-  systemd.services.enable_fn_lock = {
-    script = ''
-      # Enable fn-lock
-      echo 1 > /sys/devices/platform/lg-laptop/fn_lock
+  systemd.services = {
+    enable_fn_lock = {
+      script = "echo 1 > /sys/devices/platform/lg-laptop/fn_lock";
+      wantedBy = [ "multi-user.target" ];
+    };
 
-      #  fix high cpu on TB
-      #echo unmask > /sys/firmware/acpi/interrupts/gpe6E
-    '';
-    wantedBy = [ "multi-user.target" ];
+    #fix_usbc_dock_cpu_usage = {
+    #  script = "echo unmask > /sys/firmware/acpi/interrupts/gpe6E";
+    #  wantedBy = [ "multi-user.target" ];
+    #};
   };
+  boot.kernelParams = [ "acpi_mask_gpe=0x6E" ];
 }

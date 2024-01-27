@@ -18,8 +18,6 @@
   programs.neovim.vimAlias = lib.mkDefault true;
   programs.neovim.viAlias = lib.mkDefault true;
 
-  networking.dhcpcd.enable = lib.mkDefault false;
-  systemd.network.enable = lib.mkDefault true;
 
   # trim deleted blocks from ssd
   services.fstrim.enable = lib.mkDefault true;
@@ -50,6 +48,4 @@
     git
     btop
   ];
-
-  networking.firewall.enable = lib.mkDefault true;
 }
