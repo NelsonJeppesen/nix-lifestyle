@@ -1,8 +1,9 @@
 { config, pkgs, stdenv, lib, ... }:
 
 {
-  fileSystems."/boot".fsType = lib.mkDefault "vfat";
   fileSystems."/".fsType = lib.mkDefault "xfs";
+  fileSystems."/boot".fsType = lib.mkDefault "vfat";
+  services.fstrim.enable = lib.mkDefault true;
 
   boot.initrd.luks.devices.root = {
     name = lib.mkDefault "root";
