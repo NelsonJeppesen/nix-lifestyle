@@ -3,6 +3,7 @@
 {
   boot.kernelPackages = pkgs.linuxPackages_latest;
   services.fstrim.enable = lib.mkDefault true;
+  hardware.enableAllFirmware = true;
 
   virtualisation = {
     podman = {
