@@ -72,9 +72,9 @@
       #pkgs.roboto-mono
 
       # formaters
-      pkgs.shfmt
-      pkgs.nixpkgs-fmt
       pkgs.biome
+      pkgs.nixfmt
+      pkgs.shfmt
 
       #pkgs.gpxsee-qt6
 

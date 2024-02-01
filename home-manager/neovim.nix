@@ -184,7 +184,7 @@
                 log_level = vim.log.levels.WARN,
                 filetype = {
                   tf = { require("formatter.filetypes.terraform").terraformfmt},
-                  nix = { require("formatter.filetypes.nix").nixpkgs_fmt },
+                  nix = { require("formatter.filetypes.nix").nixfmt},
                   sh = { require("formatter.filetypes.sh").shfmt},
                   json = {
                     function()
