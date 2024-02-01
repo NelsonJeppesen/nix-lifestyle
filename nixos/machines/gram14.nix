@@ -4,19 +4,17 @@
   system.stateVersion = "22.11";
 
   imports = [
-    #../profiles/software_defined_radio.nix
-    "${builtins.fetchTarball "https://github.com/nix-community/disko/archive/master.tar.gz"}/module.nix"
-    ../falcon/falcon.nix
-
     ../profiles/desktop.nix
     ../profiles/gnome.nix
     ../profiles/intel.nix
     ../profiles/lg_gram_12th_gen.nix
     ../profiles/networking.nix
     ../profiles/shared.nix
-    ../profiles/systemd-boot.nix
     ../profiles/x86_64.nix
     ../profiles/zsh.nix
+
+    ../falcon/falcon.nix
+
   ];
 
   nixpkgs.overlays = [

@@ -174,12 +174,36 @@
             '';
           }
 
-          # https://github.com/mhartington/formatter.nvim
-          #   "A format runner for neovim, written in lua"
           {
-            plugin = neoformat;
+            plugin = formatter-nvim;
             type = "lua";
-            config = "vim.api.nvim_set_keymap('n', ',a', ':Neoformat<CR>',{noremap = true})";
+            config = ''
+              local util = require "formatter.util"
+              require("formatter").setup {
+                logging = true,
+                log_level = vim.log.levels.WARN,
+                filetype = {
+                  tf = { require("formatter.filetypes.terraform").terraformfmt},
+                  nix = { require("formatter.filetypes.nix").nixpkgs_fmt },
+                  sh = { require("formatter.filetypes.sh").shfmt},
+                  json = {
+                    function()
+                      return {
+                        exe = "biome",
+                        args = {
+                            "format",
+                            "--json-formatter-indent-style=space",
+                            "--stdin-file-path",
+                            util.escape_path(util.get_current_buffer_file_path()),
+                        },
+                        stdin = true,
+                      }
+                    end
+                  },
+                }
+              }
+              vim.api.nvim_set_keymap('n', ',a', ':Format<CR>',{noremap = true})
+            '';
           }
 
           # https://github.com/f-person/git-blame.nvim
@@ -312,7 +336,6 @@
             plugin = vim-table-mode;
             type = "viml";
             config = ''let g:table_mode_corner='|' ''; # GitHub markdown
-
           }
         ];
 
@@ -362,7 +385,6 @@
         " cant spell
         set spell
         set spelllang=en
-
 
         set list listchars=tab:→\ ,
 

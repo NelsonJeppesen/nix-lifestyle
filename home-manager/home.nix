@@ -74,6 +74,7 @@
       # formaters
       pkgs.shfmt
       pkgs.nixpkgs-fmt
+      pkgs.biome
 
       #pkgs.gpxsee-qt6
 
