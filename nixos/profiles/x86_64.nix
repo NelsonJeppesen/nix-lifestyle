@@ -2,15 +2,52 @@
 
 {
   boot.kernelPackages = pkgs.linuxPackages_latest;
+  services.fstrim.enable = lib.mkDefault true;
 
   virtualisation = {
-    # dont think I'll go back to docker
-    #docker = {
-    #  enable = true;
-    #};
     podman = {
       enable = true;
       dockerCompat = true;
+    };
+  };
+
+  disko.devices = {
+    disk = {
+      vdb = {
+        type = "disk";
+        device = "/dev/nvme0n1";
+        content = {
+          type = "gpt";
+          partitions = {
+            ESP = {
+              label = "ESP";
+              name = "ESP";
+              size = "2G";
+              type = "EF00";
+              content = {
+                type = "filesystem";
+                format = "vfat";
+                mountpoint = "/boot";
+                mountOptions = [ "defaults" ];
+              };
+            };
+            luks = {
+              size = "100%";
+              content = {
+                type = "luks";
+                name = "crypted";
+                extraOpenArgs = [ "--allow-discards" ];
+                content = {
+                  type = "btrfs";
+                  extraArgs = [ "-f" ];
+                  mountpoint = "/";
+                  mountOptions = [ "discard=async" "autodefrag" ];
+                };
+              };
+            };
+          };
+        };
+      };
     };
   };
 }
