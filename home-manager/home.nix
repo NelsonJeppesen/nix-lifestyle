@@ -1,5 +1,4 @@
-{ config, lib, pkgs, ... }:
-{
+{ config, lib, pkgs, ... }: {
   nixpkgs.config.allowUnfree = true;
 
   imports = [
@@ -25,13 +24,8 @@
         id = 0;
         name = "home";
         # Hide tab bar and side bar header
-        userChrome = "
-          #TabsToolbar
-          { visibility: collapse; }
-          #sidebar-box #sidebar-header {
-            display: none !important;
-          }
-        ";
+        userChrome =
+          "\n          #TabsToolbar\n          { visibility: collapse; }\n          #sidebar-box #sidebar-header {\n            display: none !important;\n          }\n        ";
         settings = {
           "gfx.webrender.all" = true;
           "gfx.webrender.enabled" = true;

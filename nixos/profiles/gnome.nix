@@ -1,5 +1,4 @@
-{ config, pkgs, stdenv, lib, ... }:
-{
+{ config, pkgs, stdenv, lib, ... }: {
   services.xserver = {
     enable = true;
     desktopManager.gnome.enable = true;

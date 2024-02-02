@@ -1,5 +1,4 @@
-{ config, pkgs, stdenv, lib, ... }:
-{
+{ config, pkgs, stdenv, lib, ... }: {
   hardware.bluetooth.enable = true;
 
   # Pipewire

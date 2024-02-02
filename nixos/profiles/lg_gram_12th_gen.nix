@@ -1,6 +1,5 @@
 # LG Gram 12th gen
-{ ... }:
-{
+{ ... }: {
   # Fix ACPI errors
   #
   #   ACPI Error: No handler for Region [XIN1] (000000005158740d) [UserDefinedRegion] (20221020/evregion-130)

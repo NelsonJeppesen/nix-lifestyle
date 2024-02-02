@@ -4,9 +4,10 @@
   # Use modern Intel iGPU with all the bells
   services.xserver.videoDrivers = [ "modesetting" ];
   hardware.opengl.enable = true;
-  hardware.opengl.extraPackages = with pkgs; [
-    intel-media-driver # hardware decode/encode of video streams
-  ];
+  hardware.opengl.extraPackages = with pkgs;
+    [
+      intel-media-driver # hardware decode/encode of video streams
+    ];
 
   # Update microcode when available
   hardware.cpu.intel.updateMicrocode =
@@ -14,7 +15,8 @@
 
   # Ensure modules used for efficent disk encryption are loaded
   # early in the boot process
-  boot.initrd.availableKernelModules = [ "xhci_pci" "nvme" "usb_storage" "sd_mod" "aesni_intel" "cryptd" ];
+  boot.initrd.availableKernelModules =
+    [ "xhci_pci" "nvme" "usb_storage" "sd_mod" "aesni_intel" "cryptd" ];
 
   boot.kernelParams = [
     # reserve the frame-buffer as setup by the BIOS or bootloader to avoid any flickering until Xorg

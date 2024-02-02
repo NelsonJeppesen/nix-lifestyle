@@ -1,17 +1,19 @@
-{ config, pkgs, stdenv, lib, ... }:
-{
-  i18n.extraLocaleSettings = { LC_TIME = "en_GB.UTF-8"; }; # monday is the start of the week
+{ config, pkgs, stdenv, lib, ... }: {
+  i18n.extraLocaleSettings = {
+    LC_TIME = "en_GB.UTF-8";
+  }; # monday is the start of the week
 
-  console.earlySetup = lib.mkDefault true; # Set virtual console options in initrd
+  console.earlySetup =
+    lib.mkDefault true; # Set virtual console options in initrd
   environment.defaultPackages = lib.mkDefault [ ]; # Remove default pacakges
   nixpkgs.config.allowUnfree = true; # Chrome, steam etc
   programs.zsh.enable = true;
-  security.sudo.extraConfig = ''Defaults timestamp_timeout=600'';
+  security.sudo.extraConfig = "Defaults timestamp_timeout=600";
   services.dbus.implementation = "broker";
   users.defaultUserShell = pkgs.zsh;
 
   environment.sessionVariables = rec { MOZ_ENABLE_WAYLAND = "1"; };
-  nix.extraOptions = ''experimental-features = nix-command flakes'';
+  nix.extraOptions = "experimental-features = nix-command flakes";
   services.fwupd.enable = lib.mkDefault true;
 
   # Install neovim as the system's editor
@@ -42,10 +44,5 @@
     "plugdev"
   ];
 
-  environment.systemPackages = with pkgs; [
-    wget
-    curl
-    git
-    btop
-  ];
+  environment.systemPackages = with pkgs; [ wget curl git btop ];
 }

@@ -2,7 +2,5 @@
 
 {
   hardware.rtl-sdr.enable = lib.mkDefault true;
-  environment.systemPackages = with pkgs; [
-    sdrpp
-  ];
+  environment.systemPackages = with pkgs; [ sdrpp ];
 }

@@ -1,5 +1,4 @@
-{ config, pkgs, ... }:
-{
+{ config, pkgs, ... }: {
   editorconfig = {
     enable = true;
     settings = {
@@ -57,7 +56,9 @@
 
         kubernetes = {
           # $region:$acount:$cluserName
-          context_aliases = { "arn:aws:eks:(?P<aws>.*)cluster/(?P<cluster>.*)" = "$aws$cluster"; };
+          context_aliases = {
+            "arn:aws:eks:(?P<aws>.*)cluster/(?P<cluster>.*)" = "$aws$cluster";
+          };
           disabled = false;
         };
       };
@@ -109,17 +110,20 @@
         reboot-bios = "systemctl reboot --firmware-setup";
 
         # fuzzy find aws profile
-        ap = ''(){echo export AWS_PROFILE="$(${pkgs.awscli2}/bin/aws configure list-profiles|${pkgs.fzf}/bin/fzf --exact --query=$1 --select-1)" > ~/.aws/sticky.profile;source ~/.aws/sticky.profile}'';
+        ap = ''
+          (){echo export AWS_PROFILE="$(${pkgs.awscli2}/bin/aws configure list-profiles|${pkgs.fzf}/bin/fzf --exact --query=$1 --select-1)" > ~/.aws/sticky.profile;source ~/.aws/sticky.profile}'';
 
         # fuzzy find aws region
-        ar = ''(){echo export AWS_REGION="$(echo 'us-east-1\nca-central-1\neu-central-1\nap-southeast-2'|${pkgs.fzf}/bin/fzf --exact --query=$1 --select-1)" > ~/.aws/sticky.region;source ~/.aws/sticky.region}'';
+        ar = ''
+          (){echo export AWS_REGION="$(echo 'us-east-1\nca-central-1\neu-central-1\nap-southeast-2'|${pkgs.fzf}/bin/fzf --exact --query=$1 --select-1)" > ~/.aws/sticky.region;source ~/.aws/sticky.region}'';
 
         # login via aws sso
         al = "aws sso login";
 
         clipboard = "${pkgs.xsel}/bin/xsel --clipboard";
 
-        hh = ''${pkgs.atuin}/bin/atuin history list --cwd --format "{time}\t{command}"'';
+        hh = ''
+          ${pkgs.atuin}/bin/atuin history list --cwd --format "{time}\t{command}"'';
 
         # Chat GPT chatbot
         cb = "chatblade";
@@ -131,8 +135,10 @@
         h = "${pkgs.helmfile}/bin/helmfile";
 
         # Quick notes
-        n = "nb edit work-$(date +%Y-%q).md      2>/dev/null || nb add --title work-$(date +%Y-%q)";
-        np = "nb edit personal-$(date +%Y-%q).md 2>/dev/null || nb add --title personal-$(date +%Y-%q)";
+        n =
+          "nb edit work-$(date +%Y-%q).md      2>/dev/null || nb add --title work-$(date +%Y-%q)";
+        np =
+          "nb edit personal-$(date +%Y-%q).md 2>/dev/null || nb add --title personal-$(date +%Y-%q)";
 
         ls = "ls --almost-all --group-directories-first --color=auto";
         l = "ls --almost-all --group-directories-first --color=auto -1";
@@ -159,16 +165,20 @@
 
         w = "walk";
 
-        random-theme = ''precmd() {a=$(find /nix/store/3a0j7pdbj8hi0lzfmahxqp37rq3d6swp-kitty-themes-unstable-2023-03-08/share/kitty-themes/themes/*.conf | sort -R |head -n1);kitty @ set-colors --all $a;basename $a}'';
+        random-theme =
+          "precmd() {a=$(find /nix/store/3a0j7pdbj8hi0lzfmahxqp37rq3d6swp-kitty-themes-unstable-2023-03-08/share/kitty-themes/themes/*.conf | sort -R |head -n1);kitty @ set-colors --all $a;basename $a}";
 
         # terraform
         t = "${pkgs.terraform}/bin/terraform";
         ta = "${pkgs.terraform}/bin/terraform apply";
         ti = "${pkgs.terraform}/bin/terraform init";
         tp = "${pkgs.terraform}/bin/terraform plan";
-        tsd = "echo $(${pkgs.terraform}/bin/terraform state list|fzf --multi)|xargs -n1 ${pkgs.terraform}/bin/terraform state rm";
-        tss = "${pkgs.terraform}/bin/terraform state show $(${pkgs.terraform}/bin/terraform state list|fzf)";
-        tt = "echo $(${pkgs.terraform}/bin/terraform state list|fzf --multi)|xargs -n1 ${pkgs.terraform}/bin/terraform taint";
+        tsd =
+          "echo $(${pkgs.terraform}/bin/terraform state list|fzf --multi)|xargs -n1 ${pkgs.terraform}/bin/terraform state rm";
+        tss =
+          "${pkgs.terraform}/bin/terraform state show $(${pkgs.terraform}/bin/terraform state list|fzf)";
+        tt =
+          "echo $(${pkgs.terraform}/bin/terraform state list|fzf --multi)|xargs -n1 ${pkgs.terraform}/bin/terraform taint";
 
         # kube
         k = "kubectl";

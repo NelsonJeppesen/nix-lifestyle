@@ -1,12 +1,10 @@
-{ config, lib, pkgs, ... }:
-{
+{ config, lib, pkgs, ... }: {
   dconf.settings = {
     "org/gnome/desktop/interface" = {
       clock-format = "12h";
       enable-hot-corners = false;
       show-battery-percentage = true;
     };
-
 
     # Use capslock as super key
     "org/gnome/desktop/input-sources" = {
@@ -17,9 +15,7 @@
       ];
     };
 
-    "org/gnome/desktop/notifications" = {
-      show-in-lock-screen = false;
-    };
+    "org/gnome/desktop/notifications" = { show-in-lock-screen = false; };
 
     "org/gnome/desktop/sound" = {
       allow-volume-above-100-percent = true;
@@ -42,7 +38,7 @@
     "org/gnome/shell/keybindings" = {
       show-screenshot-ui = [ ]; # free up Print
       toggle-message-tray = [ "<Super>v" ];
-      toggle-quick-settings = []; # free up super-s
+      toggle-quick-settings = [ ]; # free up super-s
     };
 
     # map the mappings
@@ -60,11 +56,12 @@
       ];
     };
 
-    "org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom0" = {
-      binding = "Print";
-      command = "${pkgs.flameshot}/bin/flameshot gui";
-      name = "flameshot screenshot";
-    };
+    "org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom0" =
+      {
+        binding = "Print";
+        command = "${pkgs.flameshot}/bin/flameshot gui";
+        name = "flameshot screenshot";
+      };
 
     "org/gnome/shell" = {
       disable-extension-version-validation = true;
