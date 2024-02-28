@@ -56,9 +56,9 @@
 
         kubernetes = {
           # $region:$acount:$cluserName
-          context_aliases = {
-            "arn:aws:eks:(?P<aws>.*)cluster/(?P<cluster>.*)" = "$aws$cluster";
-          };
+          #context_aliases = {
+          #  "arn:aws:eks:(?P<aws>.*)cluster/(?P<cluster>.*)" = "$aws$cluster";
+          #};
           disabled = false;
         };
       };

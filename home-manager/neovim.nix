@@ -122,15 +122,15 @@
           plugin = telescope-nvim;
           type = "viml";
           config = ''
-            nnoremap  ,ff  :execute 'Telescope git_files cwd=' . expand('%:p:h')<CR>
-            nnoremap  ,fg  <cmd>lua require('telescope.builtin').find_files()<CR>
-            nnoremap  ,f/  <cmd>lua require('telescope.builtin').current_buffer_fuzzy_find()<CR>
-            nnoremap  ,fb  <cmd>lua require('telescope.builtin').buffers()<CR>
-            nnoremap  ,fo  <cmd>lua require('telescope.builtin').file_browser()<CR>
-            nnoremap  ,fh  <cmd>lua require('telescope.builtin').oldfiles()<CR>
-            nnoremap  ,fc  <cmd>lua require('telescope.builtin').command_history()<CR>
-            nnoremap  ,fr  <cmd>lua require('telescope.builtin').registers()<CR>
-            nnoremap  ,p   <cmd>Telescope neoclip<CR>
+            nnoremap  ,,/  <cmd>lua require('telescope.builtin').current_buffer_fuzzy_find()<CR>
+            nnoremap  ,,b  <cmd>lua require('telescope.builtin').buffers()<CR>
+            nnoremap  ,,c  <cmd>lua require('telescope.builtin').command_history()<CR>
+            nnoremap  ,,f  <cmd>lua require('telescope.builtin').find_files()<CR>
+            nnoremap  ,,g  :execute 'Telescope git_files cwd=' . expand('%:p:h')<CR>
+            nnoremap  ,,h  <cmd>lua require('telescope.builtin').oldfiles()<CR>
+            nnoremap  ,,o  <cmd>lua require('telescope.builtin').file_browser()<CR>
+            nnoremap  ,,p  <cmd>Telescope neoclip<CR>
+            nnoremap  ,,r  <cmd>lua require('telescope.builtin').registers()<CR>
 
             lua << EOF
               _G.open_telescope = function()
@@ -363,9 +363,9 @@
 
         set autoread
         let mapleader=","
-        nnoremap <silent>   <leader><leader>n   Go<CR><esc>:r! date +\%Y-\%m-\%d<CR>I# <esc>o*<space>
-        nnoremap            <leader><leader>c   :%y+<CR>
-        nnoremap            <leader>d           :% !base64 -d<CR>
+        nnoremap            <leader>bc           :%y+<CR>
+        nnoremap            <leader>bb           :%!base64 -d<CR>
+        "nnoremap            <leader>bg           :%!base64 -d|gzip -d<CR>
 
         " persistent undo
         if !isdirectory($HOME."/.config/nvim/undo")
