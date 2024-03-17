@@ -45,8 +45,15 @@
         terraform.disabled = true;
         right_format = "$kubernetes";
 
+        git_status = {
+          format = "([$all_status$ahead_behind]($style) )";
+          up_to_date = "[✓](green)";
+          stashed = "[\\$\\($count\\)](green)";
+          deleted = "[--\\($count\\)](red)";
+        };
+
         aws = {
-          format = "on [$region:$profile $source_profile $duration]($style)";
+          format = "\\[[$profile]($style):[$region]($style)\\]";
           region_aliases = {
             ap-southeast-2 = "apse2";
             ca-central-1 = "cac1";
@@ -81,6 +88,8 @@
       syntaxHighlighting.enable = true;
 
       initExtra = ''
+       /home/nelson/kitty-colorscheme
+
         # alt + [left|right]
         bindkey "^[[1;3C" forward-word
         bindkey "^[[1;3D" backward-word
