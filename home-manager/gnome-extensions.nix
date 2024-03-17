@@ -155,17 +155,18 @@
     "com/github/amezin/ddterm" = {
       #custom-font = "Hasklug Nerd Font 13";
       audible-bell = false;
-      background-color = "rgb(25,15,26)";
-      background-opacity = 0.9;
+      background-color = "rgb(46,52,54)";
       bold-color-same-as-fg = true;
-      bold-is-bright = false;
+      bold-is-bright = true;
+      command = "custom-command";
+      custom-command =
+        "zsh -ceil -- 'cd /home/nelson/Documents;/home/nelson/.nix-profile/bin/chatgpt'";
+      custom-font = "B612 Mono 13";
       ddterm-toggle-hotkey = [ "<Super>t" ];
-      hide-animation = "ease-in-out-back";
-      hide-animation-duration = 0.2;
-      hide-when-focus-lost = false;
+      hide-when-focus-lost = true;
       new-tab-button = false;
       notebook-border = false;
-      override-window-animation = true;
+      override-window-animation = false;
       panel-icon-type = "none";
       scroll-on-output = true;
       shortcuts-enabled = false;
@@ -180,14 +181,14 @@
       tab-position = "top";
       tab-switcher-popup = false;
       transparent-background = true;
-      use-system-font = true;
+      use-system-font = false;
       use-theme-colors = false;
       window-above = true;
       window-maximize = false;
       window-monitor = "primar";
       window-position = "right";
       window-resizable = false;
-      window-size = 0.2999999999999999;
+      window-size = 0.45;
       window-skip-taskbar = false;
       #/com/github/amezin/ddterm/shortcuts-enabled
       #  true

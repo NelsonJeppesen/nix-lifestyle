@@ -16,8 +16,10 @@
           GNOME_THEME="$(dconf read /org/gnome/desktop/interface/color-scheme | tr -d "'")"
 
           if [[ "$GNOME_THEME" == "default" ]]; then
-            kitty --listen-on unix:/tmp/kitty -c ~/.config/kitty/kitty.conf -c $THEME_PATH/PencilLight.conf
+            export FZF_DEFAULT_OPTS=--color=light
+            kitty --listen-on unix:/tmp/kitty -c ~/.config/kitty/kitty.conf -c $THEME_PATH/neobones_light.conf
           else
+            export FZF_DEFAULT_OPTS=--color=dark
             kitty --listen-on unix:/tmp/kitty -c ~/.config/kitty/kitty.conf -c $THEME_PATH/rose-pine-moon.conf
           fi
         '';
@@ -76,7 +78,7 @@
 
         allow_remote_control = "password";
         #listen-on = "unix:/tmp/kitty";
-        remote_control_password = ''"" *-colors'';
+        remote_control_password = "password *-colors";
 
         copy_on_select = true;
         enable_audio_bell = false;

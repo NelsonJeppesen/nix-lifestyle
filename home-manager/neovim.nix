@@ -363,9 +363,11 @@
 
         set autoread
         let mapleader=","
-        nnoremap            <leader>bc           :%y+<CR>
-        nnoremap            <leader>bb           :%!base64 -d<CR>
-        "nnoremap            <leader>bg           :%!base64 -d|gzip -d<CR>
+        nnoremap    <leader>bc    :%y+<CR>
+        nnoremap    <leader>bb    :%!base64 -d<CR>
+        nnoremap    <leader>bg    :%!base64 -d\|gzip -d<CR>
+        nnoremap    <leader>bj    :%!jq .<CR>
+        nnoremap    <leader>by    :%!yq .<CR>
 
         " persistent undo
         if !isdirectory($HOME."/.config/nvim/undo")

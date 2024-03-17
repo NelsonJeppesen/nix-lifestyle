@@ -43,18 +43,18 @@
     username = "nelson";
     homeDirectory = "/home/nelson";
 
+    file.".config/curlrc".source = ./dotfiles/curlrc;
+    file.".config/fend/config.toml".source = ./dotfiles/fend.toml;
     file.".local/bin".source = ./bin;
     file.".terraform.d/plugin-cache/.empty".source = ./dotfiles/empty;
-    file.".config/fend/config.toml".source = ./dotfiles/fend.toml;
 
     packages = [
-      pkgs.flameshot
 
       # nixpkgs maintainer
       pkgs.nixpkgs-review
 
       # fun
-      pkgs.mindustry
+      #pkgs.mindustry
       pkgs.vitetris
 
       (pkgs.nerdfonts.override { fonts = [ "NerdFontsSymbolsOnly" ]; })

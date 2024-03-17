@@ -1,4 +1,8 @@
-{ config, lib, pkgs, ... }: {
+{ config, lib, pkgs, ... }:
+let
+  flameshot-gui = pkgs.writeShellScriptBin "flameshot-gui"
+    "${pkgs.flameshot}/bin/flameshot gui";
+in {
   dconf.settings = {
     "org/gnome/desktop/interface" = {
       clock-format = "12h";
@@ -59,7 +63,7 @@
     "org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom0" =
       {
         binding = "Print";
-        command = "${pkgs.flameshot}/bin/flameshot gui";
+        command = "${flameshot-gui}/bin/flameshot-gui";
         name = "flameshot screenshot";
       };
 

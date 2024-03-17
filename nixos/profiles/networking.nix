@@ -4,16 +4,24 @@
 
     firewall = {
       enable = lib.mkDefault true;
-
-      # Open KDE Connect
       allowedTCPPortRanges = [{
+        # Open KDE Connect
         from = 1714;
         to = 1764;
       }];
-      allowedUDPPortRanges = [{
-        from = 1714;
-        to = 1764;
-      }];
+
+      allowedUDPPortRanges = [
+        {
+          # Open KDE Connect
+          from = 1714;
+          to = 1764;
+        }
+        {
+          # Open Spotify Connect
+          from = 57621;
+          to = 57621;
+        }
+      ];
     };
   };
 

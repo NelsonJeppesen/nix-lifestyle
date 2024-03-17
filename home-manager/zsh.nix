@@ -43,6 +43,7 @@
         helm.disabled = true;
         python.disabled = true;
         terraform.disabled = true;
+        right_format = "$kubernetes";
 
         aws = {
           format = "on [$region:$profile $source_profile $duration]($style)";
@@ -55,11 +56,12 @@
         };
 
         kubernetes = {
-          # $region:$acount:$cluserName
-          #context_aliases = {
-          #  "arn:aws:eks:(?P<aws>.*)cluster/(?P<cluster>.*)" = "$aws$cluster";
-          #};
           disabled = false;
+          format = "$namespace [$context]($style)";
+          contexts = [{
+            context_pattern = "arn:aws:eks:(?P<aws>.*)cluster/(?P<cluster>.*)";
+            context_alias = "$aws$cluster";
+          }];
         };
       };
     };
@@ -73,8 +75,8 @@
         src = pkgs.zsh-fzf-tab;
       }];
 
+      autosuggestion.enable = true;
       defaultKeymap = "emacs";
-      enableAutosuggestions = true;
       enableCompletion = true;
       syntaxHighlighting.enable = true;
 
@@ -133,6 +135,8 @@
         # short 'n sweet
         g = "${pkgs.git}/bin/git";
         h = "${pkgs.helmfile}/bin/helmfile";
+
+        da = "direnv allow";
 
         # Quick notes
         n =
