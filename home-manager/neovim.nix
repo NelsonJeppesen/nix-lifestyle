@@ -59,9 +59,9 @@
             " set vim color scheme
             if theme =~ ".*default.*"
               " light vim color
-              lua require('rose-pine').setup({groups = {background = 'ffffff'}})
+              "lua require('rose-pine').setup({groups = {background = 'ffffff'}})
               set background=light
-              colorscheme rose-pine-dawn
+              colorscheme rose-pine-moon
             else
               " if dark color scheme
               set background=dark

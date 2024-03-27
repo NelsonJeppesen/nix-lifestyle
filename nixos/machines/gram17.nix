@@ -2,7 +2,7 @@
 { fetchurl, fetchgit, fetchhg, config, pkgs, stdenv, lib, modulesPath, ... }: {
   system.stateVersion = "23.05";
 
-  programs.steam.enable = true;
+  #programs.steam.enable = true;
 
   imports = [
     ../profiles/desktop.nix

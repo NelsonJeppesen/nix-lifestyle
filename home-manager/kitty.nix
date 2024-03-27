@@ -10,15 +10,17 @@
         executable = true;
         text = ''
           #!/usr/bin/env bash
-          # set color scheme dending if Gnome is set to dark or not
-
-          THEME_PATH="${pkgs.kitty-themes}/share/kitty-themes/themes"
+          # set color scheme for Kitty live
           GNOME_THEME="$(dconf read /org/gnome/desktop/interface/color-scheme | tr -d "'")"
 
           if [[ "$GNOME_THEME" == "default" ]]; then
-            kitty @ --to unix:/tmp/kitty load-config $THEME_PATH/neobones_light.conf  ~/.config/kitty/kitty.conf
+            kitty @ --to unix:/tmp/kitty load-config                             \
+              ${pkgs.kitty-themes}/share/kitty-themes/themes/ForestNight.conf     \
+              ~/.config/kitty/kitty.conf
           else
-            kitty @ --to unix:/tmp/kitty load-config $THEME_PATH/rose-pine-moon.conf  ~/.config/kitty/kitty.conf
+            kitty @ --to unix:/tmp/kitty load-config                              \
+              ${pkgs.kitty-themes}/share/kitty-themes/themes/rose-pine-moon.conf  \
+              ~/.config/kitty/kitty.conf
           fi
         '';
       };

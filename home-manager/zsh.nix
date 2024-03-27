@@ -43,7 +43,13 @@
         helm.disabled = true;
         python.disabled = true;
         terraform.disabled = true;
-        right_format = "$kubernetes";
+
+        #right_format = "$kubernetes$line_break\";
+        fill = { symbol = " "; };
+
+        format =
+          # move kubernetes to the right
+          "$all$fill$kubernetes$line_break$directory$git_branch$git_status$jobs$battery$time$status$os$container$shell$character";
 
         directory = {
           truncation_length = 9;
@@ -51,11 +57,13 @@
         };
 
         git_status = {
-          format = "([$all_status$ahead_behind]($style) )";
-          up_to_date = "[✓](green)";
-          stashed = "[\\$\\($count\\)](green)";
-          deleted = "[--\\($count\\)](red)";
+          format = "([$all_status$ahead_behind]($style))\\] ";
+          #up_to_date = "[✓](green)";
+          #stashed = "[\\$\\($count\\)](green)";
+          #deleted = "[--\\($count\\)](red)";
         };
+
+        git_branch = { format = "\\[[$branch(:$remote_branch)]($style) "; };
 
         aws = {
           format = "\\[[$profile]($style) $region\\]";
