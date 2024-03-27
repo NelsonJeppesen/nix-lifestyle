@@ -21,7 +21,7 @@
 
     fzf = {
       enable = true;
-      defaultOptions = [ "--layout=reverse" ];
+      defaultOptions = [ "--layout=reverse" "--color=bw" ];
     };
 
     atuin = {
@@ -45,6 +45,11 @@
         terraform.disabled = true;
         right_format = "$kubernetes";
 
+        directory = {
+          truncation_length = 9;
+          repo_root_style = "bright-yellow";
+        };
+
         git_status = {
           format = "([$all_status$ahead_behind]($style) )";
           up_to_date = "[✓](green)";
@@ -53,7 +58,7 @@
         };
 
         aws = {
-          format = "\\[[$profile]($style):[$region]($style)\\]";
+          format = "\\[[$profile]($style) $region\\]";
           region_aliases = {
             ap-southeast-2 = "apse2";
             ca-central-1 = "cac1";
@@ -64,7 +69,7 @@
 
         kubernetes = {
           disabled = false;
-          format = "$namespace [$context]($style)";
+          format = "\\[$namespace [$context]($style)\\]";
           contexts = [{
             context_pattern = "arn:aws:eks:(?P<aws>.*)cluster/(?P<cluster>.*)";
             context_alias = "$aws$cluster";
@@ -88,25 +93,25 @@
       syntaxHighlighting.enable = true;
 
       initExtra = ''
-       /home/nelson/kitty-colorscheme
+        /home/nelson/kitty-colorscheme
 
-        # alt + [left|right]
-        bindkey "^[[1;3C" forward-word
-        bindkey "^[[1;3D" backward-word
+         # alt + [left|right]
+         bindkey "^[[1;3C" forward-word
+         bindkey "^[[1;3D" backward-word
 
-        # kitty tab title to $PWD
-        function set-title-precmd() {printf "\e]2;%s\a" "''${PWD/*\//}"}
-        add-zsh-hook precmd set-title-precmd
+         # kitty tab title to $PWD
+         function set-title-precmd() {printf "\e]2;%s\a" "''${PWD/*\//}"}
+         add-zsh-hook precmd set-title-precmd
 
-        # kitty tab title to running command
-        function set-title-preexec() {printf "\e]2;%s\a" "$1"}
-        add-zsh-hook preexec set-title-preexec
+         # kitty tab title to running command
+         function set-title-preexec() {printf "\e]2;%s\a" "$1"}
+         add-zsh-hook preexec set-title-preexec
 
-        # If opening a new terminal, switch to repo dir
-        if [[ "$TERM" != "linux" && "$(pwd)" = "$HOME" ]]; then
-          cd ~/Documents
-          clear
-        fi
+         # If opening a new terminal, switch to repo dir
+         if [[ "$TERM" != "linux" && "$(pwd)" = "$HOME" ]]; then
+           cd ~/Documents
+           clear
+         fi
       '';
 
       sessionVariables = {
@@ -121,6 +126,7 @@
         reboot-bios = "systemctl reboot --firmware-setup";
 
         # fuzzy find aws profile
+        apu = "unset AWS_PROFILE";
         ap = ''
           (){echo export AWS_PROFILE="$(${pkgs.awscli2}/bin/aws configure list-profiles|${pkgs.fzf}/bin/fzf --exact --query=$1 --select-1)" > ~/.aws/sticky.profile;source ~/.aws/sticky.profile}'';
 

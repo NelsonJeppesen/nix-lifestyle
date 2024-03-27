@@ -16,10 +16,8 @@
           GNOME_THEME="$(dconf read /org/gnome/desktop/interface/color-scheme | tr -d "'")"
 
           if [[ "$GNOME_THEME" == "default" ]]; then
-            export FZF_DEFAULT_OPTS=--color=light
             kitty @ --to unix:/tmp/kitty load-config $THEME_PATH/neobones_light.conf  ~/.config/kitty/kitty.conf
           else
-            export FZF_DEFAULT_OPTS=--color=dark
             kitty @ --to unix:/tmp/kitty load-config $THEME_PATH/rose-pine-moon.conf  ~/.config/kitty/kitty.conf
           fi
         '';

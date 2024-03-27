@@ -13,6 +13,7 @@
         # ignore direv files
         ".envrc"
       ];
+      difftastic = { enable = true; };
 
       extraConfig = {
         # Sign all commits using ssh key

@@ -183,6 +183,7 @@
               logging = true,
               log_level = vim.log.levels.WARN,
               filetype = {
+                yaml = { require("formatter.filetypes.yaml").yamlfmt},
                 tf = { require("formatter.filetypes.terraform").terraformfmt},
                 terraform = { require("formatter.filetypes.terraform").terraformfmt},
                 nix = { require("formatter.filetypes.nix").nixfmt},
@@ -367,7 +368,7 @@
         nnoremap    <leader>bb    :%!base64 -d<CR>
         nnoremap    <leader>bg    :%!base64 -d\|gzip -d<CR>
         nnoremap    <leader>bj    :%!jq .<CR>
-        nnoremap    <leader>by    :%!yq .<CR>
+        nnoremap    <leader>by    :%!yq -y .<CR>
 
         " persistent undo
         if !isdirectory($HOME."/.config/nvim/undo")

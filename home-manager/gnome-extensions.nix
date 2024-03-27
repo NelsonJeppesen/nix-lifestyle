@@ -31,7 +31,7 @@
         "appindicatorsupport@rgcjonas.gmail.com"
         "bluetooth-quick-connect@bjarosze.gmail.com"
         "caffeine@patapon.info"
-        "ddterm@amezin.github.com"
+        #"ddterm@amezin.github.com"
         "just-perfection-desktop@just-perfection"
         "light-style@gnome-shell-extensions.gcampax.github.com"
         "nightthemeswitcher@romainvigier.fr"
