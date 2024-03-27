@@ -12,6 +12,7 @@ let
   };
 in {
   networking.hostName = hostname;
+  networking.domain = "local";
 
   imports = [
     ./machines/${hostname}.nix # map hostname to nix import
