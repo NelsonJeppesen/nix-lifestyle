@@ -87,6 +87,8 @@
 
       # cloud management
       pkgs.awscli2
+      pkgs.opentofu # terraform fork
+      pkgs.postman
       pkgs.ssm-session-manager-plugin
       pkgs.terraform
 

@@ -5,18 +5,18 @@
   home.packages = [
     #pkgs.gnomeExtensions.bluetooth-quick-connect
     #pkgs.gnomeExtensions.blur-my-shell
-    #pkgs.gnomeExtensions.github-notifications
     #pkgs.gnomeExtensions.gsconnect
-    #pkgs.gnomeExtensions.hue-lights
     #pkgs.gnomeExtensions.just-perfection
     #pkgs.gnomeExtensions.media-controls
-    pkgs.gnomeExtensions.night-theme-switcher
     #pkgs.gnomeExtensions.one-thing
     pkgs.gnomeExtensions.appindicator
     pkgs.gnomeExtensions.caffeine
     pkgs.gnomeExtensions.ddterm
+    pkgs.gnomeExtensions.github-actions
     pkgs.gnomeExtensions.google-earth-wallpaper
+    pkgs.gnomeExtensions.hue-lights
     pkgs.gnomeExtensions.light-style
+    pkgs.gnomeExtensions.night-theme-switcher
     pkgs.gnomeExtensions.pano
     pkgs.gnomeExtensions.picture-of-the-day
     pkgs.gnomeExtensions.pip-on-top
@@ -31,7 +31,7 @@
         "appindicatorsupport@rgcjonas.gmail.com"
         "bluetooth-quick-connect@bjarosze.gmail.com"
         "caffeine@patapon.info"
-        #"ddterm@amezin.github.com"
+        "hue-lights@chlumskyvaclav.gmail.com"
         "just-perfection-desktop@just-perfection"
         "light-style@gnome-shell-extensions.gcampax.github.com"
         "nightthemeswitcher@romainvigier.fr"
@@ -41,10 +41,9 @@
         "pip-on-top@rafostar.github.com"
         "run-or-raise@edvard.cz"
         "unblank@sun.wxg@gmail.com"
-
+        #"ddterm@amezin.github.com"
         #"github.notifications@alexandre.dufournet.gmail.com"
         #"gsconnect@andyholmes.github.io"
-        #"hue-lights@chlumskyvaclav.gmail.com"
         #"mediacontrols@cliffniff.github.com"
       ];
     };

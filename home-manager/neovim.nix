@@ -16,6 +16,15 @@
       # Install Vim Plugins, keep configuration local to install block if possible
       plugins = with pkgs.vimPlugins; [
         {
+          plugin = astrotheme;
+          type = "viml";
+          config = ''
+            lua require("astrotheme").setup({})
+            colorscheme astrolight
+          '';
+        }
+
+        {
           plugin = treesj;
           type = "lua";
           config = "require('treesj').setup()";
@@ -61,7 +70,7 @@
               " light vim color
               "lua require('rose-pine').setup({groups = {background = 'ffffff'}})
               set background=light
-              colorscheme rose-pine-moon
+              "colorscheme rose-pine-moon
             else
               " if dark color scheme
               set background=dark
