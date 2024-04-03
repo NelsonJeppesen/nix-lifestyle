@@ -30,9 +30,12 @@
 
       settings = {
         auto_sync = false;
-        inline_height = 13;
+        inline_height = 999;
         search_node = "fulltext";
-        style = "full";
+        secrets_filter = true;
+        show_preview = true;
+
+        #style = "full";
       };
     };
 
