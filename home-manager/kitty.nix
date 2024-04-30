@@ -83,6 +83,10 @@
         copy_on_select = true;
         enable_audio_bell = false;
         hide_window_decorations = true;
+
+        # turn off Input Method Extensions which add latency and create bugs
+        wayland_enable_ime = false;
+
         inactive_text_alpha = "0.65";
         linux_display_server = "wayland";
         scrollback_lines = "30000";

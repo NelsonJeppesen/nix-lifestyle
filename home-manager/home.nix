@@ -67,7 +67,7 @@
 
       # formaters
       pkgs.biome
-      pkgs.nixfmt
+      pkgs.nixfmt-rfc-style
       pkgs.shfmt
 
       #pkgs.gpxsee-qt6
@@ -75,6 +75,7 @@
       # chill
       #pkgs.somafm-cli forked
       pkgs.spotify
+      pkgs.qmmp
       #pkgs.vivaldi
       pkgs.fx
 

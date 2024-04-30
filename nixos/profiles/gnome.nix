@@ -4,8 +4,8 @@
     desktopManager.gnome.enable = true;
     displayManager.gdm.enable = true;
     xkb.layout = "us";
-    libinput = { touchpad.tapping = false; };
   };
+  services.libinput = { touchpad.tapping = false; };
   services.gnome.gnome-initial-setup.enable = false;
   services.gnome.sushi.enable = false;
   services.gnome.rygel.enable = false;

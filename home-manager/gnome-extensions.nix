@@ -21,6 +21,7 @@
     pkgs.gnomeExtensions.picture-of-the-day
     pkgs.gnomeExtensions.pip-on-top
     pkgs.gnomeExtensions.run-or-raise
+    pkgs.gnomeExtensions.somafm-internet-radio
     pkgs.gnomeExtensions.unblank
   ];
 
