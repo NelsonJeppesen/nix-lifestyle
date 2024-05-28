@@ -1,7 +1,8 @@
 { config, lib, pkgs, ... }:
 let
+  # https://github.com/flameshot-org/flameshot/issues/2848
   flameshot-gui = pkgs.writeShellScriptBin "flameshot-gui"
-    "${pkgs.flameshot}/bin/flameshot gui";
+    "${pkgs.flameshot}/bin/flameshot gui --raw | wl-copy";
 in {
   dconf.settings = {
     "org/gnome/desktop/interface" = {

@@ -1,74 +1,45 @@
-{ config, lib, pkgs, ... }: {
-  home.file.".config/run-or-raise/shortcuts.conf".source =
-    ./dotfiles/shortcuts.conf;
+{
+  config,
+  lib,
+  pkgs,
+  ...
+}:
+{
+  home.file.".config/run-or-raise/shortcuts.conf".source = ./dotfiles/shortcuts.conf;
 
-  home.packages = [
-    #pkgs.gnomeExtensions.bluetooth-quick-connect
-    #pkgs.gnomeExtensions.blur-my-shell
-    #pkgs.gnomeExtensions.gsconnect
-    #pkgs.gnomeExtensions.just-perfection
-    #pkgs.gnomeExtensions.media-controls
-    #pkgs.gnomeExtensions.one-thing
-    pkgs.gnomeExtensions.appindicator
-    pkgs.gnomeExtensions.caffeine
-    pkgs.gnomeExtensions.ddterm
-    pkgs.gnomeExtensions.github-actions
-    pkgs.gnomeExtensions.google-earth-wallpaper
-    pkgs.gnomeExtensions.hue-lights
-    pkgs.gnomeExtensions.light-style
-    pkgs.gnomeExtensions.night-theme-switcher
-    pkgs.gnomeExtensions.pano
-    pkgs.gnomeExtensions.picture-of-the-day
-    pkgs.gnomeExtensions.pip-on-top
-    pkgs.gnomeExtensions.run-or-raise
-    pkgs.gnomeExtensions.somafm-internet-radio
-    pkgs.gnomeExtensions.unblank
-  ];
+  programs.gnome-shell = {
+    enable = true;
+    extensions = [
+      { package = pkgs.gnomeExtensions.appindicator; }
+      { package = pkgs.gnomeExtensions.caffeine; }
+      { package = pkgs.gnomeExtensions.ddterm; }
+      { package = pkgs.gnomeExtensions.hue-lights; }
+      { package = pkgs.gnomeExtensions.light-style; }
+      { package = pkgs.gnomeExtensions.night-theme-switcher; }
+      { package = pkgs.gnomeExtensions.one-thing; }
+      { package = pkgs.gnomeExtensions.pano; }
+      { package = pkgs.gnomeExtensions.picture-of-the-day; }
+      { package = pkgs.gnomeExtensions.pip-on-top; }
+      { package = pkgs.gnomeExtensions.run-or-raise; }
+      { package = pkgs.gnomeExtensions.unblank; }
+      { package = pkgs.gnomeExtensions.wtmb-window-thumbnails; }
+    ];
+  };
 
   dconf.settings = {
 
-    "org/gnome/shell" = {
-      enabled-extensions = [
-        "appindicatorsupport@rgcjonas.gmail.com"
-        "bluetooth-quick-connect@bjarosze.gmail.com"
-        "caffeine@patapon.info"
-        "hue-lights@chlumskyvaclav.gmail.com"
-        "just-perfection-desktop@just-perfection"
-        "light-style@gnome-shell-extensions.gcampax.github.com"
-        "nightthemeswitcher@romainvigier.fr"
-        "one-thing@github.com"
-        "pano@elhan.io"
-        "picture-of-the-day@swsnr.de"
-        "pip-on-top@rafostar.github.com"
-        "run-or-raise@edvard.cz"
-        "unblank@sun.wxg@gmail.com"
-        #"ddterm@amezin.github.com"
-        #"github.notifications@alexandre.dufournet.gmail.com"
-        #"gsconnect@andyholmes.github.io"
-        #"mediacontrols@cliffniff.github.com"
+    "org/gnome/shell/extensions/quick-lofi" = {
+      volume = 75;
+      radios = [
+        "Lofi Girl - https://play.streamafrica.net/lofiradio"
+        "Lofi Hip-hop - http://hyades.shoutca.st:8043/stream"
+        "Lofi Hunter - https://live.hunter.fm/lofi_high"
+        "SomaFM Synphaera - https://somafm.com/synphaera64.pls"
       ];
     };
 
     "org/gnome/shell/extensions/swsnr-picture-of-the-day" = {
       selected-source = "bing";
-    };
-
-    "org/gnome/shell/extensions/mediacontrols" = {
-      extension-position = "center";
-      max-widget-width = 500;
-      mouse-actions = [
-        "toggle_play"
-        "toggle_menu"
-        "none"
-        "none"
-        "none"
-        "none"
-        "none"
-        "none"
-      ];
-      show-control-icons = false;
-      show-seperators = false;
-      track-label = [ "track" "-" "artist" ];
     };
 
     "org/gnome/shell/extensions/appindicator" = {
@@ -88,22 +59,6 @@
       toggle-shortcut = [ "<Super>c" ];
     };
 
-    "org/gnome/shell/extensions/just-perfection" = {
-      activities-button = false;
-      animation = 2;
-      app-menu = false;
-      calendar = false;
-      clock-menu-position = 2;
-      dash = false;
-      events-button = false;
-      hot-corner = false;
-      power-icon = false;
-      show-apps-button = true;
-      startup-status = 0;
-      type-to-search = false;
-      world-clock = false;
-    };
-
     "org/gnome/shell/extensions/github-notifications" = {
       handle = "NelsonJeppesen";
       hide-widget = true;
@@ -121,8 +76,6 @@
       day = "LightShell";
       night = "";
     };
-
-    "org/gnome/shell/extensions/googleearthwallpaper" = { hide = true; };
 
     "org/gnome/shell/extensions/one-thing" = {
       index-in-status-bar = 1;
@@ -149,25 +102,28 @@
       time = 1800;
     };
 
-    # drop down menu for somafm, vpn and fend
+    # drop down terminal used to chatgpt
     "com/github/amezin/ddterm" = {
-      #custom-font = "Hasklug Nerd Font 13";
       audible-bell = false;
       background-color = "rgb(46,52,54)";
+      backspace-binding = "auto";
       bold-color-same-as-fg = true;
       bold-is-bright = true;
       command = "custom-command";
-      custom-command =
-        "zsh -ceil -- 'cd /home/nelson/Documents;/home/nelson/.nix-profile/bin/chatgpt'";
+      custom-command = "zsh -ceil -- 'cd /home/nelson/Documents;/home/nelson/.nix-profile/bin/chatgpt'";
       custom-font = "B612 Mono 13";
       ddterm-toggle-hotkey = [ "<Super>t" ];
+      foreground-color = "rgb(255,255,255)";
       hide-when-focus-lost = true;
       new-tab-button = false;
       notebook-border = false;
       override-window-animation = false;
       panel-icon-type = "none";
       scroll-on-output = true;
-      shortcuts-enabled = false;
+      scrollback-lines = 10002;
+      shortcut-font-scale-decrease = [ "<Primary>underscore" ];
+      shortcut-font-scale-increase = [ "<Primary>plus" ];
+      shortcuts-enabled = true;
       show-animation = "ease-in-out-back";
       show-animation-duration = 0.2;
       show-scrollbar = false;
@@ -178,6 +134,7 @@
       tab-policy = "automatic";
       tab-position = "top";
       tab-switcher-popup = false;
+      text-blink-mode = "focused";
       transparent-background = true;
       use-system-font = false;
       use-theme-colors = false;
@@ -188,17 +145,6 @@
       window-resizable = false;
       window-size = 0.45;
       window-skip-taskbar = false;
-      #/com/github/amezin/ddterm/shortcuts-enabled
-      #  true
-      #
-      #/com/github/amezin/ddterm/shortcut-font-scale-increase
-      #  @as []
-      #
-      #/com/github/amezin/ddterm/shortcut-font-scale-increase
-      #  ['<Primary>plus']
-      #
-      #/com/github/amezin/ddterm/shortcut-font-scale-decrease
-      #  ['<Primary>underscore']
     };
   };
 }

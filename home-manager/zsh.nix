@@ -1,4 +1,5 @@
-{ config, pkgs, ... }: {
+{ config, pkgs, ... }:
+{
   editorconfig = {
     enable = true;
     settings = {
@@ -21,7 +22,10 @@
 
     fzf = {
       enable = true;
-      defaultOptions = [ "--layout=reverse" "--color=bw" ];
+      defaultOptions = [
+        "--layout=reverse"
+        "--color=bw"
+      ];
     };
 
     atuin = {
@@ -29,7 +33,7 @@
       flags = [ "--disable-up-arrow" ];
 
       settings = {
-        auto_sync = false;
+        sync_address = "http://192.168.4.36:8888";
         inline_height = 999;
         search_node = "fulltext";
         secrets_filter = true;
@@ -48,7 +52,9 @@
         terraform.disabled = true;
 
         #right_format = "$kubernetes$line_break\";
-        fill = { symbol = " "; };
+        fill = {
+          symbol = " ";
+        };
 
         format =
           # move kubernetes to the right
@@ -66,7 +72,9 @@
           #deleted = "[--\\($count\\)](red)";
         };
 
-        git_branch = { format = "\\[[$branch(:$remote_branch)]($style) "; };
+        git_branch = {
+          format = "\\[[$branch(:$remote_branch)]($style) ";
+        };
 
         aws = {
           format = "\\[[$profile]($style) $region\\]";
@@ -81,10 +89,12 @@
         kubernetes = {
           disabled = false;
           format = "\\[$namespace [$context]($style)\\]";
-          contexts = [{
-            context_pattern = "arn:aws:eks:(?P<aws>.*)cluster/(?P<cluster>.*)";
-            context_alias = "$aws$cluster";
-          }];
+          contexts = [
+            {
+              context_pattern = "arn:aws:eks:(?P<aws>.*)cluster/(?P<cluster>.*)";
+              context_alias = "$aws$cluster";
+            }
+          ];
         };
       };
     };
@@ -92,11 +102,13 @@
     zsh = {
       enable = true;
 
-      plugins = [{
-        file = "share/fzf-tab/fzf-tab.plugin.zsh";
-        name = "fzf-tab";
-        src = pkgs.zsh-fzf-tab;
-      }];
+      plugins = [
+        {
+          file = "share/fzf-tab/fzf-tab.plugin.zsh";
+          name = "fzf-tab";
+          src = pkgs.zsh-fzf-tab;
+        }
+      ];
 
       autosuggestion.enable = true;
       defaultKeymap = "emacs";
@@ -138,20 +150,17 @@
 
         # fuzzy find aws profile
         apu = "unset AWS_PROFILE";
-        ap = ''
-          (){echo export AWS_PROFILE="$(${pkgs.awscli2}/bin/aws configure list-profiles|${pkgs.fzf}/bin/fzf --exact --query=$1 --select-1)" > ~/.aws/sticky.profile;source ~/.aws/sticky.profile}'';
+        ap = ''(){echo export AWS_PROFILE="$(${pkgs.awscli2}/bin/aws configure list-profiles|${pkgs.fzf}/bin/fzf --exact --query=$1 --select-1)" > ~/.aws/sticky.profile;source ~/.aws/sticky.profile}'';
 
         # fuzzy find aws region
-        ar = ''
-          (){echo export AWS_REGION="$(echo 'us-east-1\nca-central-1\neu-central-1\nap-southeast-2'|${pkgs.fzf}/bin/fzf --exact --query=$1 --select-1)" > ~/.aws/sticky.region;source ~/.aws/sticky.region}'';
+        ar = ''(){echo export AWS_REGION="$(echo 'us-east-1\nca-central-1\neu-central-1\nap-southeast-2'|${pkgs.fzf}/bin/fzf --exact --query=$1 --select-1)" > ~/.aws/sticky.region;source ~/.aws/sticky.region}'';
 
         # login via aws sso
         al = "aws sso login";
 
         clipboard = "${pkgs.xsel}/bin/xsel --clipboard";
 
-        hh = ''
-          ${pkgs.atuin}/bin/atuin history list --cwd --format "{time}\t{command}"'';
+        hh = ''${pkgs.atuin}/bin/atuin history list --cwd --format "{time}\t{command}"'';
 
         # Chat GPT chatbot
         cb = "chatblade";
@@ -165,10 +174,10 @@
         da = "direnv allow";
 
         # Quick notes
-        n =
-          "nb edit work-$(date +%Y-%q).md      2>/dev/null || nb add --title work-$(date +%Y-%q)";
-        np =
-          "nb edit personal-$(date +%Y-%q).md 2>/dev/null || nb add --title personal-$(date +%Y-%q)";
+        n = "nb edit work-$(date +%Y-%q).md      2>/dev/null || nb add --title work-$(date +%Y-%q)";
+        np = "nb edit personal-$(date +%Y-%q).md 2>/dev/null || nb add --title personal-$(date +%Y-%q)";
+
+        nsr = ''nsrfun() {if [ "$2" = "" ];then 2="$1";fi;set -x;nix-shell --packages $1 --run $2};nsrfun'';
 
         ls = "ls --almost-all --group-directories-first --color=auto";
         l = "ls --almost-all --group-directories-first --color=auto -1";
@@ -195,20 +204,16 @@
 
         w = "walk";
 
-        random-theme =
-          "precmd() {a=$(find /nix/store/3a0j7pdbj8hi0lzfmahxqp37rq3d6swp-kitty-themes-unstable-2023-03-08/share/kitty-themes/themes/*.conf | sort -R |head -n1);kitty @ set-colors --all $a;basename $a}";
+        random-theme = "precmd() {a=$(find /nix/store/3a0j7pdbj8hi0lzfmahxqp37rq3d6swp-kitty-themes-unstable-2023-03-08/share/kitty-themes/themes/*.conf | sort -R |head -n1);kitty @ set-colors --all $a;basename $a}";
 
         # terraform
         t = "${pkgs.terraform}/bin/terraform";
         ta = "${pkgs.terraform}/bin/terraform apply";
         ti = "${pkgs.terraform}/bin/terraform init";
         tp = "${pkgs.terraform}/bin/terraform plan";
-        tsd =
-          "echo $(${pkgs.terraform}/bin/terraform state list|fzf --multi)|xargs -n1 ${pkgs.terraform}/bin/terraform state rm";
-        tss =
-          "${pkgs.terraform}/bin/terraform state show $(${pkgs.terraform}/bin/terraform state list|fzf)";
-        tt =
-          "echo $(${pkgs.terraform}/bin/terraform state list|fzf --multi)|xargs -n1 ${pkgs.terraform}/bin/terraform taint";
+        tsd = "echo $(${pkgs.terraform}/bin/terraform state list|fzf --multi)|xargs -n1 ${pkgs.terraform}/bin/terraform state rm";
+        tss = "${pkgs.terraform}/bin/terraform state show $(${pkgs.terraform}/bin/terraform state list|fzf)";
+        tt = "echo $(${pkgs.terraform}/bin/terraform state list|fzf --multi)|xargs -n1 ${pkgs.terraform}/bin/terraform taint";
 
         # kube
         k = "kubectl";

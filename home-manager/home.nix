@@ -100,7 +100,6 @@
       # try out gpt
       pkgs.chatblade
       pkgs.chatgpt-cli
-      pkgs.shell_gpt
 
       # yaml/json tools
       pkgs.jq
@@ -119,7 +118,7 @@
       pkgs.gh-dash
       pkgs.ipcalc
       pkgs.nb
-      pkgs.nvimpager
+      #pkgs.nvimpager
       pkgs.p7zip
       pkgs.ripgrep
       pkgs.sd

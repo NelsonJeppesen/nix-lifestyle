@@ -31,18 +31,6 @@
         }
 
         {
-          plugin = comment-nvim;
-          type = "lua";
-          config = "require('Comment').setup()";
-        }
-
-        #{
-        #  plugin = windows-nvim;
-        #  type = "lua";
-        #  config = ''require('windows').setup()'';
-        #}
-
-        {
           plugin = nvim-surround;
           type = "lua";
           config = ''require("nvim-surround").setup({})'';
