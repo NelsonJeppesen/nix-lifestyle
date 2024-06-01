@@ -21,3 +21,4 @@ sudo nix run \
 sudo ln -s nixos /etc/nixos
 sudo nixos-rebuilt swich --upgrade
 ```
+sudo mkdir -p /mnt/etc/nixos

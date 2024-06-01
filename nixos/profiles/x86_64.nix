@@ -31,7 +31,7 @@
     disk = {
       vdb = {
         type = "disk";
-        device = lib.mkDefault "/dev/nvme0n1";
+        device = "/dev/nvme0n1";
         content = {
           type = "gpt";
           partitions = {
@@ -53,7 +53,10 @@
             luks = {
               size = "100%";
               content = {
-                extraOpenArgs = [ "--allow-discards" ];
+                #extraOpenArgs = [ "--allow-discards" ];
+		settings = {
+allowDiscards = true;
+};
                 name = "crypted";
                 type = "luks";
 
@@ -61,7 +64,9 @@
                   extraArgs = [ "-f" ];
                   mountOptions = [ "discard=async" "autodefrag" ];
                   mountpoint = "/";
-                  type = "btrfs";
+ format = "btrfs";
+
+                  type = "filesystem";
                 };
               };
             };
