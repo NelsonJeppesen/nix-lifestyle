@@ -18,7 +18,9 @@ sudo nix run \
 ```
 
 ```
-sudo ln -s nixos /etc/nixos
-sudo nixos-rebuilt swich --upgrade
+cp -r ../../nix-lifestyle /mnt
+mkdir /mnt/etc
+cd /mnt/etc
+ln -s ../nix-lifestyle/nixos .
+nixos-rebuilt swich --upgrade
 ```
-sudo mkdir -p /mnt/etc/nixos
