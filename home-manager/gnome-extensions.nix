@@ -20,6 +20,7 @@
       { package = pkgs.gnomeExtensions.pano; }
       { package = pkgs.gnomeExtensions.picture-of-the-day; }
       { package = pkgs.gnomeExtensions.pip-on-top; }
+      { package = pkgs.gnomeExtensions.quick-lofi; }
       { package = pkgs.gnomeExtensions.run-or-raise; }
       { package = pkgs.gnomeExtensions.unblank; }
       { package = pkgs.gnomeExtensions.wtmb-window-thumbnails; }
