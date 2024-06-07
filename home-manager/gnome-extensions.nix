@@ -17,7 +17,8 @@
       { package = pkgs.gnomeExtensions.light-style; }
       { package = pkgs.gnomeExtensions.night-theme-switcher; }
       { package = pkgs.gnomeExtensions.one-thing; }
-      { package = pkgs.gnomeExtensions.pano; }
+      #{ package = pkgs.gnomeExtensions.pano; }
+      { package = pkgs.gnomeExtensions.clipboard-indicator; }
       { package = pkgs.gnomeExtensions.picture-of-the-day; }
       { package = pkgs.gnomeExtensions.pip-on-top; }
       { package = pkgs.gnomeExtensions.quick-lofi; }
