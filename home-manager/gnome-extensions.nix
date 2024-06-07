@@ -10,15 +10,15 @@
   programs.gnome-shell = {
     enable = true;
     extensions = [
+      #{ package = pkgs.gnomeExtensions.pano; }
       { package = pkgs.gnomeExtensions.appindicator; }
       { package = pkgs.gnomeExtensions.caffeine; }
+      { package = pkgs.gnomeExtensions.clipboard-indicator; }
       { package = pkgs.gnomeExtensions.ddterm; }
       { package = pkgs.gnomeExtensions.hue-lights; }
       { package = pkgs.gnomeExtensions.light-style; }
       { package = pkgs.gnomeExtensions.night-theme-switcher; }
       { package = pkgs.gnomeExtensions.one-thing; }
-      #{ package = pkgs.gnomeExtensions.pano; }
-      { package = pkgs.gnomeExtensions.clipboard-indicator; }
       { package = pkgs.gnomeExtensions.picture-of-the-day; }
       { package = pkgs.gnomeExtensions.pip-on-top; }
       { package = pkgs.gnomeExtensions.quick-lofi; }
@@ -98,19 +98,19 @@
       show-settings-button-on-popup = false;
     };
 
-    "org/gnome/shell/extensions/pano" = {
-      history-length = 500;
-      keep-search-entry = false;
-      open-links-in-browser = false;
-      play-audio-on-copy = false;
-      send-notification-on-copy = false;
-      show-indicator = false;
-      window-position = lib.hm.gvariant.mkUint32 (1); # right side of the screen
-    };
+    #"org/gnome/shell/extensions/pano" = {
+    #  history-length = 500;
+    #  keep-search-entry = false;
+    #  open-links-in-browser = false;
+    #  play-audio-on-copy = false;
+    #  send-notification-on-copy = false;
+    #  show-indicator = false;
+    #  window-position = lib.hm.gvariant.mkUint32 (1); # right side of the screen
+    #};
 
-    "org/gnome/shell/extensions/pano/text-item" = {
-      body-bg-color = "rgb(153,193,241)";
-    };
+    #"org/gnome/shell/extensions/pano/text-item" = {
+    #  body-bg-color = "rgb(153,193,241)";
+    #};
 
     "org/gnome/shell/extensions/unblank" = {
       power = false;
