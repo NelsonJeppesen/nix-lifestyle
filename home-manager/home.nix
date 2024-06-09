@@ -97,6 +97,13 @@
       pkgs.shellcheck
       pkgs.shfmt
 
+      # used by nvim plugins
+      pkgs.sqlite
+
+      # used by gnome-extension `quick lofi`
+      pkgs.socat
+      pkgs.mpv
+
       # try out gpt
       pkgs.chatblade
       pkgs.chatgpt-cli

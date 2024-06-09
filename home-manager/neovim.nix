@@ -1,4 +1,4 @@
-# NeoVim for daily work and daily notes
+# neovim: my cozy home for code and configuration
 { config, pkgs, ... }:
 {
   programs = {
@@ -16,14 +16,37 @@
       # Install Vim Plugins, keep configuration local to install block if possible
       plugins = with pkgs.vimPlugins; [
 
-        # The default colorscheme used by AstroNvim
+        # "The default colorscheme used by AstroNvim"
         #   https://github.com/AstroNvim/astrotheme/
+        astrotheme
+
+        # "Soho vibes for Neovim" [colorscheme]
+        #   https://github.com/rose-pine/neovim/
         {
-          plugin = astrotheme;
+          plugin = rose-pine;
           type = "viml";
+
+          # set theme very early so other plugins can pull in the settings e.g. bufferline
           config = ''
-            lua require("astrotheme").setup({})
-            colorscheme astrolight
+            " set color-scheme on gnome light/dark setting
+            "
+            " read gnome light/dark setting
+            let theme=system('dconf read /org/gnome/desktop/interface/color-scheme')
+
+            " set vim color scheme
+            if theme =~ "default"
+              " light vim color
+              set background=light
+              lua require("astrotheme").setup({})
+              colorscheme astrojupiter
+              "lua require('rose-pine').setup({groups = {background = 'ffffff'}})
+              "colorscheme astrolight"
+              "colorscheme rose-pine-moon
+            else
+              " if dark color scheme
+              set background=dark
+              colorscheme rose-pine-moon
+            end
           '';
         }
 
@@ -33,14 +56,16 @@
           plugin = cinnamon-nvim;
           type = "lua";
           config = ''
-            require('cinnamon').setup{
-                extra_keymaps = true,
-                scroll_limit = -1,
-                max_length = 50,
-            }
+            require('cinnamon').setup({
+              extra_keymaps = true,
+              scroll_limit = -1,
+              max_length = 200,
+            })
           '';
         }
 
+        # "Neovim plugin for splitting/joining blocks of code "
+        #   https://github.com/Wansmer/treesj/
         {
           plugin = treesj;
           type = "lua";
@@ -62,42 +87,32 @@
           '';
         }
 
-        {
-          plugin = rose-pine;
-          type = "viml";
-          config = ''
-            " read Gnome light/dark setting
-            let theme =  system('dconf read /org/gnome/desktop/interface/color-scheme')
-
-            " set vim color scheme
-            if theme =~ ".*default.*"
-              " light vim color
-              "lua require('rose-pine').setup({groups = {background = 'ffffff'}})
-              set background=light
-              "colorscheme rose-pine-moon
-            else
-              " if dark color scheme
-              set background=dark
-              colorscheme rose-pine-moon
-            end
-          '';
-        }
-
         # Install tree-sitter with all the plugins/grammars
         #   https://tree-sitter.github.io/tree-sitter
         {
           plugin = nvim-treesitter.withAllGrammars;
           type = "lua";
           config = ''
-            require'nvim-treesitter.configs'.setup {
-              highlight = {enable = true, additional_vim_regex_highlighting = false}
-             }
+            require'nvim-treesitter.configs'.setup({
+              highlight = {
+                enable = true,
+                additional_vim_regex_highlighting = false
+              }
+            })
           '';
         }
 
         # https://github.com/iamcco/markdown-preview.nvim/
         #   "markdown preview plugin for (neo)vim"
         markdown-preview-nvim
+
+        # "Configurable tools for working with Markdown in Neovim. "
+        #   https://github.com/tadmccorkle/markdown.nvim/
+        {
+          plugin = markdown-nvim;
+          type = "lua";
+          config = ''require("markdown").setup({})'';
+        }
 
         # https://github.com/sudormrfbin/cheatsheet.nvim
         #  "A cheatsheet plugin for neovim with bundled cheatsheets for the
@@ -111,7 +126,18 @@
           plugin = bufferline-nvim;
           type = "viml";
           config = ''
-            lua require("bufferline").setup{}
+            lua <<EOF
+              require("bufferline").setup{
+                options={
+                  max_name_length=38,
+                  max_prefix_length=35,
+                  separator_style='slope'
+                  show_buffer_close_icons=false,
+                  show_buffer_icons=false,
+                  show_close_icon=false,
+                }
+              }
+            EOF
             nnoremap <silent> <C-left>  :BufferLineCyclePrev<CR>
             nnoremap <silent> <C-right> :BufferLineCycleNext<CR>
             nnoremap <silent> <C-up>    <C-w>w
@@ -119,31 +145,58 @@
           '';
         }
 
-        # https://github.com/kyazdani42/nvim-web-devicons
-        #   "lua `fork` of vim-web-devicons for neovim"
-        nvim-web-devicons # used by bufferline-nvim
+        # SQLite LuaJIT binding with a very simple api.
+        #   https://github.com/kkharji/sqlite.lua/
+        # used by: nvim-neoclip
+        {
+          plugin = sqlite-lua;
+          config = "let g:sqlite_clib_path = '${pkgs.sqlite.out}/lib/libsqlite3.so'";
+        }
 
+        # Clipboard manager neovim plugin with telescope integration
+        #   https://github.com/AckslD/nvim-neoclip.lua
         {
           plugin = nvim-neoclip-lua;
           type = "lua";
-          config = "require('neoclip').setup()";
+          config = ''
+            require('neoclip').setup({
+              continuous_sync = true,
+              enable_persistent_history = true,
+              history = 9999,
+            })
+          '';
         }
 
-        # https://github.com/nvim-telescope/telescope.nvim
+        # Highlight changed text after Undo / Redo operations
+        #   https://github.com/tzachar/highlight-undo.nvim/
+        {
+          plugin = highlight-undo-nvim;
+          type = "lua";
+          config = ''require('highlight-undo').setup({duration = 2000})'';
+        }
+
+        # "A telescope extension to view and search your undo tree 🌴"
+        #   https://github.com/debugloop/telescope-undo.nvim/
+        telescope-undo-nvim
+
+        #   https://github.com/nvim-telescope/telescope.nvim
         #   "highly extendable fuzzy finder over lists"
         {
           plugin = telescope-nvim;
           type = "viml";
           config = ''
-            nnoremap  ,,/  <cmd>lua require('telescope.builtin').current_buffer_fuzzy_find()<CR>
-            nnoremap  ,,b  <cmd>lua require('telescope.builtin').buffers()<CR>
-            nnoremap  ,,c  <cmd>lua require('telescope.builtin').command_history()<CR>
-            nnoremap  ,,f  <cmd>lua require('telescope.builtin').find_files()<CR>
-            nnoremap  ,,g  :execute 'Telescope git_files cwd=' . expand('%:p:h')<CR>
-            nnoremap  ,,h  <cmd>lua require('telescope.builtin').oldfiles()<CR>
-            nnoremap  ,,o  <cmd>lua require('telescope.builtin').file_browser()<CR>
-            nnoremap  ,,p  <cmd>Telescope neoclip<CR>
-            nnoremap  ,,r  <cmd>lua require('telescope.builtin').registers()<CR>
+            nnoremap  ,,/  <cmd>Telescope current_buffer_fuzzy_find<cr>
+            nnoremap  ,,b  <cmd>Telescope buffers<cr>
+            nnoremap  ,,c  <cmd>Telescope command_history<cr>
+            nnoremap  ,,f  <cmd>Telescope find_files<cr>
+            nnoremap  ,,p  <cmd>Telescope neoclip<cr>
+            nnoremap  ,,u  <cmd>Telescope undo<cr>
+
+            nnoremap  ,,g  :execute 'Telescope git_files cwd=' . expand('%:p:h')<cr>
+            nnoremap  ,,h  <cmd>lua require('telescope.builtin').oldfiles()<cr>
+            nnoremap  ,,o  <cmd>lua require('telescope.builtin').file_browser()<cr>
+            nnoremap  ,,r  <cmd>lua require('telescope.builtin').registers()<cr>
+
 
             lua << EOF
               _G.open_telescope = function()
@@ -162,6 +215,7 @@
               ]], false)
 
               require('telescope').load_extension('neoclip')
+              require('telescope').load_extension('undo')
             EOF
           '';
         }
@@ -221,8 +275,8 @@
           '';
         }
 
-        # https://github.com/f-person/git-blame.nvim
-        #   "A git blame plugin for Neovim written in Lua"
+        # "A git blame plugin for Neovim written in Lua"
+        #   https://github.com/f-person/git-blame.nvim
         {
           plugin = git-blame-nvim;
           type = "lua";
@@ -238,16 +292,16 @@
           '';
         }
 
-        # https://github.com/lewis6991/gitsigns.nvim
-        #   "Super fast git decorations implemented purely in lua/teal"
+        # "Super fast git decorations implemented purely in lua/teal"
+        #   https://github.com/lewis6991/gitsigns.nvim
         {
           plugin = gitsigns-nvim;
           type = "viml";
           config = "lua require('gitsigns').setup()";
         }
 
-        # https://github.com/hoob3rt/lualine.nvim
-        #   "A blazing fast and easy to configure neovim statusline written in pure lua"
+        # "A blazing fast and easy to configure neovim statusline written in pure lua"
+        #   https://github.com/hoob3rt/lualine.nvim
         {
           plugin = lualine-nvim;
           type = "lua";
@@ -261,8 +315,8 @@
           '';
         }
 
-        # https://github.com/hrsh7th/nvim-cmp
-        #   "A completion plugin for neovim coded in Lua"
+        # "A completion plugin for neovim coded in Lua"
+        #   https://github.com/hrsh7th/nvim-cmp
         cmp-buffer
         nvim-lspconfig
         cmp-nvim-lsp
@@ -309,8 +363,8 @@
           '';
         }
 
-        # https://github.com/folke/which-key.nvim
-        #   "displays a popup with possible keybindings of the command you started typing"
+        # "displays a popup with possible keybindings of the command you started typing"
+        #   https://github.com/folke/which-key.nvim
         {
           plugin = which-key-nvim;
           type = "lua";
@@ -326,8 +380,8 @@
           '';
         }
 
-        # https://github.com/nacro90/numb.nvim/
-        #   "Peek lines just when you intend"
+        # "Peek lines just when you intend"
+        #   https://github.com/nacro90/numb.nvim/
         {
           plugin = numb-nvim;
           type = "lua";
@@ -335,18 +389,13 @@
         }
 
         # ------------------------------------ Vimscript Plugins ---------------------------------------------
-        # https://github.com/farmergreg/vim-lastplace
-        #   "Intelligently reopen files at your last edit position in Vim"
+
+        # "Intelligently reopen files at your last edit position in Vim"
+        #   https://github.com/farmergreg/vim-lastplace
         vim-lastplace
 
-        {
-          plugin = undotree;
-          type = "lua";
-          config = "vim.keymap.set('n', '<leader>u', vim.cmd.UndotreeToggle)";
-        }
-
-        # https://github.com/dhruvasagar/vim-table-mode
-        #   "VIM Table Mode for instant [ASCII] table creation"
+        # "VIM Table Mode for instant [ASCII] table creation"
+        #   https://github.com/dhruvasagar/vim-table-mode
         {
           plugin = vim-table-mode;
           type = "viml";
@@ -377,11 +426,11 @@
 
         set autoread
         let mapleader=","
-        nnoremap    <leader>bc    :%y+<CR>
-        nnoremap    <leader>bb    :%!base64 -d<CR>
-        nnoremap    <leader>bg    :%!base64 -d\|gzip -d<CR>
-        nnoremap    <leader>bj    :%!jq .<CR>
-        nnoremap    <leader>by    :%!yq -y .<CR>
+        nnoremap <leader>bc  :%y+<CR>
+        nnoremap <leader>bb  :%!base64 -d<CR>
+        nnoremap <leader>bg  :%!base64 -d\|gzip -d<CR>
+        nnoremap <leader>bj  :%!jq .<CR>
+        nnoremap <leader>by  :%!yq -y .<CR>
 
         " persistent undo
         if !isdirectory($HOME."/.config/nvim/undo")
