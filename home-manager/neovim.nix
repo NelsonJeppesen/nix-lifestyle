@@ -1,5 +1,6 @@
 # NeoVim for daily work and daily notes
-{ config, pkgs, ... }: {
+{ config, pkgs, ... }:
+{
   programs = {
 
     neovim = {
@@ -7,20 +8,36 @@
       vimAlias = true;
       withNodeJs = true;
 
-      extraLuaPackages = luaPkgs:
-        with luaPkgs;
-        [
+      extraLuaPackages =
+        luaPkgs: with luaPkgs; [
           middleclass # used by windows-nvim
         ];
 
       # Install Vim Plugins, keep configuration local to install block if possible
       plugins = with pkgs.vimPlugins; [
+
+        # The default colorscheme used by AstroNvim
+        #   https://github.com/AstroNvim/astrotheme/
         {
           plugin = astrotheme;
           type = "viml";
           config = ''
             lua require("astrotheme").setup({})
             colorscheme astrolight
+          '';
+        }
+
+        # "Smooth scrolling for ANY movement command 🤯. A Neovim plugin written in Lua!"
+        #    https://github.com/declancm/cinnamon.nvim
+        {
+          plugin = cinnamon-nvim;
+          type = "lua";
+          config = ''
+            require('cinnamon').setup{
+                extra_keymaps = true,
+                scroll_limit = -1,
+                max_length = 50,
+            }
           '';
         }
 
@@ -40,7 +57,6 @@
           plugin = mini-nvim;
           type = "lua";
           config = ''
-            require('mini.animate').setup()
             require('mini.basics').setup({ options = { extra_ui = true }})
             require('mini.trailspace').setup()
           '';
