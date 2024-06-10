@@ -16,6 +16,7 @@
       { package = pkgs.gnomeExtensions.clipboard-indicator; }
       { package = pkgs.gnomeExtensions.ddterm; }
       { package = pkgs.gnomeExtensions.hue-lights; }
+      { package = pkgs.gnomeExtensions.just-perfection; }
       { package = pkgs.gnomeExtensions.light-style; }
       { package = pkgs.gnomeExtensions.night-theme-switcher; }
       { package = pkgs.gnomeExtensions.one-thing; }
@@ -29,6 +30,15 @@
   };
 
   dconf.settings = {
+
+    "org/gnome/shell/extensions/just-perfection" = {
+      dash = false;
+      search = true;
+      startup-status = 0; # disable the overview popup thing
+      theme = false;
+      window-maximized-on-create = true;
+    };
+
     "org/gnome/shell/extensions/clipboard-indicator" = {
       cache-size = 10;
       clear-history = [ ];
