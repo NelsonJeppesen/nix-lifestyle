@@ -12,13 +12,21 @@
   hardware.opengl.enable = true;
   hardware.opengl.extraPackages = with pkgs; [
     intel-media-driver # hardware decode/encode of video streams
+    intel-vaapi-driver
+    libvdpau-va-gl
   ];
 
+  environment.variables = {
+    VDPAU_DRIVER = "va_gl";
+  };
+
   # Update microcode when available
-  hardware.cpu.intel.updateMicrocode = lib.mkDefault config.hardware.enableRedistributableFirmware;
+  hardware.cpu.intel.updateMicrocode = true;
 
   # Ensure modules used for efficent disk encryption are loaded
   # early in the boot process
+  boot.initrd.kernelModules = [ "i915" ];
+
   boot.initrd.availableKernelModules = [
     "aesni_intel"
     "cryptd"
