@@ -33,7 +33,7 @@
       cache-size = 10;
       clear-history = [ ];
       disable-down-arrow = false;
-      display-mode = 2;
+      display-mode = 0;
       history-size = 200;
       next-entry = [ "<Control>semicolon" ];
       prev-entry = [ "<Shift><Control>colon" ];
