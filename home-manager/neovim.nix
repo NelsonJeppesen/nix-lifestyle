@@ -167,7 +167,20 @@
           '';
         }
 
-        # Highlight changed text after Undo / Redo operations
+        # "A fancy, configurable, notification manager for NeoVim"
+        #   https://github.com/rcarriga/nvim-notify/
+        { plugin = nvim-notify; }
+
+        # "💥 Highly experimental plugin that completely replaces the UI for
+        # messages, cmdline and the popupmenu"
+        #   https://github.com/folke/noice.nvim/
+        {
+          plugin = noice-nvim;
+          type = "lua";
+          config = ''require('noice').setup({})'';
+        }
+
+        # "Highlight changed text after Undo / Redo operations"
         #   https://github.com/tzachar/highlight-undo.nvim/
         {
           plugin = highlight-undo-nvim;
