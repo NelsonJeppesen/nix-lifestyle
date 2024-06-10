@@ -131,7 +131,7 @@
                 options={
                   max_name_length=38,
                   max_prefix_length=35,
-                  separator_style='slope'
+                  separator_style='slope',
                   show_buffer_close_icons=false,
                   show_buffer_icons=false,
                   show_close_icon=false,
