@@ -56,14 +56,17 @@
     "org/gnome/shell/extensions/quick-lofi" = {
       volume = 75;
       radios = [
-        "Lofi Girl - https://play.streamafrica.net/lofiradio"
-        "Lofi Hip-hop - http://hyades.shoutca.st:8043/stream"
-        "Lofi Hunter - https://live.hunter.fm/lofi_high"
+        # ordered by use
+        "SomaFM Synphaera - https://somafm.com/synphaera64.pls"
         "SomaFM Drone Zone - https://somafm.com/dronezone64.pls"
         "SomaFM Groove Salad - https://somafm.com/groovesalad64.pls"
         "SomaFM Space Station - https://somafm.com/spacestation64.pls"
-        "SomaFM Synphaera - https://somafm.com/synphaera64.pls"
-        "SomaFM Vaporwaves - https://somafm.com/vaporwaves64.pls"
+
+        # over 4 entries has ugly scrollbar
+        #"Lofi Girl - https://play.streamafrica.net/lofiradio"
+        #"Lofi Hip-hop - http://hyades.shoutca.st:8043/stream"
+        #"Lofi Hunter - https://live.hunter.fm/lofi_high"
+        #"SomaFM Vaporwaves - https://somafm.com/vaporwaves64.pls"
       ];
     };
 

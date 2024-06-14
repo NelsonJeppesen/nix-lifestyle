@@ -97,6 +97,8 @@
       pkgs.shellcheck
       pkgs.shfmt
 
+      pkgs.yamlfmt
+
       # used by nvim plugins
       pkgs.sqlite
 
