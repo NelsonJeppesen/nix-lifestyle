@@ -1,3 +1,5 @@
+{ pkgs, config, ... }:
+
 {
   # make this a server; dont sleep when laptop is closed
   services.logind.lidSwitch = "ignore";
@@ -10,15 +12,14 @@
       Type = "oneshot";
       ExecStartPost = "${pkgs.util-linux}/bin/setterm -resize";
       ExecStartPre = "/run/current-system/sw/bin/sleep 15";
-      ExecStart = "${pkgs.fbset}/bin/fbset -fb /dev/fb0 -g 2304 1440 2304 1440 32";
+      ExecStart =
+        "${pkgs.fbset}/bin/fbset -fb /dev/fb0 -g 2304 1440 2304 1440 32";
       TTYPath = "/dev/console";
       StandardOutput = "tty";
       StandardInput = "tty-force";
     };
     wantedBy = [ "multi-user.target" ];
-    environment = {
-      TERM = "linux";
-    };
+    environment = { TERM = "linux"; };
   };
 
   systemd.services.console-blank = {
@@ -30,8 +31,6 @@
       StandardOutput = "tty";
     };
     wantedBy = [ "multi-user.target" ];
-    environment = {
-      TERM = "linux";
-    };
+    environment = { TERM = "linux"; };
   };
 }

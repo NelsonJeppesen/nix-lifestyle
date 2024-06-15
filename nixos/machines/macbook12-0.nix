@@ -16,7 +16,6 @@
     ../profiles/zsh.nix
 
     # lets make this a k3s server
-    ../profiles/agenix.nix
     ../profiles/k3s.nix
     ../profiles/macbook12-server.nix
     ../profiles/macbook12.nix

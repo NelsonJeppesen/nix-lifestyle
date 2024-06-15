@@ -1,3 +1,4 @@
+{
   boot.initrd.availableKernelModules = [
     "applespi"
     "intel_lpss_pci"
