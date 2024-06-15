@@ -5,6 +5,7 @@
 3. prep system
 ```
 sudo nix-channel --add https://nixos.org/channels/nixos-unstable nixos
+sudo nix-channel --add https://github.com/ryantm/agenix/archive/main.tar.gz agenix
 sudo nix-channel --update
 ```
 
@@ -18,9 +19,9 @@ sudo nix run \
 ```
 
 ```
-cp -r ../../nix-lifestyle /mnt
-mkdir /mnt/etc
-cd /mnt/etc
-ln -s ../nix-lifestyle/nixos .
-nixos-rebuilt swich --upgrade
+sudo cp -r ../../nix-lifestyle /mnt
+sudo mkdir /mnt/etc
+sudo cd /mnt/etc
+sudo ln -s ../nix-lifestyle/nixos .
+sudo nixos-install --upgrade
 ```
