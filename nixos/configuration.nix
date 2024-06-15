@@ -17,7 +17,7 @@ let
 in
 {
   networking.hostName = hostname;
-  networking.domain = "local";
+  networking.domain = "home.arpa";
 
   imports = [
     # map host name to nix import
