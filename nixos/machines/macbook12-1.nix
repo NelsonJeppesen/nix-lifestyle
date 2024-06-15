@@ -22,5 +22,5 @@
   ];
 
   # node with `services.k3s.clusterInit = true;` set
-  serverAddr = "https://192.168.5.0:6443";
+  services.k3s.serverAddr = "https://192.168.5.0:6443";
 }
