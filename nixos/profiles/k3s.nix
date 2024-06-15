@@ -3,6 +3,8 @@
 {
   age.secrets.k3s-token.file = ../secrets/encrypted/k3s-token.age;
 
+  networking.firewall.enable = false;
+
   services.k3s = {
     enable = true;
     role = "server";
