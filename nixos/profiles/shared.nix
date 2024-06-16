@@ -30,7 +30,7 @@
   programs.neovim.vimAlias = lib.mkDefault true;
   programs.neovim.viAlias = lib.mkDefault true;
 
-  zramSwap.enable = lib.mkDefaul true;
+  zramSwap.enable = lib.mkDefault true;
 
   nix = {
     gc = {
