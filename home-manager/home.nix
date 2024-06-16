@@ -1,7 +1,15 @@
-{ config, lib, pkgs, ... }: {
+{
+  config,
+  lib,
+  pkgs,
+  users,
+  ...
+}:
+{
   nixpkgs.config.allowUnfree = true;
 
   imports = [
+    <agenix/modules/age-home.nix>
     ./git.nix
     ./gnome-extensions.nix
     ./gnome.nix
@@ -17,6 +25,23 @@
   # Add local scripts
   home.sessionPath = [ "/home/nelson/.local/bin" ];
 
+  age.secrets = {
+    "envrc_personal" = {
+      file = /etc/secrets/encrypted/envrc.personal.age;
+      path = "/home/nelson/source/personal/.envrc";
+    };
+    # manually copy this file so I can change context
+    "kubeconfig.personal" = {
+      file = /etc/secrets/encrypted/kubeconfig.personal.age;
+      path = "/home/nelson/source/personal/.kube/config.orig";
+    };
+    "envrc_root" = {
+      file = /etc/secrets/encrypted/envrc.root.age;
+      path = "/home/nelson/source/.envrc";
+    };
+
+  };
+
   programs.firefox = {
     enable = true;
     profiles = {
@@ -24,8 +49,7 @@
         id = 0;
         name = "home";
         # Hide tab bar and side bar header
-        userChrome =
-          "\n          #TabsToolbar\n          { visibility: collapse; }\n          #sidebar-box #sidebar-header {\n            display: none !important;\n          }\n        ";
+        userChrome = "\n          #TabsToolbar\n          { visibility: collapse; }\n          #sidebar-box #sidebar-header {\n            display: none !important;\n          }\n        ";
         settings = {
           "gfx.webrender.all" = true;
           "gfx.webrender.enabled" = true;

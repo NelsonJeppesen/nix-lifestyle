@@ -131,8 +131,8 @@
          add-zsh-hook preexec set-title-preexec
 
          # If opening a new terminal, switch to repo dir
-         if [[ "$TERM" != "linux" && "$(pwd)" = "$HOME" ]]; then
-           cd ~/Documents
+         if [[ "$TERM" != "linux" && "$(pwd)" = "$HOME" && ! "$SSH_CLIENT"]]; then
+           cd ~/source
            clear
          fi
       '';
