@@ -5,13 +5,9 @@
   system.stateVersion = "23.11";
 
   imports = [
-    # secrets
-    ../profiles/agenix.nix
-
     # standard stuff
     ../profiles/intel.nix
     ../profiles/networking.nix
-    ../profiles/shared.nix
     ../profiles/x86_64.nix
     ../profiles/zsh.nix
 

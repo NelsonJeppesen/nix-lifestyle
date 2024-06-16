@@ -22,5 +22,9 @@ in
   imports = [
     # map host name to nix import
     ./machines/${hostname}.nix
+
+    # default profiles
+    ./profiles/agenix.nix
+    ./profiles/shared.nix
   ];
 }

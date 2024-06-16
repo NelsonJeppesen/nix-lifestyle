@@ -1,10 +1,16 @@
-{ config, pkgs, stdenv, lib, ... }: {
+{
+  config,
+  pkgs,
+  stdenv,
+  lib,
+  ...
+}:
+{
   i18n.extraLocaleSettings = {
     LC_TIME = "en_GB.UTF-8";
   }; # monday is the start of the week
 
-  console.earlySetup =
-    lib.mkDefault true; # Set virtual console options in initrd
+  console.earlySetup = lib.mkDefault true; # Set virtual console options in initrd
   environment.defaultPackages = lib.mkDefault [ ]; # Remove default pacakges
   nixpkgs.config.allowUnfree = true; # Chrome, steam etc
   programs.zsh.enable = true;
@@ -12,7 +18,9 @@
   services.dbus.implementation = "broker";
   users.defaultUserShell = pkgs.zsh;
 
-  environment.sessionVariables = rec { MOZ_ENABLE_WAYLAND = "1"; };
+  environment.sessionVariables = rec {
+    MOZ_ENABLE_WAYLAND = "1";
+  };
   nix.extraOptions = "experimental-features = nix-command flakes";
   services.fwupd.enable = lib.mkDefault true;
 
@@ -22,7 +30,7 @@
   programs.neovim.vimAlias = lib.mkDefault true;
   programs.neovim.viAlias = lib.mkDefault true;
 
-  zramSwap.enable = true;
+  zramSwap.enable = lib.mkDefaul true;
 
   nix = {
     gc = {
@@ -44,5 +52,11 @@
     "plugdev"
   ];
 
-  environment.systemPackages = with pkgs; [ wget curl git btop ];
+  environment.systemPackages = with pkgs; [
+    wget
+    curl
+    git
+    btop
+    screen
+  ];
 }
