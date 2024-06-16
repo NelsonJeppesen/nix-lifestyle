@@ -5,6 +5,9 @@
   #programs.steam.enable = true;
 
   imports = [
+    # secrets
+    ../profiles/agenix.nix
+
     ../profiles/desktop.nix
     ../profiles/gnome.nix
     ../profiles/intel.nix

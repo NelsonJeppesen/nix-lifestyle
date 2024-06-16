@@ -131,7 +131,7 @@
          add-zsh-hook preexec set-title-preexec
 
          # If opening a new terminal, switch to repo dir
-         if [[ "$TERM" != "linux" && "$(pwd)" = "$HOME" && ! "$SSH_CLIENT"]]; then
+         if [[ "$TERM" != "linux" && "$(pwd)" = "$HOME" && ! "$SSH_CLIENT" ]]; then
            cd ~/source
            clear
          fi
@@ -184,7 +184,7 @@
 
         # reset
         rst = ''
-          cd ~/Documents
+          cd ~/source
           kubectx --unset
           echo > ~/.aws/sticky.profile
           echo > ~/.aws/sticky.region
