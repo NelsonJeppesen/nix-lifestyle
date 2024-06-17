@@ -15,7 +15,7 @@
 
       # Install Vim Plugins, keep configuration local to install block if possible
       plugins = with pkgs.vimPlugins; [
-      #multicursors-nvim
+        #multicursors-nvim
 
         # "The default colorscheme used by AstroNvim"
         #   https://github.com/AstroNvim/astrotheme/
@@ -332,10 +332,11 @@
         # "A completion plugin for neovim coded in Lua"
         #   https://github.com/hrsh7th/nvim-cmp
         cmp-buffer
-        nvim-lspconfig
+        cmp-cmdline
         cmp-nvim-lsp
         cmp-path
         cmp-treesitter
+        nvim-lspconfig
         {
           plugin = nvim-cmp;
           type = "lua";
@@ -350,19 +351,40 @@
                {name = 'treesitter' },
               }),
 
-              view = {entries = "native"},
-
               window = {
                 completion    = cmp.config.window.bordered(),
                 documentation = cmp.config.window.bordered(),
               },
 
               mapping = {
-                ["<CR>"]    = cmp.mapping.confirm(          { behavior = cmp.ConfirmBehavior.Replace,select = false }),
+                ['<C-b>'] = cmp.mapping.scroll_docs(-4),
+                ['<C-f>'] = cmp.mapping.scroll_docs(4),
+                ['<C-Space>'] = cmp.mapping.complete(),
+                ['<CR>'] = cmp.mapping.confirm({ select = true }),
                 ["<S-Tab>"] = cmp.mapping.select_prev_item( { behavior = cmp.SelectBehavior.Insert }),
                 ["<Tab>"]   = cmp.mapping.select_next_item( { behavior = cmp.SelectBehavior.Insert }),
               },
             })
+
+            -- Use buffer source for `/` and `?` (if you enabled `native_menu`, this won't work anymore).
+            cmp.setup.cmdline({ '/', '?' }, {
+              mapping = cmp.mapping.preset.cmdline(),
+              sources = {
+                { name = 'buffer' }
+              }
+            })
+
+            -- Use cmdline & path source for ':' (if you enabled `native_menu`, this won't work anymore).
+            cmp.setup.cmdline(':', {
+              mapping = cmp.mapping.preset.cmdline(),
+              sources = cmp.config.sources({
+                { name = 'path' }
+              }, {
+                { name = 'cmdline' }
+              }),
+              matching = { disallow_symbol_nonprefix_matching = false }
+            })
+
 
             -- The nvim-cmp almost supports LSP's capabilities so You should advertise it to LSP servers..
             local capabilities = require('cmp_nvim_lsp').default_capabilities()
