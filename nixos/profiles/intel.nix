@@ -9,8 +9,8 @@
 {
   # Use modern Intel iGPU with all the bells
   services.xserver.videoDrivers = [ "modesetting" ];
-  hardware.opengl.enable = true;
-  hardware.opengl.extraPackages = with pkgs; [
+  hardware.graphics.enable = true;
+  hardware.graphics.extraPackages = with pkgs; [
     intel-media-driver # hardware decode/encode of video streams
     intel-vaapi-driver
     libvdpau-va-gl
