@@ -99,8 +99,7 @@
       # chill
       #pkgs.somafm-cli forked
       pkgs.spotify
-      pkgs.qmmp
-      #pkgs.vivaldi
+      pkgs.blanket
       pkgs.fx
 
       # core GUI apps

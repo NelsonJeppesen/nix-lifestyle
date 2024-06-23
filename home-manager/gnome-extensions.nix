@@ -61,6 +61,7 @@
         "SomaFM Drone Zone - https://somafm.com/dronezone64.pls"
         "SomaFM Groove Salad - https://somafm.com/groovesalad64.pls"
         "SomaFM Space Station - https://somafm.com/spacestation64.pls"
+        "SomaFM DEF CON - https://somafm.com/defcon64.pls"
 
         # over 4 entries has ugly scrollbar
         #"Lofi Girl - https://play.streamafrica.net/lofiradio"
