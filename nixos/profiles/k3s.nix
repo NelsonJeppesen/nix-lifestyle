@@ -1,7 +1,7 @@
 { config, ...}:
 
 {
-  age.secrets.k3s-token.file = ../secrets/encrypted/k3s-token.age;
+  age.secrets.k3s-token.file = /etc/secrets/encrypted/k3s-token.age;
 
   networking.firewall.enable = false;
 
