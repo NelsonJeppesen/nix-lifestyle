@@ -18,6 +18,12 @@ sudo nix run \
   -- --mode disko  ./profiles/x86_64.nix
 ```
 
+5. download `nixage` secrets
+```
+cd /etc
+git clone git@github.com:NelsonJeppesen/secrets.git
+```
+
 ```
 sudo cp -r ../../nix-lifestyle /mnt
 sudo mkdir /mnt/etc
