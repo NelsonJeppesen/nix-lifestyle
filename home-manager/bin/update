@@ -15,3 +15,6 @@ nix-channel --update
 
 tput setaf 1; echo -e '\nHome-Manager Switch [user]...\033[0m'
 home-manager switch
+
+tput setaf 1; echo -e '\nCRUD secret files [start agenix service]...\033[0m'
+systemctl start --user agenix
