@@ -1,5 +1,16 @@
 # LG Gram 14 14Z90Q-K.ARW5U1  Intel 12th Gen
-{ fetchurl, fetchgit, fetchhg, config, pkgs, stdenv, lib, modulesPath, ... }: {
+{
+  fetchurl,
+  fetchgit,
+  fetchhg,
+  config,
+  pkgs,
+  stdenv,
+  lib,
+  modulesPath,
+  ...
+}:
+{
   system.stateVersion = "22.11";
 
   imports = [
@@ -11,13 +22,11 @@
     ../profiles/x86_64.nix
     ../profiles/zsh.nix
 
-    ../falcon/falcon.nix
+    /etc/secrets/falcon.nix
   ];
 
   nixpkgs.overlays = [
-    (self: super: {
-      falcon-sensor = super.callPackage ../overlays/falcon-sensor.nix { };
-    })
+    (self: super: { falcon-sensor = super.callPackage ../overlays/falcon-sensor.nix { }; })
   ];
 
   # laptop has 8gb of ram and it can get tight sometimes

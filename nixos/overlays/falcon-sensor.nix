@@ -1,15 +1,16 @@
-{ stdenv
-, lib
-, pkgs
-, dpkg
-, openssl
-, libnl
-, zlib
-, fetchurl
-, autoPatchelfHook
-, buildFHSEnv
-, writeScript
-, ...
+{
+  stdenv,
+  lib,
+  pkgs,
+  dpkg,
+  openssl,
+  libnl,
+  zlib,
+  fetchurl,
+  autoPatchelfHook,
+  buildFHSEnv,
+  writeScript,
+  ...
 }:
 
 let
@@ -18,12 +19,16 @@ let
   # You need to get the binary from #it guys
   # mkdir -p /opt/CrowdStrikeDistro/
   # mv /tmp/falcon*.deb /opt/CrowdStrikeDistro/
-  src = /etc/nixos/falcon/falcon-sensor.deb;
+  src = /etc/falcon-sensor.deb;
   falcon-sensor = stdenv.mkDerivation {
     inherit arch src;
     name = pname;
 
-    buildInputs = [ dpkg zlib autoPatchelfHook ];
+    buildInputs = [
+      dpkg
+      zlib
+      autoPatchelfHook
+    ];
 
     sourceRoot = ".";
 
@@ -46,8 +51,12 @@ in
 
 buildFHSEnv {
   name = "fs-bash";
-    unsharePid = false;
-  targetPkgs = pkgs: [ libnl openssl zlib ];
+  unsharePid = false;
+  targetPkgs = pkgs: [
+    libnl
+    openssl
+    zlib
+  ];
 
   extraInstallCommands = ''
     ln -s ${falcon-sensor}/* $out/
