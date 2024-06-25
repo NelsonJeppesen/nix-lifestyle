@@ -31,6 +31,15 @@
 
   dconf.settings = {
 
+    # https://github.com/rafaelmardojai/blanket
+    #   "Improve focus and increase your productivity by listening to different
+    #   sounds. Or allows you to fall asleep in a noisy environment"
+    "com/rafaelmardojai/Blanket" = {
+      autostart = false;
+      background-playback = true;
+      start-paused = false;
+    };
+
     "org/gnome/shell/extensions/just-perfection" = {
       dash = false;
       search = true;
