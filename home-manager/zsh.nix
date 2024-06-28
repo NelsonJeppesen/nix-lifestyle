@@ -83,6 +83,8 @@
             ca-central-1 = "cac1";
             eu-central-1 = "euc1";
             us-east-1 = "use1";
+            us-west-1 = "usw1";
+            us-west-2 = "usw2";
           };
         };
 
