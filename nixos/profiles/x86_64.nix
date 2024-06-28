@@ -13,7 +13,7 @@
     loader = {
       efi.canTouchEfiVariables = true;
       systemd-boot = {
-        consoleMode = "auto";
+        #consoleMode = "auto";
         enable = true;
       };
     };
