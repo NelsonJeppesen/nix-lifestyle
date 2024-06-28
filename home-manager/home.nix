@@ -30,6 +30,10 @@
       file = /etc/secrets/encrypted/envrc.personal.age;
       path = "/home/nelson/source/personal/.envrc";
     };
+    "awscredentials.personal" = {
+      file = "/etc/secrets/encrypted/awscredentials.personal.age";
+      path = "/home/nelson/source/personal/.aws/credentials";
+    };
     # manually copy this file so I can change context
     "kubeconfig.personal" = {
       file = /etc/secrets/encrypted/kubeconfig.personal.age;
