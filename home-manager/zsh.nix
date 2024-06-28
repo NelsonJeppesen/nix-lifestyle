@@ -176,8 +176,8 @@
         da = "direnv allow";
 
         # Quick notes
-        n = "nb edit work-$(date +%Y-%q).md      2>/dev/null || nb add --title work-$(date +%Y-%q)";
-        np = "nb edit personal-$(date +%Y-%q).md 2>/dev/null || nb add --title personal-$(date +%Y-%q)";
+        n = "nb edit work-$(date +%Y-%m).md      2>/dev/null || nb add --title work-$(date +%Y-%m)";
+        np = "nb edit personal-$(date +%Y-%m).md 2>/dev/null || nb add --title personal-$(date +%Y-%m)";
 
         nsr = ''nsrfun() {if [ "$2" = "" ];then 2="$1";fi;set -x;nix-shell --packages $1 --run $2};nsrfun'';
 
