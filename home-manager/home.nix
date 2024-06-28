@@ -75,6 +75,7 @@
     file.".config/fend/config.toml".source = ./dotfiles/fend.toml;
     file.".local/bin".source = ./bin;
     file.".terraform.d/plugin-cache/.empty".source = ./dotfiles/empty;
+    file.".nbrc".text = ''export NB_DIR="''${NB_DIR:-/home/nelson/source/personal/notes}"'';
 
     packages = [
 
