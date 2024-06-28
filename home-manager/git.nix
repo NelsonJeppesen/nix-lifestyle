@@ -35,6 +35,12 @@
         co = "checkout";
 
         de = "!git diff --name-only | uniq | xargs vim";
+
+        d1 = "diff HEAD~1";
+        d2 = "diff HEAD~2";
+        d3 = "diff HEAD~3";
+        d4 = "diff HEAD~4";
+
         da = "!git diff --name-only | uniq | xargs git add";
         dap = "!git diff --name-only | uniq | xargs git add --patch";
 
