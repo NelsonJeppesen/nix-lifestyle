@@ -170,7 +170,16 @@
 
         # "A fancy, configurable, notification manager for NeoVim"
         #   https://github.com/rcarriga/nvim-notify/
-        { plugin = nvim-notify; }
+        {
+          plugin = nvim-notify;
+          type = "lua";
+          config = ''
+            require("notify").setup({
+              render = 'wrapped-compact',
+              timeout = 2000,
+            })
+          '';
+        }
 
         # "💥 Highly experimental plugin that completely replaces the UI for
         # messages, cmdline and the popupmenu"
@@ -178,7 +187,14 @@
         {
           plugin = noice-nvim;
           type = "lua";
-          config = ''require('noice').setup({})'';
+          config = ''
+            require('noice').setup({})
+            vim.keymap.set("n", "<leader>nl", ":Noice last<cr>")
+            vim.keymap.set("n", "<leader>nh", ":Noice history<cr>")
+            vim.keymap.set("n", "<leader>nc", ":Noice dismiss<cr>")
+            vim.keymap.set("n", "<leader>ne", ":Noice errors<cr>")
+            vim.keymap.set("n", "<leader>nt", ":Noice telescope<cr>")
+          '';
         }
 
         # "Highlight changed text after Undo / Redo operations"

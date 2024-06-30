@@ -1,23 +1,6 @@
 { config, pkgs, ... }:
 {
-  editorconfig = {
-    enable = true;
-    settings = {
-      "*" = {
-        charset = "utf-8";
-        end_of_line = "lf";
-        trim_trailing_whitespace = true;
-        insert_final_newline = true;
-        max_line_width = 0;
-        indent_style = "space";
-        indent_size = 2;
-      };
-    };
-  };
-
   programs = {
-    broot.enable = true;
-    zoxide.enable = true;
     direnv.enable = true;
 
     fzf = {
@@ -33,7 +16,7 @@
       flags = [ "--disable-up-arrow" ];
 
       settings = {
-        sync_address = "http://192.168.4.36:8888";
+        sync_address = "http://192.168.5.0:8888";
         inline_height = 999;
         search_node = "fulltext";
         secrets_filter = true;
@@ -118,25 +101,26 @@
       syntaxHighlighting.enable = true;
 
       initExtra = ''
+        # set kitty colorscheme
         /home/nelson/kitty-colorscheme
 
-         # alt + [left|right]
-         bindkey "^[[1;3C" forward-word
-         bindkey "^[[1;3D" backward-word
+        # ctrl+[left|right] word
+        bindkey "^[[1;5C" forward-word
+        bindkey "^[[1;5D" backward-word
 
-         # kitty tab title to $PWD
-         function set-title-precmd() {printf "\e]2;%s\a" "''${PWD/*\//}"}
-         add-zsh-hook precmd set-title-precmd
+        # kitty tab title to $PWD
+        function set-title-precmd() {printf "\e]2;%s\a" "''${PWD/*\//}"}
+        add-zsh-hook precmd set-title-precmd
 
-         # kitty tab title to running command
-         function set-title-preexec() {printf "\e]2;%s\a" "$1"}
-         add-zsh-hook preexec set-title-preexec
+        # kitty tab title to running command
+        function set-title-preexec() {printf "\e]2;%s\a" "$1"}
+        add-zsh-hook preexec set-title-preexec
 
-         # If opening a new terminal, switch to repo dir
-         if [[ "$TERM" != "linux" && "$(pwd)" = "$HOME" && ! "$SSH_CLIENT" ]]; then
-           cd ~/source
-           clear
-         fi
+        # If opening a new terminal, not over SSH, cd to code directory and clear screen
+        if [[ "$TERM" != "linux" && "$(pwd)" = "$HOME" && ! "$SSH_CLIENT" ]]; then
+          cd ~/source
+          clear
+        fi
       '';
 
       sessionVariables = {

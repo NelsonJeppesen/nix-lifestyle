@@ -1,6 +1,6 @@
-{ config, pkgs, ... }: {
-  home.file.".ssh/allowed_signers".text =
-    "* ${builtins.readFile /home/nelson/.ssh/id_ed25519.pub}";
+{ config, pkgs, ... }:
+{
+  home.file.".ssh/allowed_signers".text = "* ${builtins.readFile /home/nelson/.ssh/id_ed25519.pub}";
 
   programs = {
 
@@ -13,9 +13,13 @@
         # ignore direv files
         ".envrc"
       ];
-      difftastic = { enable = true; };
+      difftastic = {
+        enable = true;
+      };
 
       extraConfig = {
+        credential.helper = "${pkgs.git.override { withLibsecret = true; }}/bin/git-credential-libsecret";
+
         # Sign all commits using ssh key
         commit.gpgsign = true;
         gpg.format = "ssh";
@@ -23,8 +27,12 @@
         merge.conflictstyle = "zdiff3";
         user.signingkey = "~/.ssh/id_ed25519.pub";
 
-        pull = { ff = "only"; };
-        push = { default = "current"; };
+        pull = {
+          ff = "only";
+        };
+        push = {
+          default = "current";
+        };
       };
 
       aliases = {

@@ -10,6 +10,8 @@
 
   imports = [
     <agenix/modules/age-home.nix>
+
+    ./editorconfig.nix
     ./git.nix
     ./gnome-extensions.nix
     ./gnome.nix
@@ -119,6 +121,7 @@
       pkgs.postman
       pkgs.ssm-session-manager-plugin
       pkgs.terraform
+      pkgs.tflint
 
       # better shell scripts
       pkgs.shellcheck
