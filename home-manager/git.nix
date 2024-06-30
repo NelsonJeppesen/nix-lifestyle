@@ -18,8 +18,6 @@
       };
 
       extraConfig = {
-        credential.helper = "${pkgs.git.override { withLibsecret = true; }}/bin/git-credential-libsecret";
-
         # Sign all commits using ssh key
         commit.gpgsign = true;
         gpg.format = "ssh";
@@ -32,6 +30,10 @@
         };
         push = {
           default = "current";
+        };
+
+        credential = {
+          helper = "store";
         };
       };
 
