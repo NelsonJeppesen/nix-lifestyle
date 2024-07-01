@@ -176,7 +176,8 @@
           config = ''
             require("notify").setup({
               render = 'wrapped-compact',
-              timeout = 2000,
+              stages = "fade_in_slide_out",
+              timeout = 3000,
             })
           '';
         }
@@ -188,7 +189,8 @@
           plugin = noice-nvim;
           type = "lua";
           config = ''
-            require('noice').setup({})
+            require('noice').setup({
+              })
             vim.keymap.set("n", "<leader>nl", ":Noice last<cr>")
             vim.keymap.set("n", "<leader>nh", ":Noice history<cr>")
             vim.keymap.set("n", "<leader>nc", ":Noice dismiss<cr>")
