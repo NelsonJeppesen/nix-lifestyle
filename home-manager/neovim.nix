@@ -280,12 +280,15 @@
               logging = true,
               log_level = vim.log.levels.WARN,
               filetype = {
-                yaml = { require("formatter.filetypes.yaml").yamlfmt},
-                tf = { require("formatter.filetypes.terraform").terraformfmt},
-                terraform = { require("formatter.filetypes.terraform").terraformfmt},
-                nix = { require("formatter.filetypes.nix").nixfmt},
-                sh = { require("formatter.filetypes.sh").shfmt},
-                json = {
+                ["terraform-vars"]  = { require("formatter.filetypes.terraform").terraformfmt},
+                nix                 = { require("formatter.filetypes.nix").nixfmt},
+                python              = { require("formatter.filetypes.python").black},
+                ruby                = { require("formatter.filetypes.ruby").rubocop},
+                sh                  = { require("formatter.filetypes.sh").shfmt},
+                terraform           = { require("formatter.filetypes.terraform").terraformfmt},
+                yaml                = { require("formatter.filetypes.yaml").yamlfmt},
+
+                json      = {
                   function()
                     return {
                       exe = "biome",

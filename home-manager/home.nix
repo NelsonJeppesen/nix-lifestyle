@@ -123,6 +123,10 @@
       pkgs.terraform
       pkgs.tflint
 
+      # code
+      pkgs.rubocop
+      pkgs.black
+
       # better shell scripts
       pkgs.shellcheck
       pkgs.shfmt
