@@ -10,7 +10,6 @@
   programs.gnome-shell = {
     enable = true;
     extensions = [
-      #{ package = pkgs.gnomeExtensions.pano; }
       { package = pkgs.gnomeExtensions.appindicator; }
       { package = pkgs.gnomeExtensions.caffeine; }
       { package = pkgs.gnomeExtensions.clipboard-indicator; }
@@ -25,7 +24,6 @@
       { package = pkgs.gnomeExtensions.quick-lofi; }
       { package = pkgs.gnomeExtensions.run-or-raise; }
       { package = pkgs.gnomeExtensions.unblank; }
-      { package = pkgs.gnomeExtensions.wtmb-window-thumbnails; }
     ];
   };
 
@@ -66,18 +64,28 @@
     "org/gnome/shell/extensions/quick-lofi" = {
       volume = 75;
       radios = [
-        # ordered by use
-        "SomaFM Synphaera - https://somafm.com/synphaera64.pls"
-        "SomaFM Drone Zone - https://somafm.com/dronezone64.pls"
-        "SomaFM Groove Salad - https://somafm.com/groovesalad64.pls"
-        "SomaFM Space Station - https://somafm.com/spacestation64.pls"
-        "SomaFM DEF CON - https://somafm.com/defcon64.pls"
+        # somafm
+        "SomaFM DEF CON - http://somafm.com/defcon130.pls"
+        "SomaFM DEF CON [low] - http://somafm.com/defcon32.pls"
+        "SomaFM Drone Zone - http://somafm.com/dronezone130.pls"
+        "SomaFM Groove Salad - http://somafm.com/groovesalad130.pls"
+        "SomaFM Space Station - http://somafm.com/spacestation130.pls"
+        "SomaFM Synphaera - http://somafm.com/synphaera130.pls"
+        "SomaFM Vaporwaves - http://somafm.com/vaporwaves130.pls"
 
-        # over 4 entries has ugly scrollbar
-        #"Lofi Girl - https://play.streamafrica.net/lofiradio"
-        #"Lofi Hip-hop - http://hyades.shoutca.st:8043/stream"
-        #"Lofi Hunter - https://live.hunter.fm/lofi_high"
-        #"SomaFM Vaporwaves - https://somafm.com/vaporwaves64.pls"
+        # bay area npr (the good one)
+        "KALW - https://kalw-live.streamguys1.com/kalw.aac"
+
+        # rekt.network
+        "chillsynth - http://stream.rekt.network/chillsynth.ogg"
+        "darksynth - http://stream.rekt.network/darksynth.ogg"
+        "datawave - http://stream.rekt.network/datawave.ogg"
+        "ebsm - http://stream.rekt.network/ebsm.ogg"
+        "horrorsynth - http://stream.rekt.network/horrorsynth.ogg"
+        "nightride - http://stream.rekt.network/nightride.ogg"
+        "rekt - http://stream.rekt.network/rekt.ogg"
+        "rektory - http://stream.rekt.network/rektory.ogg"
+        "spacesynth - http://stream.rekt.network/spacesynth.ogg"
       ];
     };
 
