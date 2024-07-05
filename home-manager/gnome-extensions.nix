@@ -21,9 +21,12 @@
       { package = pkgs.gnomeExtensions.one-thing; }
       { package = pkgs.gnomeExtensions.picture-of-the-day; }
       { package = pkgs.gnomeExtensions.pip-on-top; }
-      { package = pkgs.gnomeExtensions.quick-lofi; }
       { package = pkgs.gnomeExtensions.run-or-raise; }
       { package = pkgs.gnomeExtensions.unblank; }
+
+      # "Play lofi music on your Gnome desktop with just a click!"
+      #   https://github.com/eucaue/gnome-shell-extension-quick-lofi
+      #{ package = pkgs.gnomeExtensions.quick-lofi; }
     ];
   };
 
