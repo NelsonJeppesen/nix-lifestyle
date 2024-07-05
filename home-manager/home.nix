@@ -123,6 +123,9 @@
       pkgs.terraform
       pkgs.tflint
 
+      # "A terminal spreadsheet multitool for discovering and arranging data"
+      pkgs.visidata
+
       # code
       pkgs.rubocop
       pkgs.black

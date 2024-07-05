@@ -66,6 +66,7 @@
             ca-central-1 = "cac1";
             eu-central-1 = "euc1";
             us-east-1 = "use1";
+            us-east-2 = "use2";
             us-west-1 = "usw1";
             us-west-2 = "usw2";
           };
@@ -144,14 +145,8 @@
         # login via aws sso
         al = "aws sso login";
 
+        # pipe to clipboard
         clipboard = "${pkgs.xsel}/bin/xsel --clipboard";
-
-        hh = ''${pkgs.atuin}/bin/atuin history list --cwd --format "{time}\t{command}"'';
-
-        # Chat GPT chatbot
-        cb = "chatblade";
-        cb3 = "chatblade -c 4";
-        cb4 = "chatblade -c 3.5";
 
         # short 'n sweet
         g = "${pkgs.git}/bin/git";
@@ -164,9 +159,6 @@
         np = "nb edit personal-$(date +%Y-%m).md 2>/dev/null || nb add --title personal-$(date +%Y-%m)";
 
         nsr = ''nsrfun() {if [ "$2" = "" ];then 2="$1";fi;set -x;nix-shell --packages $1 --run $2};nsrfun'';
-
-        ls = "ls --almost-all --group-directories-first --color=auto";
-        l = "ls --almost-all --group-directories-first --color=auto -1";
 
         # reset
         rst = ''
@@ -182,13 +174,6 @@
         # calculator
         f = "fend";
         fc = "clear;fend";
-
-        # grep json; sometimes with color
-        fg = "fastgron";
-        fggc = "fastgron --color|grep --color=never";
-        fgg = "fastgron|grep --color=always";
-
-        w = "walk";
 
         random-theme = "precmd() {a=$(find /nix/store/3a0j7pdbj8hi0lzfmahxqp37rq3d6swp-kitty-themes-unstable-2023-03-08/share/kitty-themes/themes/*.conf | sort -R |head -n1);kitty @ set-colors --all $a;basename $a}";
 
