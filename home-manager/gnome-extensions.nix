@@ -50,16 +50,17 @@
 
     "org/gnome/shell/extensions/clipboard-indicator" = {
       cache-size = 10;
-      clear-history = [ ];
       disable-down-arrow = false;
       display-mode = 0;
       history-size = 200;
-      next-entry = [ "<Control>semicolon" ];
-      prev-entry = [ "<Shift><Control>colon" ];
-      private-mode-binding = [ ];
       strip-text = true;
-      toggle-menu = [ ];
       topbar-preview-size = 8;
+
+      clear-history = [ ];
+      next-entry = [ "<Shift><Control>p" ];
+      prev-entry = [ "<Shift><Control>o" ];
+      private-mode-binding = [ ];
+      toggle-menu = [ "<Shift><Control>i" ];
     };
 
     "org/gnome/shell/extensions/quick-lofi" = {
