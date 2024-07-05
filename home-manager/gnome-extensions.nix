@@ -26,7 +26,7 @@
 
       # "Play lofi music on your Gnome desktop with just a click!"
       #   https://github.com/eucaue/gnome-shell-extension-quick-lofi
-      #{ package = pkgs.gnomeExtensions.quick-lofi; }
+      { package = pkgs.gnomeExtensions.quick-lofi; }
     ];
   };
 
@@ -69,26 +69,29 @@
       radios = [
         # somafm
         "SomaFM DEF CON - http://somafm.com/defcon130.pls"
-        "SomaFM DEF CON [low] - http://somafm.com/defcon32.pls"
+        "SomaFM Doomed - http://somafm.com/doomed130.pls"
         "SomaFM Drone Zone - http://somafm.com/dronezone130.pls"
         "SomaFM Groove Salad - http://somafm.com/groovesalad130.pls"
+        "SomaFM SF 10-33 - http://somafm.com/sf1033130.pls"
         "SomaFM Space Station - http://somafm.com/spacestation130.pls"
         "SomaFM Synphaera - http://somafm.com/synphaera130.pls"
         "SomaFM Vaporwaves - http://somafm.com/vaporwaves130.pls"
 
         # bay area npr (the good one)
-        "KALW - https://kalw-live.streamguys1.com/kalw.aac"
+        "KALW [npr] - https://kalw-live.streamguys1.com/kalw.aac"
 
         # rekt.network
-        "chillsynth - http://stream.rekt.network/chillsynth.ogg"
-        "darksynth - http://stream.rekt.network/darksynth.ogg"
-        "datawave - http://stream.rekt.network/datawave.ogg"
-        "ebsm - http://stream.rekt.network/ebsm.ogg"
-        "horrorsynth - http://stream.rekt.network/horrorsynth.ogg"
-        "nightride - http://stream.rekt.network/nightride.ogg"
-        "rekt - http://stream.rekt.network/rekt.ogg"
-        "rektory - http://stream.rekt.network/rektory.ogg"
-        "spacesynth - http://stream.rekt.network/spacesynth.ogg"
+        "rekt: chillsynth - http://stream.rekt.network/chillsynth.ogg"
+        "rekt: darksynth - http://stream.rekt.network/darksynth.ogg"
+        "rekt: datawave - http://stream.rekt.network/datawave.ogg"
+        "rekt: ebsm - http://stream.rekt.network/ebsm.ogg"
+        "rekt: horrorsynth - http://stream.rekt.network/horrorsynth.ogg"
+        "rekt: nightride - http://stream.rekt.network/nightride.ogg"
+        "rekt: rekt - http://stream.rekt.network/rekt.ogg"
+        "rekt: rektory - http://stream.rekt.network/rektory.ogg"
+        "rekt: spacesynth - http://stream.rekt.network/spacesynth.ogg"
+
+        "[emergency slow internet] - http://somafm.com/defcon32.pls"
       ];
     };
 
