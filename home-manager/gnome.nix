@@ -9,6 +9,13 @@ let
   flameshot-gui = pkgs.writeShellScriptBin "flameshot-gui" "${pkgs.flameshot}/bin/flameshot gui --raw | wl-copy";
 in
 {
+
+  home.file.".config/gtk-3.0/bookmarks".text = ''
+    file:///home/nelson/source/personal
+    file:///home/nelson/source
+    file:///s3fs s3fs
+  '';
+
   dconf.settings = {
     "org/gnome/desktop/interface" = {
       clock-format = "12h";
