@@ -77,8 +77,9 @@
         "SomaFM Synphaera - http://somafm.com/synphaera130.pls"
         "SomaFM Vaporwaves - http://somafm.com/vaporwaves130.pls"
 
-        # bay area npr (the good one)
-        "KALW [npr] - https://kalw-live.streamguys1.com/kalw.aac"
+        # "radio"
+        "KALW - https://kalw-live.streamguys1.com/kalw.aac"
+        "KEXP - https://kexp-mp3-128.streamguys1.com/kexp128.mp3"
 
         # rekt.network
         "rekt: chillsynth - http://stream.rekt.network/chillsynth.ogg"
