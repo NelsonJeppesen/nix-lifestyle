@@ -57,11 +57,11 @@
       settings = {
 
         # Set fonts; disable bold
-        bold_font = "Red Hat Mono Medium";
-        bold_italic_font = "Red Hat Mono Medium Italic";
-        italic_font = "Red Hat Mono Medium Italic";
-        font_family = "Red Hat Mono Medium";
-        font_size = "12.5";
+        bold_font = "Inconsolata Medium";
+        #bold_italic_font = "Fira Code, Regular Italic";
+        #italic_font = "Fira Code, Regular Italic";
+        font_family = "Inconsolata Medium";
+        font_size = "13.0";
 
         window_border_width = "1px";
         window_margin_width = "0";

@@ -88,12 +88,17 @@
       pkgs.vitetris
 
       (pkgs.nerdfonts.override { fonts = [ "NerdFontsSymbolsOnly" ]; })
-      pkgs.b612
-      pkgs.atkinson-hyperlegible
-      pkgs.redhat-official-fonts
-      pkgs.source-code-pro
+
+      #pkgs.atkinson-hyperlegible
+      #pkgs.maple-mono
+      #pkgs.b612
+      #pkgs.fira-code
+      pkgs.inconsolata
       #pkgs.meslo-lg
+      #pkgs.oxygenfonts
+      #pkgs.redhat-official-fonts
       #pkgs.roboto-mono
+      #pkgs.source-code-pro
 
       # formaters
       pkgs.biome

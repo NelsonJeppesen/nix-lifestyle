@@ -538,6 +538,8 @@
 
         " ALWAYS keep cursor centered
         set scrolloff=15
+
+        set wrap
       '';
 
       extraLuaConfig = '''';
