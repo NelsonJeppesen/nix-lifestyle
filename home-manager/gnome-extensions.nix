@@ -167,7 +167,7 @@
       bold-color-same-as-fg = true;
       bold-is-bright = true;
       command = "custom-command";
-      custom-command = "zsh -ceil -- 'cd /home/nelson/Documents;/home/nelson/.nix-profile/bin/chatgpt'";
+      custom-command = "zsh -ceil -- 'cd /home/nelson/source/personal;/home/nelson/.nix-profile/bin/chatgpt'";
       custom-font = "B612 Mono 13";
       ddterm-toggle-hotkey = [ "<Super>t" ];
       foreground-color = "rgb(255,255,255)";
