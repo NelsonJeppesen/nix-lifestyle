@@ -10,3 +10,8 @@
   * [kitty](https://sw.kovidgoyal.net/kitty/)
   * [neovim](https://neovim.io/) and plugins
   * [zsh](https://en.wikipedia.org/wiki/Z_shell)
+
+ **systems**
+  * LG Gram 14
+  * LG Gram 17
+  * (3) Apple Macbook 12 `k3s`
