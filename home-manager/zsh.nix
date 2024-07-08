@@ -3,6 +3,21 @@
   programs = {
     direnv.enable = true;
 
+    eza = {
+      enable = true;
+      git = true;
+      icons = false;
+
+      extraOptions = [
+        "--group-directories-first"
+        "--long"
+        "--no-filesize"
+        "--no-permissions"
+        "--no-time"
+        "--no-user"
+      ];
+    };
+
     fzf = {
       enable = true;
       defaultOptions = [
