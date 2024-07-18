@@ -129,7 +129,7 @@
       pkgs.tflint
 
       # "A terminal spreadsheet multitool for discovering and arranging data"
-      pkgs.visidata
+      #pkgs.visidata
 
       # code
       pkgs.rubocop
@@ -180,7 +180,7 @@
       pkgs.wl-clipboard
 
       # Kubernetes
-      pkgs.glooctl
+      #pkgs.glooctl
       pkgs.helmfile
       pkgs.kubectl
       pkgs.kubectx

@@ -15,6 +15,7 @@ let
 in
 {
   hardware.bluetooth.enable = true;
+  hardware.pulseaudio.enable = false;
 
   #boot.initrd.systemd.enable = true;
   #boot.initrd.unl0kr.enable = true;
@@ -28,10 +29,9 @@ in
   security.pki.certificates = [ cert ];
 
   # Pipewire
-  sound.enable = true;
-  hardware.pulseaudio.enable = false;
   services.pipewire = {
     alsa.enable = true;
+    audio.enable = true;
     enable = true;
     pulse.enable = true;
   };
