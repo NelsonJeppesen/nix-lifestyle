@@ -448,14 +448,7 @@
           plugin = which-key-nvim;
           type = "lua";
           config = ''
-            require('which-key').setup({
-              window = {
-                border    = "none",
-                position  = "top",
-                margin    = { .25, .25, .25, .25 },
-                padding   = {   0,   0,   0,   0 },
-              }
-            })
+            require("which-key")
           '';
         }
 

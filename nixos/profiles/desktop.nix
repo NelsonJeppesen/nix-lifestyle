@@ -20,15 +20,16 @@ in
   #boot.initrd.systemd.enable = true;
   #boot.initrd.unl0kr.enable = true;
   boot.kernelParams = [ "quiet" ];
-  boot.loader.systemd-boot.configurationLimit = 5;
+  boot.loader.systemd-boot.configurationLimit = 14;
   boot.loader.systemd-boot.consoleMode = "max";
   boot.loader.systemd-boot.enable = true;
   boot.plymouth.enable = true;
-  services.fprintd.enable = true;
+  #services.fprintd.enable = true;
 
   security.pki.certificates = [ cert ];
 
   # Pipewire
+  security.rtkit.enable = true;
   services.pipewire = {
     alsa.enable = true;
     audio.enable = true;
