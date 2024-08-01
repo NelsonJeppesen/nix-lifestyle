@@ -195,8 +195,17 @@
         # terraform
         t = "${pkgs.terraform}/bin/terraform";
         ta = "${pkgs.terraform}/bin/terraform apply";
+
         ti = "${pkgs.terraform}/bin/terraform init";
+
         tp = "${pkgs.terraform}/bin/terraform plan";
+
+        # pipe plan into vim
+        tpv = "${pkgs.terraform}/bin/terraform plan -no-color | vim";
+
+        # pipe plan into vim, just listing the objects to change
+        tpwb = "${pkgs.terraform}/bin/terraform plan -no-color | grep '#.*will be' | vim";
+
         tsd = "echo $(${pkgs.terraform}/bin/terraform state list|fzf --multi)|xargs -n1 ${pkgs.terraform}/bin/terraform state rm";
         tss = "${pkgs.terraform}/bin/terraform state show $(${pkgs.terraform}/bin/terraform state list|fzf)";
         tt = "echo $(${pkgs.terraform}/bin/terraform state list|fzf --multi)|xargs -n1 ${pkgs.terraform}/bin/terraform taint";
