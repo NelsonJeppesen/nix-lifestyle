@@ -13,9 +13,9 @@
 
   # Remove gnome tools I don't use
   environment.gnome.excludePackages = with pkgs.gnome; [
-    gnome-backgrounds
-    gnome-maps
-    gnome-music
+    pkgs.gnome-backgrounds
+    pkgs.gnome-maps
+    pkgs.gnome-music
     pkgs.gnome-tour
     pkgs.gnome-user-docs
     pkgs.gnome-video-effects

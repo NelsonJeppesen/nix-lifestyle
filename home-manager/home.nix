@@ -110,7 +110,7 @@
       # chill
       #pkgs.somafm-cli forked
       pkgs.spotify
-      pkgs.blanket
+      #pkgs.blanket
       pkgs.fx
 
       # core GUI apps

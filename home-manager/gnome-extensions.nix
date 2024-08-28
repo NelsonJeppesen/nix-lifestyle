@@ -24,7 +24,6 @@
       { package = pkgs.gnomeExtensions.run-or-raise; }
       { package = pkgs.gnomeExtensions.unblank; }
 
-      # using local copy until updated version makes it to nix store
       # "Play lofi music on your Gnome desktop with just a click!"
       #   https://github.com/eucaue/gnome-shell-extension-quick-lofi
       #{ package = pkgs.gnomeExtensions.quick-lofi; }
