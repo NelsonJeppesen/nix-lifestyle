@@ -171,24 +171,24 @@
         # SQLite LuaJIT binding with a very simple api.
         #   https://github.com/kkharji/sqlite.lua/
         # used by: nvim-neoclip
-        {
-          plugin = sqlite-lua;
-          config = "let g:sqlite_clib_path = '${pkgs.sqlite.out}/lib/libsqlite3.so'";
-        }
+        #{
+        #  plugin = sqlite-lua;
+        #  config = "let g:sqlite_clib_path = '${pkgs.sqlite.out}/lib/libsqlite3.so'";
+        #}
 
-        # Clipboard manager neovim plugin with telescope integration
-        #   https://github.com/AckslD/nvim-neoclip.lua
-        {
-          plugin = nvim-neoclip-lua;
-          type = "lua";
-          config = ''
-            require('neoclip').setup({
-              continuous_sync = true,
-              enable_persistent_history = true,
-              history = 9999,
-            })
-          '';
-        }
+        ## Clipboard manager neovim plugin with telescope integration
+        ##   https://github.com/AckslD/nvim-neoclip.lua
+        #{
+        #  plugin = nvim-neoclip-lua;
+        #  type = "lua";
+        #  config = ''
+        #    require('neoclip').setup({
+        #      continuous_sync = true,
+        #      enable_persistent_history = true,
+        #      history = 9999,
+        #    })
+        #  '';
+        #}
 
         # "A fancy, configurable, notification manager for NeoVim"
         #   https://github.com/rcarriga/nvim-notify/
@@ -243,7 +243,7 @@
             nnoremap  ,,b  <cmd>Telescope buffers<cr>
             nnoremap  ,,c  <cmd>Telescope command_history<cr>
             nnoremap  ,,f  <cmd>Telescope find_files<cr>
-            nnoremap  ,,p  <cmd>Telescope neoclip<cr>
+            "nnoremap  ,,p  <cmd>Telescope neoclip<cr>
             nnoremap  ,,u  <cmd>Telescope undo<cr>
 
             nnoremap  ,,g  :execute 'Telescope git_files cwd=' . expand('%:p:h')<cr>
@@ -268,7 +268,7 @@
                 augroup END
               ]], false)
 
-              require('telescope').load_extension('neoclip')
+              -- require('telescope').load_extension('neoclip')
               require('telescope').load_extension('undo')
             EOF
           '';

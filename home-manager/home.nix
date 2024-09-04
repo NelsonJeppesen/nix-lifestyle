@@ -75,6 +75,7 @@
 
     file.".config/curlrc".source = ./dotfiles/curlrc;
     file.".config/fend/config.toml".source = ./dotfiles/fend.toml;
+    file.".digrc".source = ./dotfiles/digrc;
     file.".local/bin".source = ./bin;
     file.".terraform.d/plugin-cache/.empty".source = ./dotfiles/empty;
 
@@ -122,6 +123,7 @@
 
       # cloud management
       pkgs.awscli2
+      pkgs.oci-cli
       pkgs.opentofu # terraform fork
       pkgs.postman
       pkgs.ssm-session-manager-plugin
