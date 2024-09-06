@@ -51,17 +51,18 @@
 
     "org/gnome/shell/extensions/clipboard-indicator" = {
       cache-size = 10;
-      disable-down-arrow = false;
-      display-mode = 0;
-      history-size = 200;
-      strip-text = true;
-      topbar-preview-size = 8;
-
       clear-history = [ ];
+      disable-down-arrow = true;
+      display-mode = 1;
+      history-size = 200;
+      move-item-first = true;
       next-entry = [ "<Shift><Control>p" ];
+      paste-button = false;
       prev-entry = [ "<Shift><Control>o" ];
       private-mode-binding = [ ];
+      strip-text = true;
       toggle-menu = [ "<Shift><Control>i" ];
+      topbar-preview-size = 9;
     };
 
     "org/gnome/shell/extensions/quick-lofi" = {
