@@ -169,6 +169,7 @@
       pkgs.fend
       pkgs.gh
       pkgs.gh-dash
+      pkgs.hurl
       pkgs.ipcalc
       pkgs.nb
       #pkgs.nvimpager
