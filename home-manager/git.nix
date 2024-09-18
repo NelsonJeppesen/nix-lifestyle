@@ -1,10 +1,9 @@
 { config, pkgs, ... }:
 let
   gitalias = builtins.fetchGit {
-  url = "https://github.com/GitAlias/gitalias.git";
-  ref = "main";
-};
-
+    url = "https://github.com/GitAlias/gitalias.git";
+    ref = "main";
+  };
 
 in
 {
@@ -18,8 +17,15 @@ in
       userEmail = "50854675+NelsonJeppesen@users.noreply.github.com";
 
       includes = [
+        # https://github.com/GitAlias/gitalias?tab=readme-ov-file#index-of-all-aliases
+        # include a huge list of pre-built git aliases
         { path = "${gitalias}/gitalias.txt"; }
-    ];
+      ];
+
+      aliases = {
+        pu = "push";
+        puf = "!git push --force-with-lease";
+      };
 
       ignores = [
         # ignore direv files
