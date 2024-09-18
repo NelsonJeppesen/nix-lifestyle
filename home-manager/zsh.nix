@@ -103,11 +103,6 @@
     zsh = {
       enable = true;
 
-      oh-my-zsh = {
-        enable = true;
-        plugins = [ "git" ];
-      };
-
       plugins = [
         {
           file = "share/fzf-tab/fzf-tab.plugin.zsh";
@@ -197,11 +192,12 @@
 
         check-ptr = ''
           (){
-                    FORWARD_IP="$(dig $1 +short)"
-                    PTR_HOSTNAME="$(dig -x $FORWARD_IP +short)"
-                    if [ "$1." = "$PTR_HOSTNAME" ];then MATCH="✅";else MATCH="❌";fi
-                    echo -e "$MATCH $1 --> ''${FORWARD_IP:=missing}\n   ''${FORWARD_IP:=missing} --> ''${PTR_HOSTNAME:=missing}"
-                  }'';
+              FORWARD_IP="$(dig $1 +short)"
+              PTR_HOSTNAME="$(dig -x $FORWARD_IP +short)"
+              if [ "$1." = "$PTR_HOSTNAME" ];then MATCH="✅";else MATCH="❌";fi
+              echo -e "$MATCH $1 --> ''${FORWARD_IP:=missing}\n   ''${FORWARD_IP:=missing} --> ''${PTR_HOSTNAME:=missing}"
+            }
+        '';
 
         random-theme = "precmd() {a=$(find /nix/store/3a0j7pdbj8hi0lzfmahxqp37rq3d6swp-kitty-themes-unstable-2023-03-08/share/kitty-themes/themes/*.conf | sort -R |head -n1);kitty @ set-colors --all $a;basename $a}";
 

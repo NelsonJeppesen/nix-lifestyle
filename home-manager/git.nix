@@ -1,4 +1,12 @@
 { config, pkgs, ... }:
+let
+  gitalias = builtins.fetchGit {
+  url = "https://github.com/GitAlias/gitalias.git";
+  ref = "main";
+};
+
+
+in
 {
   home.file.".ssh/allowed_signers".text = "* ${builtins.readFile /home/nelson/.ssh/id_ed25519.pub}";
 
@@ -8,6 +16,10 @@
       enable = true;
       userName = "Nelson Jeppesen";
       userEmail = "50854675+NelsonJeppesen@users.noreply.github.com";
+
+      includes = [
+        { path = "${gitalias}/gitalias.txt"; }
+    ];
 
       ignores = [
         # ignore direv files
