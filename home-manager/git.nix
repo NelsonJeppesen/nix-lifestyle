@@ -25,6 +25,7 @@ in
       aliases = {
         pu = "push";
         puf = "!git push --force-with-lease";
+        br = "!git co $(git branch --list --sort=-committerdate|fzf --height 15)";
       };
 
       ignores = [
@@ -42,6 +43,10 @@ in
         gpg.ssh.allowedSignersFile = "~/.ssh/allowed_signers";
         merge.conflictstyle = "zdiff3";
         user.signingkey = "~/.ssh/id_ed25519.pub";
+
+        branch = {
+          sort = "-committerdate";
+        };
 
         pull = {
           ff = "only";

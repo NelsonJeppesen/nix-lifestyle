@@ -190,8 +190,7 @@
         f = "fend";
         fc = "clear;fend";
 
-        check-ptr = ''
-          (){
+        check-ptr = ''(){
               FORWARD_IP="$(dig $1 +short)"
               PTR_HOSTNAME="$(dig -x $FORWARD_IP +short)"
               if [ "$1." = "$PTR_HOSTNAME" ];then MATCH="✅";else MATCH="❌";fi
