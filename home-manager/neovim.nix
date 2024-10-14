@@ -223,11 +223,11 @@
 
         # "Highlight changed text after Undo / Redo operations"
         #   https://github.com/tzachar/highlight-undo.nvim/
-        {
-          plugin = highlight-undo-nvim;
-          type = "lua";
-          config = ''require('highlight-undo').setup({duration = 2000})'';
-        }
+        #{
+        #  plugin = highlight-undo-nvim;
+        #  type = "lua";
+        #  config = ''require('highlight-undo').setup({duration = 2000})'';
+        #}
 
         # "A telescope extension to view and search your undo tree 🌴"
         #   https://github.com/debugloop/telescope-undo.nvim/

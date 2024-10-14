@@ -160,6 +160,7 @@
       pkgs.yq
 
       # core shell tools
+      #pkgs.nvimpager
       #pkgs.terminal-stocks
       pkgs.btop
       pkgs.choose
@@ -171,8 +172,8 @@
       pkgs.gh-dash
       pkgs.hurl
       pkgs.ipcalc
+      pkgs.jira-cli-go
       pkgs.nb
-      #pkgs.nvimpager
       pkgs.p7zip
       pkgs.ripgrep
       pkgs.sd
