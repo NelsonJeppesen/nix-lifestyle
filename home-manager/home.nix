@@ -137,7 +137,7 @@ in
       pkgs.awscli2
       pkgs.oci-cli
       pkgs.opentofu # terraform fork
-      pkgs.postman
+      #pkgs.postman
       pkgs.ssm-session-manager-plugin
       pkgs.terraform
       pkgs.tflint
