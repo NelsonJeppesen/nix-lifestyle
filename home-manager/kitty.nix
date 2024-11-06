@@ -61,7 +61,7 @@
         #bold_italic_font = "Fira Code, Regular Italic";
         #italic_font = "Fira Code, Regular Italic";
         font_family = "Inconsolata Medium";
-        font_size = "13.0";
+        font_size = "14.0";
 
         window_border_width = "1px";
         window_margin_width = "0";

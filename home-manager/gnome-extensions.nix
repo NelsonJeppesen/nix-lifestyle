@@ -14,9 +14,9 @@
       { package = pkgs.gnomeExtensions.caffeine; }
       { package = pkgs.gnomeExtensions.clipboard-indicator; }
       { package = pkgs.gnomeExtensions.ddterm; }
-      { package = pkgs.gnomeExtensions.hue-lights; }
+      #{ package = pkgs.gnomeExtensions.hue-lights; }
       { package = pkgs.gnomeExtensions.just-perfection; }
-      { package = pkgs.gnomeExtensions.light-style; }
+      #{ package = pkgs.gnomeExtensions.light-style; }
       { package = pkgs.gnomeExtensions.night-theme-switcher; }
       { package = pkgs.gnomeExtensions.one-thing; }
       { package = pkgs.gnomeExtensions.picture-of-the-day; }
@@ -170,9 +170,8 @@
       backspace-binding = "auto";
       bold-color-same-as-fg = true;
       bold-is-bright = true;
-      command = "custom-command";
-      custom-command = "zsh -ceil -- 'cd /home/nelson/source/personal;/home/nelson/.nix-profile/bin/chatgpt'";
-      custom-font = "B612 Mono 13";
+      command = "user-shell";
+      custom-font = "Inconsolata Medium 13";
       ddterm-toggle-hotkey = [ "<Super>t" ];
       foreground-color = "rgb(255,255,255)";
       hide-when-focus-lost = true;

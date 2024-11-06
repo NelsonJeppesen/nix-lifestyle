@@ -6,7 +6,7 @@
     eza = {
       enable = true;
       git = true;
-      icons = false;
+      icons = null;
 
       extraOptions = [
         "--group-directories-first"

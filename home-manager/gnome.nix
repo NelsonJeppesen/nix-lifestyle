@@ -18,6 +18,7 @@ in
 
   dconf.settings = {
     "org/gnome/desktop/interface" = {
+      accent-color = "pink";
       clock-format = "12h";
       enable-hot-corners = false;
       show-battery-percentage = true;
