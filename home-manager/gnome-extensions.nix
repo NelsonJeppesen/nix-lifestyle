@@ -26,7 +26,7 @@
 
       # "Play lofi music on your Gnome desktop with just a click!"
       #   https://github.com/eucaue/gnome-shell-extension-quick-lofi
-      #{ package = pkgs.gnomeExtensions.quick-lofi; }
+      { package = pkgs.gnomeExtensions.quick-lofi; }
     ];
   };
 
@@ -72,7 +72,7 @@
       radios = [
         # somafm
         "SomaFM DEF CON - http://somafm.com/defcon130.pls"
-        "SomaFM Doomed - http://somafm.com/doomed130.pls"
+        "SomaFM Dark Zone - http://somafm.com/darkzone130.pls"
         "SomaFM Drone Zone - http://somafm.com/dronezone130.pls"
         "SomaFM Groove Salad - http://somafm.com/groovesalad130.pls"
         "SomaFM SF 10-33 - http://somafm.com/sf1033130.pls"

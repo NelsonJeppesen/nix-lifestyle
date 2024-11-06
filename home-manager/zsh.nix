@@ -160,6 +160,8 @@
         # login via aws sso
         al = "aws sso login";
 
+        a = "sgpt";
+
         # pipe to clipboard
         clipboard = "${pkgs.xsel}/bin/xsel --clipboard";
 
@@ -192,14 +194,15 @@
 
         jci = "jira issue create --assignee 'Nelson Jeppesen' --label SRETasks";
         jil = "jira issue list   --assignee 'Nelson Jeppesen' --updated '-2w' --order-by RESOLUTION";
-        jclose = ''jira issue list --assignee 'Nelson Jeppesen' --updated '-2w' --order-by 'RESOLUTION' --jql 'resolution = EMPTY' --plain --columns KEY,SUMMARY --no-headers | fzf --select-1 --bind 'enter:execute(jira issue move {1} "Resolve Issue" --resolution Done)+abort' '';
+        jdone = ''jira issue list --assignee 'Nelson Jeppesen' --updated '-2w' --order-by 'RESOLUTION' --jql 'resolution = EMPTY' --plain --columns KEY,SUMMARY --no-headers | fzf --select-1 --bind 'enter:execute(jira issue move {1} "Resolve Issue" --resolution Done)+abort' '';
 
-        check-ptr = ''(){
-              FORWARD_IP="$(dig $1 +short)"
-              PTR_HOSTNAME="$(dig -x $FORWARD_IP +short)"
-              if [ "$1." = "$PTR_HOSTNAME" ];then MATCH="✅";else MATCH="❌";fi
-              echo -e "$MATCH $1 --> ''${FORWARD_IP:=missing}\n   ''${FORWARD_IP:=missing} --> ''${PTR_HOSTNAME:=missing}"
-            }
+        check-ptr = ''
+          (){
+                        FORWARD_IP="$(dig $1 +short)"
+                        PTR_HOSTNAME="$(dig -x $FORWARD_IP +short)"
+                        if [ "$1." = "$PTR_HOSTNAME" ];then MATCH="✅";else MATCH="❌";fi
+                        echo -e "$MATCH $1 --> ''${FORWARD_IP:=missing}\n   ''${FORWARD_IP:=missing} --> ''${PTR_HOSTNAME:=missing}"
+                      }
         '';
 
         random-theme = "precmd() {a=$(find /nix/store/3a0j7pdbj8hi0lzfmahxqp37rq3d6swp-kitty-themes-unstable-2023-03-08/share/kitty-themes/themes/*.conf | sort -R |head -n1);kitty @ set-colors --all $a;basename $a}";
