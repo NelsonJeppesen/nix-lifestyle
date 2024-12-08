@@ -11,18 +11,21 @@
         executable = true;
         text = ''
           #!/usr/bin/env bash
-          # set color scheme for Kitty live
+          # set kitty-colorscheme in live using gnomes light/dark setting
+
           GNOME_THEME="$(dconf read /org/gnome/desktop/interface/color-scheme | tr -d "'")"
+          KITTY_THEME_PATH="${pkgs.kitty-themes}/share/kitty-themes/themes"
 
           if [[ "$GNOME_THEME" == "default" ]]; then
-            kitty @ --to unix:/tmp/kitty load-config                             \
-              ${pkgs.kitty-themes}/share/kitty-themes/themes/ForestNight.conf     \
-              ~/.config/kitty/kitty.conf
+            #THEME="OneHalfLight"
+            THEME="GruvboxMaterialLightHard"
           else
-            kitty @ --to unix:/tmp/kitty load-config                              \
-              ${pkgs.kitty-themes}/share/kitty-themes/themes/rose-pine-moon.conf  \
-              ~/.config/kitty/kitty.conf
+            #THEME="OneDark-Pro"
+            #THEME="Nightfox"
+            THEME="GruvboxMaterialDarkHard"
           fi
+
+          kitty @ --to unix:/tmp/kitty load-config $KITTY_THEME_PATH/$THEME.conf ~/.config/kitty/kitty.conf
         '';
       };
     };
@@ -48,10 +51,21 @@
         "kitty_mod+right" = "next_tab";
         "kitty_mod+n" = "new_tab_with_cwd";
 
-        # search
-        "kitty_mod+s" = "show_scrollback";
+        # copy to clipboard
+        "f1" =
+          "launch --type background     --stdin-source=@last_cmd_output     ${pkgs.wl-clipboard}/bin/wl-copy --paste-once";
+        "f2" =
+          "launch --type background     --stdin-source=@screen              ${pkgs.wl-clipboard}/bin/wl-copy --paste-once";
+        "f3" =
+          "launch --type background     --stdin-source=@screen_scrollback   ${pkgs.wl-clipboard}/bin/wl-copy --paste-once";
 
-        "f11" = "toggle_fullscreen";
+        "f6" = "launch --type tab       --stdin-source=@last_cmd_output   nvim";
+        "f7" = "launch --type tab       --stdin-source=@screen            nvim";
+        "f8" = "launch --type tab       --stdin-source=@screen_scrollback nvim";
+
+        "f10" = "launch --type overlay  --stdin-source=@last_cmd_output   nvim";
+        "f11" = "launch --type overlay  --stdin-source=@screen            nvim";
+        "f12" = "launch --type overlay  --stdin-source=@screen_scrollback nvim";
       };
 
       settings = {

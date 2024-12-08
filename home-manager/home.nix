@@ -6,13 +6,16 @@
   ...
 }:
 let
-  pinnedZoomPkgs = import (builtins.fetchTarball {
-      url = "https://github.com/NixOS/nixpkgs/archive/0c19708cf035f50d28eb4b2b8e7a79d4dc52f6bb.tar.gz";
-      sha256 = "0ngw2shvl24swam5pzhcs9hvbwrgzsbcdlhpvzqc7nfk8lc28sp3";
-  }) {
-    system = "x86_64-linux";
-    config.allowUnfree = true;
-  };
+  pinnedZoomPkgs =
+    import
+      (builtins.fetchTarball {
+        url = "https://github.com/NixOS/nixpkgs/archive/0c19708cf035f50d28eb4b2b8e7a79d4dc52f6bb.tar.gz";
+        sha256 = "0ngw2shvl24swam5pzhcs9hvbwrgzsbcdlhpvzqc7nfk8lc28sp3";
+      })
+      {
+        system = "x86_64-linux";
+        config.allowUnfree = true;
+      };
 
   pinnedZoom = pinnedZoomPkgs.zoom-us;
 in
@@ -99,7 +102,7 @@ in
       #pkgs.mindustry
       pkgs.vitetris
 
-      (pkgs.nerdfonts.override { fonts = [ "NerdFontsSymbolsOnly" ]; })
+      pkgs.nerd-fonts.symbols-only
 
       #pkgs.atkinson-hyperlegible
       #pkgs.maple-mono
@@ -112,6 +115,13 @@ in
       #pkgs.roboto-mono
       #pkgs.source-code-pro
 
+      pkgs.google-chrome
+
+      #pkgs.ecapture
+
+      #pkgs.libreoffice
+      pkgs.onlyoffice-desktopeditors
+
       # formaters
       pkgs.biome
       pkgs.nixfmt-rfc-style
@@ -123,7 +133,7 @@ in
       #pkgs.somafm-cli forked
       pkgs.spotify
       #pkgs.blanket
-      pkgs.fx
+      #pkgs.fx
 
       # core GUI apps
       #pkgs.fractal
@@ -181,8 +191,8 @@ in
       pkgs.dnsutils
       pkgs.fd
       pkgs.fend
-      pkgs.gh
-      pkgs.gh-dash
+      #pkgs.gh
+      #pkgs.gh-dash
       pkgs.hurl
       pkgs.ipcalc
       pkgs.jira-cli-go

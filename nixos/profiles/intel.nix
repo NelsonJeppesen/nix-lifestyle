@@ -62,7 +62,7 @@
     PLATFORM_PROFILE_ON_BAT = "low-power";
     RUNTIME_PM_ON_AC = "auto";
     RUNTIME_PM_ON_BAT = "auto";
-    WIFI_PWR_ON_AC = "on";
-    WIFI_PWR_ON_BAT = "on";
+    WIFI_PWR_ON_AC = "off";
+    WIFI_PWR_ON_BAT = "off";
   };
 }

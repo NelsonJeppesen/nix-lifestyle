@@ -10,13 +10,15 @@
   programs.gnome-shell = {
     enable = true;
     extensions = [
+      #{ package = pkgs.gnomeExtensions.light-style; }
+
       { package = pkgs.gnomeExtensions.appindicator; }
+      { package = pkgs.gnomeExtensions.bitcoin-markets; }
       { package = pkgs.gnomeExtensions.caffeine; }
       { package = pkgs.gnomeExtensions.clipboard-indicator; }
       { package = pkgs.gnomeExtensions.ddterm; }
-      #{ package = pkgs.gnomeExtensions.hue-lights; }
+      { package = pkgs.gnomeExtensions.hue-lights; }
       { package = pkgs.gnomeExtensions.just-perfection; }
-      #{ package = pkgs.gnomeExtensions.light-style; }
       { package = pkgs.gnomeExtensions.night-theme-switcher; }
       { package = pkgs.gnomeExtensions.one-thing; }
       { package = pkgs.gnomeExtensions.picture-of-the-day; }
@@ -31,15 +33,6 @@
   };
 
   dconf.settings = {
-
-    # https://github.com/rafaelmardojai/blanket
-    #   "Improve focus and increase your productivity by listening to different
-    #   sounds. Or allows you to fall asleep in a noisy environment"
-    "com/rafaelmardojai/Blanket" = {
-      autostart = false;
-      background-playback = true;
-      start-paused = false;
-    };
 
     "org/gnome/shell/extensions/just-perfection" = {
       dash = false;
@@ -120,12 +113,6 @@
       toggle-shortcut = [ "<Super>c" ];
     };
 
-    "org/gnome/shell/extensions/github-notifications" = {
-      handle = "NelsonJeppesen";
-      hide-widget = true;
-      refresh-interval = 61;
-    };
-
     "org/gnome/shell/extensions/nightthemeswitcher/commands" = {
       enabled = true;
       sunset = "/home/nelson/kitty-colorscheme";
@@ -143,20 +130,6 @@
       location-in-status-bar = 0;
       show-settings-button-on-popup = false;
     };
-
-    #"org/gnome/shell/extensions/pano" = {
-    #  history-length = 500;
-    #  keep-search-entry = false;
-    #  open-links-in-browser = false;
-    #  play-audio-on-copy = false;
-    #  send-notification-on-copy = false;
-    #  show-indicator = false;
-    #  window-position = lib.hm.gvariant.mkUint32 (1); # right side of the screen
-    #};
-
-    #"org/gnome/shell/extensions/pano/text-item" = {
-    #  body-bg-color = "rgb(153,193,241)";
-    #};
 
     "org/gnome/shell/extensions/unblank" = {
       power = false;

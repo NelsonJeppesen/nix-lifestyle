@@ -504,6 +504,8 @@
         nnoremap <leader>bj  :%!jq .<CR>
         nnoremap <leader>by  :%!yq -y .<CR>
 
+        nnoremap <leader>q :q!<CR>
+
         " persistent undo
         if !isdirectory($HOME."/.config/nvim/undo")
             call mkdir($HOME."/.config/nvim/undo", "", 0700)
