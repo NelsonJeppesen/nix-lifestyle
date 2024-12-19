@@ -87,6 +87,7 @@ in
     username = "nelson";
     homeDirectory = "/home/nelson";
 
+    file.".config/aichat/config.yaml".source = ./dotfiles/aichat.yaml;
     file.".config/curlrc".source = ./dotfiles/curlrc;
     file.".config/fend/config.toml".source = ./dotfiles/fend.toml;
     file.".digrc".source = ./dotfiles/digrc;

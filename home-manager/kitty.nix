@@ -52,9 +52,11 @@
         "kitty_mod+n" = "new_tab_with_cwd";
 
         "f1" =
-          "launch --title 'AIChat'            zsh -lic 'cd ~/source;${pkgs.aichat}/bin/aichat --session fast --model openai:chatgpt-4o-latest'";
+          "launch --title '4o-latest'            zsh -lic 'cd ~/source;${pkgs.aichat}/bin/aichat --session fast --model openai:chatgpt-4o-latest'";
         "f2" =
-          "launch --title 'AIChat' --type tab zsh -lic 'cd ~/source;${pkgs.aichat}/bin/aichat --session slow --model openai:o1-preview'";
+          "launch --title 'o1 [preview]' --type tab zsh -lic 'cd ~/source;${pkgs.aichat}/bin/aichat --session slow --model openai:o1-preview'";
+        "f3" =
+          "launch --title 'gemini [flash-exp]' --type tab zsh -lic 'cd ~/source;${pkgs.aichat}/bin/aichat --session slow --model gemini:gemini-2.0-flash-exp'";
 
         # copy to clipboard
         #"f1" =

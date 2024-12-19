@@ -1,0 +1,9 @@
+# see https://github.com/sigoden/aichat/blob/main/config.example.yaml
+#light_theme: true
+model: openai:chatgpt-4o-latest
+save_session: true
+clients:
+  - type: openai
+  - type: gemini
+    models:
+    - name: gemini-2.0-flash-exp
