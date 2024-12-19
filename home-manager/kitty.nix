@@ -51,13 +51,18 @@
         "kitty_mod+right" = "next_tab";
         "kitty_mod+n" = "new_tab_with_cwd";
 
-        # copy to clipboard
         "f1" =
-          "launch --type background     --stdin-source=@last_cmd_output     ${pkgs.wl-clipboard}/bin/wl-copy --paste-once";
+          "launch --title 'AIChat'            zsh -lic 'cd ~/source;${pkgs.aichat}/bin/aichat --session fast --model openai:chatgpt-4o-latest'";
         "f2" =
-          "launch --type background     --stdin-source=@screen              ${pkgs.wl-clipboard}/bin/wl-copy --paste-once";
-        "f3" =
-          "launch --type background     --stdin-source=@screen_scrollback   ${pkgs.wl-clipboard}/bin/wl-copy --paste-once";
+          "launch --title 'AIChat' --type tab zsh -lic 'cd ~/source;${pkgs.aichat}/bin/aichat --session slow --model openai:o1-preview'";
+
+        # copy to clipboard
+        #"f1" =
+        #  "launch --type background     --stdin-source=@last_cmd_output     ${pkgs.wl-clipboard}/bin/wl-copy --paste-once";
+        #"f2" =
+        #  "launch --type background     --stdin-source=@screen              ${pkgs.wl-clipboard}/bin/wl-copy --paste-once";
+        #"f3" =
+        #  "launch --type background     --stdin-source=@screen_scrollback   ${pkgs.wl-clipboard}/bin/wl-copy --paste-once";
 
         "f6" = "launch --type tab       --stdin-source=@last_cmd_output   nvim";
         "f7" = "launch --type tab       --stdin-source=@screen            nvim";

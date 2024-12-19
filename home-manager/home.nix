@@ -206,6 +206,8 @@ in
       pkgs.whois
       pkgs.wl-clipboard
 
+      pkgs.mariadb
+
       # Kubernetes
       #pkgs.glooctl
       pkgs.helmfile

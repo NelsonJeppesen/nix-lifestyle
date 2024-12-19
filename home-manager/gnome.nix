@@ -17,6 +17,22 @@ in
   '';
 
   dconf.settings = {
+    "org/gtk/gtk4/settings/file-chooser" = {
+      sort-directories-first = true;
+    };
+
+    "org/gnome/nautilus/list-view" = {
+      use-tree-view = true;
+    };
+
+    "org/gnome/nautilus/preferences" = {
+      click-policy = "single";
+    };
+
+    "org/gnome/nautilus/preferences" = {
+      show-delete-permanently = true;
+    };
+
     "org/gnome/desktop/interface" = {
       accent-color = "pink";
       clock-format = "12h";
