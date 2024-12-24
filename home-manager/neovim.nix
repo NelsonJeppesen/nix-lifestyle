@@ -312,13 +312,39 @@
                 terraform           = { require("formatter.filetypes.terraform").terraformfmt},
                 yaml                = { require("formatter.filetypes.yaml").yamlfmt},
 
+                hcl = {
+                  function()
+                    return {
+                      exe = "packer",
+                      args = {
+                          "fmt",
+                          "-",
+                      },
+                      stdin = true,
+                    }
+                  end
+                },
+                javascript = {
+                  function()
+                    return {
+                      exe = "biome",
+                      args = {
+                          "format",
+                          "--indent-style=space",
+                          "--stdin-file-path",
+                          util.escape_path(util.get_current_buffer_file_path()),
+                      },
+                      stdin = true,
+                    }
+                  end
+                },
                 json      = {
                   function()
                     return {
                       exe = "biome",
                       args = {
                           "format",
-                          "--json-formatter-indent-style=space",
+                          "--indent-style=space",
                           "--stdin-file-path",
                           util.escape_path(util.get_current_buffer_file_path()),
                       },

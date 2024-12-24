@@ -103,6 +103,7 @@ in
       #pkgs.mindustry
       pkgs.vitetris
 
+
       pkgs.nerd-fonts.symbols-only
 
       #pkgs.atkinson-hyperlegible
@@ -123,32 +124,36 @@ in
       #pkgs.libreoffice
       pkgs.onlyoffice-desktopeditors
 
-      # formaters
+      # formater / linter
       pkgs.biome
+      pkgs.black
       pkgs.nixfmt-rfc-style
+      pkgs.rubocop
+      pkgs.shellcheck
       pkgs.shfmt
-
-      #pkgs.gpxsee-qt6
+      pkgs.shfmt
+      pkgs.yamlfmt
 
       # chill
-      #pkgs.somafm-cli forked
-      pkgs.spotify
       #pkgs.blanket
       #pkgs.fx
+      #pkgs.somafm-cli forked
+      pkgs.spotify
 
       # core GUI apps
       #pkgs.fractal
       #pkgs.google-chrome
-      pkgs.kitty
-      pkgs.slack
       #pkgs.zoom-us
       pinnedZoom
+      pkgs.kitty
+      pkgs.slack
 
       # cloud management
+      pkgs.ansible_2_16
       pkgs.awscli2
       pkgs.oci-cli
       pkgs.opentofu # terraform fork
-      #pkgs.postman
+      pkgs.packer
       pkgs.ssm-session-manager-plugin
       pkgs.terraform
       pkgs.tflint
@@ -157,15 +162,6 @@ in
       #pkgs.visidata
 
       # code
-      pkgs.rubocop
-      pkgs.black
-
-      # better shell scripts
-      pkgs.shellcheck
-      pkgs.shfmt
-
-      pkgs.yamlfmt
-
       # used by nvim plugins
       pkgs.sqlite
 
