@@ -169,10 +169,12 @@ in
       pkgs.socat
       pkgs.mpv
 
+      pkgs.wireshark
+
       # try out gpt
-      pkgs.chatblade
-      pkgs.chatgpt-cli
-      pkgs.shell-gpt
+      pkgs.aichat
+      #pkgs.chatgpt-cli
+      #pkgs.shell-gpt
 
       # yaml/json tools
       pkgs.jq
