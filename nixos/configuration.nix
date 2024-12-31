@@ -13,6 +13,5 @@ in
     # default profiles
     ./profiles/agenix.nix
     ./profiles/shared.nix
-    ./profiles/s3fs.nix
   ];
 }

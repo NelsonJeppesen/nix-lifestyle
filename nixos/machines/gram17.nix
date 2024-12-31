@@ -10,6 +10,7 @@
     ../profiles/intel.nix
     ../profiles/lg_gram_12th_gen.nix
     ../profiles/networking.nix
+    ../profiles/s3fs.nix
     ../profiles/x86_64.nix
     ../profiles/zsh.nix
   ];
