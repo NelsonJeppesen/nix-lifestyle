@@ -15,7 +15,7 @@ let
 in
 {
   hardware.bluetooth.enable = true;
-  hardware.pulseaudio.enable = false;
+  services.pulseaudio.enable = false;
 
   #boot.initrd.systemd.enable = true;
   #boot.initrd.unl0kr.enable = true;
