@@ -103,7 +103,6 @@ in
       #pkgs.mindustry
       pkgs.vitetris
 
-
       pkgs.nerd-fonts.symbols-only
 
       #pkgs.atkinson-hyperlegible
@@ -175,6 +174,10 @@ in
       pkgs.aichat
       #pkgs.chatgpt-cli
       #pkgs.shell-gpt
+
+      pkgs.wireguard-tools
+      pkgs.fluxcd
+      pkgs.k9s
 
       # yaml/json tools
       pkgs.jq
