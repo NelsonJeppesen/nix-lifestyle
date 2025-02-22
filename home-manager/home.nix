@@ -107,6 +107,7 @@ in
 
       #pkgs.atkinson-hyperlegible
       #pkgs.maple-mono
+      pkgs.atkinson-monolegible
       #pkgs.b612
       #pkgs.fira-code
       pkgs.inconsolata
@@ -142,13 +143,13 @@ in
       # core GUI apps
       #pkgs.fractal
       #pkgs.google-chrome
-      #pkgs.zoom-us
-      pinnedZoom
+      pkgs.zoom-us
+      #pinnedZoom
       pkgs.kitty
       pkgs.slack
 
       # cloud management
-      pkgs.ansible_2_16
+      #pkgs.ansible_2_16
       pkgs.awscli2
       pkgs.oci-cli
       pkgs.opentofu # terraform fork

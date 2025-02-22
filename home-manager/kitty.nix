@@ -78,11 +78,16 @@
       settings = {
 
         # Set fonts; disable bold
-        bold_font = "Inconsolata Medium";
+        #bold_font = "Inconsolata Medium";
         #bold_italic_font = "Fira Code, Regular Italic";
         #italic_font = "Fira Code, Regular Italic";
-        font_family = "Inconsolata Medium";
-        font_size = "14.0";
+        #font_family = "Inconsolata Medium";
+        font_family = ''family="Atkinson Monolegible" wght=200 style=Medium'';
+        bold_font = ''family="Atkinson Monolegible" wght=200 style=Medium'';
+        italic_font = "auto";
+        bold_italic_font = "auto";
+
+        font_size = "11.5";
 
         window_border_width = "1px";
         window_margin_width = "0";

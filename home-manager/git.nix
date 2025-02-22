@@ -11,6 +11,10 @@ in
 
   programs = {
 
+    git-worktree-switcher = {
+      enable = true;
+    };
+
     git = {
       enable = true;
       userName = "Nelson Jeppesen";
@@ -32,6 +36,7 @@ in
         # ignore direv files
         ".envrc"
       ];
+
       difftastic = {
         enable = true;
       };

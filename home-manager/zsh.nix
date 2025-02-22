@@ -3,11 +3,6 @@
   programs = {
     direnv.enable = true;
 
-    kubecolor = {
-      enable = true;
-      enableAlias = true;
-    };
-
     eza = {
       enable = true;
       git = true;
