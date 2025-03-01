@@ -182,6 +182,7 @@ in
 
       # yaml/json tools
       pkgs.jq
+      pkgs.jqp
       pkgs.fastgron
       pkgs.yq
 
