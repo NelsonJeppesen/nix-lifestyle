@@ -1,5 +1,6 @@
 # LG Gram 12th gen
-{ ... }: {
+{ ... }:
+{
   # Fix ACPI errors
   #
   #   ACPI Error: No handler for Region [XIN1] (000000005158740d) [UserDefinedRegion] (20221020/evregion-130)
@@ -20,4 +21,11 @@
 
   #fix_usbc_dock_cpu_usage = {
   boot.kernelParams = [ "acpi_mask_gpe=0x6E" ];
+
+  boot.extraModprobeConfig = ''
+    # example settings
+    options iwlwifi disable_11ax=1 disable_11be=0 11n_disable=6
+    #bt_coex_active=0
+    options iwlmvm  power_scheme=1
+  '';
 }

@@ -58,6 +58,7 @@ in
         };
         push = {
           default = "current";
+          autoSetupRemote = "true";
         };
 
         credential = {
