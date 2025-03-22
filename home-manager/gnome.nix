@@ -26,11 +26,8 @@ in
     };
 
     "org/gnome/nautilus/preferences" = {
-      click-policy = "single";
-    };
-
-    "org/gnome/nautilus/preferences" = {
       show-delete-permanently = true;
+      click-policy = "double";
     };
 
     "org/gnome/desktop/interface" = {

@@ -23,9 +23,13 @@
   boot.kernelParams = [ "acpi_mask_gpe=0x6E" ];
 
   boot.extraModprobeConfig = ''
-    # example settings
-    options iwlwifi disable_11ax=1 disable_11be=0 11n_disable=6
-    #bt_coex_active=0
-    options iwlmvm  power_scheme=1
+    options iwlwifi disable_11ax=Y disable_11be=Y disable_11ac=N 11n_disable=0 amsdu_size=1
+    # amsdu_size:amsdu size
+    #   0: 12K for multi Rx queue devices, 2K for AX210 devices, 4K for other devices
+    #   1: 4K
+    #   2: 8K
+    #   3: 12K (16K buffers)
+    #   4: 2K
+    options iwlmvm power_scheme=1
   '';
 }
