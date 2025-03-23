@@ -15,7 +15,18 @@
 
       # Install Vim Plugins, keep configuration local to install block if possible
       plugins = with pkgs.vimPlugins; [
-        #multicursors-nvim
+
+        # "Use your Neovim like using Cursor AI IDE! "
+        #   https://github.com/yetone/avante.nvim
+        {
+          plugin = avante-nvim;
+          type = "lua";
+          config = ''
+            require("avante").setup({
+              provider = "openai",
+            })
+          '';
+        }
 
         # "The default colorscheme used by AstroNvim"
         #   https://github.com/AstroNvim/astrotheme/
