@@ -55,7 +55,8 @@
               },
             })
 
-            vim.keymap.set("n", "<leader>e", "<Cmd>Neotree toggle<CR>")
+            vim.keymap.set("n", "<leader>e", "<Cmd>Neotree reveal<CR>")
+            vim.keymap.set("n", "<leader>E", "<Cmd>Neotree toggle<CR>")
           '';
         }
 
@@ -215,6 +216,10 @@
                 }
               }
             EOF
+            nnoremap <silent> <C-h>  :BufferLineCyclePrev<CR>
+            nnoremap <silent> <C-l>  :BufferLineCycleNext<CR>
+            nnoremap <silent> <C-j>  <C-w>w
+            nnoremap <silent> <C-k>  <C-w>w
             nnoremap <silent> <C-left>  :BufferLineCyclePrev<CR>
             nnoremap <silent> <C-right> :BufferLineCycleNext<CR>
             nnoremap <silent> <C-up>    <C-w>w
