@@ -22,6 +22,8 @@ in
 {
   nixpkgs.config.allowUnfree = true;
 
+   programs.kubecolor.enable = true;
+
   imports = [
     <agenix/modules/age-home.nix>
 
