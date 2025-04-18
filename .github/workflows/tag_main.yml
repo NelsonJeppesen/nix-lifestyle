@@ -1,0 +1,25 @@
+name: Tag Commit with Timestamp
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  timestamp-tag:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - name: Set up Git
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+
+      - name: Generate timestamp tag
+        run: |
+          TAG_NAME=$(date -u +"%Y-%m-%d-%H-%M")
+          git tag "$TAG_NAME"
+          git push origin "$TAG_NAME"

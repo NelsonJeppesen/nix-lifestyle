@@ -18,11 +18,10 @@
           "toolkit.legacyUserProfileCustomizations.stylesheets" = true;
         };
         search = {
-          default = "o4mini"; # Change this to your desired engine
+          default = "google"; # Change this to your desired engine
           force = true;
 
           engines = {
-            google.metaData.alias = "g";
             bing.metaData.hidden = true;
             ebay.metaData.hidden = true;
             wikipedia.metaData.hidden = true;
