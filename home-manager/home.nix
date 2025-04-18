@@ -22,12 +22,13 @@ in
 {
   nixpkgs.config.allowUnfree = true;
 
-   programs.kubecolor.enable = true;
+  programs.kubecolor.enable = true;
 
   imports = [
     <agenix/modules/age-home.nix>
 
     ./editorconfig.nix
+    ./firefix.nix
     ./git.nix
     ./gnome-extensions.nix
     ./gnome.nix
@@ -62,26 +63,6 @@ in
       path = "/home/nelson/source/.envrc";
     };
 
-  };
-
-  programs.firefox = {
-    enable = true;
-    profiles = {
-      home = {
-        id = 0;
-        name = "home";
-        # Hide tab bar and side bar header
-        userChrome = "\n          #TabsToolbar\n          { visibility: collapse; }\n          #sidebar-box #sidebar-header {\n            display: none !important;\n          }\n        ";
-        settings = {
-          "gfx.webrender.all" = true;
-          "gfx.webrender.enabled" = true;
-          "layers.acceleration.force-enabled" = true;
-          "layout.css.backdrop-filter.enabled" = true;
-          "svg.context-properties.content.enabled" = true;
-          "toolkit.legacyUserProfileCustomizations.stylesheets" = true;
-        };
-      };
-    };
   };
 
   home = {
