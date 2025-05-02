@@ -49,6 +49,9 @@ in
         merge.conflictstyle = "zdiff3";
         user.signingkey = "~/.ssh/id_ed25519.pub";
 
+        url."git@github.com:".insteadOf = "https://github.com/";
+        url."git@bitbucket.org:".insteadOf = "https://bitbucket.org/";
+
         branch = {
           sort = "-committerdate";
         };

@@ -116,7 +116,7 @@
       enableCompletion = true;
       syntaxHighlighting.enable = true;
 
-      initExtra = ''
+      initContent = ''
         # set kitty colorscheme
         /home/nelson/kitty-colorscheme
 

@@ -103,6 +103,7 @@ in
       pkgs.google-chrome
 
       #pkgs.ecapture
+      pkgs.lunarvim
 
       #pkgs.libreoffice
       pkgs.onlyoffice-desktopeditors
