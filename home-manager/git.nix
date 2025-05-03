@@ -1,4 +1,4 @@
-{ config, pkgs, ... }:
+{  ... }:
 let
   gitalias = builtins.fetchGit {
     url = "https://github.com/GitAlias/gitalias.git";
