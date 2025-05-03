@@ -140,7 +140,6 @@ in
       pkgs.packer
       pkgs.ssm-session-manager-plugin
       pkgs.terraform
-      pkgs.tflint
 
       # "A terminal spreadsheet multitool for discovering and arranging data"
       #pkgs.visidata

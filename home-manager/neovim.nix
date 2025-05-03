@@ -8,6 +8,16 @@
       vimAlias = true;
       withNodeJs = true;
 
+      extraPackages = [
+        pkgs.bash-language-server
+        pkgs.nixd
+        pkgs.ruby-lsp
+        pkgs.terraform-ls
+        pkgs.tflint
+        pkgs.typos-lsp
+        pkgs.yaml-language-server
+      ];
+
       extraLuaConfig = ''
         -- map leader to <Space>
         vim.keymap.set("n", " ", "<Nop>", { silent = true, remap = false })
@@ -19,6 +29,38 @@
 
       # Install Vim Plugins, keep configuration local to install block if possible
       plugins = with pkgs.vimPlugins; [
+        {
+          plugin = nvim-lspconfig;
+          type = "lua";
+          config = ''
+            vim.diagnostic.config({ virtual_lines = { current_line = true }})
+
+            -- https://github.com/neovim/nvim-lspconfig/tree/master/lsp
+            -- vim.lsp.enable('jsonls') missing vscode-json-language-server
+            vim.lsp.enable('bashls')
+            vim.lsp.enable('nixd')
+            vim.lsp.enable('ruby_lsp')
+            vim.lsp.enable('terraformls')
+            vim.lsp.enable('tflint')
+            vim.lsp.enable('typos_lsp')
+            vim.lsp.enable('yamlls')
+          '';
+        }
+
+        ## "displays a popup with possible keybindings of the command you started typing"
+        ##   https://github.com/folke/which-key.nvim
+        {
+          plugin = which-key-nvim;
+          type = "lua";
+          config = ''
+            local wk = require("which-key")
+
+             wk.add({
+              { "<leader>l", group = "LSP" },
+              { "<leader>lf",function() vim.lsp.buf.format() end,desc = "Format Document"},
+            })
+          '';
+        }
 
         # fuzzy picker
         snacks-nvim
@@ -46,20 +88,6 @@
           config = ''require("better_escape").setup()'';
         }
 
-        {
-          plugin = nvim-lspconfig;
-          type = "lua";
-          config = ''
-            vim.diagnostic.config({ virtual_lines = { current_line = true }})
-
-            -- https://github.com/neovim/nvim-lspconfig/tree/master/lsp
-            vim.lsp.enable('terraformls')
-            vim.lsp.enable('nixd')
-            vim.lsp.enable('jsonls')
-            vim.lsp.enable('yamlls')
-          '';
-        }
-
         #{
         #  plugin = nvim-navic;
         #  type = "lua";
@@ -68,13 +96,15 @@
         #  '';
         #}
 
+        # "Performant, batteries-included completion plugin for Neovim"
+        # https://github.com/Saghen/blink.cmp?tab=readme-ov-file
         {
           plugin = blink-cmp;
           type = "lua";
           config = ''
             require("blink.cmp").setup({
             	-- https://cmp.saghen.dev/configuration/fuzzy.html
-            	fuzzy = { implementation = "rust" },
+              keymap = { preset = 'super-tab' },
 
             	-- https://cmp.saghen.dev/configuration/signature.html
             	signature = {
@@ -106,45 +136,45 @@
         # "Neovim plugin to manage the file system and other tree like structures"
         #   https://github.com/nvim-neo-tree/neo-tree.nvim/
         {
-         plugin = neo-tree-nvim;
-         type = "lua";
-         config = ''
-           require('neo-tree').setup({
-             filesystem = {
-               commands = {
-                 avante_add_files = function(state)
-                   local node = state.tree:get_node()
-                   local filepath = node:get_id()
-                   local relative_path = require('avante.utils').relative_path(filepath)
+          plugin = neo-tree-nvim;
+          type = "lua";
+          config = ''
+            require('neo-tree').setup({
+              filesystem = {
+                commands = {
+                  avante_add_files = function(state)
+                    local node = state.tree:get_node()
+                    local filepath = node:get_id()
+                    local relative_path = require('avante.utils').relative_path(filepath)
 
-                   local sidebar = require('avante').get()
+                    local sidebar = require('avante').get()
 
-                   local open = sidebar:is_open()
-                   -- ensure avante sidebar is open
-                   if not open then
-                     require('avante.api').ask()
-                     sidebar = require('avante').get()
-                   end
+                    local open = sidebar:is_open()
+                    -- ensure avante sidebar is open
+                    if not open then
+                      require('avante.api').ask()
+                      sidebar = require('avante').get()
+                    end
 
-                   sidebar.file_selector:add_selected_file(relative_path)
+                    sidebar.file_selector:add_selected_file(relative_path)
 
-                   -- remove neo tree buffer
-                   if not open then
-                     sidebar.file_selector:remove_selected_file('neo-tree filesystem [1]')
-                   end
-                 end,
-               },
-               window = {
-                 mappings = {
-                   ['oa'] = 'avante_add_files',
-                 },
-               },
-             },
-           })
+                    -- remove neo tree buffer
+                    if not open then
+                      sidebar.file_selector:remove_selected_file('neo-tree filesystem [1]')
+                    end
+                  end,
+                },
+                window = {
+                  mappings = {
+                    ['oa'] = 'avante_add_files',
+                  },
+                },
+              },
+            })
 
-           vim.keymap.set("n", "<leader>e", "<Cmd>Neotree reveal<CR>")
-           vim.keymap.set("n", "<leader>E", "<Cmd>Neotree toggle<CR>")
-         '';
+            vim.keymap.set("n", "<leader>e", "<Cmd>Neotree reveal<CR>")
+            vim.keymap.set("n", "<leader>E", "<Cmd>Neotree toggle<CR>")
+          '';
         }
 
         # "Use your Neovim like using Cursor AI IDE! "
@@ -159,10 +189,11 @@
           '';
         }
 
-        # "Soho vibes for Neovim" [colorscheme]
-        #   https://github.com/rose-pine/neovim/
+        # "🏙 A clean, dark Neovim theme written in Lua, with support for lsp, treesitter
+        # and lots of plugins. Includes additional themes for Kitty, Alacritty, iTerm and Fish"
+        # https://github.com/folke/tokyonight.nvim/?tab=readme-ov-file
         {
-          plugin = rose-pine;
+          plugin = tokyonight-nvim;
           type = "viml";
 
           # set theme very early so other plugins can pull in the settings e.g. bufferline
@@ -174,17 +205,9 @@
 
             " set vim color scheme
             if theme =~ "default"
-              " light vim color
-              set background=light
-              lua require("astrotheme").setup({})
-              colorscheme astrojupiter
-              "lua require('rose-pine').setup({groups = {background = 'ffffff'}})
-              "colorscheme astrolight"
-              "colorscheme rose-pine-moon
+              colorscheme tokyonight-moon
             else
-              " if dark color scheme
-              set background=dark
-              colorscheme rose-pine-moon
+              colorscheme tokyonight-night
             end
           '';
         }
@@ -281,19 +304,6 @@
                 component_separators = " "
               }
             }
-          '';
-        }
-
-        ## "displays a popup with possible keybindings of the command you started typing"
-        ##   https://github.com/folke/which-key.nvim
-        {
-          plugin = which-key-nvim;
-          type = "lua";
-          config = ''
-            local whichkey = require("which-key")
-
-            whichkey.add({
-            })
           '';
         }
 
