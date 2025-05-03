@@ -5,18 +5,23 @@
 
     neovim = {
       enable = true;
+      defaultEditor = true;
       vimAlias = true;
       withNodeJs = true;
 
       extraPackages = [
         pkgs.bash-language-server
         pkgs.nixd
+        pkgs.phpactor
         pkgs.ruby-lsp
         pkgs.terraform-ls
         pkgs.tflint
         pkgs.typos-lsp
         pkgs.yaml-language-server
+        pkgs.python312Packages.python-lsp-server
       ];
+
+      # extraPython3Packages = pyPkgs: with pyPkgs; [ python-lsp-server ];
 
       extraLuaConfig = ''
         -- map leader to <Space>
@@ -25,6 +30,17 @@
 
         -- unmap esc to retrain myself on jj
         vim.keymap.set("i", "<Esc>", "<Nop>", { noremap = true, silent = true })
+
+        -- set persistent undo history between neovim sessions
+        local undodir = vim.fn.stdpath("cache") .. "/undo"
+
+        if vim.fn.isdirectory(undodir) == 0 then
+          vim.fn.mkdir(undodir, "p", '0o700')
+        end
+
+        vim.opt.undodir = undodir
+        vim.opt.undofile = true
+        vim.opt.swapfile = false
       '';
 
       # Install Vim Plugins, keep configuration local to install block if possible
@@ -37,14 +53,17 @@
             vim.diagnostic.config({ virtual_lines = { current_line = true }})
 
             -- https://github.com/neovim/nvim-lspconfig/tree/master/lsp
-            -- vim.lsp.enable('jsonls') missing vscode-json-language-server
             vim.lsp.enable('bashls')
             vim.lsp.enable('nixd')
+            vim.lsp.enable('phpactor')
+            vim.lsp.enable('pylsp')
             vim.lsp.enable('ruby_lsp')
             vim.lsp.enable('terraformls')
             vim.lsp.enable('tflint')
             vim.lsp.enable('typos_lsp')
             vim.lsp.enable('yamlls')
+
+            -- vim.lsp.enable('jsonls') missing vscode-json-language-server
           '';
         }
 
@@ -102,21 +121,31 @@
 
         # "Performant, batteries-included completion plugin for Neovim"
         # https://github.com/Saghen/blink.cmp?tab=readme-ov-file
+        friendly-snippets
         {
           plugin = blink-cmp;
           type = "lua";
           config = ''
             require("blink.cmp").setup({
-            	-- https://cmp.saghen.dev/configuration/fuzzy.html
-              keymap = { preset = 'super-tab' },
-
-            	-- https://cmp.saghen.dev/configuration/signature.html
-            	signature = {
-            		enabled = true,
-            		window = {
-            			border = "rounded",
-            		},
-            	},
+              -- keymap = { preset = 'super-tab' },
+              completion = {
+                documentation = { auto_show = true, auto_show_delay_ms = 100 },
+                ghost_text = { enabled = true },
+                menu = {
+                  draw = {
+                    columns = {
+                      { "label", "label_description", gap = 1 },
+                      { "kind_icon", "kind" }
+                    },
+                  }
+                }
+              },
+              signature = {
+                enabled = true,
+                window = {
+                	border = "rounded",
+                },
+              },
             })
           '';
         }
@@ -340,15 +369,6 @@
         vnoremap <Right>  <Nop>
         vnoremap <Up>     <Nop>
 
-        " persistent undo
-        if !isdirectory($HOME."/.config/nvim/undo")
-            call mkdir($HOME."/.config/nvim/undo", "", 0700)
-        endif
-        set undodir=~/.config/nvim/undo
-
-        "" disable swap
-        set noswapfile
-
         "" Indentation settings for using 2 spaces instead of tabs.
         set shiftwidth=2
         set softtabstop=2
@@ -356,7 +376,6 @@
 
         set list listchars=tab:→\ ,
       '';
-
     };
   };
 }

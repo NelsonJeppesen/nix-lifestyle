@@ -1,27 +1,9 @@
 {
-  config,
-  lib,
   pkgs,
-  users,
   ...
 }:
-let
-  pinnedZoomPkgs =
-    import
-      (builtins.fetchTarball {
-        url = "https://github.com/NixOS/nixpkgs/archive/0c19708cf035f50d28eb4b2b8e7a79d4dc52f6bb.tar.gz";
-        sha256 = "0ngw2shvl24swam5pzhcs9hvbwrgzsbcdlhpvzqc7nfk8lc28sp3";
-      })
-      {
-        system = "x86_64-linux";
-        config.allowUnfree = true;
-      };
-
-  pinnedZoom = pinnedZoomPkgs.zoom-us;
-in
 {
   nixpkgs.config.allowUnfree = true;
-
   programs.kubecolor.enable = true;
 
   imports = [
@@ -38,7 +20,6 @@ in
   ];
 
   programs.home-manager.enable = true;
-
   fonts.fontconfig.enable = true;
 
   # Add local scripts
@@ -103,23 +84,11 @@ in
       pkgs.google-chrome
 
       #pkgs.ecapture
-      pkgs.lunarvim
 
       #pkgs.libreoffice
       pkgs.onlyoffice-desktopeditors
 
-      # formater / linter
-      pkgs.biome
-      pkgs.black
-      pkgs.nixfmt-rfc-style
-      pkgs.rubocop
-      pkgs.shellcheck
-      pkgs.shfmt
-      pkgs.shfmt
-      pkgs.yamlfmt
-
       # chill
-      #pkgs.blanket
       #pkgs.fx
       #pkgs.somafm-cli forked
       pkgs.spotify
@@ -178,8 +147,8 @@ in
       pkgs.dnsutils
       pkgs.fd
       pkgs.fend
-      #pkgs.gh
-      #pkgs.gh-dash
+      pkgs.gh
+      pkgs.gh-dash
       pkgs.hurl
       pkgs.ipcalc
       pkgs.jira-cli-go
@@ -193,7 +162,7 @@ in
       pkgs.whois
       pkgs.wl-clipboard
 
-      pkgs.mariadb
+      #pkgs.mariadb
 
       # Kubernetes
       #pkgs.glooctl

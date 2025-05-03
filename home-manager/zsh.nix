@@ -3,21 +3,6 @@
   programs = {
     direnv.enable = true;
 
-    eza = {
-      enable = true;
-      git = true;
-      icons = null;
-
-      extraOptions = [
-        "--group-directories-first"
-        "--long"
-        "--no-filesize"
-        "--no-permissions"
-        "--no-time"
-        "--no-user"
-      ];
-    };
-
     fzf = {
       enable = true;
       defaultOptions = [
@@ -141,7 +126,6 @@
 
       sessionVariables = {
         DIRENV_LOG_FORMAT = ""; # silence direnv
-        EDITOR = "vim";
         MANPAGER = "vim +Man!";
         NIXPKGS_ALLOW_UNFREE = "1";
       };
