@@ -29,6 +29,7 @@
 
       # Install Vim Plugins, keep configuration local to install block if possible
       plugins = with pkgs.vimPlugins; [
+        mini-icons
         {
           plugin = nvim-lspconfig;
           type = "lua";
@@ -56,8 +57,19 @@
             local wk = require("which-key")
 
              wk.add({
-              { "<leader>l", group = "LSP" },
-              { "<leader>lf",function() vim.lsp.buf.format() end,desc = "Format Document"},
+              { "<leader>l",  group = "LSP" },
+              { "<leader>li", desc = "LSP Info",                "<cmd>LspInfo<cr>"},
+              { "<leader>lD", desc = "Goto Declaration",        function() Snacks.picker.lsp_declarations() end},
+              { "<leader>lI", desc = "Goto Implementation",     function() Snacks.picker.lsp_implementations() end},
+              { "<leader>ld", desc = "Goto Definition",         function() Snacks.picker.lsp_definitions() end},
+              { "<leader>lf", desc = "Format Document",         function() vim.lsp.buf.format() end},
+              { "<leader>lr", desc = "References",              function() Snacks.picker.lsp_references() end, nowait = true},
+
+              { "<leader>b",  group = "Buffer" },
+              { "<leader>bc", desc = "Copy Buffer",         "<cmd>%y+<cr>"},
+              { "<leader>bb", desc = "Decode Base64",       "<cmd>%!base64 -d<cr>"},
+              { "<leader>bg", desc = "Decode Base64-gzip",  "<cmd>%!base64 -d|gzip -d<cr>"},
+              { "<leader>bj", desc = "Format JSON",         "<cmd>%!jq .<cr>"},
             })
           '';
         }
@@ -88,14 +100,6 @@
           config = ''require("better_escape").setup()'';
         }
 
-        #{
-        #  plugin = nvim-navic;
-        #  type = "lua";
-        #  config = ''
-        #    require("nvim-navic")
-        #  '';
-        #}
-
         # "Performant, batteries-included completion plugin for Neovim"
         # https://github.com/Saghen/blink.cmp?tab=readme-ov-file
         {
@@ -116,22 +120,6 @@
             })
           '';
         }
-
-        # "null-ls.nvim reloaded / Use Neovim as a language server to inject LSP diagnostics, code actions, and more via Lua."
-        # https://github.com/nvimtools/none-ls.nvim/tree/main
-        # using git until nixpkgs moves to new repo
-        # {
-        #  plugin = (
-        #    pkgs.vimUtils.buildVimPlugin {
-        #      name = "none-ls.nvim";
-        #      src = pkgs.fetchFromGitHub {
-        #        owner = "nvimtools";
-        #        repo = "none-ls.nvim";
-        #        rev = "master"; # or a commit hash or tag
-        #        sha256 = "sha256-Yg3VpsXhdbz195BHfZ2P+nfn5yrgyXbxjoOPrLvSJnQ="; # may 2, 2025
-        #      };
-        #    }
-        #  );
 
         # "Neovim plugin to manage the file system and other tree like structures"
         #   https://github.com/nvim-neo-tree/neo-tree.nvim/
@@ -182,11 +170,7 @@
         {
           plugin = avante-nvim;
           type = "lua";
-          config = ''
-            require("avante").setup({
-              provider = "openai",
-            })
-          '';
+          config = ''require("avante").setup({provider = "openai"})'';
         }
 
         # "🏙 A clean, dark Neovim theme written in Lua, with support for lsp, treesitter
@@ -199,11 +183,8 @@
           # set theme very early so other plugins can pull in the settings e.g. bufferline
           config = ''
             " set color-scheme on gnome light/dark setting
-            "
-            " read gnome light/dark setting
             let theme=system('dconf read /org/gnome/desktop/interface/color-scheme')
 
-            " set vim color scheme
             if theme =~ "default"
               colorscheme tokyonight-moon
             else
@@ -217,9 +198,7 @@
         {
           plugin = neoscroll-nvim;
           type = "lua";
-          config = ''
-            require('neoscroll').setup({})
-          '';
+          config = ''require('neoscroll').setup({})'';
         }
 
         # https://github.com/iamcco/markdown-preview.nvim/
@@ -260,7 +239,7 @@
         {
           plugin = highlight-undo-nvim;
           type = "lua";
-          config = ''require('highlight-undo').setup({duration = 2000})'';
+          config = ''require('highlight-undo').setup({duration = 400})'';
         }
 
         # https://github.com/akinsho/toggleterm.nvim
@@ -307,10 +286,22 @@
           '';
         }
 
+        {
+          plugin = mini-indentscope;
+          type = "lua";
+          config = "require('mini.indentscope').setup()";
+        }
+
         # "Peek lines just when you intend"
         #   https://github.com/nacro90/numb.nvim/
         {
           plugin = numb-nvim;
+        }
+
+        {
+          plugin = vim-illuminate;
+          type = "lua";
+          config = '''';
         }
 
         ## ------------------------------------ Vimscript Plugins ---------------------------------------------
@@ -332,30 +323,22 @@
         set clipboard=unnamedplus
 
         " Remove newbie crutches in Insert Mode
-        inoremap <Down> <Nop>
-        inoremap <Left> <Nop>
-        inoremap <Right> <Nop>
-        inoremap <Up> <Nop>
+        inoremap <Down>   <Nop>
+        inoremap <Left>   <Nop>
+        inoremap <Right>  <Nop>
+        inoremap <Up>     <Nop>
 
         " Remove newbie crutches in Normal Mode
-        nnoremap <Down> <Nop>
-        nnoremap <Left> <Nop>
-        nnoremap <Right> <Nop>
-        nnoremap <Up> <Nop>
+        nnoremap <Down>   <Nop>
+        nnoremap <Left>   <Nop>
+        nnoremap <Right>  <Nop>
+        nnoremap <Up>     <Nop>
 
         " Remove newbie crutches in Visual Mode
-        vnoremap <Down> <Nop>
-        vnoremap <Left> <Nop>
-        vnoremap <Right> <Nop>
-        vnoremap <Up> <Nop>
-
-        "nnoremap <leader>bc  :%y+<CR>
-        "nnoremap <leader>bb  :%!base64 -d<CR>
-        "nnoremap <leader>bg  :%!base64 -d\|gzip -d<CR>
-        "nnoremap <leader>bj  :%!jq .<CR>
-        "nnoremap <leader>by  :%!yq -y .<CR>
-
-        "nnoremap <leader>q :q!<CR>
+        vnoremap <Down>   <Nop>
+        vnoremap <Left>   <Nop>
+        vnoremap <Right>  <Nop>
+        vnoremap <Up>     <Nop>
 
         " persistent undo
         if !isdirectory($HOME."/.config/nvim/undo")
@@ -363,15 +346,15 @@
         endif
         set undodir=~/.config/nvim/undo
 
+        "" disable swap
+        set noswapfile
+
         "" Indentation settings for using 2 spaces instead of tabs.
         set shiftwidth=2
         set softtabstop=2
         set expandtab
 
         set list listchars=tab:→\ ,
-
-        "" disable swp
-        set noswapfile
       '';
 
     };
