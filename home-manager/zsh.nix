@@ -192,8 +192,6 @@
         f = "fend";
         fc = "clear;fend";
 
-        vim = "lvim";
-
         jci = "jira issue create --assignee 'Nelson Jeppesen' --label SRETasks";
         jil = "jira issue list   --assignee 'Nelson Jeppesen' --updated '-2w' --order-by RESOLUTION";
         jdone = ''jira issue list --assignee 'Nelson Jeppesen' --updated '-2w' --order-by 'RESOLUTION' --jql 'resolution = EMPTY' --plain --columns KEY,SUMMARY --no-headers | fzf --select-1 --bind 'enter:execute(jira issue move {1} "Resolve Issue" --resolution Done)+abort' '';
