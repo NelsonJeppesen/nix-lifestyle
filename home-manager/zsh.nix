@@ -141,8 +141,8 @@
 
       sessionVariables = {
         DIRENV_LOG_FORMAT = ""; # silence direnv
-        EDITOR = "nvim";
-        MANPAGER = "nvim +Man!";
+        EDITOR = "vim";
+        MANPAGER = "vim +Man!";
         NIXPKGS_ALLOW_UNFREE = "1";
       };
 
@@ -191,6 +191,8 @@
         # calculator
         f = "fend";
         fc = "clear;fend";
+
+        vim = "lvim";
 
         jci = "jira issue create --assignee 'Nelson Jeppesen' --label SRETasks";
         jil = "jira issue list   --assignee 'Nelson Jeppesen' --updated '-2w' --order-by RESOLUTION";
