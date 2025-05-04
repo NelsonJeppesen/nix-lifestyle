@@ -62,7 +62,7 @@
                },
              }
 
-              wk.add({
+             wk.add({
                { "<leader><space>",  desc = "Smart Find Files",  function() Snacks.picker.smart() end },
                { "<leader>,",  desc = "Buffers",                 function() Snacks.picker.buffers() end },
                { "<leader>/",  desc = "Grep",                    function() Snacks.picker.grep() end },
