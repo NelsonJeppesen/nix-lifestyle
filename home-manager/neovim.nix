@@ -68,7 +68,10 @@
               { "<leader>:",  desc = "Command History",         function() Snacks.picker.command_history() end },
               { "<leader>n",  desc = "Notification History",    function() Snacks.picker.notifications() end },
               { "<leader>e",  desc = "File Explorer",           function() Snacks.explorer() end },
-              { "<leader>q",  desc = "Quit",                    "<cmd>q<cr>" },
+
+              { "<leader>q", group = "Quit" },
+              { "<leader>qq", desc = "Quit",                    "<cmd>q<cr>" },
+              { "<leader>qf", desc = "Quit [force]",            "<cmd>q!<cr>" },
 
               { "<leader>w", group = "Write" },
               { "<leader>wq", desc = "Write Quit",              "<cmd>wq<cr>" },
