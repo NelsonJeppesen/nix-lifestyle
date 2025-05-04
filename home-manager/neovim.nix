@@ -38,9 +38,11 @@
           vim.fn.mkdir(undodir, "p", '0o700')
         end
 
-        vim.opt.undodir = undodir
-        vim.opt.undofile = true
-        vim.opt.swapfile = false
+        vim.o.undodir     = undodir
+        vim.o.undofile    = true
+        vim.o.swapfile    = false
+        vim.o.ignorecase  = true
+        vim.o.smartcase   = true
       '';
 
       # Install Vim Plugins, keep configuration local to install block if possible
@@ -83,18 +85,79 @@
               { "<leader>ld", desc = "Goto Definition",         function() Snacks.picker.lsp_definitions() end},
               { "<leader>lf", desc = "Format Document",         function() vim.lsp.buf.format() end},
               { "<leader>lr", desc = "References",              function() Snacks.picker.lsp_references() end, nowait = true},
+              { "<leader>ly", desc = "Goto T[y]pe Definition",  function() Snacks.picker.lsp_type_definitions() end},
+              { "<leader>ls", desc = "LSP Symbols",             function() Snacks.picker.lsp_symbols() end},
+              { "<leader>lS", desc = "LSP Workspace Symbols",   function() Snacks.picker.lsp_workspace_symbols() end},
 
-              { "<leader>b",  group = "Buffer" },
-              { "<leader>bc", desc = "Copy Buffer",         "<cmd>%y+<cr>"},
-              { "<leader>bb", desc = "Decode Base64",       "<cmd>%!base64 -d<cr>"},
-              { "<leader>bg", desc = "Decode Base64-gzip",  "<cmd>%!base64 -d|gzip -d<cr>"},
-              { "<leader>bj", desc = "Format JSON",         "<cmd>%!jq .<cr>"},
+              { "<leader><space>", function() Snacks.picker.smart() end, desc = "Smart Find Files" },
+              { "<leader>,", function() Snacks.picker.buffers() end, desc = "Buffers" },
+              { "<leader>/", function() Snacks.picker.grep() end, desc = "Grep" },
+              { "<leader>:", function() Snacks.picker.command_history() end, desc = "Command History" },
+              { "<leader>n", function() Snacks.picker.notifications() end, desc = "Notification History" },
+              { "<leader>e", function() Snacks.explorer() end, desc = "File Explorer" },
+
+              { "<leader>f",  group = "Find" },
+              { "<leader>fb", function() Snacks.picker.buffers() end, desc = "Buffers" },
+              { "<leader>fc", function() Snacks.picker.files({ cwd = vim.fn.stdpath("config") }) end, desc = "Find Config File" },
+              { "<leader>ff", function() Snacks.picker.files() end, desc = "Find Files" },
+              { "<leader>fg", function() Snacks.picker.git_files() end, desc = "Find Git Files" },
+              { "<leader>fp", function() Snacks.picker.projects() end, desc = "Projects" },
+              { "<leader>fr", function() Snacks.picker.recent() end, desc = "Recent" },
+
+              { "<leader>g",  group = "Git" },
+              { "<leader>gb", function() Snacks.picker.git_branches() end, desc = "Git Branches" },
+              { "<leader>gl", function() Snacks.picker.git_log() end, desc = "Git Log" },
+              { "<leader>gL", function() Snacks.picker.git_log_line() end, desc = "Git Log Line" },
+              { "<leader>gs", function() Snacks.picker.git_status() end, desc = "Git Status" },
+              { "<leader>gS", function() Snacks.picker.git_stash() end, desc = "Git Stash" },
+              { "<leader>gd", function() Snacks.picker.git_diff() end, desc = "Git Diff (Hunks)" },
+              { "<leader>gf", function() Snacks.picker.git_log_file() end, desc = "Git Log File" },
+
+              { "<leader>s",  group = "Grep" },
+              { "<leader>sb", function() Snacks.picker.lines() end, desc = "Buffer Lines" },
+              { "<leader>sB", function() Snacks.picker.grep_buffers() end, desc = "Grep Open Buffers" },
+              { "<leader>sg", function() Snacks.picker.grep() end, desc = "Grep" },
+              { "<leader>sw", function() Snacks.picker.grep_word() end, desc = "Visual selection or word", mode = { "n", "x" } },
+              { '<leader>s"', function() Snacks.picker.registers() end, desc = "Registers" },
+              { '<leader>s/', function() Snacks.picker.search_history() end, desc = "Search History" },
+              { "<leader>sa", function() Snacks.picker.autocmds() end, desc = "Autocmds" },
+              { "<leader>sb", function() Snacks.picker.lines() end, desc = "Buffer Lines" },
+              { "<leader>sc", function() Snacks.picker.command_history() end, desc = "Command History" },
+              { "<leader>sC", function() Snacks.picker.commands() end, desc = "Commands" },
+              { "<leader>sd", function() Snacks.picker.diagnostics() end, desc = "Diagnostics" },
+              { "<leader>sD", function() Snacks.picker.diagnostics_buffer() end, desc = "Buffer Diagnostics" },
+              { "<leader>sh", function() Snacks.picker.help() end, desc = "Help Pages" },
+              { "<leader>sH", function() Snacks.picker.highlights() end, desc = "Highlights" },
+              { "<leader>si", function() Snacks.picker.icons() end, desc = "Icons" },
+              { "<leader>sj", function() Snacks.picker.jumps() end, desc = "Jumps" },
+              { "<leader>sk", function() Snacks.picker.keymaps() end, desc = "Keymaps" },
+              { "<leader>sl", function() Snacks.picker.loclist() end, desc = "Location List" },
+              { "<leader>sm", function() Snacks.picker.marks() end, desc = "Marks" },
+              { "<leader>sM", function() Snacks.picker.man() end, desc = "Man Pages" },
+              { "<leader>sp", function() Snacks.picker.lazy() end, desc = "Search for Plugin Spec" },
+              { "<leader>sq", function() Snacks.picker.qflist() end, desc = "Quickfix List" },
+              { "<leader>sR", function() Snacks.picker.resume() end, desc = "Resume" },
+              { "<leader>su", function() Snacks.picker.undo() end, desc = "Undo History" },
+
+              { "<leader>u",  group = "Util" },
+              { "<leader>uc", desc = "Copy Buffer",         "<cmd>%y+<cr>"},
+              { "<leader>ub", desc = "Decode Base64",       "<cmd>%!base64 -d<cr>"},
+              { "<leader>ug", desc = "Decode Base64-gzip",  "<cmd>%!base64 -d|gzip -d<cr>"},
+              { "<leader>uj", desc = "Format JSON",         "<cmd>%!jq .<cr>"},
+              { "<leader>uC", function() Snacks.picker.colorschemes() end, desc = "Colorschemes" },
             })
           '';
         }
 
         # fuzzy picker
         snacks-nvim
+
+        {
+          plugin = flash-nvim;
+          type = "lua";
+          config = ''
+          '';
+        }
 
         # Install tree-sitter with all the plugins/grammars
         #   https://tree-sitter.github.io/tree-sitter
@@ -150,50 +213,6 @@
           '';
         }
 
-        # "Neovim plugin to manage the file system and other tree like structures"
-        #   https://github.com/nvim-neo-tree/neo-tree.nvim/
-        {
-          plugin = neo-tree-nvim;
-          type = "lua";
-          config = ''
-            require('neo-tree').setup({
-              filesystem = {
-                commands = {
-                  avante_add_files = function(state)
-                    local node = state.tree:get_node()
-                    local filepath = node:get_id()
-                    local relative_path = require('avante.utils').relative_path(filepath)
-
-                    local sidebar = require('avante').get()
-
-                    local open = sidebar:is_open()
-                    -- ensure avante sidebar is open
-                    if not open then
-                      require('avante.api').ask()
-                      sidebar = require('avante').get()
-                    end
-
-                    sidebar.file_selector:add_selected_file(relative_path)
-
-                    -- remove neo tree buffer
-                    if not open then
-                      sidebar.file_selector:remove_selected_file('neo-tree filesystem [1]')
-                    end
-                  end,
-                },
-                window = {
-                  mappings = {
-                    ['oa'] = 'avante_add_files',
-                  },
-                },
-              },
-            })
-
-            vim.keymap.set("n", "<leader>e", "<Cmd>Neotree reveal<CR>")
-            vim.keymap.set("n", "<leader>E", "<Cmd>Neotree toggle<CR>")
-          '';
-        }
-
         # "Use your Neovim like using Cursor AI IDE! "
         #   https://github.com/yetone/avante.nvim
         {
@@ -212,13 +231,13 @@
           # set theme very early so other plugins can pull in the settings e.g. bufferline
           config = ''
             " set color-scheme on gnome light/dark setting
-            let theme=system('dconf read /org/gnome/desktop/interface/color-scheme')
+            "let theme=system('dconf read /org/gnome/desktop/interface/color-scheme')
 
-            if theme =~ "default"
+            "if theme =~ "default"
               colorscheme tokyonight-moon
-            else
-              colorscheme tokyonight-night
-            end
+            "else
+            "  colorscheme tokyonight-night
+            "end
           '';
         }
 
@@ -268,7 +287,7 @@
         {
           plugin = highlight-undo-nvim;
           type = "lua";
-          config = ''require('highlight-undo').setup({duration = 400})'';
+          config = ''require('highlight-undo').setup({duration = 500})'';
         }
 
         # https://github.com/akinsho/toggleterm.nvim
