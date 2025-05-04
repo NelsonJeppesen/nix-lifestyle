@@ -87,7 +87,7 @@
         italic_font = "auto";
         bold_italic_font = "auto";
 
-        font_size = "11.5";
+        font_size = "12.5";
 
         window_border_width = "1px";
         window_margin_width = "0";

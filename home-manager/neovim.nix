@@ -69,8 +69,31 @@
 
       # Install Vim Plugins, keep configuration local to install block if possible
       plugins = with pkgs.vimPlugins; [
-        ## "displays a popup with possible keybindings of the command you started typing"
-        ##   https://github.com/folke/which-key.nvim
+        # misc deps
+        dressing-nvim
+        nui-nvim
+        plenary-nvim
+
+        # "A fancy, configurable, notification manager for NeoVim"
+        # https://github.com/rcarriga/nvim-notify
+        {
+          plugin = nvim-notify;
+          type = "lua";
+          config = "vim.notify = require('notify')";
+        }
+
+        # "💥 Highly experimental plugin that completely replaces the UI for messages, cmdline and the popupmenu"
+        # https://github.com/folke/noice.nvim/
+        {
+          plugin = noice-nvim;
+          type = "lua";
+          config = ''
+            require("noice").setup({})
+          '';
+        }
+
+        # "displays a popup with possible keybindings of the command you started typing"
+        #   https://github.com/folke/which-key.nvim
         {
           plugin = which-key-nvim;
           type = "lua";
@@ -191,6 +214,27 @@
           '';
         }
 
+        {
+          plugin = copilot-lua;
+          type = "lua";
+          config = ''
+            require("copilot").setup({
+              suggestion = { enabled = false },
+              panel = { enabled = false },
+              filetypes = {
+                markdown = true,
+                help = true,
+              },
+            })
+          '';
+        }
+
+        {
+          plugin = blink-copilot;
+          type = "lua";
+          config = '''';
+        }
+
         # fuzzy picker
         {
           plugin = snacks-nvim;
@@ -221,9 +265,16 @@
           config = ''require("better_escape").setup()'';
         }
 
+        # "Use your Neovim like using Cursor AI IDE! "
+        #   https://github.com/yetone/avante.nvim
+        {
+          plugin = avante-nvim;
+          type = "lua";
+          config = ''require("avante").setup({provider = "openai"})'';
+        }
+
         # "Performant, batteries-included completion plugin for Neovim"
         # https://github.com/Saghen/blink.cmp?tab=readme-ov-file
-        # hfriendly-snippets
         blink-cmp-avante
         {
           plugin = blink-cmp;
@@ -231,12 +282,20 @@
           config = ''
             require("blink.cmp").setup({
               sources = {
-                default = { 'avante', 'lsp', 'path', 'snippets', 'buffer' },
+                default = { 'avante', 'copilot', 'lsp', 'path', 'snippets', 'buffer' },
                 providers = {
                   avante = {
+                    async = true,
                     module = 'blink-cmp-avante',
-                    name = 'Avante',
-                  }
+                    name = 'avante',
+                    score_offset = 75,
+                  },
+                  copilot = {
+                    async = true,
+                    module = "blink-copilot",
+                    name = "copilot",
+                    score_offset = 100,
+                  },
                 }
               },
               keymap = {
@@ -246,36 +305,15 @@
               completion = {
                 documentation = { auto_show = true, auto_show_delay_ms = 100 },
                 ghost_text = { enabled = true },
-                menu = {
-                  draw = {
-                    columns = {
-                      { "label", "label_description", gap = 1 },
-                      { "kind_icon", "kind" }
-                    },
-                  }
-                }
               },
               signature = {
                 enabled = true,
-                window = {
-                	border = "rounded",
-                },
+                window = {border = "rounded"},
               },
             })
           '';
         }
-
-        # "Use your Neovim like using Cursor AI IDE! "
-        #   https://github.com/yetone/avante.nvim
-        plenary-nvim
-        nui-nvim
-        {
-          plugin = avante-nvim;
-          type = "lua";
-          config = ''require("avante").setup({provider = "openai"})'';
-        }
-
-        # "🏙 A clean, dark Neovim theme written in Lua, with support for lsp, treesitter
+        # "A clean, dark Neovim theme written in Lua, with support for lsp, treesitter
         # and lots of plugins. Includes additional themes for Kitty, Alacritty, iTerm and Fish"
         # https://github.com/folke/tokyonight.nvim/?tab=readme-ov-file
         {
