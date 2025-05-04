@@ -71,6 +71,7 @@
       plugins = with pkgs.vimPlugins; [
         # misc deps
         dressing-nvim
+        mini-icons
         nui-nvim
         plenary-nvim
 
@@ -191,8 +192,6 @@
           '';
         }
 
-        mini-icons
-
         {
           plugin = nvim-lspconfig;
           type = "lua";
@@ -214,6 +213,16 @@
           '';
         }
 
+        # "Rainbow highlighting and intelligent auto-pairs for Neovim"
+        # https://github.com/Saghen/blink.pairs
+        {
+          plugin = blink-pairs;
+          type = "lua";
+          config = "require('blink.pairs').setup({})";
+        }
+
+        # "Fully featured & enhanced replacement for copilot.vim complete with API for interacting with Github Copilot"
+        # https://github.com/zbirenbaum/copilot.lua
         {
           plugin = copilot-lua;
           type = "lua";
@@ -229,13 +238,16 @@
           '';
         }
 
+        # "⚙️ Configurable GitHub Copilot blink.cmp source for Neovim"
+        # https://github.com/fang2hou/blink-copilot
         {
           plugin = blink-copilot;
           type = "lua";
           config = '''';
         }
 
-        # fuzzy picker
+        # "🍿 A collection of QoL plugins for Neovim"
+        # https://github.com/folke/snacks.nvim
         {
           plugin = snacks-nvim;
           type = "lua";
@@ -336,7 +348,7 @@
         }
 
         # "Smooth scrolling neovim plugin written in lua "
-        #   https://github.com/karb94/neoscroll.nvim/
+        # https://github.com/karb94/neoscroll.nvim/
         {
           plugin = neoscroll-nvim;
           type = "lua";
@@ -344,11 +356,11 @@
         }
 
         # https://github.com/iamcco/markdown-preview.nvim/
-        #   "markdown preview plugin for (neo)vim"
+        # "markdown preview plugin for (neo)vim"
         markdown-preview-nvim
 
+        # "A snazzy bufferline for Neovim"
         # https://github.com/akinsho/bufferline.nvim
-        #  "A snazzy bufferline for Neovim"
         {
           plugin = bufferline-nvim;
           type = "viml";
@@ -377,7 +389,7 @@
         }
 
         # "Highlight changed text after Undo / Redo operations"
-        #   https://github.com/tzachar/highlight-undo.nvim/
+        # https://github.com/tzachar/highlight-undo.nvim/
         {
           plugin = highlight-undo-nvim;
           type = "lua";
@@ -385,7 +397,7 @@
         }
 
         # https://github.com/akinsho/toggleterm.nvim
-        #   "A neovim plugin to persist and toggle multiple terminals during an editing session"
+        # "A neovim plugin to persist and toggle multiple terminals during an editing session"
         {
           plugin = toggleterm-nvim;
           type = "viml";
@@ -406,7 +418,7 @@
         }
 
         # "Super fast git decorations implemented purely in lua/teal"
-        #   https://github.com/lewis6991/gitsigns.nvim
+        # https://github.com/lewis6991/gitsigns.nvim
         {
           plugin = gitsigns-nvim;
           type = "lua";
@@ -414,7 +426,7 @@
         }
 
         # "A blazing fast and easy to configure neovim statusline written in pure lua"
-        #   https://github.com/hoob3rt/lualine.nvim
+        # https://github.com/hoob3rt/lualine.nvim
         {
           plugin = lualine-nvim;
           type = "lua";
@@ -429,6 +441,8 @@
           '';
         }
 
+        # "Neovim Lua plugin to visualize and operate on indent scope. Part of 'mini.nvim' library"
+        # https://github.com/echasnovski/mini.indentscope
         {
           plugin = mini-indentscope;
           type = "lua";
@@ -436,9 +450,12 @@
         }
 
         # "Peek lines just when you intend"
-        #   https://github.com/nacro90/numb.nvim/
+        # https://github.com/nacro90/numb.nvim/
         { plugin = numb-nvim; }
 
+        # "(Neo)Vim plugin for automatically highlighting other uses of the word under the cursor using either LSP,
+        # Tree-sitter, or regex matching"
+        # https://github.com/RRethy/vim-illuminate
         {
           plugin = vim-illuminate;
           type = "lua";
@@ -448,11 +465,11 @@
         ## ------------------------------------ Vimscript Plugins ---------------------------------------------
 
         ## "Intelligently reopen files at your last edit position in Vim"
-        ##   https://github.com/farmergreg/vim-lastplace
+        ## https://github.com/farmergreg/vim-lastplace
         vim-lastplace
 
         # "VIM Table Mode for instant [ASCII] table creation"
-        #   https://github.com/dhruvasagar/vim-table-mode
+        # https://github.com/dhruvasagar/vim-table-mode
         {
           plugin = vim-table-mode;
           type = "lua";
