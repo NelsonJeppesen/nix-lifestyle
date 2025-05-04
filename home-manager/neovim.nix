@@ -41,14 +41,14 @@
 
         vim.o.undodir     = undodir
 
-        vim.o.clipboard     = 'unnamedplus'
-        vim.o.ignorecase    = true
-        vim.o.smartcase     = true
-        vim.o.swapfile      = false
-        vim.o.undofile      = true
-        vim.opt.shiftwidth  = 2
-        vim.opt.softtabstop = 2
+        vim.opt.clipboard   = 'unnamedplus'
         vim.opt.expandtab   = true
+        vim.opt.ignorecase  = true
+        vim.opt.shiftwidth  = 2
+        vim.opt.smartcase   = true
+        vim.opt.softtabstop = 2
+        vim.opt.swapfile    = false
+        vim.opt.undofile    = true
       '';
 
       # Install Vim Plugins, keep configuration local to install block if possible
