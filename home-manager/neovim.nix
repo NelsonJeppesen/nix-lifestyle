@@ -353,8 +353,8 @@
         #   https://github.com/lewis6991/gitsigns.nvim
         {
           plugin = gitsigns-nvim;
-          type = "viml";
-          config = "lua require('gitsigns').setup()";
+          type = "lua";
+          config = "require('gitsigns').setup()";
         }
 
         # "A blazing fast and easy to configure neovim statusline written in pure lua"
