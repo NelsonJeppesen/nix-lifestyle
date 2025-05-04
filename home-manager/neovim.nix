@@ -40,10 +40,15 @@
         end
 
         vim.o.undodir     = undodir
-        vim.o.undofile    = true
-        vim.o.swapfile    = false
-        vim.o.ignorecase  = true
-        vim.o.smartcase   = true
+
+        vim.o.clipboard     = 'unnamedplus'
+        vim.o.ignorecase    = true
+        vim.o.smartcase     = true
+        vim.o.swapfile      = false
+        vim.o.undofile      = true
+        vim.opt.shiftwidth  = 2
+        vim.opt.softtabstop = 2
+        vim.opt.expandtab   = true
       '';
 
       # Install Vim Plugins, keep configuration local to install block if possible
@@ -406,8 +411,6 @@
       ];
 
       extraConfig = ''
-        set clipboard=unnamedplus
-
         " Remove newbie crutches in Insert Mode
         inoremap <Down>   <Nop>
         inoremap <Left>   <Nop>
@@ -425,13 +428,6 @@
         vnoremap <Left>   <Nop>
         vnoremap <Right>  <Nop>
         vnoremap <Up>     <Nop>
-
-        "" Indentation settings for using 2 spaces instead of tabs.
-        set shiftwidth=2
-        set softtabstop=2
-        set expandtab
-
-        set list listchars=tab:→\ ,
       '';
     };
   };

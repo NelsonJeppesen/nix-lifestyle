@@ -1,8 +1,4 @@
-{
-  pkgs,
-  ...
-}:
-{
+{ pkgs, ... }: {
   nixpkgs.config.allowUnfree = true;
   programs.kubecolor.enable = true;
 
