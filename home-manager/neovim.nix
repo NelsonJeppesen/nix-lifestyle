@@ -9,15 +9,31 @@
       vimAlias = true;
       withNodeJs = true;
 
+      # install LSPs/linters/formatters
       extraPackages = [
+        # bash
         pkgs.bash-language-server
+        pkgs.shfmt
+
+        # nix
         pkgs.nixd
         pkgs.nixfmt-rfc-style
+
+        # php
         pkgs.phpactor
+
+        # python
         pkgs.python312Packages.python-lsp-server
+
+        # ruby
         pkgs.ruby-lsp
+
+        # terraform
+        pkgs.terraform
         pkgs.terraform-ls
         pkgs.tflint
+
+        # misc
         pkgs.typos-lsp
         pkgs.yaml-language-server
       ];
@@ -268,14 +284,16 @@
 
           # set theme very early so other plugins can pull in the settings e.g. bufferline
           config = ''
-            " set color-scheme on gnome light/dark setting
-            "let theme=system('dconf read /org/gnome/desktop/interface/color-scheme')
+            set bg=dark
 
-            "if theme =~ "default"
+            " set color-scheme on gnome light/dark setting
+            let theme=system('dconf read /org/gnome/desktop/interface/color-scheme')
+
+            if theme =~ "default"
               colorscheme tokyonight-moon
-            "else
-            "  colorscheme tokyonight-night
-            "end
+            else
+              colorscheme tokyonight-night
+            end
           '';
         }
 
@@ -365,6 +383,7 @@
           config = ''
             require('lualine').setup {
               options = {
+                theme = 'papercolor_light',
                 section_separators = " ",
                 component_separators = " "
               }

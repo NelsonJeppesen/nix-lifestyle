@@ -18,7 +18,7 @@
 
           if [[ "$GNOME_THEME" == "default" ]]; then
             #THEME="OneHalfLight"
-            THEME="GruvboxMaterialLightHard"
+            THEME="Adapta_Nokto_Maia"
           else
             #THEME="OneDark-Pro"
             #THEME="Nightfox"
