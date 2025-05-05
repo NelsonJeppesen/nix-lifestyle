@@ -41,34 +41,42 @@
       # extraPython3Packages = pyPkgs: with pyPkgs; [ python-lsp-server ];
 
       extraLuaConfig = ''
-        -- map leader to <Space>
-        vim.keymap.set("n", " ", "<Nop>", { silent = true, remap = false })
-        vim.g.mapleader = " "
-
         -- unmap esc to retrain myself on jj
         vim.keymap.set("i", "<Esc>", "<Nop>", { noremap = true, silent = true })
 
-        -- set persistent undo history between neovim sessions
-        local undodir = vim.fn.stdpath("cache") .. "/undo"
-
-        if vim.fn.isdirectory(undodir) == 0 then
-          vim.fn.mkdir(undodir, "p", '0o700')
-        end
-
-        vim.o.undodir     = undodir
-
-        vim.opt.clipboard   = 'unnamedplus'
         vim.opt.expandtab   = true
-        vim.opt.ignorecase  = true
         vim.opt.shiftwidth  = 2
-        vim.opt.smartcase   = true
         vim.opt.softtabstop = 2
         vim.opt.swapfile    = false
-        vim.opt.undofile    = true
       '';
 
       # Install Vim Plugins, keep configuration local to install block if possible
       plugins = with pkgs.vimPlugins; [
+        {
+          plugin = mini-basics;
+          type = "lua";
+          config = ''
+            require("mini.basics").setup({
+              options = {
+                -- Basic options ('number', 'ignorecase', and many more)
+                basic = true,
+                 -- Extra UI features ('winblend', 'listchars', 'pumheight', ...)
+                extra_ui = true,
+              },
+              mappings = {
+                -- Basic mappings (better 'jk', save with Ctrl+S, ...)
+                basic = true,
+
+                -- Window navigation with <C-hjkl>, resize with <C-arrow>
+                windows = true,
+
+                -- Move cursor in Insert, Command, and Terminal mode with <M-hjkl>
+                move_with_alt = true,
+              },
+            })
+          '';
+        }
+
         # misc deps
         dressing-nvim
         mini-icons
@@ -88,9 +96,7 @@
         {
           plugin = noice-nvim;
           type = "lua";
-          config = ''
-            require("noice").setup({})
-          '';
+          config = ''require("noice").setup({})'';
         }
 
         # "displays a popup with possible keybindings of the command you started typing"
@@ -377,14 +383,14 @@
                 }
               }
             EOF
-            nnoremap <silent> <C-h>  :BufferLineCyclePrev<CR>
-            nnoremap <silent> <C-l>  :BufferLineCycleNext<CR>
-            nnoremap <silent> <C-j>  <C-w>w
-            nnoremap <silent> <C-k>  <C-w>w
-            nnoremap <silent> <C-left>  :BufferLineCyclePrev<CR>
-            nnoremap <silent> <C-right> :BufferLineCycleNext<CR>
-            nnoremap <silent> <C-up>    <C-w>w
-            nnoremap <silent> <C-down>  <C-w>w
+            "nnoremap <silent> <C-h>  :BufferLineCyclePrev<CR>
+            "nnoremap <silent> <C-l>  :BufferLineCycleNext<CR>
+            "nnoremap <silent> <C-j>  <C-w>w
+            "nnoremap <silent> <C-k>  <C-w>w
+            "nnoremap <silent> <C-left>  :BufferLineCyclePrev<CR>
+            "nnoremap <silent> <C-right> :BufferLineCycleNext<CR>
+            "nnoremap <silent> <C-up>    <C-w>w
+            "nnoremap <silent> <C-down>  <C-w>w
           '';
         }
 
