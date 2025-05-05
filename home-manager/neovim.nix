@@ -50,7 +50,8 @@
         vim.opt.swapfile    = false
       '';
 
-      # Install Vim Plugins, keep configuration local to install block if possible
+      # "Neovim Lua plugin with common configuration presets for options, mappings, and autocommands. Part of 'mini.nvim' library"
+      # https://github.com/echasnovski/mini.basics
       plugins = with pkgs.vimPlugins; [
         {
           plugin = mini-basics;
@@ -421,6 +422,21 @@
           config = "require('gitsigns').setup()";
         }
 
+        # "Simple winbar/statusline plugin that shows your current code context"
+        # https://github.com/SmiteshP/nvim-navic
+        {
+          plugin = nvim-navic;
+          type = "lua";
+          config = ''
+            local navic = require("nvim-navic").setup({
+              lsp = {auto_attach = true},
+              click = true
+            })
+
+            vim.o.winbar = "%{%v:lua.require'nvim-navic'.get_location()%}"
+          '';
+        }
+
         # "A blazing fast and easy to configure neovim statusline written in pure lua"
         # https://github.com/hoob3rt/lualine.nvim
         {
@@ -432,7 +448,7 @@
                 theme = 'papercolor_light',
                 section_separators = " ",
                 component_separators = " "
-              }
+              },
             }
           '';
         }
