@@ -41,6 +41,9 @@
       # extraPython3Packages = pyPkgs: with pyPkgs; [ python-lsp-server ];
 
       extraLuaConfig = ''
+        -- disable neovim vim.tbl_islist is deprecated
+        vim.tbl_islist = vim.islist
+
         -- unmap esc to retrain myself on jj
         vim.keymap.set("i", "<Esc>", "<Nop>", { noremap = true, silent = true })
 
@@ -255,7 +258,23 @@
         {
           plugin = snacks-nvim;
           type = "lua";
-          config = "require('snacks').setup()";
+          config = ''
+            require('snacks').setup({
+                picker = { enabled = true},
+                explorer = { enabled = true},
+
+                statuscolumn = { enabled = false},
+                bigfile = { enabled = false },
+                dashboard = { enabled = false },
+                indent = { enabled = false },
+                input = { enabled = false },
+                notifier = { enabled = false },
+                quickfile = { enabled = false },
+                scope = { enabled = false },
+                scroll = { enabled = false },
+                words = { enabled = false },
+            })
+          '';
         }
 
         # Install tree-sitter with all the plugins/grammars
