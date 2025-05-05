@@ -51,6 +51,23 @@
         vim.opt.shiftwidth  = 2
         vim.opt.softtabstop = 2
         vim.opt.swapfile    = false
+
+        -- Configure LSP/diagnostic icons
+        local icons = {
+          [vim.diagnostic.severity.ERROR] = "",
+          [vim.diagnostic.severity.WARN]  = "",
+          [vim.diagnostic.severity.INFO]  = "",
+          [vim.diagnostic.severity.HINT]  = "󰌵",
+        }
+
+        vim.diagnostic.config({
+          signs = {
+            text = icons,
+          },
+          virtual_text   = false,
+          underline      = true,
+          update_in_insert = false,
+        })
       '';
 
       # "Neovim Lua plugin with common configuration presets for options, mappings, and autocommands. Part of 'mini.nvim' library"
