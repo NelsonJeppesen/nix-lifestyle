@@ -58,19 +58,12 @@
           config = ''
             require("mini.basics").setup({
               options = {
-                -- Basic options ('number', 'ignorecase', and many more)
                 basic = true,
-                 -- Extra UI features ('winblend', 'listchars', 'pumheight', ...)
                 extra_ui = true,
               },
               mappings = {
-                -- Basic mappings (better 'jk', save with Ctrl+S, ...)
                 basic = true,
-
-                -- Window navigation with <C-hjkl>, resize with <C-arrow>
                 windows = true,
-
-                -- Move cursor in Insert, Command, and Terminal mode with <M-hjkl>
                 move_with_alt = true,
               },
             })
@@ -107,19 +100,23 @@
           config = ''
             local wk = require("which-key")
              require("which-key").setup {
-               win = {
-                 border = "rounded",
-                 padding = { 1, 2, 1, 2 },
-               },
+                win = {
+                  border = "rounded",
+                  padding = { 1, 2, 1, 2 },
+                  no_overlap = false,
+                },
              }
 
              wk.add({
+              { '<c-\\>', desc = "Toggle Terminal", function() require("toggleterm").toggle() end, mode = { "n", "i", "t" } },
+
                { "<leader><space>",  desc = "Smart Find Files",  function() Snacks.picker.smart() end },
                { "<leader>,",  desc = "Buffers",                 function() Snacks.picker.buffers() end },
                { "<leader>/",  desc = "Grep",                    function() Snacks.picker.grep() end },
                { "<leader>:",  desc = "Command History",         function() Snacks.picker.command_history() end },
                { "<leader>n",  desc = "Notification History",    function() Snacks.picker.notifications() end },
                { "<leader>e",  desc = "File Explorer",           function() Snacks.explorer() end },
+               { "<leader>?",  desc = "keybindings",             function() require("which-key").show() end},
 
                { "<leader>q", group = "Quit" },
                { "<leader>qq", desc = "Quit",                    "<cmd>q<cr>" },
@@ -406,20 +403,13 @@
         # "A neovim plugin to persist and toggle multiple terminals during an editing session"
         {
           plugin = toggleterm-nvim;
-          type = "viml";
+          type = "lua";
           config = ''
-            lua << EOF
             require("toggleterm").setup{
               direction = 'float',
               winblend = 3,
               float_opts = {border = 'curved'}
             }
-            EOF
-            nnoremap <silent> <c-\>     <cmd>execute 'ToggleTerm direction=float      dir=' . expand('%:p:h')<CR>
-            nnoremap <silent> <S-c-\>   <cmd>execute 'ToggleTerm direction=horizontal dir=' . expand('%:p:h')<CR>
-            inoremap <silent> <c-\>     <esc><cmd>execute 'ToggleTerm dir=' . expand('%:p:h')<CR>
-            tnoremap <silent> <c-\>     <esc><cmd>ToggleTerm<CR>
-            tnoremap <silent> <S-c-\>   <esc><cmd>ToggleTerm<CR>
           '';
         }
 
