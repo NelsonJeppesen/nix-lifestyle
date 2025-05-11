@@ -102,9 +102,6 @@
       syntaxHighlighting.enable = true;
 
       initContent = ''
-        # set kitty colorscheme
-        /home/nelson/kitty-colorscheme
-
         # ctrl+[left|right] word
         bindkey "^[[1;5C" forward-word
         bindkey "^[[1;5D" backward-word
