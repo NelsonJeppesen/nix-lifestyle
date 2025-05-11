@@ -44,9 +44,6 @@
         -- disable neovim vim.tbl_islist is deprecated
         vim.tbl_islist = vim.islist
 
-        -- unmap esc to retrain myself on jj
-        vim.keymap.set("i", "<Esc>", "<Nop>", { noremap = true, silent = true })
-
         vim.opt.expandtab   = true
         vim.opt.shiftwidth  = 2
         vim.opt.softtabstop = 2
@@ -381,14 +378,6 @@
           '';
         }
 
-        # "map keys without delay when typing "
-        # https://github.com/max397574/better-escape.nvim/
-        {
-          plugin = better-escape-nvim;
-          type = "lua";
-          config = ''require("better_escape").setup()'';
-        }
-
         # "Use your Neovim like using Cursor AI IDE! "
         #   https://github.com/yetone/avante.nvim
         {
@@ -616,6 +605,11 @@
         nnoremap <Left>   <Nop>
         nnoremap <Right>  <Nop>
         nnoremap <Up>     <Nop>
+
+        nnoremap h <Nop>
+        nnoremap j <Nop>
+        nnoremap k <Nop>
+        nnoremap l <Nop>
 
         " Remove newbie crutches in Visual Mode
         vnoremap <Down>   <Nop>
