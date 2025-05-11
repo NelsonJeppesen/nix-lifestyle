@@ -14,7 +14,6 @@
       { package = pkgs.gnomeExtensions.bitcoin-markets; }
       { package = pkgs.gnomeExtensions.caffeine; }
       { package = pkgs.gnomeExtensions.clipboard-indicator; }
-      { package = pkgs.gnomeExtensions.ddterm; }
       { package = pkgs.gnomeExtensions.hue-lights; }
       { package = pkgs.gnomeExtensions.just-perfection; }
       { package = pkgs.gnomeExtensions.night-theme-switcher; }
@@ -134,48 +133,5 @@
       time = 1800;
     };
 
-    # drop down terminal used to chatgpt
-    "com/github/amezin/ddterm" = {
-      audible-bell = false;
-      background-color = "rgb(46,52,54)";
-      backspace-binding = "auto";
-      bold-color-same-as-fg = true;
-      bold-is-bright = true;
-      command = "user-shell";
-      custom-font = "Inconsolata Medium 13";
-      ddterm-toggle-hotkey = [ "<Super>t" ];
-      foreground-color = "rgb(255,255,255)";
-      hide-when-focus-lost = true;
-      new-tab-button = false;
-      notebook-border = false;
-      override-window-animation = false;
-      panel-icon-type = "none";
-      scroll-on-output = true;
-      scrollback-lines = 10002;
-      shortcut-font-scale-decrease = [ "<Primary>underscore" ];
-      shortcut-font-scale-increase = [ "<Primary>plus" ];
-      shortcuts-enabled = true;
-      show-animation = "ease-in-out-back";
-      show-animation-duration = 0.2;
-      show-scrollbar = false;
-      tab-close-buttons = false;
-      tab-expand = false;
-      tab-label-ellipsize-mode = "middle";
-      tab-label-width = 0.1;
-      tab-policy = "automatic";
-      tab-position = "top";
-      tab-switcher-popup = false;
-      text-blink-mode = "focused";
-      transparent-background = true;
-      use-system-font = false;
-      use-theme-colors = false;
-      window-above = true;
-      window-maximize = false;
-      window-monitor = "primar";
-      window-position = "right";
-      window-resizable = false;
-      window-size = 0.45;
-      window-skip-taskbar = false;
-    };
   };
 }
