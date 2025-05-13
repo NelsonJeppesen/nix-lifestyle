@@ -86,6 +86,14 @@
           '';
         }
 
+        # "💭👀precognition.nvim - Precognition uses virtual text and gutter signs to show available motions"
+        # https://github.com/tris203/precognition.nvim
+        {
+          plugin = precognition-nvim;
+          type = "lua";
+          config = ''require("precognition").setup({startVisible = false})'';
+        }
+
         # misc deps
         dressing-nvim
         mini-icons
@@ -124,6 +132,8 @@
             }
 
             wk.add({
+              { 'q', desc = "precognition peek", function() require("precognition").peek() end},
+              { '<leader>q', desc = "precognition toggle", function() require("precognition").toggle() end},
               { '<c-\\>', desc = "Toggle Terminal", function() require("toggleterm").toggle() end, mode = { "n", "i", "t" } },
 
               { "<leader><space>", desc = "Smart Find Files", function() Snacks.picker.smart() end },
@@ -616,6 +626,8 @@
       ];
 
       extraConfig = ''
+        set relativenumber
+
         " Remove newbie crutches in Insert Mode
         inoremap <Down>   <Nop>
         inoremap <Left>   <Nop>
