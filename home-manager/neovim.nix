@@ -86,6 +86,12 @@
           '';
         }
 
+        {
+          plugin = nvim-colorizer-lua;
+          type = "lua";
+          config = ''require("colorizer").setup({})'';
+        }
+
         # "💭👀precognition.nvim - Precognition uses virtual text and gutter signs to show available motions"
         # https://github.com/tris203/precognition.nvim
         {
