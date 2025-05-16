@@ -68,6 +68,8 @@
       # "Neovim Lua plugin with common configuration presets for options, mappings, and autocommands. Part of 'mini.nvim' library"
       # https://github.com/echasnovski/mini.basics
       plugins = with pkgs.vimPlugins; [
+        cellular-automaton-nvim
+
         {
           plugin = mini-basics;
           type = "lua";
@@ -142,6 +144,8 @@
               { '<leader>q', desc = "precognition toggle", function() require("precognition").toggle() end},
               { '<c-\\>', desc = "Toggle Terminal", function() require("toggleterm").toggle() end, mode = { "n", "i", "t" } },
 
+              { "<leader>fml", desc = "FML" ,"<cmd>CellularAutomaton make_it_rain<cr>"},
+
               { "<leader><space>", desc = "Smart Find Files", function() Snacks.picker.smart() end },
               { "<leader>,", desc = "Buffers", function() Snacks.picker.buffers() end },
               { "<leader>/", desc = "Grep", function() Snacks.picker.grep() end },
@@ -157,7 +161,6 @@
               { "<leader>w", group = "Write" },
               { "<leader>wq", desc = "Write Quit", "<cmd>wq<cr>" },
               { "<leader>ww", desc = "Write", "<cmd>w<cr>" },
-
               { "<leader>a", group = "Avante" },
 
               { "<leader>l", group = "LSP" },
