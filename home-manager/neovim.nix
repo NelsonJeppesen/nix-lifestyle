@@ -291,11 +291,11 @@
 
         # "Rainbow highlighting and intelligent auto-pairs for Neovim"
         # https://github.com/Saghen/blink.pairs
-        {
-          plugin = blink-pairs;
-          type = "lua";
-          config = "require('blink.pairs').setup({})";
-        }
+        #{
+        #  plugin = blink-pairs;
+        #  type = "lua";
+        #  config = "require('blink.pairs').setup({})";
+        #}
 
         # "Fully featured & enhanced replacement for copilot.vim complete with API for interacting with Github Copilot"
         # https://github.com/zbirenbaum/copilot.lua

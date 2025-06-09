@@ -1,8 +1,4 @@
 {
-  config,
-  pkgs,
-  stdenv,
-  lib,
   ...
 }:
 let

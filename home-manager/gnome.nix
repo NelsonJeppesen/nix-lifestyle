@@ -19,8 +19,33 @@ in
       sort-directories-first = true;
     };
 
+    "org/gnome/system/location" = {
+      enabled = true;
+    };
+
     "org/gnome/nautilus/list-view" = {
       use-tree-view = true;
+
+      default-visible-columns = [
+        "name"
+        "size"
+        "type"
+        "date_modified"
+      ];
+
+      default-column-order = [
+        "name"
+        "size"
+        "type"
+        "owner"
+        "group"
+        "permissions"
+        "date_modified"
+        "date_accessed"
+        "date_created"
+        "recency"
+        "detailed_type"
+      ];
     };
 
     "org/gnome/nautilus/preferences" = {
