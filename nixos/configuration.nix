@@ -14,4 +14,8 @@ in
     ./profiles/agenix.nix
     ./profiles/shared.nix
   ];
+
+  #networking.extraHosts = ''
+  #  52.4.157.168 thrall-app.alchemer.com
+  #'';
 }

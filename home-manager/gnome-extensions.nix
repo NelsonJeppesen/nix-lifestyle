@@ -18,6 +18,7 @@
       { package = pkgs.gnomeExtensions.just-perfection; }
       { package = pkgs.gnomeExtensions.night-theme-switcher; }
       { package = pkgs.gnomeExtensions.one-thing; }
+      { package = pkgs.gnomeExtensions.penguin-ai-chatbot; }
       { package = pkgs.gnomeExtensions.picture-of-the-day; }
       { package = pkgs.gnomeExtensions.pip-on-top; }
       { package = pkgs.gnomeExtensions.run-or-raise; }
