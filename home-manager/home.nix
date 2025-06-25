@@ -146,7 +146,7 @@
       pkgs.fend
       pkgs.gh
       pkgs.gh-dash
-      pkgs.hurl
+      #pkgs.hurl
       pkgs.ipcalc
       pkgs.jira-cli-go
       pkgs.nb
