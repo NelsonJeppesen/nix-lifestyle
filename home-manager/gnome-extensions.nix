@@ -8,14 +8,13 @@
   programs.gnome-shell = {
     enable = true;
     extensions = [
-      #{ package = pkgs.gnomeExtensions.light-style; }
-
+      #{ package = pkgs.gnomeExtensions.hue-lights; }
       { package = pkgs.gnomeExtensions.appindicator; }
       { package = pkgs.gnomeExtensions.bitcoin-markets; }
       { package = pkgs.gnomeExtensions.caffeine; }
       { package = pkgs.gnomeExtensions.clipboard-indicator; }
-      { package = pkgs.gnomeExtensions.hue-lights; }
       { package = pkgs.gnomeExtensions.just-perfection; }
+      { package = pkgs.gnomeExtensions.light-style; }
       { package = pkgs.gnomeExtensions.night-theme-switcher; }
       { package = pkgs.gnomeExtensions.one-thing; }
       { package = pkgs.gnomeExtensions.penguin-ai-chatbot; }
@@ -54,6 +53,12 @@
       strip-text = true;
       toggle-menu = [ "<Shift><Control>i" ];
       topbar-preview-size = 9;
+    };
+
+    "org/gnome/shell/extensions/penguin-ai-chatbot" = {
+      llm-provider = "openai";
+      open-chat-shortcut = [ "<Super>a" ];
+      openai-model = "o3-mini";
     };
 
     "org/gnome/shell/extensions/quick-lofi" = {

@@ -97,6 +97,7 @@ in
 
     "org/gnome/shell/keybindings" = {
       show-screenshot-ui = [ ]; # free up Print
+      toggle-application-view = [ ]; # free up super-a
       toggle-message-tray = [ "<Super>v" ];
       toggle-quick-settings = [ ]; # free up super-s
     };
