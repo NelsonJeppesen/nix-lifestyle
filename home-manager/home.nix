@@ -139,7 +139,7 @@
       #pkgs.terminal-stocks
       pkgs.btop
       pkgs.choose
-      pkgs.codex
+      #pkgs.codex
       pkgs.curl
       pkgs.dnsutils
       pkgs.fd

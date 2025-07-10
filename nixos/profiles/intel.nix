@@ -1,7 +1,5 @@
 {
-  config,
   pkgs,
-  stdenv,
   lib,
   ...
 }:
@@ -23,7 +21,7 @@
   # Update microcode when available
   hardware.cpu.intel.updateMicrocode = true;
 
-  # Ensure modules used for efficent disk encryption are loaded
+  # Ensure modules used for efficient disk encryption are loaded
   # early in the boot process
   boot.initrd.kernelModules = [ "i915" ];
 

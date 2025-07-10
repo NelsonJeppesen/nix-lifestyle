@@ -1,14 +1,17 @@
-{ config, pkgs, stdenv, lib, ... }: {
+{ pkgs, lib, ... }:
+{
   networking = {
     dhcpcd.enable = lib.mkDefault false;
 
     firewall = {
       enable = lib.mkDefault true;
-      allowedTCPPortRanges = [{
-        # Open KDE Connect
-        from = 1714;
-        to = 1764;
-      }];
+      allowedTCPPortRanges = [
+        {
+          # Open KDE Connect
+          from = 1714;
+          to = 1764;
+        }
+      ];
 
       allowedUDPPortRanges = [
         {
@@ -29,4 +32,9 @@
     enable = lib.mkDefault true;
     wait-online.enable = lib.mkDefault false;
   };
+
+  networking.networkmanager.plugins = [
+    pkgs.networkmanager-openvpn
+    pkgs.networkmanager-fortisslvpn
+  ];
 }

@@ -65,12 +65,17 @@
         #bold_italic_font = "Fira Code, Regular Italic";
         #italic_font = "Fira Code, Regular Italic";
         #font_family = "Inconsolata Medium";
-        font_family = ''family="Atkinson Monolegible" wght=200 style=Medium'';
-        bold_font = ''family="Atkinson Monolegible" wght=200 style=Medium'';
+        #Font_family = ''family="Atkinson Monolegible" wght=200 style=Medium'';
+        #Bold_font = ''family="Atkinson Monolegible" wght=200 style=Medium'';
+        #Italic_font = "auto";
+
+        # use same font as Gnome
+        font_family = ''family="Adwaita Mono"'';
+        bold_font = "auto";
         italic_font = "auto";
         bold_italic_font = "auto";
 
-        font_size = "12.5";
+        font_size = "14";
 
         window_border_width = "1px";
         window_margin_width = "0";
