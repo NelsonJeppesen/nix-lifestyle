@@ -649,10 +649,10 @@
         nnoremap <Right>  <Nop>
         nnoremap <Up>     <Nop>
 
-        nnoremap h <Nop>
-        nnoremap j <Nop>
-        nnoremap k <Nop>
-        nnoremap l <Nop>
+        "nnoremap h <Nop>
+        "nnoremap j <Nop>
+        "nnoremap k <Nop>
+        "nnoremap l <Nop>
 
         " Remove newbie crutches in Visual Mode
         vnoremap <Down>   <Nop>
