@@ -13,4 +13,12 @@
     ../profiles/x86_64.nix
     ../profiles/zsh.nix
   ];
+
+  # force the use of more modern xe video driver over i915
+  #boot.blacklistedKernelModules = [ "i915" ];
+
+  #boot.kernelParams = [
+  #  "xe.force_probe=46a6"
+  #  "i915.force_probe=!46a6"
+  #];
 }

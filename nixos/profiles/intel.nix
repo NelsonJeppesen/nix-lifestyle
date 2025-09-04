@@ -34,8 +34,6 @@
     "xhci_pci"
   ];
 
-  boot.blacklistedKernelModules = [ "i915" ];
-
   # Enable TLP service to reduce power usage and fan noise, particularly on battery
   #services.thermald.enable = lib.mkDefault true;
   services.power-profiles-daemon.enable = false;
