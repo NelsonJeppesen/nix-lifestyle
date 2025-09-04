@@ -1,15 +1,5 @@
-# LG Gram 14 14Z90Q-K.ARW5U1  Intel 12th Gen
-{
-  fetchurl,
-  fetchgit,
-  fetchhg,
-  config,
-  pkgs,
-  stdenv,
-  lib,
-  modulesPath,
-  ...
-}:
+# LG Gram 14 2022 14Z90Q-K.ARW5U1 Intel 12th Gen
+{ ... }:
 {
   system.stateVersion = "22.11";
 
@@ -30,6 +20,12 @@
     (self: super: { falcon-sensor = super.callPackage ../overlays/falcon-sensor.nix { }; })
   ];
 
-  # laptop has 8gb of ram and it can get tight sometimes
+  # 8GiB laptop; things get tight
   zramSwap.memoryPercent = 100;
+
+  # force xe driver for lg-gram-14-2022.home.arpa
+  boot.kernelParams = [
+    "xe.force_probe=46a6"
+    "i915.force_probe=!46a6"
+  ];
 }

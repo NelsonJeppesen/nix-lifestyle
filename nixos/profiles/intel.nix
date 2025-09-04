@@ -23,7 +23,7 @@
 
   # Ensure modules used for efficient disk encryption are loaded
   # early in the boot process
-  boot.initrd.kernelModules = [ "i915" ];
+  boot.initrd.kernelModules = [ "xe" ];
 
   boot.initrd.availableKernelModules = [
     "aesni_intel"
@@ -34,14 +34,7 @@
     "xhci_pci"
   ];
 
-  boot.kernelParams = [
-    "i915.modeset=1"
-
-    # Making use of Framebuffer compression (FBC) can reduce power consumption while reducing memory bandwidth needed for screen refreshes
-    "i915.enable_fbc=1"
-    "i915.enable_psr=2"
-    "i915.enable_dc=1"
-  ];
+  boot.blacklistedKernelModules = [ "i915" ];
 
   # Enable TLP service to reduce power usage and fan noise, particularly on battery
   #services.thermald.enable = lib.mkDefault true;

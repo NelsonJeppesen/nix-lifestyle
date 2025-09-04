@@ -1,11 +1,8 @@
-{ config, pkgs, stdenv, lib, ... }:
+{ pkgs, lib, ... }:
 
 {
   imports = [
-    "${
-      builtins.fetchTarball
-      "https://github.com/nix-community/disko/archive/master.tar.gz"
-    }/module.nix"
+    "${builtins.fetchTarball "https://github.com/nix-community/disko/archive/master.tar.gz"}/module.nix"
   ];
 
   boot = {
@@ -54,17 +51,20 @@
               size = "100%";
               content = {
                 #extraOpenArgs = [ "--allow-discards" ];
-		settings = {
-allowDiscards = true;
-};
+                settings = {
+                  allowDiscards = true;
+                };
                 name = "crypted";
                 type = "luks";
 
                 content = {
                   extraArgs = [ "-f" ];
-                  mountOptions = [ "discard=async" "autodefrag" ];
+                  mountOptions = [
+                    "discard=async"
+                    "autodefrag"
+                  ];
                   mountpoint = "/";
- format = "btrfs";
+                  format = "btrfs";
 
                   type = "filesystem";
                 };

@@ -421,10 +421,20 @@
 
         # "Use your Neovim like using Cursor AI IDE! "
         #   https://github.com/yetone/avante.nvim
+        copilot-lua
         {
           plugin = avante-nvim;
           type = "lua";
-          config = ''require("avante").setup({provider = "openai"})'';
+          config = ''
+              require("copilot").setup({})
+              require("avante").setup({
+                provider = "copilot",
+                providers = {
+                copilot = {
+                  --disable_tools = false,
+                },
+                },
+            })'';
         }
 
         # "Performant, batteries-included completion plugin for Neovim"

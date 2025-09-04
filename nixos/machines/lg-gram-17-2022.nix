@@ -1,8 +1,7 @@
-# LG Gram 14 14Z90Q-K.ARW5U1  Intel 12th Gen
-{ fetchurl, fetchgit, fetchhg, config, pkgs, stdenv, lib, modulesPath, ... }: {
+# LG Gram 17 2022 Intel 12th Gen
+{ ... }:
+{
   system.stateVersion = "23.05";
-
-  #programs.steam.enable = true;
 
   imports = [
     ../profiles/desktop.nix
