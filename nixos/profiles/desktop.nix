@@ -1,28 +1,18 @@
-{
-  ...
-}:
-let
-
-  # dumb hack to get godaddy certs working outside of a browser
-  cert = builtins.fetchurl {
-    url = "https://certs.godaddy.com/repository/gd_bundle-g2-g1.crt";
-    sha256 = "0n6qpxm8mzl1fx4xw3yzmq1lx910csa73ijqc8xmbqild970390a";
-  };
-in
+{ ... }:
 {
   hardware.bluetooth.enable = true;
   services.pulseaudio.enable = false;
+  programs.evolution.enable = false;
 
-  #boot.initrd.systemd.enable = true;
-  #boot.initrd.unl0kr.enable = true;
-  boot.kernelParams = [ "quiet" ];
+  boot.kernelParams = [
+    "quiet"
+    "loglevel=3"
+  ]; # Added loglevel=3 for cleaner boot logs.
+
   boot.loader.systemd-boot.configurationLimit = 14;
   boot.loader.systemd-boot.consoleMode = "max";
   boot.loader.systemd-boot.enable = true;
   boot.plymouth.enable = true;
-  #services.fprintd.enable = true;
-
-  security.pki.certificates = [ cert ];
 
   # Pipewire
   security.rtkit.enable = true;

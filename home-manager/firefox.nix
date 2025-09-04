@@ -1,14 +1,20 @@
-{  pkgs, ... }:
+{ pkgs, ... }:
 {
-
   programs.firefox = {
     enable = true;
     profiles = {
+
       home = {
         id = 0;
         name = "home";
         # Hide tab bar and side bar header
         userChrome = "\n          #TabsToolbar\n          { visibility: collapse; }\n          #sidebar-box #sidebar-header {\n            display: none !important;\n          }\n        ";
+
+        # Chrome-style auto suspend
+        #extensions = with pkgs.firefox-addons; [
+        #  auto-tab-discard
+        #];
+
         settings = {
           "gfx.webrender.all" = true;
           "gfx.webrender.enabled" = true;
@@ -16,7 +22,31 @@
           "layout.css.backdrop-filter.enabled" = true;
           "svg.context-properties.content.enabled" = true;
           "toolkit.legacyUserProfileCustomizations.stylesheets" = true;
+
+          # 🔧 Background Tab Throttling
+          "dom.min_background_timeout_value" = 1000;
+          "dom.timeout.enable_budget_timer_throttling" = true;
+          "dom.timeout.background_throttling_max_budget" = 50;
+          "dom.ipc.processPriorityManager.enabled" = true;
+
+          # 🌙 Sleep Background Tabs
+          "browser.tabs.unloadOnLowMemory" = true;
+          "browser.tabs.unloadOnLowMemory.delay_ms" = 60000;
+
+          # 🎨 Rendering (lower paints when idle; Wayland compositor path)
+          "layout.frame_rate" = 30;
+          "gfx.webrender.compositor.force-enabled" = true;
+
+          # 💤 Kill wasteful background fetches
+          #"network.prefetch-next" = false;
+          #"network.dns.disablePrefetch" = true;
+          #"network.predictor.enabled" = false;
+
+          # ✅ Wayland niceties (harmless on X11; ignored)
+          "widget.wayland.async-dnd" = true;
+          "widget.use-xdg-desktop-portal.file-picker" = 1;
         };
+
         search = {
           default = "google"; # Change this to your desired engine
           force = true;

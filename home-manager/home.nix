@@ -1,4 +1,5 @@
-{ pkgs, ... }: {
+{ pkgs, ... }:
+{
   nixpkgs.config.allowUnfree = true;
   programs.kubecolor.enable = true;
 
@@ -6,7 +7,9 @@
     <agenix/modules/age-home.nix>
 
     ./editorconfig.nix
-    ./firefix.nix
+    ./firefox.nix
+    ./firefox-slack.nix
+    ./firefox-chatgpt.nix
     ./git.nix
     ./gnome-extensions.nix
     ./gnome.nix
@@ -51,7 +54,7 @@
     file.".config/curlrc".source = ./dotfiles/curlrc;
     file.".config/fend/config.toml".source = ./dotfiles/fend.toml;
     file.".digrc".source = ./dotfiles/digrc;
-    file.".local/bin".source = ./bin;
+    file.".local/bin/update".source = ./dotfiles/update;
     file.".terraform.d/plugin-cache/.empty".source = ./dotfiles/empty;
 
     packages = [
@@ -95,7 +98,7 @@
       pkgs.zoom-us
       #pinnedZoom
       pkgs.kitty
-      pkgs.slack
+      # pkgs.slack
 
       # cloud management
       #pkgs.ansible_2_16

@@ -9,13 +9,15 @@
   services.xserver.videoDrivers = [ "modesetting" ];
   hardware.graphics.enable = true;
   hardware.graphics.extraPackages = with pkgs; [
-    intel-media-driver # hardware decode/encode of video streams
-    intel-vaapi-driver
-    libvdpau-va-gl
+    intel-compute-runtime
+    intel-media-driver
+    vpl-gpu-rt
   ];
 
   environment.variables = {
-    VDPAU_DRIVER = "va_gl";
+    LIBVA_DRIVER_NAME = "iHD"; # force modern VA-API
+    MOZ_ENABLE_WAYLAND = "1"; # Firefox on Wayland behaves better/less wakeups
+    OZONE_PLATFORM = "wayland";
   };
 
   # Update microcode when available
@@ -34,26 +36,58 @@
     "xhci_pci"
   ];
 
-  boot.blacklistedKernelModules = [ "i915" ];
+  networking.networkmanager.wifi.powersave = true;
 
   # Enable TLP service to reduce power usage and fan noise, particularly on battery
-  #services.thermald.enable = lib.mkDefault true;
+  services.thermald.enable = lib.mkDefault true;
   services.power-profiles-daemon.enable = false;
   services.tlp.enable = lib.mkDefault true;
   services.tlp.settings = {
-    CPU_BOOST_ON_AC = "0";
-    CPU_BOOST_ON_BAT = "0";
-    CPU_ENERGY_PERF_POLICY_ON_AC = "balance_power";
-    CPU_ENERGY_PERF_POLICY_ON_BAT = "balance_power";
-    CPU_HWP_DYN_BOOST_ON_AC = "0";
-    CPU_HWP_DYN_BOOST_ON_BAT = "0";
-    CPU_MAX_PERF_ON_AC = "100";
-    CPU_MAX_PERF_ON_BAT = "70";
     PLATFORM_PROFILE_ON_AC = "balanced";
-    PLATFORM_PROFILE_ON_BAT = "balanced";
+    PLATFORM_PROFILE_ON_BAT = "low-power";
+
+    CPU_SCALING_GOVERNOR_ON_AC = "powersave";
+    CPU_SCALING_GOVERNOR_ON_BAT = "powersave";
+    CPU_ENERGY_PERF_POLICY_ON_AC = "balance_performance";
+    CPU_ENERGY_PERF_POLICY_ON_BAT = "power";
+    CPU_MIN_PERF_ON_AC = 5;
+    CPU_MAX_PERF_ON_AC = 100;
+    CPU_MIN_PERF_ON_BAT = 5;
+    CPU_MAX_PERF_ON_BAT = 70;
+    CPU_BOOST_ON_AC = 0;
+    CPU_BOOST_ON_BAT = 0;
+    CPU_HWP_DYN_BOOST_ON_AC = 1;
+    CPU_HWP_DYN_BOOST_ON_BAT = 0;
+
+    NMI_WATCHDOG = 0;
+
+    PCIE_ASPM_ON_AC = "powersave";
+    PCIE_ASPM_ON_BAT = "powersupersave";
+
+    NVME_APST_ON_AC = 1;
+    NVME_APST_ON_BAT = 1;
+    NVME_APST_MAX_LATENCY_ON_AC = 70000;
+    NVME_APST_MAX_LATENCY_ON_BAT = 55000;
+
+    SATA_LINKPWR_ON_AC = "med_power_with_dipm";
+    SATA_LINKPWR_ON_BAT = "min_power";
+    AHCI_RUNTIME_PM_ON_AC = "auto";
+    AHCI_RUNTIME_PM_ON_BAT = "auto";
+    AHCI_RUNTIME_PM_TIMEOUT = 15;
+
+    WIFI_PWR_ON_AC = "off";
+    WIFI_PWR_ON_BAT = "on";
+    WOL_DISABLE = "Y";
+
+    USB_AUTOSUSPEND = 1;
+    USB_DENYLIST_BTUSB = 1;
+    USB_EXCLUDE_PHONE = 1;
+
+    SOUND_POWER_SAVE_ON_AC = 0;
+    SOUND_POWER_SAVE_ON_BAT = 10;
+    SOUND_POWER_SAVE_CONTROLLER = "Y";
+
     RUNTIME_PM_ON_AC = "auto";
     RUNTIME_PM_ON_BAT = "auto";
-    WIFI_PWR_ON_AC = "off";
-    WIFI_PWR_ON_BAT = "off";
   };
 }

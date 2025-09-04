@@ -19,6 +19,24 @@ in
       sort-directories-first = true;
     };
 
+    "org/gnome/desktop/a11y/applications" = {
+      "screen-magnifier-enabled" = true;
+    };
+
+    "org/gnome/desktop/interface" = {
+      toolkit-accessibility = true;
+    };
+
+    "org/gnome/desktop/a11y/magnifier" = {
+      mag-factor = 1.0;
+      brightness-red = 0.01;
+      brightness-blue = 0.01;
+      brightness-green = 0.01;
+      contrast-red = -0.04;
+      contrast-blue = -0.04;
+      contrast-green = -0.04;
+    };
+
     "org/gnome/system/location" = {
       enabled = true;
     };

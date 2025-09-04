@@ -1,27 +1,17 @@
-{
-  pkgs,
-  ...
-}:
+{ pkgs, ... }:
 {
   home.file.".config/run-or-raise/shortcuts.conf".source = ./dotfiles/shortcuts.conf;
 
   programs.gnome-shell = {
     enable = true;
     extensions = [
-      #{ package = pkgs.gnomeExtensions.hue-lights; }
       { package = pkgs.gnomeExtensions.appindicator; }
       { package = pkgs.gnomeExtensions.bitcoin-markets; }
       { package = pkgs.gnomeExtensions.caffeine; }
       { package = pkgs.gnomeExtensions.clipboard-indicator; }
       { package = pkgs.gnomeExtensions.just-perfection; }
-      { package = pkgs.gnomeExtensions.light-style; }
-      { package = pkgs.gnomeExtensions.night-theme-switcher; }
-      { package = pkgs.gnomeExtensions.one-thing; }
-      { package = pkgs.gnomeExtensions.penguin-ai-chatbot; }
       { package = pkgs.gnomeExtensions.picture-of-the-day; }
-      { package = pkgs.gnomeExtensions.pip-on-top; }
       { package = pkgs.gnomeExtensions.run-or-raise; }
-      { package = pkgs.gnomeExtensions.unblank; }
 
       # "Play lofi music on your Gnome desktop with just a click!"
       #   https://github.com/eucaue/gnome-shell-extension-quick-lofi
@@ -32,6 +22,7 @@
   dconf.settings = {
 
     "org/gnome/shell/extensions/just-perfection" = {
+      accessibility-menu = false;
       dash = false;
       search = true;
       startup-status = 0; # disable the overview popup thing
@@ -55,18 +46,12 @@
       topbar-preview-size = 9;
     };
 
-    "org/gnome/shell/extensions/penguin-ai-chatbot" = {
-      llm-provider = "openai";
-      open-chat-shortcut = [ "<Super>a" ];
-      openai-model = "o3-mini";
-    };
-
     "org/gnome/shell/extensions/quick-lofi" = {
       volume = 75;
       set-popup-max-height = false;
 
       radios = [
-        # somafm
+        # SomaFM Radios
         "SomaFM DEF CON - http://somafm.com/defcon130.pls"
         "SomaFM Dark Zone - http://somafm.com/darkzone130.pls"
         "SomaFM Drone Zone - http://somafm.com/dronezone130.pls"
@@ -76,11 +61,11 @@
         "SomaFM Synphaera - http://somafm.com/synphaera130.pls"
         "SomaFM Vaporwaves - http://somafm.com/vaporwaves130.pls"
 
-        # "radio"
+        # General Radios
         "KALW - https://kalw-live.streamguys1.com/kalw.aac"
         "KEXP - https://kexp-mp3-128.streamguys1.com/kexp128.mp3"
 
-        # rekt.network
+        # rekt.network Radios
         "rekt: chillsynth - http://stream.rekt.network/chillsynth.ogg"
         "rekt: darksynth - http://stream.rekt.network/darksynth.ogg"
         "rekt: datawave - http://stream.rekt.network/datawave.ogg"
@@ -90,8 +75,6 @@
         "rekt: rekt - http://stream.rekt.network/rekt.ogg"
         "rekt: rektory - http://stream.rekt.network/rektory.ogg"
         "rekt: spacesynth - http://stream.rekt.network/spacesynth.ogg"
-
-        "[emergency slow internet] - http://somafm.com/defcon32.pls"
       ];
     };
 
@@ -115,29 +98,5 @@
       show-notifications = false;
       toggle-shortcut = [ "<Super>p" ];
     };
-
-    "org/gnome/shell/extensions/nightthemeswitcher/commands" = {
-      enabled = true;
-      sunset = "/home/nelson/kitty-colorscheme";
-      sunrise = "/home/nelson/kitty-colorscheme";
-    };
-
-    "org/gnome/shell/extensions/nightthemeswitcher/shell-variants" = {
-      enabled = true;
-      day = "LightShell";
-      night = "";
-    };
-
-    "org/gnome/shell/extensions/one-thing" = {
-      index-in-status-bar = 1;
-      location-in-status-bar = 0;
-      show-settings-button-on-popup = false;
-    };
-
-    "org/gnome/shell/extensions/unblank" = {
-      power = false;
-      time = 1800;
-    };
-
   };
 }

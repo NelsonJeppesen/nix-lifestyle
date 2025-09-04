@@ -23,7 +23,9 @@
   # 8GiB laptop; things get tight
   zramSwap.memoryPercent = 100;
 
-  # force xe driver for lg-gram-14-2022.home.arpa
+  # force the use of more modern xe video driver over i915
+  boot.blacklistedKernelModules = [ "i915" ];
+
   boot.kernelParams = [
     "xe.force_probe=46a6"
     "i915.force_probe=!46a6"

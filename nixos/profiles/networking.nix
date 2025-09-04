@@ -1,6 +1,9 @@
 { pkgs, lib, ... }:
 {
+
   networking = {
+    modemmanager.enable = false;
+
     dhcpcd.enable = lib.mkDefault false;
 
     firewall = {

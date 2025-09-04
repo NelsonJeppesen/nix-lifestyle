@@ -18,10 +18,13 @@
   services.dbus.implementation = "broker";
   users.defaultUserShell = pkgs.zsh;
 
-  environment.sessionVariables = rec {
+  environment.sessionVariables = {
+    GDK_BACKEND = "wayland"; # prefer Wayland, fallback to X11 if needed
     MOZ_ENABLE_WAYLAND = "1";
+    MOZ_USE_XINPUT2 = "1"; # smoother scrolling/input
     NIXOS_OZONE_WL = "1";
   };
+
   nix.extraOptions = "experimental-features = nix-command flakes";
   services.fwupd.enable = lib.mkDefault true;
 
