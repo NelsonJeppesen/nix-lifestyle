@@ -1,5 +1,6 @@
 # LG Gram Pro 17 2025 17Z90TP-G
-{ ... }: {
+{ ... }:
+{
   system.stateVersion = "25.05";
 
   imports = [
@@ -7,8 +8,13 @@
     ../profiles/gnome.nix
     ../profiles/intel.nix
     ../profiles/networking.nix
-    ../profiles/s3fs.nix
+    # ../profiles/s3fs.nix
     ../profiles/x86_64.nix
     ../profiles/zsh.nix
+  ];
+
+  boot.kernelParams = [
+    "xe.force_probe=7d51"
+    "i915.force_probe=!7d51"
   ];
 }
