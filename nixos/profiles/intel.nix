@@ -36,7 +36,7 @@
     "xhci_pci"
   ];
 
-  networking.networkmanager.wifi.powersave = 2;
+  networking.networkmanager.wifi.powersave = true;
 
   # Enable TLP service to reduce power usage and fan noise, particularly on battery
   services.thermald.enable = lib.mkDefault true;
