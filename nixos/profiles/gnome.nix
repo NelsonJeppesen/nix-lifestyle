@@ -9,6 +9,8 @@
       gnome-initial-setup.enable = false;
       rygel.enable = false;
       sushi.enable = false;
+      localsearch.enable = false;
+      tinysparql.enable = false;
     };
 
     xserver = {

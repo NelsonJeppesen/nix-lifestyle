@@ -48,6 +48,7 @@
         vim.opt.shiftwidth  = 2
         vim.opt.softtabstop = 2
         vim.opt.swapfile    = false
+        vim.opt.showmode    = false  -- Disable mode display for statusline plugins.
 
         -- Configure LSP/diagnostic icons
         vim.diagnostic.config({
@@ -522,7 +523,7 @@
                 options={
                   max_name_length=38,
                   max_prefix_length=35,
-                  separator_style='slope',
+                                separator_style='thick',  -- Better separation for buffers.
                   show_buffer_close_icons=false,
                   show_buffer_icons=false,
                   show_close_icon=false,
@@ -637,9 +638,8 @@
             -- use which-key
             vim.g.table_mode_disable_mappings = 1
             vim.g.table_mode_disable_tableize_mappings = 1
-
-            -- GitHub markdown
             vim.g.table_mode_corner='|'
+            vim.g.table_mode_header_fillchar='-'
           '';
         }
       ];
@@ -654,10 +654,10 @@
         inoremap <Up>     <Nop>
 
         " Remove newbie crutches in Normal Mode
-        nnoremap <Down>   <Nop>
-        nnoremap <Left>   <Nop>
-        nnoremap <Right>  <Nop>
-        nnoremap <Up>     <Nop>
+        nnoremap <Down>    :echo "Arrow keys are disabled!"<CR>
+        nnoremap <Left>    :echo "Arrow keys are disabled!"<CR>
+        nnoremap <Right>   :echo "Arrow keys are disabled!"<CR>
+        nnoremap <Up>      :echo "Arrow keys are disabled!"<CR>
 
         "nnoremap h <Nop>
         "nnoremap j <Nop>
