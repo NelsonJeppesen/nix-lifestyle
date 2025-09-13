@@ -5,7 +5,7 @@
 
   imports = [
     ../profiles/desktop.nix
-    ../profiles/factorio.nix
+    # ../profiles/factorio.nix
     ../profiles/gnome.nix
     ../profiles/intel.nix
     ../profiles/networking.nix

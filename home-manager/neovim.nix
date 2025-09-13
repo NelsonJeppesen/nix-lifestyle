@@ -95,12 +95,32 @@
           config = ''require("colorizer").setup({})'';
         }
 
+        oil-git-status-nvim
+        {
+          plugin = oil-nvim;
+          type = "lua";
+          config = ''
+            require("oil").setup({
+              win_options = {
+                signcolumn = "yes:2",
+              },
+            })
+            require("oil-git-status").setup()
+          '';
+        }
+
         # "💭👀precognition.nvim - Precognition uses virtual text and gutter signs to show available motions"
         # https://github.com/tris203/precognition.nvim
         {
           plugin = precognition-nvim;
           type = "lua";
           config = ''require("precognition").setup({startVisible = false})'';
+        }
+
+        {
+          plugin = hardtime-nvim;
+          type = "lua";
+          config = ''require("hardtime").setup()'';
         }
 
         # misc deps
@@ -152,7 +172,7 @@
               { "<leader>/", desc = "Grep", function() Snacks.picker.grep() end },
               { "<leader>:", desc = "Command History", function() Snacks.picker.command_history() end },
               { "<leader>n", desc = "Notification History", function() Snacks.picker.notifications() end },
-              { "<leader>e", desc = "File Explorer", function() Snacks.explorer() end },
+              { "<leader>e", desc = "Oil", "<cmd>Oil<cr>" },
               { "<leader>?", desc = "keybindings", function() require("which-key").show() end },
 
               { "<leader>q", group = "Quit" },

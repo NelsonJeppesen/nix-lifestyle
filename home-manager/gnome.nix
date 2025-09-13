@@ -20,11 +20,11 @@ in
     };
 
     "org/gnome/desktop/a11y/applications" = {
-      "screen-magnifier-enabled" = true;
+      "screen-magnifier-enabled" = false;
     };
 
     "org/gnome/desktop/interface" = {
-      toolkit-accessibility = true;
+      toolkit-accessibility = false;
     };
 
     "org/gnome/desktop/a11y/magnifier" = {

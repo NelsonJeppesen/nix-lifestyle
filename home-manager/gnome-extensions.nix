@@ -12,6 +12,7 @@
       { package = pkgs.gnomeExtensions.just-perfection; }
       { package = pkgs.gnomeExtensions.picture-of-the-day; }
       { package = pkgs.gnomeExtensions.run-or-raise; }
+      { package = pkgs.gnomeExtensions.todotxt; }
 
       # "Play lofi music on your Gnome desktop with just a click!"
       #   https://github.com/eucaue/gnome-shell-extension-quick-lofi
@@ -20,6 +21,16 @@
   };
 
   dconf.settings = {
+
+    "org/gnome/shell/extensions/TodoTxt" = {
+      donetxt-location = "/home/nelson/source/personal/notes/done.txt";
+      todotxt-location = "/home/nelson/source/personal/notes/todo.txt";
+
+      add-creation-date = true;
+      auto-archive = true;
+      confirm-delete = false;
+      keep-open-after-new = true;
+    };
 
     "org/gnome/shell/extensions/just-perfection" = {
       accessibility-menu = false;
@@ -91,12 +102,12 @@
     };
 
     "org/gnome/shell/extensions/caffeine" = {
-      indicator-position = -1;
-      indicator-position-index = -1;
+      indicator-position = 17;
+      indicator-position-index = 3;
       screen-blank = "never";
-      show-indicator = "only-active";
+      show-indicator = "always";
       show-notifications = false;
-      toggle-shortcut = [ "<Super>p" ];
+      toggle-shortcut = [ "<Super>c" ];
     };
   };
 }

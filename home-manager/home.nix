@@ -8,8 +8,7 @@
 
     ./editorconfig.nix
     ./firefox.nix
-    ./firefox-slack.nix
-    ./firefox-chatgpt.nix
+    ./chrome-apps.nix
     ./git.nix
     ./gnome-extensions.nix
     ./gnome.nix
@@ -19,6 +18,11 @@
   ];
 
   programs.home-manager.enable = true;
+
+  programs.opencode = {
+    enable = true;
+  };
+
   fonts.fontconfig.enable = true;
 
   # Add local scripts
@@ -70,6 +74,7 @@
 
       #pkgs.atkinson-hyperlegible
       #pkgs.maple-mono
+      pkgs.python314
       pkgs.atkinson-monolegible
       #pkgs.b612
       #pkgs.fira-code
@@ -108,6 +113,7 @@
       pkgs.packer
       pkgs.ssm-session-manager-plugin
       pkgs.terraform
+      pkgs.terraform-mcp-server
 
       # "A terminal spreadsheet multitool for discovering and arranging data"
       #pkgs.visidata
