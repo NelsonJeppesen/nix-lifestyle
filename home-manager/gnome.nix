@@ -23,8 +23,13 @@ in
       "screen-magnifier-enabled" = false;
     };
 
+    # merged interface settings (was duplicate)
     "org/gnome/desktop/interface" = {
       toolkit-accessibility = false;
+      accent-color = "pink";
+      clock-format = "12h";
+      enable-hot-corners = false;
+      show-battery-percentage = true;
     };
 
     "org/gnome/desktop/a11y/magnifier" = {
@@ -71,12 +76,7 @@ in
       click-policy = "double";
     };
 
-    "org/gnome/desktop/interface" = {
-      accent-color = "pink";
-      clock-format = "12h";
-      enable-hot-corners = false;
-      show-battery-percentage = true;
-    };
+
 
     "org/gnome/desktop/peripherals/touchpad" = {
       tap-to-click = false;

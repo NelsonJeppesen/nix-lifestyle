@@ -28,7 +28,7 @@ in
 
       aliases = {
         pu = "push";
-        puf = "!git push --force-with-lease";
+        puf = "!git push --force-with-lease --force-if-includes";
         br = "!git co $(git branch --list --sort=-committerdate|fzf --height 15)";
       };
 

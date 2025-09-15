@@ -1,4 +1,4 @@
-{ pkgs, ... }:
+{ config, pkgs, ... }:
 {
   nixpkgs.config.allowUnfree = true;
   programs.kubecolor.enable = true;
@@ -26,7 +26,7 @@
   fonts.fontconfig.enable = true;
 
   # Add local scripts
-  home.sessionPath = [ "/home/nelson/.local/bin" ];
+  home.sessionPath = [ "${config.home.homeDirectory}/.local/bin" ];
 
   age.secrets = {
     "envrc_personal" = {
@@ -50,7 +50,8 @@
   };
 
   home = {
-    stateVersion = "22.11";
+    # bumped from 22.11 -> 24.05; review release notes before locking in
+    stateVersion = "24.05";
     username = "nelson";
     homeDirectory = "/home/nelson";
 
@@ -74,7 +75,7 @@
 
       #pkgs.atkinson-hyperlegible
       #pkgs.maple-mono
-      pkgs.python314
+      pkgs.python313
       pkgs.atkinson-monolegible
       #pkgs.b612
       #pkgs.fira-code

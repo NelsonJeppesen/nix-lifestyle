@@ -18,8 +18,7 @@ let
     --disk-cache-size=65536
     --media-cache-size=65537
     --ignore-gpu-blocklist
-    --enable-features=VaapiVideoEncoder,VaapiVideoDecoder
-    --ozone-platform-hint=auto
+    --enable-features=VaapiVideoEncoder,VaapiVideoDecoder,WaylandWindowDecorations
     --ozone-platform=wayland
     --use-gl=egl
     # Stop PWA window from hijacking external links

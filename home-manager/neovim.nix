@@ -23,7 +23,7 @@
         pkgs.phpactor
 
         # python
-        pkgs.python312Packages.python-lsp-server
+        pkgs.python313Packages.python-lsp-server
 
         # ruby
         pkgs.ruby-lsp
@@ -303,13 +303,7 @@
           '';
         }
 
-        {
-          plugin = nvim-treesitter-textobjects;
-          type = "lua";
-          config = ''
-            require'nvim-treesitter.configs'.setup {}
-          '';
-        }
+        { plugin = nvim-treesitter-textobjects; }
 
         # "Rainbow highlighting and intelligent auto-pairs for Neovim"
         # https://github.com/Saghen/blink.pairs
@@ -321,20 +315,7 @@
 
         # "Fully featured & enhanced replacement for copilot.vim complete with API for interacting with Github Copilot"
         # https://github.com/zbirenbaum/copilot.lua
-        {
-          plugin = copilot-lua;
-          type = "lua";
-          config = ''
-            require("copilot").setup({
-              suggestion = { enabled = false },
-              panel = { enabled = false },
-              filetypes = {
-                markdown = true,
-                help = true,
-              },
-            })
-          '';
-        }
+
 
         # "⚙️ Configurable GitHub Copilot blink.cmp source for Neovim"
         # https://github.com/fang2hou/blink-copilot
@@ -448,15 +429,16 @@
           plugin = avante-nvim;
           type = "lua";
           config = ''
-              require("copilot").setup({})
-              require("avante").setup({
-                provider = "copilot",
-                providers = {
-                copilot = {
-                  --disable_tools = false,
-                },
-                },
-            })'';
+            require("copilot").setup({
+              suggestion = { enabled = false },
+              panel = { enabled = false },
+              filetypes = { markdown = true, help = true },
+            })
+            require("avante").setup({
+              provider = "copilot",
+              providers = { copilot = {} },
+            })
+          '';
         }
 
         # "Performant, batteries-included completion plugin for Neovim"
@@ -504,20 +486,22 @@
         # https://github.com/folke/tokyonight.nvim/?tab=readme-ov-file
         {
           plugin = tokyonight-nvim;
-          type = "viml";
-
-          # set theme very early so other plugins can pull in the settings e.g. bufferline
+          type = "lua";
           config = ''
-            set bg=dark
-
-            " set color-scheme on gnome light/dark setting
-            let theme=system('dconf read /org/gnome/desktop/interface/color-scheme')
-
-            if theme =~ "default"
-              colorscheme tokyonight-moon
-            else
-              colorscheme tokyonight-night
+            local function apply_theming()
+              local handle = io.popen("gsettings get org.gnome.desktop.interface color-scheme 2>/dev/null")
+              local result = handle and handle:read("*l") or ""
+              if handle then handle:close() end
+              if result:find("prefer%-dark") then
+                vim.o.background = "dark"
+                vim.cmd("colorscheme tokyonight-night")
+              else
+                vim.o.background = "dark"
+                vim.cmd("colorscheme tokyonight-moon")
+              end
             end
+            vim.api.nvim_create_autocmd({ "VimEnter", "FocusGained" }, { callback = apply_theming })
+            apply_theming()
           '';
         }
 

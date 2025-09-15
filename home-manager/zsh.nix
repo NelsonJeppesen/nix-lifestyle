@@ -1,4 +1,4 @@
-{  pkgs, ... }:
+{ pkgs, ... }:
 {
   programs = {
     direnv.enable = true;
@@ -34,7 +34,7 @@
         python.disabled = true;
         terraform.disabled = true;
 
-        #right_format = "$kubernetes$line_break\";
+        #right_format = "$kubernetes$line_break";
         fill = {
           symbol = " ";
         };
@@ -119,6 +119,49 @@
           cd ~/source
           clear
         fi
+
+        # ----- Functions migrated from broken alias definitions -----
+        ap() {
+          local query="$1"
+          local profile
+          profile="$(${pkgs.awscli2}/bin/aws configure list-profiles | sort | ${pkgs.fzf}/bin/fzf --exact --query="$query" --select-1)"
+          if [ -n "$profile" ]; then
+            echo export AWS_PROFILE="$profile" > ~/.aws/sticky.profile
+            source ~/.aws/sticky.profile
+          fi
+        }
+
+        ar() {
+          local query="$1"
+          local region
+          region="$(printf '%s\n' us-east-1 ca-central-1 eu-central-1 ap-southeast-2 | ${pkgs.fzf}/bin/fzf --exact --query="$query" --select-1)"
+          if [ -n "$region" ]; then
+            echo export AWS_REGION="$region" > ~/.aws/sticky.region
+            source ~/.aws/sticky.region
+          fi
+        }
+
+        nsr() {
+          if [ -z "$1" ]; then
+            echo "usage: nsr <package> [command]" >&2
+            return 1
+          fi
+          local pkg="$1"
+          local run_cmd="''${2:-$1}"
+          set -x
+          nix-shell --packages "$pkg" --run "$run_cmd"
+        }
+
+        rgreplace() {
+          if [ $# -lt 2 ]; then
+            echo "usage: rgreplace <search> <replace>" >&2
+            return 1
+          fi
+            local search="$1"
+            local replace="$2"
+            rg -l -- "$search" | xargs -r -n1 sed -i "s|$search|$replace|g"
+        }
+        # ------------------------------------------------------------
       '';
 
       sessionVariables = {
@@ -131,12 +174,8 @@
         # reboot into uefi bios
         reboot-bios = "systemctl reboot --firmware-setup";
 
-        # fuzzy find aws profile
+        # fuzzy find aws profile reset
         apu = "unset AWS_PROFILE";
-        ap = ''(){echo export AWS_PROFILE="$(${pkgs.awscli2}/bin/aws configure list-profiles|sort|${pkgs.fzf}/bin/fzf --exact --query=$1 --select-1)" > ~/.aws/sticky.profile;source ~/.aws/sticky.profile}'';
-
-        # fuzzy find aws region
-        ar = ''(){echo export AWS_REGION="$(echo 'us-east-1\nca-central-1\neu-central-1\nap-southeast-2'|${pkgs.fzf}/bin/fzf --exact --query=$1 --select-1)" > ~/.aws/sticky.region;source ~/.aws/sticky.region}'';
 
         # login via aws sso
         al = "aws sso login";
@@ -144,19 +183,17 @@
         a = "sgpt";
 
         # pipe to clipboard
-        clipboard = "${pkgs.xsel}/bin/xsel --clipboard";
+        # Wayland-only clipboard tool
+        clipboard = "${pkgs.wl-clipboard}/bin/wl-copy";
 
         # short 'n sweet
         g = "${pkgs.git}/bin/git";
-        h = "${pkgs.helmfile}/bin/helmfile";
 
         da = "direnv allow";
 
         # Quick notes
         n = "nb edit work-$(date +%Y-%m).md      2>/dev/null || nb add --title work-$(date +%Y-%m)";
         np = "nb edit personal-$(date +%Y-%m).md 2>/dev/null || nb add --title personal-$(date +%Y-%m)";
-
-        nsr = ''nsrfun() {if [ "$2" = "" ];then 2="$1";fi;set -x;nix-shell --packages $1 --run $2};nsrfun'';
 
         # reset
         rst = ''
@@ -173,33 +210,13 @@
         f = "fend";
         fc = "clear;fend";
 
-        jci = "jira issue create --assignee 'Nelson Jeppesen' --label SRETasks";
-        jil = "jira issue list   --assignee 'Nelson Jeppesen' --updated '-2w' --order-by RESOLUTION";
-        jdone = ''jira issue list --assignee 'Nelson Jeppesen' --updated '-2w' --order-by 'RESOLUTION' --jql 'resolution = EMPTY' --plain --columns KEY,SUMMARY --no-headers | fzf --select-1 --bind 'enter:execute(jira issue move {1} "Resolve Issue" --resolution Done)+abort' '';
-
-        check-ptr = ''
-          (){
-                        FORWARD_IP="$(dig $1 +short)"
-                        PTR_HOSTNAME="$(dig -x $FORWARD_IP +short)"
-                        if [ "$1." = "$PTR_HOSTNAME" ];then MATCH="✅";else MATCH="❌";fi
-                        echo -e "$MATCH $1 --> ''${FORWARD_IP:=missing}\n   ''${FORWARD_IP:=missing} --> ''${PTR_HOSTNAME:=missing}"
-                      }
-        '';
-
         # terraform
         t = "${pkgs.terraform}/bin/terraform";
         ta = "${pkgs.terraform}/bin/terraform apply";
-
         ti = "${pkgs.terraform}/bin/terraform init";
-
         tp = "${pkgs.terraform}/bin/terraform plan";
-
-        # pipe plan into vim
         tpv = "${pkgs.terraform}/bin/terraform plan -no-color | vim";
-
-        # pipe plan into vim, just listing the objects to change
         tpwb = "${pkgs.terraform}/bin/terraform plan -no-color | grep '#.*will be' | vim";
-
         tsd = "echo $(${pkgs.terraform}/bin/terraform state list|fzf --multi)|xargs -n1 ${pkgs.terraform}/bin/terraform state rm";
         tss = "${pkgs.terraform}/bin/terraform state show $(${pkgs.terraform}/bin/terraform state list|fzf)";
         tt = "echo $(${pkgs.terraform}/bin/terraform state list|fzf --multi)|xargs -n1 ${pkgs.terraform}/bin/terraform taint";
