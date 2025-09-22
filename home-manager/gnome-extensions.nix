@@ -62,30 +62,48 @@
       set-popup-max-height = false;
 
       radios = [
-        # SomaFM Radios
-        "SomaFM DEF CON - http://somafm.com/defcon130.pls"
-        "SomaFM Dark Zone - http://somafm.com/darkzone130.pls"
-        "SomaFM Drone Zone - http://somafm.com/dronezone130.pls"
-        "SomaFM Groove Salad - http://somafm.com/groovesalad130.pls"
-        "SomaFM SF 10-33 - http://somafm.com/sf1033130.pls"
-        "SomaFM Space Station - http://somafm.com/spacestation130.pls"
-        "SomaFM Synphaera - http://somafm.com/synphaera130.pls"
-        "SomaFM Vaporwaves - http://somafm.com/vaporwaves130.pls"
-
-        # General Radios
-        "KALW - https://kalw-live.streamguys1.com/kalw.aac"
-        "KEXP - https://kexp-mp3-128.streamguys1.com/kexp128.mp3"
-
-        # rekt.network Radios
-        "rekt: chillsynth - http://stream.rekt.network/chillsynth.ogg"
-        "rekt: darksynth - http://stream.rekt.network/darksynth.ogg"
-        "rekt: datawave - http://stream.rekt.network/datawave.ogg"
-        "rekt: ebsm - http://stream.rekt.network/ebsm.ogg"
-        "rekt: horrorsynth - http://stream.rekt.network/horrorsynth.ogg"
-        "rekt: nightride - http://stream.rekt.network/nightride.ogg"
-        "rekt: rekt - http://stream.rekt.network/rekt.ogg"
-        "rekt: rektory - http://stream.rekt.network/rektory.ogg"
-        "rekt: spacesynth - http://stream.rekt.network/spacesynth.ogg"
+        # SomaFM Radios (all channels as of 2025-09-21)
+        "SomaFM Seven Inch Soul - https://api.somafm.com/7soul130.pls"
+        "SomaFM Beat Blender - https://api.somafm.com/beatblender130.pls"
+        "SomaFM Boot Liquor - https://api.somafm.com/bootliquor130.pls"
+        "SomaFM Black Rock FM - https://api.somafm.com/brfm130.pls"
+        "SomaFM cliqhop idm - https://api.somafm.com/cliqhop130.pls"
+        "SomaFM Covers - https://api.somafm.com/covers130.pls"
+        "SomaFM Deep Space One - https://api.somafm.com/deepspaceone130.pls"
+        "SomaFM DEF CON Radio - https://api.somafm.com/defcon130.pls"
+        "SomaFM Digitalis - https://api.somafm.com/digitalis130.pls"
+        "SomaFM Doomed - https://api.somafm.com/doomed130.pls"
+        "SomaFM Drone Zone - https://api.somafm.com/dronezone130.pls"
+        "SomaFM Dub Step Beyond - https://api.somafm.com/dubstep130.pls"
+        "SomaFM Fluid - https://api.somafm.com/fluid130.pls"
+        "SomaFM Folk Forward - https://api.somafm.com/folkfwd130.pls"
+        "SomaFM Groove Salad - https://api.somafm.com/groovesalad130.pls"
+        "SomaFM Groove Salad Classic - https://api.somafm.com/gsclassic130.pls"
+        "SomaFM Illinois Street Lounge - https://api.somafm.com/illstreet130.pls"
+        "SomaFM Indie Pop Rocks! - https://api.somafm.com/indiepop130.pls"
+        "SomaFM Live - https://api.somafm.com/live130.pls"
+        "SomaFM Lush - https://api.somafm.com/lush130.pls"
+        "SomaFM Mission Control - https://api.somafm.com/missioncontrol130.pls"
+        "SomaFM PopTron - https://api.somafm.com/poptron130.pls"
+        "SomaFM Secret Agent - https://api.somafm.com/secretagent130.pls"
+        "SomaFM Left Coast 70s - https://api.somafm.com/seventies130.pls"
+        "SomaFM SF 10-33 - https://api.somafm.com/sf1033130.pls"
+        "SomaFM Sonic Universe - https://api.somafm.com/sonicuniverse130.pls"
+        "SomaFM Space Station Soma - https://api.somafm.com/spacestation130.pls"
+        "SomaFM Suburbs of Goa - https://api.somafm.com/suburbsofgoa130.pls"
+        "SomaFM Synphaera Radio - https://api.somafm.com/synphaera130.pls"
+        "SomaFM The Dark Zone - https://api.somafm.com/darkzone130.pls"
+        "SomaFM SF in SF - https://api.somafm.com/sfinsf130.pls"
+        "SomaFM Tiki Time - https://api.somafm.com/tikitime130.pls"
+        "SomaFM Bossa Beyond - https://api.somafm.com/bossa130.pls"
+        "SomaFM The In-Sound - https://api.somafm.com/insound130.pls"
+        "SomaFM Chillits Radio - https://api.somafm.com/chillits130.pls"
+        "SomaFM Metal Detector - https://api.somafm.com/metal130.pls"
+        "SomaFM Heavyweight Reggae - https://api.somafm.com/reggae130.pls"
+        "SomaFM SF Police Scanner - https://api.somafm.com/scanner130.pls"
+        "SomaFM Vaporwaves - https://api.somafm.com/vaporwaves130.pls"
+        "SomaFM Specials - https://api.somafm.com/specials130.pls"
+        "SomaFM n5MD Radio - https://api.somafm.com/n5md130.pls"
       ];
     };
 
@@ -105,7 +123,7 @@
       indicator-position = 17;
       indicator-position-index = 3;
       screen-blank = "never";
-      show-indicator = "always";
+      show-indicator = "only-active";
       show-notifications = false;
       toggle-shortcut = [ "<Super>c" ];
     };
