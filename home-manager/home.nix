@@ -1,27 +1,26 @@
 { config, pkgs, ... }:
 {
   nixpkgs.config.allowUnfree = true;
-  programs.kubecolor.enable = true;
+  # programs.kubecolor.enable = true;
+  programs.fabric-ai.enable = true;
 
   imports = [
     <agenix/modules/age-home.nix>
 
+    ./chrome-apps.nix
     ./editorconfig.nix
     ./firefox.nix
-    ./chrome-apps.nix
     ./git.nix
     ./gnome-extensions.nix
     ./gnome.nix
     ./kitty.nix
     ./neovim.nix
+    ./opencode.nix
     ./zsh.nix
   ];
 
   programs.home-manager.enable = true;
 
-  programs.opencode = {
-    enable = true;
-  };
 
   fonts.fontconfig.enable = true;
 
