@@ -13,16 +13,18 @@
 
     atuin = {
       enable = true;
-      flags = [ "--disable-up-arrow" ];
+      # flags = [ "--disable-up-arrow" ];
 
       settings = {
-        sync_address = "http://192.168.5.0:8888";
-        inline_height = 999;
+        #style = "full";
+        filter_mode_shell_up_key_binding = "directory";
+        filter_mode = "workspace";
+        # inline_height = 999;
+        keymap_mode = "vim-normal";
         search_node = "fulltext";
         secrets_filter = true;
         show_preview = true;
-
-        #style = "full";
+        sync_address = "http://192.168.5.0:8888";
       };
     };
 
@@ -42,6 +44,12 @@
         format =
           # move kubernetes to the right
           "$all$fill$kubernetes$line_break$directory$git_branch$git_status$jobs$battery$time$status$os$container$shell$character";
+
+        character = {
+          success_symbol = "[➜](bold green)";
+          error_symbol = "[➜](bold red)";
+          vimcmd_symbol = "[←](bold green)";
+        };
 
         directory = {
           truncation_length = 9;
@@ -94,18 +102,19 @@
           name = "fzf-tab";
           src = pkgs.zsh-fzf-tab;
         }
+        # {
+        #   file = "share/zsh-vi-mode/zsh-vi-mode.plugin.zsh";
+        #   name = "zsh-vi-mode";
+        #   src = pkgs.zsh-vi-mode;
+        # }
       ];
 
       autosuggestion.enable = true;
-      defaultKeymap = "emacs";
+      # defaultKeymap = "vicmd";
       enableCompletion = true;
       syntaxHighlighting.enable = true;
 
       initContent = ''
-        # ctrl+[left|right] word
-        bindkey "^[[1;5C" forward-word
-        bindkey "^[[1;5D" backward-word
-
         # kitty tab title to $PWD
         function set-title-precmd() {printf "\e]2;%s\a" "''${PWD/*\//}"}
         add-zsh-hook precmd set-title-precmd
@@ -168,6 +177,9 @@
         DIRENV_LOG_FORMAT = ""; # silence direnv
         MANPAGER = "vim +Man!";
         NIXPKGS_ALLOW_UNFREE = "1";
+
+        # zsh-vi-mode can integrate with your system clipboard
+        ZVM_SYSTEM_CLIPBOARD_ENABLED = true;
       };
 
       shellAliases = {

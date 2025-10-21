@@ -82,15 +82,6 @@ in
       tap-to-click = false;
     };
 
-    # Use capslock as super key
-    "org/gnome/desktop/input-sources" = {
-      xkb-options = [
-        "caps:super" # map capslock to windows/mac key
-        "numpad:mac" # always enable numlock
-        "f:XF86AudioRaiseVolume"
-      ];
-    };
-
     "org/gnome/desktop/notifications" = {
       show-in-lock-screen = false;
     };

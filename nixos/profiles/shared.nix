@@ -6,6 +6,20 @@
   ...
 }:
 {
+
+  services.keyd = {
+    enable = true;
+    keyboards.default = {
+      settings = {
+        main = {
+          capslock = "layer(capslock)";
+        };
+        "capslock:M" = {};
+
+      };
+    };
+  };
+
   i18n.extraLocaleSettings = {
     LC_TIME = "en_GB.UTF-8";
   }; # monday is the start of the week
@@ -59,6 +73,7 @@
   ];
 
   environment.systemPackages = with pkgs; [
+    keyd
     wget
     curl
     git
