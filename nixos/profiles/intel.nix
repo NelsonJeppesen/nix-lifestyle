@@ -9,11 +9,11 @@
   services.xserver.videoDrivers = [ "modesetting" ];
   hardware.graphics.enable = true;
   hardware.graphics.extraPackages = with pkgs; [
-    intel-compute-runtime
+    # intel-compute-runtime
     intel-media-driver # Intel iGPU (Gen9+ -> iHD)
     libva
     libva-utils # provides 'vainfo'
-    libvdpau-va-gl # Fallbacks
+    # libvdpau-va-gl # Fallbacks
     vaapiVdpau # VAAPI<->VDPAU bridge
     vpl-gpu-rt
   ];

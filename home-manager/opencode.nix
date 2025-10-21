@@ -1,5 +1,9 @@
 { ... }:
 {
+  programs.zsh.shellAliases = {
+    oc = "opencode";
+  };
+
   programs.opencode = {
     enable = true;
     commands = {

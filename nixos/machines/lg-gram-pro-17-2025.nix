@@ -18,7 +18,11 @@
   boot.kernelParams = [
     "xe.force_probe=7d51"
     "i915.force_probe=!7d51"
+    # "acpi.ec_no_wakeup=1"
+    "acpi_mask_gpe=0x6e"
   ];
+
+  boot.blacklistedKernelModules = [ "i915" ];
 
   #boot.extraModprobeConfig = ''
   #  options iwlwifi power_save=Y

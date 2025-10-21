@@ -48,12 +48,14 @@
   users.users.nelson.isNormalUser = lib.mkDefault true;
 
   users.users.nelson.extraGroups = lib.mkDefault [
-    "i2c"
+    "cdrom"
     "dialout"
-    "wheel"
     "docker"
+    "i2c"
     "networkmanager"
+    "optical"
     "plugdev"
+    "wheel"
   ];
 
   environment.systemPackages = with pkgs; [

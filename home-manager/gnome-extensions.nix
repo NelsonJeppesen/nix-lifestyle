@@ -125,7 +125,7 @@
       screen-blank = "never";
       show-indicator = "only-active";
       show-notifications = false;
-      toggle-shortcut = [ "<Super>c" ];
+      toggle-shortcut = [ "<Super>o" ];
     };
   };
 }

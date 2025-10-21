@@ -86,6 +86,7 @@
       #pkgs.source-code-pro
 
       pkgs.google-chrome
+      pkgs._1password-gui
 
       #pkgs.ecapture
 
