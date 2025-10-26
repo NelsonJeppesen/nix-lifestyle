@@ -67,7 +67,7 @@
       '';
 
       # "Neovim Lua plugin with common configuration presets for options, mappings, and autocommands. Part of 'mini.nvim' library"
-      # https://github.com/echasnovski/mini.basics
+      #   https://github.com/echasnovski/mini.basics
       plugins = with pkgs.vimPlugins; [
         cellular-automaton-nvim
 
@@ -86,6 +86,26 @@
                 move_with_alt = true,
               },
             })
+          '';
+        }
+
+        # "A neovim plugin for moving around your code in a syntax tree aware manner"
+        #   https://github.com/aaronik/treewalker.nvim/
+        {
+          plugin = treewalker-nvim;
+          type = "lua";
+          config = ''
+            require('treewalker').setup({})
+
+            -- movement
+            vim.keymap.set({ 'n', 'v' }, '<C-k>', '<cmd>Treewalker Up<cr>', { silent = true })
+            vim.keymap.set({ 'n', 'v' }, '<C-j>', '<cmd>Treewalker Down<cr>', { silent = true })
+            vim.keymap.set({ 'n', 'v' }, '<C-h>', '<cmd>Treewalker Left<cr>', { silent = true })
+            vim.keymap.set({ 'n', 'v' }, '<C-l>', '<cmd>Treewalker Right<cr>', { silent = true })
+
+            -- swapping
+            vim.keymap.set('n', '<C-S-k>', '<cmd>Treewalker SwapUp<cr>', { silent = true })
+            vim.keymap.set('n', '<C-S-j>', '<cmd>Treewalker SwapDown<cr>', { silent = true })
           '';
         }
 
@@ -117,6 +137,8 @@
           config = ''require("precognition").setup({startVisible = false})'';
         }
 
+        # "Break bad habits, master Vim motions "
+        #   https://github.com/m4xshen/hardtime.nvim
         {
           plugin = hardtime-nvim;
           type = "lua";
@@ -130,7 +152,7 @@
         plenary-nvim
 
         # "A fancy, configurable, notification manager for NeoVim"
-        # https://github.com/rcarriga/nvim-notify
+        #   https://github.com/rcarriga/nvim-notify
         {
           plugin = nvim-notify;
           type = "lua";
@@ -138,7 +160,7 @@
         }
 
         # "💥 Highly experimental plugin that completely replaces the UI for messages, cmdline and the popupmenu"
-        # https://github.com/folke/noice.nvim/
+        #   https://github.com/folke/noice.nvim/
         {
           plugin = noice-nvim;
           type = "lua";
@@ -315,7 +337,6 @@
 
         # "Fully featured & enhanced replacement for copilot.vim complete with API for interacting with Github Copilot"
         # https://github.com/zbirenbaum/copilot.lua
-
 
         # "⚙️ Configurable GitHub Copilot blink.cmp source for Neovim"
         # https://github.com/fang2hou/blink-copilot

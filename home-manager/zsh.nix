@@ -7,20 +7,16 @@
       enable = true;
       defaultOptions = [
         "--layout=reverse"
-        "--color=bw"
+        # "--color=bw"
       ];
     };
 
     atuin = {
       enable = true;
-      # flags = [ "--disable-up-arrow" ];
+      flags = [ "--disable-up-arrow" ];
 
       settings = {
-        #style = "full";
-        filter_mode_shell_up_key_binding = "directory";
         filter_mode = "workspace";
-        # inline_height = 999;
-        keymap_mode = "vim-normal";
         search_node = "fulltext";
         secrets_filter = true;
         show_preview = true;
@@ -44,12 +40,6 @@
         format =
           # move kubernetes to the right
           "$all$fill$kubernetes$line_break$directory$git_branch$git_status$jobs$battery$time$status$os$container$shell$character";
-
-        character = {
-          success_symbol = "[➜](bold green)";
-          error_symbol = "[➜](bold red)";
-          vimcmd_symbol = "[←](bold green)";
-        };
 
         directory = {
           truncation_length = 9;
@@ -186,17 +176,13 @@
         # reboot into uefi bios
         reboot-bios = "systemctl reboot --firmware-setup";
 
-        # fuzzy find aws profile reset
-        apu = "unset AWS_PROFILE";
-
         # login via aws sso
         al = "aws sso login";
 
-        a = "sgpt";
-
         # pipe to clipboard
         # Wayland-only clipboard tool
-        clipboard = "${pkgs.wl-clipboard}/bin/wl-copy";
+        cbc = "${pkgs.wl-clipboard}/bin/wl-copy";
+        cbp = "${pkgs.wl-clipboard}/bin/wl-";
 
         # short 'n sweet
         g = "${pkgs.git}/bin/git";
@@ -204,8 +190,9 @@
         da = "direnv allow";
 
         # Quick notes
-        n = "nb edit work-$(date +%Y-%m).md      2>/dev/null || nb add --title work-$(date +%Y-%m)";
-        np = "nb edit personal-$(date +%Y-%m).md 2>/dev/null || nb add --title personal-$(date +%Y-%m)";
+        nw = "nb edit work-$(date +%Y-%m).md      2>/dev/null || nb add --title work-$(date +%Y-%m)";
+        np = "nb edit personal-$(date +%Y-%m).md  2>/dev/null || nb add --title personal-$(date +%Y-%m)";
+        ns = "$EDITOR $(mktemp)";
 
         # reset
         rst = ''
