@@ -443,24 +443,39 @@
           '';
         }
 
-        # "Use your Neovim like using Cursor AI IDE! "
-        #   https://github.com/yetone/avante.nvim
-        copilot-lua
         {
-          plugin = avante-nvim;
+          plugin = codecompanion-nvim;
           type = "lua";
           config = ''
-            require("copilot").setup({
-              suggestion = { enabled = false },
-              panel = { enabled = false },
-              filetypes = { markdown = true, help = true },
-            })
-            require("avante").setup({
-              provider = "copilot",
-              providers = { copilot = {} },
+            require("codecompanion").setup({
+              strategies = {
+                chat = {
+                  name = "copilot",
+                  model = "gpt-4.1",
+                },
+              }
             })
           '';
         }
+
+        # "Use your Neovim like using Cursor AI IDE! "
+        #   https://github.com/yetone/avante.nvim
+        copilot-lua
+        # {
+        #   plugin = avante-nvim;
+        #   type = "lua";
+        #   config = ''
+        #     require("copilot").setup({
+        #       suggestion = { enabled = false },
+        #       panel = { enabled = false },
+        #       filetypes = { markdown = true, help = true },
+        #     })
+        #     require("avante").setup({
+        #       provider = "copilot",
+        #       providers = { copilot = {} },
+        #     })
+        #   '';
+        # }
 
         # "Performant, batteries-included completion plugin for Neovim"
         # https://github.com/Saghen/blink.cmp?tab=readme-ov-file
