@@ -7,8 +7,10 @@
         launch
       '';
 
-      ".config/kitty/light-theme.auto.conf".source = ./dotfiles/kitty.light.conf;
-      ".config/kitty/no-preference-theme.auto.conf".source = ./dotfiles/kitty.light.conf;
+      ".config/kitty/light-theme.auto.conf".source =
+        pkgs.kitty-themes + "/share/kitty-themes/themes/everforest_dark_soft.conf";
+      ".config/kitty/no-preference-theme.auto.conf".source =
+        pkgs.kitty-themes + "/share/kitty-themes/themes/everforest_dark_soft.conf";
       ".config/kitty/dark-theme.auto.conf".source =
         pkgs.kitty-themes + "/share/kitty-themes/themes/shadotheme.conf";
     };

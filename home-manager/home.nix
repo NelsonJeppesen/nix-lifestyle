@@ -19,6 +19,21 @@
     ./zsh.nix
   ];
 
+xdg.userDirs = {
+  enable = true;
+  createDirectories = true;
+
+  # set your dirs explicitly
+  download = "${config.home.homeDirectory}/Downloads";
+  # documents = "${config.home.homeDirectory}/Documents";
+  # music = "${config.home.homeDirectory}/Music";
+  pictures = "${config.home.homeDirectory}/Pictures";
+  # videos = "${config.home.homeDirectory}/Videos";
+  # publicShare = "${config.home.homeDirectory}/Public";
+  # templates = "${config.home.homeDirectory}/Templates";
+  # desktop = "${config.home.homeDirectory}/Desktop";
+};
+
   programs.home-manager.enable = true;
 
 
@@ -71,6 +86,8 @@
       pkgs.vitetris
 
       pkgs.nerd-fonts.symbols-only
+
+      pkgs.lsof
 
       #pkgs.atkinson-hyperlegible
       #pkgs.maple-mono

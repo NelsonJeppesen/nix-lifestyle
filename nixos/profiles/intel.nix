@@ -13,8 +13,8 @@
     intel-media-driver # Intel iGPU (Gen9+ -> iHD)
     libva
     libva-utils # provides 'vainfo'
-    # libvdpau-va-gl # Fallbacks
-    vaapiVdpau # VAAPI<->VDPAU bridge
+    libvdpau-va-gl # Fallbacks
+    libva-vdpau-driver # VAAPI<->VDPAU bridge
     vpl-gpu-rt
   ];
 
@@ -40,7 +40,8 @@
     "xhci_pci"
   ];
 
-  #networking.networkmanager.wifi.powersave = true;
+  # networking.networkmanager.wifi.powersave = false;
+  networking.networkmanager.wifi.backend = "iwd";
 
   # Enable TLP service to reduce power usage and fan noise, particularly on battery
   services.thermald.enable = lib.mkDefault true;

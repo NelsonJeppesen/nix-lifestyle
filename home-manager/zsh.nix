@@ -17,6 +17,7 @@
 
       settings = {
         filter_mode = "workspace";
+        keymap_mode = "emacs";
         search_node = "fulltext";
         secrets_filter = true;
         show_preview = true;
@@ -58,6 +59,7 @@
         };
 
         aws = {
+          # $duration
           format = "\\[[$profile]($style) $region\\]";
           region_aliases = {
             ap-southeast-2 = "apse2";
@@ -100,7 +102,7 @@
       ];
 
       autosuggestion.enable = true;
-      # defaultKeymap = "vicmd";
+      defaultKeymap = "emacs";
       enableCompletion = true;
       syntaxHighlighting.enable = true;
 
@@ -190,6 +192,7 @@
         da = "direnv allow";
 
         # Quick notes
+        # n = "vim $(ls ~/personal/notes/*.md | fzf --multi)";
         nw = "nb edit work-$(date +%Y-%m).md      2>/dev/null || nb add --title work-$(date +%Y-%m)";
         np = "nb edit personal-$(date +%Y-%m).md  2>/dev/null || nb add --title personal-$(date +%Y-%m)";
         ns = "$EDITOR $(mktemp)";
@@ -215,7 +218,7 @@
         ti = "${pkgs.terraform}/bin/terraform init";
         tp = "${pkgs.terraform}/bin/terraform plan";
         tpv = "${pkgs.terraform}/bin/terraform plan -no-color | vim";
-        tpwb = "${pkgs.terraform}/bin/terraform plan -no-color | grep '#.*will be' | vim";
+        tpwb = "${pkgs.terraform}/bin/terraform plan -no-color | grep 'will be'";
         tsd = "echo $(${pkgs.terraform}/bin/terraform state list|fzf --multi)|xargs -n1 ${pkgs.terraform}/bin/terraform state rm";
         tss = "${pkgs.terraform}/bin/terraform state show $(${pkgs.terraform}/bin/terraform state list|fzf)";
         tt = "echo $(${pkgs.terraform}/bin/terraform state list|fzf --multi)|xargs -n1 ${pkgs.terraform}/bin/terraform taint";

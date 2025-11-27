@@ -355,6 +355,7 @@
             require('snacks').setup({
                 picker = { enabled = true},
                 explorer = { enabled = true},
+                terminal = { enabled = true},
 
                 statuscolumn = { enabled = false},
                 bigfile = { enabled = false },
@@ -444,20 +445,26 @@
         }
 
         {
-          plugin = codecompanion-nvim;
+          plugin = opencode-nvim;
           type = "lua";
-          config = ''
-            require("codecompanion").setup({
-              strategies = {
-                chat = {
-                  name = "copilot",
-                  model = "gpt-4.1",
-                },
-              }
-            })
-          '';
+          config = '''';
         }
 
+        # {
+        #   plugin = codecompanion-nvim;
+        #   type = "lua";
+        #   config = ''
+        #     require("codecompanion").setup({
+        #       strategies = {
+        #         chat = {
+        #           name = "copilot",
+        #           model = "gpt-4.1",
+        #         },
+        #       }
+        #     })
+        #   '';
+        # }
+        #
         # "Use your Neovim like using Cursor AI IDE! "
         #   https://github.com/yetone/avante.nvim
         copilot-lua
