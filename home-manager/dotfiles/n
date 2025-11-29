@@ -1,0 +1,3 @@
+#!/usr/bin/env bash
+cd ~/source/personal/notes
+nb edit $(ls *.md | fzf --multi)

@@ -74,6 +74,7 @@ xdg.userDirs = {
     file.".config/fend/config.toml".source = ./dotfiles/fend.toml;
     file.".digrc".source = ./dotfiles/digrc;
     file.".local/bin/update".source = ./dotfiles/update;
+    file.".local/bin/n".source = ./dotfiles/n;
     file.".terraform.d/plugin-cache/.empty".source = ./dotfiles/empty;
 
     packages = [
