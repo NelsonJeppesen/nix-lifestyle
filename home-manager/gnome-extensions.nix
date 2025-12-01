@@ -6,13 +6,13 @@
     enable = true;
     extensions = [
       { package = pkgs.gnomeExtensions.appindicator; }
-      { package = pkgs.gnomeExtensions.bitcoin-markets; }
+      # { package = pkgs.gnomeExtensions.bitcoin-markets; }
       { package = pkgs.gnomeExtensions.caffeine; }
       { package = pkgs.gnomeExtensions.clipboard-indicator; }
       { package = pkgs.gnomeExtensions.just-perfection; }
       { package = pkgs.gnomeExtensions.picture-of-the-day; }
       { package = pkgs.gnomeExtensions.run-or-raise; }
-      { package = pkgs.gnomeExtensions.todotxt; }
+      # { package = pkgs.gnomeExtensions.todotxt; }
 
       # "Play lofi music on your Gnome desktop with just a click!"
       #   https://github.com/eucaue/gnome-shell-extension-quick-lofi
