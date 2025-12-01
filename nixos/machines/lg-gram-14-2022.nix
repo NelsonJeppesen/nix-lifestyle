@@ -1,7 +1,7 @@
 # LG Gram 14 2022 14Z90Q-K.ARW5U1 Intel 12th Gen
 { ... }:
 {
-  system.stateVersion = "22.11";
+  system.stateVersion = "25.05";
 
   imports = [
     ../profiles/desktop.nix
@@ -12,22 +12,18 @@
     ../profiles/s3fs.nix
     ../profiles/x86_64.nix
     ../profiles/zsh.nix
-
-    /etc/secrets/falcon.nix
   ];
 
-  nixpkgs.overlays = [
-    (self: super: { falcon-sensor = super.callPackage ../overlays/falcon-sensor.nix { }; })
-  ];
-
-  # 8GiB laptop; things get tight
-  zramSwap.memoryPercent = 100;
-
-  # force the use of more modern xe video driver over i915
-  boot.blacklistedKernelModules = [ "i915" ];
-
+  # force new, xe video driver
   boot.kernelParams = [
     "xe.force_probe=46a6"
     "i915.force_probe=!46a6"
+    # "acpi.ec_no_wakeup=1"
+    "acpi_mask_gpe=0x6e"
   ];
+
+  boot.blacklistedKernelModules = [ "i915" ];
+
+  # 8GiB laptop; things get tight
+  zramSwap.memoryPercent = 100;
 }

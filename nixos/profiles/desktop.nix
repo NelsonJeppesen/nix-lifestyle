@@ -4,11 +4,6 @@
   services.pulseaudio.enable = false;
   programs.evolution.enable = false;
 
-  boot.kernelParams = [
-    # "quiet"
-    # "loglevel=3"
-  ]; # Added loglevel=3 for cleaner boot logs.
-
   boot.loader.systemd-boot.configurationLimit = 14;
   boot.loader.systemd-boot.consoleMode = "max";
   boot.loader.systemd-boot.enable = true;
@@ -23,7 +18,7 @@
     pulse.enable = true;
   };
 
-  programs.steam = {
-    enable = true;
-  };
+  # programs.steam = {
+  #   enable = true;
+  # };
 }
