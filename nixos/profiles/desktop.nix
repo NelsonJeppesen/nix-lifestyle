@@ -1,5 +1,10 @@
 { ... }:
 {
+  hardware.logitech.wireless = {
+    enable = true;
+    enableGraphical = true;
+  };
+
   hardware.bluetooth.enable = true;
   services.pulseaudio.enable = false;
   programs.evolution.enable = false;
