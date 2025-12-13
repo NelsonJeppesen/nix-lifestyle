@@ -6,13 +6,12 @@
     enable = true;
     extensions = [
       { package = pkgs.gnomeExtensions.appindicator; }
-      # { package = pkgs.gnomeExtensions.bitcoin-markets; }
+      { package = pkgs.gnomeExtensions.bitcoin-markets; }
       { package = pkgs.gnomeExtensions.caffeine; }
       { package = pkgs.gnomeExtensions.clipboard-indicator; }
       { package = pkgs.gnomeExtensions.just-perfection; }
       { package = pkgs.gnomeExtensions.picture-of-the-day; }
       { package = pkgs.gnomeExtensions.run-or-raise; }
-      # { package = pkgs.gnomeExtensions.todotxt; }
 
       # "Play lofi music on your Gnome desktop with just a click!"
       #   https://github.com/eucaue/gnome-shell-extension-quick-lofi
@@ -21,16 +20,6 @@
   };
 
   dconf.settings = {
-
-    "org/gnome/shell/extensions/TodoTxt" = {
-      donetxt-location = "/home/nelson/source/personal/notes/done.txt";
-      todotxt-location = "/home/nelson/source/personal/notes/todo.txt";
-
-      add-creation-date = true;
-      auto-archive = true;
-      confirm-delete = false;
-      keep-open-after-new = true;
-    };
 
     "org/gnome/shell/extensions/just-perfection" = {
       accessibility-menu = false;
@@ -104,6 +93,7 @@
         "SomaFM The In-Sound - https://api.somafm.com/insound130.pls"
         "SomaFM Tiki Time - https://api.somafm.com/tikitime130.pls"
         "SomaFM Vaporwaves - https://api.somafm.com/vaporwaves130.pls"
+        "Fogpoint Radio - https://streaming.live365.com/a25002"
       ];
     };
 
