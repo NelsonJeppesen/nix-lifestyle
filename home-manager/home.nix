@@ -14,6 +14,7 @@
     ./gnome-extensions.nix
     ./gnome.nix
     ./kitty.nix
+    ./mcp.nix
     ./neovim.nix
     ./opencode.nix
     ./zsh.nix
@@ -132,7 +133,6 @@ xdg.userDirs = {
       pkgs.packer
       pkgs.ssm-session-manager-plugin
       pkgs.terraform
-      pkgs.terraform-mcp-server
 
       # "A terminal spreadsheet multitool for discovering and arranging data"
       #pkgs.visidata

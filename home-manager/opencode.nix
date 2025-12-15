@@ -6,6 +6,8 @@
 
   programs.opencode = {
     enable = true;
+    enableMcpIntegration = true;
+
     commands = {
       # Inline content
       changelog = ''
