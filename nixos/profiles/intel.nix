@@ -9,19 +9,21 @@
   services.xserver.videoDrivers = [ "modesetting" ];
   hardware.graphics.enable = true;
   hardware.graphics.extraPackages = with pkgs; [
-    # intel-compute-runtime
+    intel-compute-runtime # OpenCL for compute workloads
     intel-media-driver # Intel iGPU (Gen9+ -> iHD)
     libva
     libva-utils # provides 'vainfo'
-    libvdpau-va-gl # Fallbacks
-    libva-vdpau-driver # VAAPI<->VDPAU bridge
-    vpl-gpu-rt
+    vpl-gpu-rt # Intel VPL for modern video codecs
   ];
 
   environment.variables = {
     LIBVA_DRIVER_NAME = "iHD"; # force modern VA-API
     MOZ_ENABLE_WAYLAND = "1"; # Firefox on Wayland behaves better/less wakeups
     OZONE_PLATFORM = "wayland";
+  };
+  # Enable Firefox hardware video decode
+  environment.sessionVariables = {
+    MOZ_X11_EGL = "1"; # Enable EGL for X11 sessions
   };
 
   # Update microcode when available
