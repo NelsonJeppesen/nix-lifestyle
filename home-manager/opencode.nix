@@ -5,6 +5,7 @@
     o = "opencode";
     ods = "opencode run '/summary daily'  -m 'github-copilot/claude-sonnet-4.5'";
     ows = "opencode run '/summary weekly' -m 'github-copilot/claude-sonnet-4.5'";
+    ocm = "opencode run 'create commit and push' -m openai/gpt-5.1";
 
     # Terraform / DevOps helpers
     otf = "opencode -a terraform-devops";
@@ -140,12 +141,6 @@
     };
 
     agents = {
-      # Inline content
-      code-reviewer = ''
-        # Code Reviewer Agent
-        Specialized code review assistant.
-      '';
-
       terraform-devops = ''
         # Terraform DevOps Agent
         Specialized assistant for Terraform monorepos and DevOps workflows.
@@ -167,10 +162,7 @@
         - Draft CI workflows or runbooks for terraform plan/apply and drift detection.
         - Recommend tagging and naming standards across resources.
       '';
-    };
 
-
-    agents = {
       # Inline content
       code-reviewer = ''
         # Code Reviewer Agent
