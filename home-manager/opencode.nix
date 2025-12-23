@@ -3,19 +3,21 @@
   programs.zsh.shellAliases = {
     # Connect to the daemon server running on port 4096
     o = "opencode";
-    ods = "opencode run '/summary daily'  -m 'github-copilot/claude-sonnet-4.5'";
-    ows = "opencode run '/summary weekly' -m 'github-copilot/claude-sonnet-4.5'";
-    ocm = "opencode run 'create commit and push' -m openai/gpt-5.1";
+    oc = "opencode --continue";
+    or = "opencode run";
 
-    # Terraform / DevOps helpers
-    otf = "opencode -a terraform-devops";
-    otfs = "opencode run '/tf-scope'";
-    otfp = "opencode run '/tf-plan-helper'";
+    osd = "opencode run '/summary daily'";
+    osw = "opencode run '/summary weekly'";
+    ocm = "opencode run 'create commit and push'";
   };
 
   programs.opencode = {
     enable = true;
     enableMcpIntegration = true;
+
+    settings = {
+      model = "github-copilot/claude-sonnet-4.5";
+    };
 
     commands = {
       # Inline content

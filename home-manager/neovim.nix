@@ -54,9 +54,9 @@
         vim.diagnostic.config({
           signs = {
             text = {
-              [vim.diagnostic.severity.ERROR] = "",
-              [vim.diagnostic.severity.WARN]  = "",
-              [vim.diagnostic.severity.INFO]  = "",
+              [vim.diagnostic.severity.ERROR] = "",
+              [vim.diagnostic.severity.WARN]  = "",
+              [vim.diagnostic.severity.INFO]  = "",
               [vim.diagnostic.severity.HINT]  = "󰌵",
             },
           },
@@ -64,6 +64,10 @@
           underline      = true,
           update_in_insert = false,
         })
+
+        -- opencode.nvim configuration (set early for plugin init)
+        vim.o.autoread = true
+        vim.g.opencode_opts = {}
       '';
 
       # "Neovim Lua plugin with common configuration presets for options, mappings, and autocommands. Part of 'mini.nvim' library"
@@ -150,6 +154,7 @@
         mini-icons
         nui-nvim
         plenary-nvim
+        render-markdown-nvim
 
         # "A fancy, configurable, notification manager for NeoVim"
         #   https://github.com/rcarriga/nvim-notify
@@ -206,6 +211,15 @@
               { "<leader>wq", desc = "Write Quit", "<cmd>wq<cr>" },
               { "<leader>ww", desc = "Write", "<cmd>w<cr>" },
               { "<leader>a", group = "Avante" },
+
+              { "<leader>o", group = "OpenCode" },
+              { "<leader>oa", desc = "Ask OpenCode" },
+              { "<leader>og", desc = "Toggle OpenCode" },
+              { "<leader>op", desc = "Add to Prompt" },
+              { "<leader>ox", desc = "Execute Action" },
+              { "<leader>os", desc = "Scroll Up" },
+              { "<leader>od", desc = "Scroll Down" },
+              { "<leader>oc", desc = "Stop OpenCode" },
 
               { "<leader>l", group = "LSP" },
               { "<leader>li", desc = "LSP Info", "<cmd>LspInfo<cr>" },
@@ -444,10 +458,21 @@
           '';
         }
 
+        # opencode.nvim - NickvanDyke's opencode integration
+        # https://github.com/NickvanDyke/opencode.nvim
         {
           plugin = opencode-nvim;
           type = "lua";
-          config = '''';
+          config = ''
+            -- opencode keybindings (set after plugin loads)
+            vim.keymap.set({ "n", "x" }, "<leader>oa", function() require("opencode").ask("@this: ", { submit = true }) end, { desc = "Ask opencode" })
+            vim.keymap.set({ "n", "x" }, "<leader>ox", function() require("opencode").select() end, { desc = "Execute opencode action" })
+            vim.keymap.set({ "n", "x" }, "<leader>op", function() require("opencode").prompt("@this") end, { desc = "Add to opencode prompt" })
+            vim.keymap.set({ "n", "t" }, "<leader>og", function() require("opencode").toggle() end, { desc = "Toggle opencode" })
+            vim.keymap.set("n", "<leader>os", function() require("opencode").command("session.half.page.up") end, { desc = "Scroll up" })
+            vim.keymap.set("n", "<leader>od", function() require("opencode").command("session.half.page.down") end, { desc = "Scroll down" })
+            vim.keymap.set("n", "<leader>oc", function() require("opencode").stop() end, { desc = "Stop opencode" })
+          '';
         }
 
         # {
