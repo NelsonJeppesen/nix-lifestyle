@@ -4,6 +4,8 @@
   # make this a server; dont sleep when laptop is closed
   services.logind.lidSwitch = "ignore";
 
+  networking.wireless.enable = false;
+
   networking.networkmanager.enable = true;
 
   #systemd.services.console-fbset = {

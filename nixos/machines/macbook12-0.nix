@@ -13,13 +13,13 @@
     ../profiles/zsh.nix
 
     # lets make this a k3s server
-    ../profiles/k3s.nix
+    # ../profiles/k3s.nix
     ../profiles/macbook12-server.nix
     ../profiles/macbook12.nix
   ];
 
   # this is the first node of the k3s cluster
-  services.k3s.clusterInit = true;
+  # services.k3s.clusterInit = true;
 
   services.atuin.enable = true;
   services.atuin.host = "0.0.0.0";
