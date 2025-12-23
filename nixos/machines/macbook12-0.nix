@@ -2,7 +2,7 @@
 #
 # The most cute server in the world
 { fetchurl, fetchgit, fetchhg, config, pkgs, stdenv, lib, modulesPath, ... }: {
-  system.stateVersion = "23.11";
+  system.stateVersion = "24.11";
 
   imports = [
     # secrets

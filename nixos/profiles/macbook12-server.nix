@@ -2,8 +2,7 @@
 
 {
   # make this a server; dont sleep when laptop is closed
-  services.logind.lidSwitch = "ignore";
-
+  services.logind.settings.Login.HandleLidSwitch = "ignore";
   networking.wireless.enable = false;
 
   networking.networkmanager.enable = true;
@@ -33,6 +32,8 @@
       StandardOutput = "tty";
     };
     wantedBy = [ "multi-user.target" ];
-    environment = { TERM = "linux"; };
+    environment = {
+      TERM = "linux";
+    };
   };
 }
