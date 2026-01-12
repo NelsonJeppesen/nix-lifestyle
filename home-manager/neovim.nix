@@ -339,7 +339,7 @@
           '';
         }
 
-        { plugin = nvim-treesitter-textobjects; }
+        nvim-treesitter-textobjects
 
         # "Rainbow highlighting and intelligent auto-pairs for Neovim"
         # https://github.com/Saghen/blink.pairs
@@ -357,7 +357,7 @@
         {
           plugin = blink-copilot;
           type = "lua";
-          config = '''';
+          config = "";
         }
 
         # "🍿 A collection of QoL plugins for Neovim"
@@ -387,73 +387,17 @@
 
         # Install tree-sitter with all the plugins/grammars
         #   https://tree-sitter.github.io/tree-sitter
+        nvim-treesitter-textobjects
         {
           plugin = nvim-treesitter.withAllGrammars;
           type = "lua";
           config = ''
-             require'nvim-treesitter.configs'.setup({
-              highlight = {
-                enable = true,
-                additional_vim_regex_highlighting = false
-              },
-              textobjects = {
-                select = {
-                  enable = true,
-                  keymaps = {
-                    ["ab"] = "@block.outer",
-                    ["ib"] = "@block.inner",
-                    ["aa"] = "@parameter.outer",
-                    ["ia"] = "@parameter.inner",
-                    ["af"] = "@function.outer",
-                    ["if"] = "@function.inner",
-                    ["ac"] = "@class.outer",
-                    ["ic"] = "@class.inner",
-                    ["ai"] = "@conditional.outer",
-                    ["ii"] = "@conditional.inner",
-                    ["al"] = "@loop.outer",
-                    ["il"] = "@loop.inner",
-                    ["is"] = "@statement.inner",
-                    ["as"] = "@statement.outer",
-                    ["ad"] = "@comment.outer",
-                    ["am"] = "@call.outer",
-                    ["im"] = "@call.inner",
-                  },
-                },
-                move = {
-                  enable = true,
-                  set_jumps = true,        -- record in jumplist
-                  goto_next_start = {
-                    ["]B"] = "@block.inner",
-                    ["]b"] = "@block.outer",
-                    ["]c"] = "@class.outer",
-                    ["]f"] = "@function.outer",
-                    ["]I"] = "@conditional.inner",
-                    ["]i"] = "@conditional.outer",
-                    ["]M"] = "@call.inner",
-                    ["]m"] = "@call.outer",
-                    ["]O"] = "@loop.inner",
-                    ["]o"] = "@loop.outer",
-                    ["]p"] = "@parameter.inner",
-                    ["]S"] = "@scope.inner",
-                    ["]s"] = "@scope.outer",
-                  },
-                  goto_previous_start = {
-                    ["[B"] = "@block.inner",
-                    ["[b"] = "@block.outer",
-                    ["[c"] = "@class.outer",
-                    ["[f"] = "@function.outer",
-                    ["[I"] = "@conditional.inner",
-                    ["[i"] = "@conditional.outer",
-                    ["[M"] = "@call.inner",
-                    ["[m"] = "@call.outer",
-                    ["[O"] = "@loop.inner",
-                    ["[o"] = "@loop.outer",
-                    ["[p"] = "@parameter.inner",
-                    ["[S"] = "@scope.inner",
-                    ["[s"] = "@scope.outer",
-                  },
-                },
-              },
+            -- nvim-treesitter v0.10+ uses new API - just enable highlighting via autocmd
+            vim.api.nvim_create_autocmd('FileType', {
+              pattern = '*',
+              callback = function()
+                pcall(vim.treesitter.start)
+              end,
             })
           '';
         }
