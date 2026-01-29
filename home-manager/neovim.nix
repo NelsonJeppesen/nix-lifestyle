@@ -17,7 +17,7 @@
 
         # nix
         pkgs.nixd
-        pkgs.nixfmt-rfc-style
+        pkgs.nixfmt
 
         # php
         pkgs.phpactor
@@ -40,7 +40,7 @@
 
       # extraPython3Packages = pyPkgs: with pyPkgs; [ python-lsp-server ];
 
-      extraLuaConfig = ''
+      initLua = ''
         -- disable neovim vim.tbl_islist is deprecated
         vim.tbl_islist = vim.islist
 
