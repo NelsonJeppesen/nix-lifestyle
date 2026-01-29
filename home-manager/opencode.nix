@@ -14,6 +14,7 @@
   programs.opencode = {
     enable = true;
     enableMcpIntegration = true;
+    web.enable = true;
 
     settings = {
       model = "github-copilot/claude-sonnet-4.5";
