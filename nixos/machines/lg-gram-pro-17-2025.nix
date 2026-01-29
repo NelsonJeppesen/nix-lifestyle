@@ -1,7 +1,7 @@
 # LG Gram Pro 17 2025 17Z90TP-G
 { ... }:
 {
-  system.stateVersion = "25.05";
+  system.stateVersion = "26.05";
 
   # nixpkgs.hostPlatform = {
   #   gcc.arch = "native";
