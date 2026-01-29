@@ -65,8 +65,7 @@ xdg.userDirs = {
   };
 
   home = {
-    # bumped from 22.11 -> 24.05; review release notes before locking in
-    stateVersion = "24.05";
+    stateVersion = "26.05";
     username = "nelson";
     homeDirectory = "/home/nelson";
 
@@ -156,11 +155,13 @@ xdg.userDirs = {
       pkgs.fluxcd
       pkgs.k9s
 
-      # yaml/json tools
+      # yaml/json/toml tools
       pkgs.jq
       pkgs.jqp
       pkgs.fastgron
       pkgs.yq
+      pkgs.yj # convert yaml/toml/json/hcl
+      pkgs.dasel # query/update json/yaml/toml/xml/csv
 
       # core shell tools
       #pkgs.nvimpager
@@ -197,6 +198,19 @@ xdg.userDirs = {
       pkgs.kubernetes-helm
       pkgs.sops
       pkgs.stern
+      pkgs.kubeconform # k8s manifest validation
+
+      # linting/formatting tools
+      pkgs.actionlint # github actions linter
+      pkgs.hadolint # dockerfile linter
+      pkgs.shellcheck # shell script linter
+      pkgs.shfmt # shell script formatter
+      pkgs.yamllint # yaml linter
+      pkgs.markdownlint-cli # markdown linter
+
+      # code modification tools
+      pkgs.dasel # query/update json/yaml/toml/xml/csv
+      pkgs.yj # convert yaml/toml/json/hcl
     ];
   };
 }
