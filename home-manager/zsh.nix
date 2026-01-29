@@ -155,12 +155,13 @@
 
         rgreplace() {
           if [ $# -lt 2 ]; then
-            echo "usage: rgreplace <search> <replace>" >&2
+            echo "usage: rgreplace <search> <replace> [path]" >&2
             return 1
           fi
-            local search="$1"
-            local replace="$2"
-            rg -l -- "$search" | xargs -r -n1 sed -i "s|$search|$replace|g"
+          local search="$1"
+          local replace="$2"
+          local path="''${3:-.}"
+          ${pkgs.ripgrep}/bin/rg -l -- "$search" "$path" | ${pkgs.findutils}/bin/xargs -r -n1 ${pkgs.gnused}/bin/sed -i "s|$search|$replace|g"
         }
         # ------------------------------------------------------------
       '';
