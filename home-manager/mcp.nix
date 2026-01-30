@@ -18,7 +18,8 @@
   # Make MCP servers available in environment
   home.packages = [
     pkgs.github-mcp-server
-    pkgs.terraform-mcp-server
+    pkgs.mcp-grafana
     pkgs.mcp-k8s-go
+    pkgs.terraform-mcp-server
   ];
 }
