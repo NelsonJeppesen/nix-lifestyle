@@ -1,13 +1,12 @@
-{ ... }:
-let
-  gitalias = builtins.fetchGit {
-    url = "https://github.com/GitAlias/gitalias.git";
-    ref = "main";
-  };
-
-in
+{ config, gitalias, ... }:
 {
-  home.file.".ssh/allowed_signers".text = "* ${builtins.readFile /home/nelson/.ssh/id_ed25519.pub}";
+  # Create allowed_signers from existing SSH key
+  home.activation.createAllowedSigners = config.lib.dag.entryAfter [ "writeBoundary" ] ''
+    if [ -f "${config.home.homeDirectory}/.ssh/id_ed25519.pub" ]; then
+      $DRY_RUN_CMD rm -f ${config.home.homeDirectory}/.ssh/allowed_signers
+      $DRY_RUN_CMD echo "* $(cat ${config.home.homeDirectory}/.ssh/id_ed25519.pub)" > ${config.home.homeDirectory}/.ssh/allowed_signers
+    fi
+  '';
 
   programs = {
 

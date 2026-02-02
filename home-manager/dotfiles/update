@@ -1,29 +1,36 @@
 #!/usr/bin/env bash
 
-sudo tput setaf 1; echo -e '\nUpdating firmware [system]...\033[0m'
+tput setaf 1
+echo -e '\nUpdating firmware [system]...\033[0m'
 sudo fwupdmgr refresh
 RETVAR_FR=$?
 sudo fwupdmgr update
 RETVAR_FU=$?
 
-tput setaf 1; echo -e '\nUpdating NixOS channel [system]...\033[0m'
+tput setaf 1
+echo -e '\nUpdating NixOS channel [system]...\033[0m'
 sudo nix-channel --update
 RETVAR_NCUS=$?
 
-tput setaf 1; echo -e '\nNixOS Switch [system]...\033[0m'
+tput setaf 1
+echo -e '\nNixOS Switch [system]...\033[0m'
 sudo nixos-rebuild switch
 RETVAR_NOSRB=$?
 
-tput setaf 1; echo -e '\nUpdating NixOS channel [user]...\033[0m'
-nix-channel --update
-RETVAR_NCUU=$?
+tput setaf 1
+echo -e '\nUpdating Home-Manager flake inputs [user]...\033[0m'
+cd ~/.config/home-manager || exit 1
+nix flake update
+RETVAR_FU_HM=$?
 
-tput setaf 1; echo -e '\nHome-Manager Switch [user]...\033[0m'
-home-manager switch
+tput setaf 1
+echo -e '\nHome-Manager Switch [user]...\033[0m'
+home-manager switch --flake ~/.config/home-manager#nelson --recreate-lock-file --impure
 RETVAR_HMS=$?
 
-tput setaf 1; echo -e '\nCRUD secret files [start agenix service]...\033[0m'
+tput setaf 1
+echo -e '\nCRUD secret files [start agenix service]...\033[0m'
 systemctl start --user agenix
 RETVAR_AGENIX=$?
 
-echo $RETVAR_FR $RETVAR_FU $RETVAR_NCUS $RETVAR_NOSRB $RETVAR_NCUU $RETVAR_HMS $RETVAR_AGENIX
+echo "$RETVAR_FR $RETVAR_FU $RETVAR_NCUS $RETVAR_NOSRB $RETVAR_FU_HM $RETVAR_HMS $RETVAR_AGENIX"

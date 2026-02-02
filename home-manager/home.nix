@@ -5,8 +5,6 @@
   programs.fabric-ai.enable = true;
 
   imports = [
-    <agenix/modules/age-home.nix>
-
     ./chrome-apps.nix
     ./editorconfig.nix
     ./firefox.nix
@@ -130,7 +128,7 @@ xdg.userDirs = {
       pkgs.oci-cli
       pkgs.opentofu # terraform fork
       pkgs.packer
-      pkgs.ssm-session-manager-plugin
+      #pkgs.ssm-session-manager-plugin # broken: vendoring inconsistency
       pkgs.terraform
 
       # "A terminal spreadsheet multitool for discovering and arranging data"
