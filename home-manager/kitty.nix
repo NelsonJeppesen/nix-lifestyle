@@ -36,28 +36,8 @@
         "kitty_mod+right" = "next_tab";
         "kitty_mod+n" = "new_tab_with_cwd";
 
-        "f1" =
-          "launch --title '4o-latest'            zsh -lic 'cd ~/source;${pkgs.aichat}/bin/aichat --session fast --model openai:chatgpt-4o-latest'";
-        "f2" =
-          "launch --title 'o1 [preview]' --type tab zsh -lic 'cd ~/source;${pkgs.aichat}/bin/aichat --session slow --model openai:o1-preview'";
-        "f3" =
-          "launch --title 'gemini [flash-exp]' --type tab zsh -lic 'cd ~/source;${pkgs.aichat}/bin/aichat --session slow --model gemini:gemini-2.0-flash-exp'";
-
-        # copy to clipboard
-        #"f1" =
-        #  "launch --type background     --stdin-source=@last_cmd_output     ${pkgs.wl-clipboard}/bin/wl-copy --paste-once";
-        #"f2" =
-        #  "launch --type background     --stdin-source=@screen              ${pkgs.wl-clipboard}/bin/wl-copy --paste-once";
-        #"f3" =
-        #  "launch --type background     --stdin-source=@screen_scrollback   ${pkgs.wl-clipboard}/bin/wl-copy --paste-once";
-
-        "f6" = "launch --type tab       --stdin-source=@last_cmd_output   nvim";
-        "f7" = "launch --type tab       --stdin-source=@screen            nvim";
-        "f8" = "launch --type tab       --stdin-source=@screen_scrollback nvim";
-
-        "f10" = "launch --type overlay  --stdin-source=@last_cmd_output   nvim";
-        "f11" = "launch --type overlay  --stdin-source=@screen            nvim";
-        "f12" = "launch --type overlay  --stdin-source=@screen_scrollback nvim";
+        # copy full buffer to vim in split
+        "f1" = "launch --stdin-source=@screen_scrollback --location=hsplit --cwd=current nvim -c 'set buftype=nofile' -";
       };
 
       settings = {
@@ -72,18 +52,17 @@
         #Italic_font = "auto";
 
         # use same font as Gnome
-        font_family = ''family="Adwaita Mono"'';
         bold_font = "auto";
-        italic_font = "auto";
         bold_italic_font = "auto";
-
+        font_family = ''family="Adwaita Mono"'';
         font_size = "14";
+        italic_font = "auto";
 
+        active_border_color = "#74B3CE";
+        bell_border_color = "#ff5a00";
+        inactive_border_color = "#aaaaaa";
         window_border_width = "1px";
         window_margin_width = "0";
-        active_border_color = "#74B3CE";
-        inactive_border_color = "#aaaaaa";
-        bell_border_color = "#ff5a00";
 
         # Don't use patched fonts
         # have kitty bring in Symbols from Nerd Font
@@ -107,15 +86,6 @@
         tab_powerline_style = "slanted";
         term = "xterm-256color";
         update_check_interval = "0";
-
-        enabled_layouts = "vertical,tall,grid,stack";
-        # Fat -- One (or optionally more) windows are shown full width on the top, the rest of the windows are shown side-by-side on the bottom
-        # Grid -- All windows are shown in a grid
-        # Horizontal -- All windows are shown side-by-side
-        # Splits -- Windows arranged in arbitrary patterns created using horizontal and vertical splits
-        # Stack -- Only a single maximized window is shown at a time
-        # Tall -- One (or optionally more) windows are shown full height on the left, the rest of the windows are shown one below the other on the right
-        # Vertical -- All windows are shown one below the other
       };
     };
   };

@@ -25,7 +25,7 @@ RETVAR_FU_HM=$?
 
 tput setaf 1
 echo -e '\nHome-Manager Switch [user]...\033[0m'
-home-manager switch --flake ~/.config/home-manager#nelson --recreate-lock-file --impure
+home-manager switch --flake ~/.config/home-manager#nelson --impure
 RETVAR_HMS=$?
 
 tput setaf 1

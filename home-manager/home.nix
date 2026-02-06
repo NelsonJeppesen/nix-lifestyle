@@ -128,7 +128,7 @@ xdg.userDirs = {
       pkgs.oci-cli
       pkgs.opentofu # terraform fork
       pkgs.packer
-      #pkgs.ssm-session-manager-plugin # broken: vendoring inconsistency
+      pkgs.ssm-session-manager-plugin
       pkgs.terraform
 
       # "A terminal spreadsheet multitool for discovering and arranging data"
