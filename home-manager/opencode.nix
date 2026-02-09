@@ -17,7 +17,7 @@
     web.enable = true;
 
     settings = {
-      model = "github-copilot/claude-sonnet-4.5";
+      model = "github-copilot/claude-opus-4.6";
     };
 
     commands = {

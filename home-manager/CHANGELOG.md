@@ -5,7 +5,15 @@ reconstructed retroactively from existing commit history (no prior tags).
 Commit hashes are included for traceability.
 
 ## [Unreleased]
-- (No unreleased changes yet)
+
+### Added
+- Flameshot: overlay to build from unstable commit (13.3.0-unstable-2026-01-25)
+  with CMake patch replacing FetchContent with find_package (cf35678)
+
+### Changed
+- OpenCode: switch default model to claude-opus-4.6 (cf35678)
+- GNOME: simplify flameshot-gui wrapper, drop wl-copy pipe (cf35678)
+- Flake inputs: bump nixpkgs and home-manager (cf35678)
 
 ## [0.1.0] - 2025-09-21
 ### Added

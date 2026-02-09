@@ -4,7 +4,7 @@
 }:
 let
   # https://github.com/flameshot-org/flameshot/issues/2848
-  flameshot-gui = pkgs.writeShellScriptBin "flameshot-gui" "${pkgs.flameshot}/bin/flameshot gui --raw | wl-copy";
+  flameshot-gui = pkgs.writeShellScriptBin "flameshot-gui" "${pkgs.flameshot}/bin/flameshot gui";
 in
 {
 
@@ -75,8 +75,6 @@ in
       show-delete-permanently = true;
       click-policy = "double";
     };
-
-
 
     "org/gnome/desktop/peripherals/touchpad" = {
       tap-to-click = false;

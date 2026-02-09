@@ -27,7 +27,25 @@
     }:
     let
       system = "x86_64-linux";
-      pkgs = nixpkgs.legacyPackages.${system};
+      pkgs = import nixpkgs {
+        inherit system;
+        overlays = [
+          (final: prev: {
+            flameshot = prev.flameshot.overrideAttrs (old: {
+              version = "13.3.0-unstable-2026-01-25";
+              src = prev.fetchFromGitHub {
+                owner = "flameshot-org";
+                repo = "flameshot";
+                rev = "739a809557d8be3ee8f3f7d16dffd0cfd391de09";
+                hash = "sha256-YCYwpVR7vTTKBmBwGt+C8nsuE0UfvJuo4plAeIbwIJU=";
+              };
+              patches = [
+                ./patches/flameshot-load-missing-deps.patch
+              ];
+            });
+          })
+        ];
+      };
     in
     {
       homeConfigurations."nelson" = home-manager.lib.homeManagerConfiguration {
