@@ -1,56 +1,68 @@
-# neovim: my cozy home for code and configuration
+# neovim.nix - Neovim editor configuration
+#
+# Full-featured Neovim setup with:
+# - LSP servers for bash, nix, PHP, Python, Ruby, Terraform, YAML, and typos
+# - 30+ plugins including completion (blink.cmp + Copilot), fuzzy finding (snacks),
+#   syntax highlighting (treesitter), file management (oil.nvim), and AI integration
+# - TokyoNight colorscheme with auto dark/light detection from GNOME settings
+# - Which-key for discoverable keybindings organized by leader key groups
+# - Arrow keys disabled to encourage proper vim motions (hardtime + precognition)
+# - OpenCode AI assistant integration via opencode.nvim
 { pkgs, ... }:
 {
   programs = {
 
     neovim = {
       enable = true;
-      defaultEditor = true;
-      vimAlias = true;
-      withNodeJs = true;
+      defaultEditor = true; # Set as $EDITOR and $VISUAL
+      vimAlias = true; # Create `vim` alias pointing to nvim
+      withNodeJs = true; # Enable Node.js provider (needed by some plugins)
 
-      # install LSPs/linters/formatters
+      # LSP servers, linters, and formatters installed alongside neovim
+      # These are added to neovim's PATH so nvim-lspconfig can find them
       extraPackages = [
-        # bash
-        pkgs.bash-language-server
-        pkgs.shfmt
+        # Bash
+        pkgs.bash-language-server # LSP for shell scripts
+        pkgs.shfmt # Shell formatter (also used by bash-language-server)
 
-        # nix
-        pkgs.nixd
-        pkgs.nixfmt
+        # Nix
+        pkgs.nixd # Nix language server (better than nil for nixpkgs)
+        pkgs.nixfmt # Nix formatter (RFC style)
 
-        # php
-        pkgs.phpactor
+        # PHP
+        pkgs.phpactor # PHP language server
 
-        # python
-        pkgs.python313Packages.python-lsp-server
+        # Python
+        pkgs.python313Packages.python-lsp-server # Python LSP
 
-        # ruby
-        pkgs.ruby-lsp
+        # Ruby
+        pkgs.ruby-lsp # Ruby language server
 
-        # terraform
-        pkgs.terraform
-        pkgs.terraform-ls
-        pkgs.tflint
+        # Terraform
+        pkgs.terraform # Needed by terraform-ls for validation
+        pkgs.terraform-ls # Official Terraform language server
+        pkgs.tflint # Terraform linter
 
-        # misc
-        pkgs.typos-lsp
-        pkgs.yaml-language-server
+        # Misc
+        pkgs.typos-lsp # Spellcheck-like LSP for source code typos
+        pkgs.yaml-language-server # YAML LSP with JSON schema support
       ];
 
       # extraPython3Packages = pyPkgs: with pyPkgs; [ python-lsp-server ];
 
+      # Lua configuration that runs before plugins load
       initLua = ''
-        -- disable neovim vim.tbl_islist is deprecated
+        -- Suppress deprecation warning for vim.tbl_islist (renamed to vim.islist)
         vim.tbl_islist = vim.islist
 
+        -- Editor defaults: 2-space indentation, no swap files
         vim.opt.expandtab   = true
         vim.opt.shiftwidth  = 2
         vim.opt.softtabstop = 2
         vim.opt.swapfile    = false
         vim.opt.showmode    = false  -- Disable mode display for statusline plugins.
 
-        -- Configure LSP/diagnostic icons
+        -- Configure LSP/diagnostic icons (Nerd Font symbols)
         vim.diagnostic.config({
           signs = {
             text = {
@@ -70,11 +82,17 @@
         vim.g.opencode_opts = {}
       '';
 
-      # "Neovim Lua plugin with common configuration presets for options, mappings, and autocommands. Part of 'mini.nvim' library"
-      #   https://github.com/echasnovski/mini.basics
+      # ── Plugin configuration ────────────────────────────────────────
+      # Plugins are managed by home-manager via nixpkgs vimPlugins.
+      # Each plugin entry can specify type ("lua" or "viml") and inline config.
       plugins = with pkgs.vimPlugins; [
+
+        # Fun: cellular automaton animation (:CellularAutomaton make_it_rain)
         cellular-automaton-nvim
 
+        # mini.basics: sensible defaults for options, mappings, and autocommands
+        # Part of the mini.nvim library by echasnovski
+        #   https://github.com/echasnovski/mini.basics
         {
           plugin = mini-basics;
           type = "lua";
@@ -93,7 +111,8 @@
           '';
         }
 
-        # "A neovim plugin for moving around your code in a syntax tree aware manner"
+        # treewalker.nvim: move around code in a syntax-tree-aware manner
+        # Ctrl+hjkl navigates between AST nodes, Ctrl+Shift+jk swaps nodes
         #   https://github.com/aaronik/treewalker.nvim/
         {
           plugin = treewalker-nvim;
@@ -113,12 +132,15 @@
           '';
         }
 
+        # nvim-colorizer: display color codes as their actual color inline
         {
           plugin = nvim-colorizer-lua;
           type = "lua";
           config = ''require("colorizer").setup({})'';
         }
 
+        # oil.nvim: file explorer that lets you edit the filesystem like a buffer
+        # Includes git status integration via oil-git-status-nvim
         oil-git-status-nvim
         {
           plugin = oil-nvim;
@@ -133,7 +155,8 @@
           '';
         }
 
-        # "💭👀precognition.nvim - Precognition uses virtual text and gutter signs to show available motions"
+        # precognition.nvim: show available vim motions as virtual text hints
+        # Starts hidden; toggle with <leader>q, peek with q
         # https://github.com/tris203/precognition.nvim
         {
           plugin = precognition-nvim;
@@ -141,7 +164,8 @@
           config = ''require("precognition").setup({startVisible = false})'';
         }
 
-        # "Break bad habits, master Vim motions "
+        # hardtime.nvim: break bad habits by limiting repetitive key presses
+        # Encourages using proper vim motions instead of hjkl spam
         #   https://github.com/m4xshen/hardtime.nvim
         {
           plugin = hardtime-nvim;
@@ -149,14 +173,14 @@
           config = ''require("hardtime").setup()'';
         }
 
-        # misc deps
-        dressing-nvim
-        mini-icons
-        nui-nvim
-        plenary-nvim
-        render-markdown-nvim
+        # ── Common plugin dependencies ────────────────────────────────
+        dressing-nvim # Better vim.ui.select and vim.ui.input
+        mini-icons # Icon provider for various plugins
+        nui-nvim # UI component library
+        plenary-nvim # Lua utility functions (used by many plugins)
+        render-markdown-nvim # Render markdown with formatting in buffers
 
-        # "A fancy, configurable, notification manager for NeoVim"
+        # nvim-notify: notification manager for async LSP/plugin messages
         #   https://github.com/rcarriga/nvim-notify
         {
           plugin = nvim-notify;
@@ -164,7 +188,8 @@
           config = "vim.notify = require('notify')";
         }
 
-        # "💥 Highly experimental plugin that completely replaces the UI for messages, cmdline and the popupmenu"
+        # noice.nvim: replaces the built-in UI for messages, cmdline, and popupmenu
+        # Provides a modern floating UI experience
         #   https://github.com/folke/noice.nvim/
         {
           plugin = noice-nvim;
@@ -172,7 +197,8 @@
           config = ''require("noice").setup({})'';
         }
 
-        # "displays a popup with possible keybindings of the command you started typing"
+        # which-key.nvim: displays available keybindings in a popup as you type
+        # All leader key groups and their mappings are defined here
         #   https://github.com/folke/which-key.nvim
         {
           plugin = which-key-nvim;
@@ -188,12 +214,14 @@
             }
 
             wk.add({
+              -- Quick access bindings
               { 'q', desc = "precognition peek", function() require("precognition").peek() end},
               { '<leader>q', desc = "precognition toggle", function() require("precognition").toggle() end},
               { '<c-\\>', desc = "Toggle Terminal", function() require("toggleterm").toggle() end, mode = { "n", "i", "t" } },
 
               { "<leader>fml", desc = "FML" ,"<cmd>CellularAutomaton make_it_rain<cr>"},
 
+              -- Top-level leader shortcuts
               { "<leader><space>", desc = "Smart Find Files", function() Snacks.picker.smart() end },
               { "<leader>,", desc = "Buffers", function() Snacks.picker.buffers() end },
               { "<leader>/", desc = "Grep", function() Snacks.picker.grep() end },
@@ -202,16 +230,19 @@
               { "<leader>e", desc = "Oil", "<cmd>Oil<cr>" },
               { "<leader>?", desc = "keybindings", function() require("which-key").show() end },
 
+              -- Quit group
               { "<leader>q", group = "Quit" },
               { "<leader>qq", desc = "Quit", "<cmd>q<cr>" },
               { "<leader>qa", desc = "Quit", "<cmd>qa<cr>" },
               { "<leader>qf", desc = "Quit [force]", "<cmd>qa!<cr>" },
 
+              -- Write group
               { "<leader>w", group = "Write" },
               { "<leader>wq", desc = "Write Quit", "<cmd>wq<cr>" },
               { "<leader>ww", desc = "Write", "<cmd>w<cr>" },
               { "<leader>a", group = "Avante" },
 
+              -- OpenCode AI integration group
               { "<leader>o", group = "OpenCode" },
               { "<leader>oa", desc = "Ask OpenCode" },
               { "<leader>og", desc = "Toggle OpenCode" },
@@ -221,6 +252,7 @@
               { "<leader>od", desc = "Scroll Down" },
               { "<leader>oc", desc = "Stop OpenCode" },
 
+              -- LSP group: language server interactions
               { "<leader>l", group = "LSP" },
               { "<leader>li", desc = "LSP Info", "<cmd>LspInfo<cr>" },
               { "<leader>lD", desc = "Goto Declaration", function() Snacks.picker.lsp_declarations() end },
@@ -232,6 +264,7 @@
               { "<leader>ls", desc = "LSP Symbols", function() Snacks.picker.lsp_symbols() end },
               { "<leader>lS", desc = "LSP Workspace Symbols", function() Snacks.picker.lsp_workspace_symbols() end },
 
+              -- Find group: file and buffer navigation
               { "<leader>f", group = "Find" },
               { "<leader>fb", desc = "Buffers", function() Snacks.picker.buffers() end },
               { "<leader>fc", desc = "Find Config File", function() Snacks.picker.files({ cwd = vim.fn.stdpath("config") }) end },
@@ -240,6 +273,7 @@
               { "<leader>fp", desc = "Projects", function() Snacks.picker.projects() end },
               { "<leader>fr", desc = "Recent", function() Snacks.picker.recent() end },
 
+              -- Git group: git operations via snacks picker
               { "<leader>g", group = "Git" },
               { "<leader>gb", desc = "Git Branches", function() Snacks.picker.git_branches() end },
               { "<leader>gl", desc = "Git Log", function() Snacks.picker.git_log() end },
@@ -249,6 +283,7 @@
               { "<leader>gd", desc = "Git Diff (Hunks)", function() Snacks.picker.git_diff() end },
               { "<leader>gf", desc = "Git Log File", function() Snacks.picker.git_log_file() end },
 
+              -- Search/Grep group: content search and exploration
               { "<leader>s", group = "Search/Grep" },
               { "<leader>sb", desc = "Buffer Lines", function() Snacks.picker.lines() end },
               { "<leader>sB", desc = "Grep Open Buffers", function() Snacks.picker.grep_buffers() end },
@@ -275,6 +310,7 @@
               { "<leader>sR", desc = "Resume", function() Snacks.picker.resume() end },
               { "<leader>su", desc = "Undo History", function() Snacks.picker.undo() end },
 
+              -- Util group: buffer operations and formatting
               { "<leader>u", group = "Util" },
               { "<leader>uc", desc = "Copy Buffer", "<cmd>%y+<cr>" },
               { "<leader>ub", desc = "Decode Base64", "<cmd>%!base64 -d<cr>" },
@@ -285,6 +321,7 @@
               { "<leader>ut", desc = "Table Mode: Toggle", "<cmd>TableModeToggle<cr>" },
               { "<leader>ur", desc = "Table Mode: Realign", "<cmd>TableModeRealign<cr>" },
 
+              -- Textobject navigation (treesitter-textobjects)
               { "[", group = "Previous" },
               { "[B", desc = "Previous Block Inner" },
               { "[I", desc = "Previous Conditional Inner" },
@@ -318,12 +355,16 @@
           '';
         }
 
+        # nvim-lspconfig: configuration for built-in LSP client
+        # Enables language servers that are installed via extraPackages above
         {
           plugin = nvim-lspconfig;
           type = "lua";
           config = ''
+            -- Show diagnostics inline for the current line only
             vim.diagnostic.config({ virtual_lines = { current_line = true }})
 
+            -- Enable all configured language servers
             -- https://github.com/neovim/nvim-lspconfig/tree/master/lsp
             vim.lsp.enable('bashls')
             vim.lsp.enable('nixd')
@@ -339,9 +380,10 @@
           '';
         }
 
+        # Treesitter textobjects: navigate and select code by semantic units
         nvim-treesitter-textobjects
 
-        # "Rainbow highlighting and intelligent auto-pairs for Neovim"
+        # blink.pairs: rainbow highlighting and intelligent auto-pairs
         # https://github.com/Saghen/blink.pairs
         #{
         #  plugin = blink-pairs;
@@ -349,10 +391,10 @@
         #  config = "require('blink.pairs').setup({})";
         #}
 
-        # "Fully featured & enhanced replacement for copilot.vim complete with API for interacting with Github Copilot"
+        # copilot.lua: GitHub Copilot integration for Neovim
         # https://github.com/zbirenbaum/copilot.lua
 
-        # "⚙️ Configurable GitHub Copilot blink.cmp source for Neovim"
+        # blink-copilot: Copilot source for blink.cmp completion
         # https://github.com/fang2hou/blink-copilot
         {
           plugin = blink-copilot;
@@ -360,7 +402,8 @@
           config = "";
         }
 
-        # "🍿 A collection of QoL plugins for Neovim"
+        # snacks.nvim: collection of QoL plugins (picker, explorer, terminal, etc.)
+        # Only a few modules are enabled; the rest are explicitly disabled
         # https://github.com/folke/snacks.nvim
         {
           plugin = snacks-nvim;
@@ -385,7 +428,8 @@
           '';
         }
 
-        # Install tree-sitter with all the plugins/grammars
+        # nvim-treesitter: syntax highlighting and code parsing via tree-sitter
+        # Installs all available grammars for maximum language coverage
         #   https://tree-sitter.github.io/tree-sitter
         nvim-treesitter-textobjects
         {
@@ -402,7 +446,8 @@
           '';
         }
 
-        # opencode.nvim - NickvanDyke's opencode integration
+        # opencode.nvim: OpenCode AI assistant integration for Neovim
+        # Provides keybindings to ask questions, toggle UI, and execute actions
         # https://github.com/NickvanDyke/opencode.nvim
         {
           plugin = opencode-nvim;
@@ -419,6 +464,7 @@
           '';
         }
 
+        # Avante / CodeCompanion (disabled, keeping config for reference)
         # {
         #   plugin = codecompanion-nvim;
         #   type = "lua";
@@ -434,7 +480,7 @@
         #   '';
         # }
         #
-        # "Use your Neovim like using Cursor AI IDE! "
+        # avante.nvim: "Use your Neovim like using Cursor AI IDE!"
         #   https://github.com/yetone/avante.nvim
         copilot-lua
         # {
@@ -453,8 +499,9 @@
         #   '';
         # }
 
-        # "Performant, batteries-included completion plugin for Neovim"
-        # https://github.com/Saghen/blink.cmp?tab=readme-ov-file
+        # blink.cmp: fast, batteries-included completion engine
+        # Sources: Copilot (highest priority), LSP, path, snippets, buffer
+        # https://github.com/Saghen/blink.cmp
         blink-cmp-avante
         {
           plugin = blink-cmp;
@@ -493,9 +540,10 @@
             })
           '';
         }
-        # "A clean, dark Neovim theme written in Lua, with support for lsp, treesitter
-        # and lots of plugins. Includes additional themes for Kitty, Alacritty, iTerm and Fish"
-        # https://github.com/folke/tokyonight.nvim/?tab=readme-ov-file
+
+        # tokyonight.nvim: dark/light colorscheme with wide plugin support
+        # Auto-detects GNOME dark/light preference and switches accordingly
+        # https://github.com/folke/tokyonight.nvim
         {
           plugin = tokyonight-nvim;
           type = "lua";
@@ -512,12 +560,13 @@
                 vim.cmd("colorscheme tokyonight-moon")
               end
             end
+            -- Re-apply on focus to detect system theme changes
             vim.api.nvim_create_autocmd({ "VimEnter", "FocusGained" }, { callback = apply_theming })
             apply_theming()
           '';
         }
 
-        # "Smooth scrolling neovim plugin written in lua "
+        # neoscroll.nvim: smooth scrolling animations
         # https://github.com/karb94/neoscroll.nvim/
         {
           plugin = neoscroll-nvim;
@@ -525,11 +574,11 @@
           config = "require('neoscroll').setup({})";
         }
 
+        # markdown-preview.nvim: live markdown preview in browser
         # https://github.com/iamcco/markdown-preview.nvim/
-        # "markdown preview plugin for (neo)vim"
         markdown-preview-nvim
 
-        # "A snazzy bufferline for Neovim"
+        # bufferline.nvim: tab-like buffer line at the top of the editor
         # https://github.com/akinsho/bufferline.nvim
         {
           plugin = bufferline-nvim;
@@ -558,7 +607,7 @@
           '';
         }
 
-        # "Highlight changed text after Undo / Redo operations"
+        # highlight-undo.nvim: briefly highlight changed text after undo/redo
         # https://github.com/tzachar/highlight-undo.nvim/
         {
           plugin = highlight-undo-nvim;
@@ -566,8 +615,8 @@
           config = "require('highlight-undo').setup({duration = 500})";
         }
 
+        # toggleterm.nvim: floating terminal overlay (Ctrl+\\ to toggle)
         # https://github.com/akinsho/toggleterm.nvim
-        # "A neovim plugin to persist and toggle multiple terminals during an editing session"
         {
           plugin = toggleterm-nvim;
           type = "lua";
@@ -580,7 +629,7 @@
           '';
         }
 
-        # "Super fast git decorations implemented purely in lua/teal"
+        # gitsigns.nvim: git decorations in the sign column (added/modified/deleted)
         # https://github.com/lewis6991/gitsigns.nvim
         {
           plugin = gitsigns-nvim;
@@ -588,7 +637,8 @@
           config = "require('gitsigns').setup()";
         }
 
-        # "Simple winbar/statusline plugin that shows your current code context"
+        # nvim-navic: breadcrumb navigation in the winbar showing current code context
+        # Auto-attaches to LSP servers that support documentSymbols
         # https://github.com/SmiteshP/nvim-navic
         {
           plugin = nvim-navic;
@@ -603,7 +653,8 @@
           '';
         }
 
-        # "A blazing fast and easy to configure neovim statusline written in pure lua"
+        # lualine.nvim: fast statusline written in Lua
+        # Uses papercolor_light theme with minimal separators
         # https://github.com/hoob3rt/lualine.nvim
         {
           plugin = lualine-nvim;
@@ -619,7 +670,7 @@
           '';
         }
 
-        # "Neovim Lua plugin to visualize and operate on indent scope. Part of 'mini.nvim' library"
+        # mini.indentscope: animated indent guides showing current scope
         # https://github.com/echasnovski/mini.indentscope
         {
           plugin = mini-indentscope;
@@ -627,12 +678,12 @@
           config = "require('mini.indentscope').setup()";
         }
 
-        # "Peek lines just when you intend"
+        # numb.nvim: peek lines when typing :<number> (before pressing Enter)
         # https://github.com/nacro90/numb.nvim/
         { plugin = numb-nvim; }
 
-        # "(Neo)Vim plugin for automatically highlighting other uses of the word under the cursor using either LSP,
-        # Tree-sitter, or regex matching"
+        # vim-illuminate: highlight other uses of the word under cursor
+        # Uses LSP, treesitter, or regex matching automatically
         # https://github.com/RRethy/vim-illuminate
         {
           plugin = vim-illuminate;
@@ -640,19 +691,20 @@
           config = "";
         }
 
-        ## ------------------------------------ Vimscript Plugins ---------------------------------------------
+        ## ───────────────────── Vimscript Plugins ─────────────────────
 
-        ## "Intelligently reopen files at your last edit position in Vim"
-        ## https://github.com/farmergreg/vim-lastplace
+        # vim-lastplace: reopen files at the last edit position
+        # https://github.com/farmergreg/vim-lastplace
         vim-lastplace
 
-        # "VIM Table Mode for instant [ASCII] table creation"
+        # vim-table-mode: instant ASCII table creation and formatting
+        # Toggle with <leader>ut, realign with <leader>ur
         # https://github.com/dhruvasagar/vim-table-mode
         {
           plugin = vim-table-mode;
           type = "lua";
           config = ''
-            -- use which-key
+            -- Disable default mappings (using which-key instead)
             vim.g.table_mode_disable_mappings = 1
             vim.g.table_mode_disable_tableize_mappings = 1
             vim.g.table_mode_corner='|'
@@ -661,9 +713,11 @@
         }
       ];
 
+      # Vimscript configuration (runs after plugins)
       extraConfig = ''
         set relativenumber
 
+        " ── Disable arrow keys to encourage proper vim motions ──────
         " Remove newbie crutches in Insert Mode
         inoremap <Down>   <Nop>
         inoremap <Left>   <Nop>

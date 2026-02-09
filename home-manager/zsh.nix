@@ -1,52 +1,74 @@
+# zsh.nix - Zsh shell configuration
+#
+# Configures the Z shell with:
+# - direnv integration for per-directory environment variables
+# - fzf for fuzzy finding (files, history, completions)
+# - Atuin for shell history sync (syncs to local server at 192.168.5.0)
+# - Starship cross-shell prompt with Kubernetes context and AWS profile display
+# - fzf-tab plugin for tab completion with fuzzy matching
+# - Custom functions: ap (AWS profile), ar (AWS region), nsr (nix-shell-run), rgreplace
+# - Extensive shell aliases for terraform, kubectl, git, clipboard, and notes
+# - Kitty terminal tab title integration (shows PWD and running command)
 { pkgs, ... }:
 {
   programs = {
+    # direnv: automatically load/unload .envrc environment variables per directory
     direnv.enable = true;
 
+    # fzf: fuzzy finder used throughout the shell (history, file picker, etc.)
     fzf = {
       enable = true;
       defaultOptions = [
-        "--layout=reverse"
+        "--layout=reverse" # Show results top-to-bottom (feels more natural)
         # "--color=bw"
       ];
     };
 
+    # Atuin: replacement shell history that syncs across machines
+    # Stores history in SQLite and syncs to a self-hosted server on the LAN
     atuin = {
       enable = true;
-      flags = [ "--disable-up-arrow" ];
+      flags = [ "--disable-up-arrow" ]; # Don't hijack up-arrow (use Ctrl+R instead)
 
       settings = {
-        filter_mode = "workspace";
-        keymap_mode = "emacs";
-        search_node = "fulltext";
-        secrets_filter = true;
-        show_preview = true;
-        sync_address = "http://192.168.5.0:8888";
+        filter_mode = "workspace"; # Filter history by current git repo/directory
+        keymap_mode = "emacs"; # Use emacs-style keybindings in search UI
+        search_node = "fulltext"; # Full-text search across command history
+        secrets_filter = true; # Automatically filter out commands containing secrets
+        show_preview = true; # Show command preview in search results
+        sync_address = "http://192.168.5.0:8888"; # Self-hosted Atuin sync server on LAN
       };
     };
 
+    # Starship: minimal, fast, cross-shell prompt
+    # Displays git status, AWS profile/region, Kubernetes context, and directory
     starship = {
       enable = true;
       settings = {
+        # Disable noisy/unhelpful prompt modules
         cmd_duration.disabled = true;
         helm.disabled = true;
         python.disabled = true;
         terraform.disabled = true;
 
         #right_format = "$kubernetes$line_break";
+
+        # Fill character between left and right prompt sections
         fill = {
           symbol = " ";
         };
 
-        format =
-          # move kubernetes to the right
-          "$all$fill$kubernetes$line_break$directory$git_branch$git_status$jobs$battery$time$status$os$container$shell$character";
+        # Custom prompt layout: main info on first line, directory/git on second
+        # Kubernetes context is pushed to the right side of the first line
+        format = "$all$fill$kubernetes$line_break$directory$git_branch$git_status$jobs$battery$time$status$os$container$shell$character";
 
+        # Directory display: show up to 9 levels, highlight repo root
         directory = {
           truncation_length = 9;
           repo_root_style = "bright-yellow";
         };
 
+        # Git status indicators (modified, staged, ahead/behind)
         git_status = {
           format = "([$all_status$ahead_behind]($style))\\] ";
           #up_to_date = "[✓](green)";
@@ -54,10 +76,12 @@
           #deleted = "[--\\($count\\)](red)";
         };
 
+        # Git branch display format
         git_branch = {
           format = "\\[[$branch(:$remote_branch)]($style) ";
         };
 
+        # AWS profile and region display with short region aliases
         aws = {
           # $duration
           format = "\\[[$profile]($style) $region\\]";
@@ -72,6 +96,8 @@
           };
         };
 
+        # Kubernetes context display: show namespace and cluster name
+        # Strips the verbose ARN prefix from EKS cluster names
         kubernetes = {
           disabled = false;
           format = "\\[$namespace [$context]($style)\\]";
@@ -88,7 +114,9 @@
     zsh = {
       enable = true;
 
+      # Zsh plugins (loaded via home-manager's plugin system)
       plugins = [
+        # fzf-tab: replace zsh's default tab completion with fzf-powered fuzzy matching
         {
           file = "share/fzf-tab/fzf-tab.plugin.zsh";
           name = "fzf-tab";
@@ -101,27 +129,34 @@
         # }
       ];
 
-      autosuggestion.enable = true;
-      defaultKeymap = "emacs";
-      enableCompletion = true;
-      syntaxHighlighting.enable = true;
+      autosuggestion.enable = true; # Fish-like autosuggestions based on history
+      defaultKeymap = "emacs"; # Emacs-style line editing (Ctrl+A/E, etc.)
+      enableCompletion = true; # Enable zsh completion system
+      syntaxHighlighting.enable = true; # Real-time syntax highlighting as you type
 
+      # Shell initialization code (runs on every new shell)
       initContent = ''
-        # kitty tab title to $PWD
+        # ── Kitty tab title integration ─────────────────────────────
+        # Show current directory name as tab title when idle
         function set-title-precmd() {printf "\e]2;%s\a" "''${PWD/*\//}"}
         add-zsh-hook precmd set-title-precmd
 
-        # kitty tab title to running command
+        # Show running command name as tab title while executing
         function set-title-preexec() {printf "\e]2;%s\a" "$1"}
         add-zsh-hook preexec set-title-preexec
 
-        # If opening a new terminal, not over SSH, cd to code directory and clear screen
+        # ── Auto-cd to source directory on new terminal ─────────────
+        # If opening a new terminal (not over SSH), cd to ~/source and clear
         if [[ "$TERM" != "linux" && "$(pwd)" = "$HOME" && ! "$SSH_CLIENT" ]]; then
           cd ~/source
           clear
         fi
 
-        # ----- Functions migrated from broken alias definitions -----
+        # ── Custom shell functions ──────────────────────────────────
+
+        # ap: AWS Profile switcher
+        # Usage: ap [query] -- fuzzy-select an AWS profile and export it
+        # Persists selection to ~/.aws/sticky.profile so direnv can source it
         ap() {
           local query="$1"
           local profile
@@ -132,6 +167,9 @@
           fi
         }
 
+        # ar: AWS Region switcher
+        # Usage: ar [query] -- fuzzy-select an AWS region and export it
+        # Persists selection to ~/.aws/sticky.region
         ar() {
           local query="$1"
           local region
@@ -142,6 +180,9 @@
           fi
         }
 
+        # nsr: Nix Shell Run -- quickly run a command from a nix package
+        # Usage: nsr <package> [command]
+        # If command is omitted, uses the package name as the command
         nsr() {
           if [ -z "$1" ]; then
             echo "usage: nsr <package> [command]" >&2
@@ -153,6 +194,8 @@
           nix-shell --packages "$pkg" --run "$run_cmd"
         }
 
+        # rgreplace: bulk search and replace across files using ripgrep + sed
+        # Usage: rgreplace <search> <replace> [path]
         rgreplace() {
           if [ $# -lt 2 ]; then
             echo "usage: rgreplace <search> <replace> [path]" >&2
@@ -166,39 +209,41 @@
         # ------------------------------------------------------------
       '';
 
+      # Environment variables set for every zsh session
       sessionVariables = {
-        DIRENV_LOG_FORMAT = ""; # silence direnv
-        MANPAGER = "vim +Man!";
-        NIXPKGS_ALLOW_UNFREE = "1";
+        DIRENV_LOG_FORMAT = ""; # Silence direnv "loading .envrc" messages
+        MANPAGER = "vim +Man!"; # Use vim as the man page viewer
+        NIXPKGS_ALLOW_UNFREE = "1"; # Allow unfree packages in nix-shell
 
-        # zsh-vi-mode can integrate with your system clipboard
+        # Enable system clipboard integration for zsh-vi-mode (if re-enabled)
         ZVM_SYSTEM_CLIPBOARD_ENABLED = true;
       };
 
+      # ── Shell aliases ─────────────────────────────────────────────
       shellAliases = {
-        # reboot into uefi bios
-        reboot-bios = "systemctl reboot --firmware-setup";
+        # System
+        reboot-bios = "systemctl reboot --firmware-setup"; # Reboot directly into UEFI/BIOS
 
-        # login via aws sso
-        al = "aws sso login";
+        # AWS
+        al = "aws sso login"; # Quick SSO login
 
-        # pipe to clipboard
-        # Wayland-only clipboard tool
-        cbc = "${pkgs.wl-clipboard}/bin/wl-copy";
-        cbp = "${pkgs.wl-clipboard}/bin/wl-";
+        # Clipboard (Wayland-only via wl-clipboard)
+        cbc = "${pkgs.wl-clipboard}/bin/wl-copy"; # Pipe to clipboard
+        cbp = "${pkgs.wl-clipboard}/bin/wl-"; # Paste from clipboard
 
-        # short 'n sweet
+        # Git
         g = "${pkgs.git}/bin/git";
 
-        da = "direnv allow";
+        # direnv
+        da = "direnv allow"; # Quick allow for .envrc changes
 
-        # Quick notes
+        # Notes (nb-based note-taking)
         # n = "vim $(ls ~/personal/notes/*.md | fzf --multi)";
-        nw = "nb edit work-$(date +%Y-%m).md      2>/dev/null || nb add --title work-$(date +%Y-%m)";
-        np = "nb edit personal-$(date +%Y-%m).md  2>/dev/null || nb add --title personal-$(date +%Y-%m)";
-        ns = "$EDITOR $(mktemp)";
+        nw = "nb edit work-$(date +%Y-%m).md      2>/dev/null || nb add --title work-$(date +%Y-%m)"; # Work notes (monthly)
+        np = "nb edit personal-$(date +%Y-%m).md  2>/dev/null || nb add --title personal-$(date +%Y-%m)"; # Personal notes (monthly)
+        ns = "$EDITOR $(mktemp)"; # Scratch note in temp file
 
-        # reset
+        # Reset environment: clear AWS/kube context and go back to ~/source
         rst = ''
           cd ~/source
           kubectx --unset
@@ -209,26 +254,26 @@
           clear
         '';
 
-        # calculator
+        # Calculator (fend)
         f = "fend";
         fc = "clear;fend";
 
-        # terraform
+        # Terraform aliases (short commands for daily IaC work)
         t = "${pkgs.terraform}/bin/terraform";
         ta = "${pkgs.terraform}/bin/terraform apply";
         ti = "${pkgs.terraform}/bin/terraform init";
         tp = "${pkgs.terraform}/bin/terraform plan";
-        tpv = "${pkgs.terraform}/bin/terraform plan -no-color | vim";
-        tpwb = "${pkgs.terraform}/bin/terraform plan -no-color | grep 'will be'";
-        tsd = "echo $(${pkgs.terraform}/bin/terraform state list|fzf --multi)|xargs -n1 ${pkgs.terraform}/bin/terraform state rm";
-        tss = "${pkgs.terraform}/bin/terraform state show $(${pkgs.terraform}/bin/terraform state list|fzf)";
-        tt = "echo $(${pkgs.terraform}/bin/terraform state list|fzf --multi)|xargs -n1 ${pkgs.terraform}/bin/terraform taint";
+        tpv = "${pkgs.terraform}/bin/terraform plan -no-color | vim"; # Plan output in vim for review
+        tpwb = "${pkgs.terraform}/bin/terraform plan -no-color | grep 'will be'"; # Quick summary of what will change
+        tsd = "echo $(${pkgs.terraform}/bin/terraform state list|fzf --multi)|xargs -n1 ${pkgs.terraform}/bin/terraform state rm"; # Fuzzy state remove
+        tss = "${pkgs.terraform}/bin/terraform state show $(${pkgs.terraform}/bin/terraform state list|fzf)"; # Fuzzy state show
+        tt = "echo $(${pkgs.terraform}/bin/terraform state list|fzf --multi)|xargs -n1 ${pkgs.terraform}/bin/terraform taint"; # Fuzzy taint
 
-        # kube
+        # Kubernetes aliases
         k = "kubectl";
-        kns = "kubens";
-        uc = "kubectx";
-        ucu = "kubectx --unset";
+        kns = "kubens"; # Quick namespace switch
+        uc = "kubectx"; # Quick context switch
+        ucu = "kubectx --unset"; # Unset current context
       };
     };
   };

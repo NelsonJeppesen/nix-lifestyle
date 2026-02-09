@@ -1,78 +1,100 @@
+# firefox.nix - Firefox browser configuration
+#
+# Configures Firefox with:
+# - Hidden tab bar (using a sidebar tab extension instead)
+# - Hardware acceleration and WebRender enabled for Wayland
+# - Background tab throttling and memory management
+# - Custom search engines: Gmail, ChatGPT (o3/o4-mini), Nix Packages
+# - Default built-in search engines hidden (Bing, eBay, Wikipedia, etc.)
 { pkgs, ... }:
 {
   programs.firefox = {
     enable = true;
     profiles = {
 
+      # Default profile
       home = {
         id = 0;
         name = "home";
-        # Hide tab bar and side bar header
+
+        # Hide the tab bar via userChrome CSS
+        # A sidebar tab extension (e.g., Tree Style Tab) is used instead
+        # for vertical tab management
         userChrome = "\n          #TabsToolbar\n          { visibility: collapse; }\n          #sidebar-box #sidebar-header {\n            display: none !important;\n          }\n        ";
 
-        # Chrome-style auto suspend
+        # Chrome-style auto suspend (disabled, using native Firefox instead)
         #extensions = with pkgs.firefox-addons; [
         #  auto-tab-discard
         #];
 
         settings = {
-          "gfx.webrender.all" = true;
+          # ── GPU acceleration and rendering ──────────────────────
+          "gfx.webrender.all" = true; # Enable WebRender for all content
           "gfx.webrender.enabled" = true;
-          "layers.acceleration.force-enabled" = true;
-          "layout.css.backdrop-filter.enabled" = true;
-          "svg.context-properties.content.enabled" = true;
-          "toolkit.legacyUserProfileCustomizations.stylesheets" = true;
+          "layers.acceleration.force-enabled" = true; # Force GPU layer acceleration
+          "layout.css.backdrop-filter.enabled" = true; # Enable CSS backdrop-filter
+          "svg.context-properties.content.enabled" = true; # SVG context properties
+          "toolkit.legacyUserProfileCustomizations.stylesheets" = true; # Enable userChrome.css
 
-          # 🔧 Background Tab Throttling
-          "dom.min_background_timeout_value" = 1000;
+          # ── Background tab throttling ───────────────────────────
+          # Reduce CPU/battery usage from inactive tabs
+          "dom.min_background_timeout_value" = 1000; # Min timer interval for background tabs (ms)
           "dom.timeout.enable_budget_timer_throttling" = true;
-          "dom.timeout.background_throttling_max_budget" = 50;
-          "dom.ipc.processPriorityManager.enabled" = true;
+          "dom.timeout.background_throttling_max_budget" = 50; # Budget per background tab (ms)
+          "dom.ipc.processPriorityManager.enabled" = true; # Lower priority for background processes
 
-          # 🌙 Sleep Background Tabs
+          # ── Sleep/unload background tabs ────────────────────────
+          # Automatically unload tabs when memory is low
           "browser.tabs.unloadOnLowMemory" = true;
-          "browser.tabs.unloadOnLowMemory.delay_ms" = 60000;
+          "browser.tabs.unloadOnLowMemory.delay_ms" = 60000; # Wait 60s before unloading
 
-          # 🎨 Rendering (lower paints when idle; Wayland compositor path)
+          # ── Rendering performance ───────────────────────────────
+          # Lower frame rate when idle to save power (Wayland compositor path)
           "layout.frame_rate" = 30;
           "gfx.webrender.compositor.force-enabled" = true;
 
-          # 💤 Kill wasteful background fetches
+          # ── Disable prefetching (saves bandwidth, disabled for now) ──
           #"network.prefetch-next" = false;
           #"network.dns.disablePrefetch" = true;
           #"network.predictor.enabled" = false;
 
-          # ✅ Wayland niceties (harmless on X11; ignored)
-          "widget.wayland.async-dnd" = true;
-          "widget.use-xdg-desktop-portal.file-picker" = 1;
+          # ── Wayland integration ─────────────────────────────────
+          "widget.wayland.async-dnd" = true; # Async drag-and-drop on Wayland
+          "widget.use-xdg-desktop-portal.file-picker" = 1; # Use native GNOME file picker
         };
 
+        # ── Custom search engines ─────────────────────────────────
         search = {
-          default = "google"; # Change this to your desired engine
-          force = true;
+          default = "google";
+          force = true; # Override any profile search settings
 
           engines = {
+            # Hide default search engines that are never used
             bing.metaData.hidden = true;
             ebay.metaData.hidden = true;
             wikipedia.metaData.hidden = true;
             ddg.metaData.hidden = true;
             amazondotcom-us.metaData.hidden = true;
 
+            # Gmail search: type "gm <query>" in the address bar
             "gmail" = {
               urls = [ { template = "https://mail.google.com/mail/u/0/#search/{searchTerms}"; } ];
               definedAliases = [ "gm" ];
             };
 
+            # ChatGPT o3: type "o3 <query>" for o3 model
             "o3" = {
               urls = [ { template = "https://chatgpt.com/?model=o3&q={searchTerms}"; } ];
               definedAliases = [ "o3" ];
             };
 
+            # ChatGPT o4-mini: type "o4 <query>" for o4-mini model
             "o4mini" = {
               urls = [ { template = "https://chatgpt.com/?model=o4-mini&q={searchTerms}"; } ];
               definedAliases = [ "o4" ];
             };
 
+            # Nix Packages search: type "np <package>" to search nixpkgs unstable
             nix-packages = {
               name = "Nix Packages";
               urls = [

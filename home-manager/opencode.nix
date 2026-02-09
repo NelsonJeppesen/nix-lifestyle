@@ -1,32 +1,48 @@
+# opencode.nix - OpenCode AI coding assistant configuration
+#
+# OpenCode is a terminal-based AI coding assistant (similar to Cursor/Aider).
+# This module configures:
+# - Default model: Claude Opus 4.6 via GitHub Copilot
+# - MCP server integration (GitHub, Terraform, Kubernetes)
+# - Web UI for browser-based interaction
+# - Shell aliases for quick access (o, oc, or, etc.)
+# - Custom slash commands for shell history analysis and Terraform workflows
+# - Specialized agents for Terraform/DevOps and code review
 { pkgs, ... }:
 {
+  # Shell aliases for quick OpenCode invocation
   programs.zsh.shellAliases = {
-    # Connect to the daemon server running on port 4096
-    o = "opencode";
-    oc = "opencode --continue";
-    or = "opencode run";
+    o = "opencode"; # Launch OpenCode
+    oc = "opencode --continue"; # Continue previous conversation
+    or = "opencode run"; # Run a command through OpenCode
 
-    osd = "opencode run '/summary daily'";
-    osw = "opencode run '/summary weekly'";
-    ocm = "opencode run 'create commit and push'";
+    # Pre-built workflows
+    osd = "opencode run '/summary daily'"; # Daily shell history summary
+    osw = "opencode run '/summary weekly'"; # Weekly shell history summary
+    ocm = "opencode run 'create commit and push'"; # AI-assisted commit and push
   };
 
   programs.opencode = {
     enable = true;
-    enableMcpIntegration = true;
-    web.enable = true;
+    enableMcpIntegration = true; # Connect to MCP servers defined in mcp.nix
+    web.enable = true; # Enable browser-based web UI
 
     settings = {
+      # Use Claude Opus 4.6 via GitHub Copilot as the default model
       model = "github-copilot/claude-opus-4.6";
     };
 
+    # ── Custom slash commands ─────────────────────────────────────
+    # These are invoked as /command-name in the OpenCode chat
     commands = {
-      # Inline content
+      # /changelog: update CHANGELOG.md with new entries
       changelog = ''
         # Update Changelog Command
         Update CHANGELOG.md with new entries.
       '';
 
+      # /summary: analyze shell history from Atuin and generate activity summary
+      # Supports daily/weekly/monthly/custom time ranges
       summary = ''
         # Shell History Summary Command
         Analyze the user's Atuin shell history and generate a summary of activities.
@@ -39,10 +55,10 @@
 
         ## Instructions:
         1. Parse the argument to determine the time period:
-           - No argument or "day"  24 hours (limit 2000)
-           - "week"  7 days (limit 5000)
-           - "month"  30 days (limit 10000)
-           - "<N>d"  N days (adjust limit appropriately: ~300*N commands)
+           - No argument or "day"  24 hours (limit 2000)
+           - "week"  7 days (limit 5000)
+           - "month"  30 days (limit 10000)
+           - "<N>d"  N days (adjust limit appropriately: ~300*N commands)
 
         2. Query Atuin history using: `atuin search --limit <LIMIT> --format "{time}\t{command}" --filter-mode global --after "<PERIOD>"`
 
@@ -67,6 +83,7 @@
         - Monthly: High-level overview with key themes
       '';
 
+      # /tf-scope: analyze current directory as a Terraform scope and describe it
       tf-scope = ''
         # Terraform Scope Helper
         Analyze the current working directory as part of a Terraform monorepo and describe the Terraform "scope" for the user.
@@ -91,6 +108,7 @@
         5. Keep the output concise and focused on the next actions for the user.
       '';
 
+      # /tf-plan-helper: construct the correct terraform plan command for this directory
       tf-plan-helper = ''
         # Terraform Plan Helper
         Help the user construct the correct Terraform plan command for this directory in a Terraform monorepo.
@@ -114,6 +132,7 @@
         5. Always keep safety in mind and explicitly prefer plan over apply, especially for production-like environments.
       '';
 
+      # /tf-impact-summary: summarize a terraform plan JSON for change review
       tf-impact-summary = ''
         # Terraform Plan Impact Summary
         Summarize the impact of a Terraform plan, focusing on resource changes and risk.
@@ -143,7 +162,10 @@
       '';
     };
 
+    # ── Specialized agents ────────────────────────────────────────
+    # Agents are persona-based modes that OpenCode can switch between
     agents = {
+      # Terraform/DevOps agent: infrastructure-focused analysis and guidance
       terraform-devops = ''
         # Terraform DevOps Agent
         Specialized assistant for Terraform monorepos and DevOps workflows.
@@ -166,7 +188,7 @@
         - Recommend tagging and naming standards across resources.
       '';
 
-      # Inline content
+      # Code review agent: general-purpose code review assistant
       code-reviewer = ''
         # Code Reviewer Agent
         Specialized code review assistant.

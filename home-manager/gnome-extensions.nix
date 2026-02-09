@@ -1,56 +1,76 @@
+# gnome-extensions.nix - GNOME Shell extensions and their dconf settings
+#
+# Installs and configures GNOME Shell extensions:
+# - AppIndicator: system tray support for legacy apps
+# - Bitcoin Markets: live BTC price ticker in the top bar
+# - Caffeine: prevent screen blanking with a toggle (Super+O)
+# - Clipboard Indicator: clipboard history manager (Ctrl+Shift+I to toggle)
+# - Just Perfection: fine-tune GNOME Shell UI elements
+# - Picture of the Day: wallpaper from Bing's daily image
+# - Run-or-Raise: focus-or-launch apps via keyboard shortcuts
+# - Quick Lofi: internet radio player with SomaFM stations
 { pkgs, ... }:
 {
+  # Deploy run-or-raise shortcut configuration
+  # This maps keyboard shortcuts to apps (focus if running, launch if not)
   home.file.".config/run-or-raise/shortcuts.conf".source = ./dotfiles/shortcuts.conf;
 
   programs.gnome-shell = {
     enable = true;
     extensions = [
-      { package = pkgs.gnomeExtensions.appindicator; }
-      { package = pkgs.gnomeExtensions.bitcoin-markets; }
-      { package = pkgs.gnomeExtensions.caffeine; }
-      { package = pkgs.gnomeExtensions.clipboard-indicator; }
-      { package = pkgs.gnomeExtensions.just-perfection; }
-      { package = pkgs.gnomeExtensions.picture-of-the-day; }
-      { package = pkgs.gnomeExtensions.run-or-raise; }
+      { package = pkgs.gnomeExtensions.appindicator; } # System tray icons
+      { package = pkgs.gnomeExtensions.bitcoin-markets; } # BTC price in top bar
+      { package = pkgs.gnomeExtensions.caffeine; } # Inhibit screen blanking
+      { package = pkgs.gnomeExtensions.clipboard-indicator; } # Clipboard history
+      { package = pkgs.gnomeExtensions.just-perfection; } # UI customization tweaks
+      { package = pkgs.gnomeExtensions.picture-of-the-day; } # Daily wallpaper
+      { package = pkgs.gnomeExtensions.run-or-raise; } # Keyboard-driven app switching
 
-      # "Play lofi music on your Gnome desktop with just a click!"
+      # Quick Lofi: play internet radio (SomaFM, etc.) from the GNOME top bar
+      # Requires socat and mpv packages (installed in home.nix)
       #   https://github.com/eucaue/gnome-shell-extension-quick-lofi
       { package = pkgs.gnomeExtensions.quick-lofi; }
     ];
   };
 
+  # ── Extension-specific dconf settings ─────────────────────────────
   dconf.settings = {
 
+    # Just Perfection: customize GNOME Shell UI elements
     "org/gnome/shell/extensions/just-perfection" = {
-      accessibility-menu = false;
-      dash = false;
-      search = true;
-      startup-status = 0; # disable the overview popup thing
-      theme = false;
-      window-maximized-on-create = true;
+      accessibility-menu = false; # Hide accessibility menu from top bar
+      dash = false; # Hide the dock/dash
+      search = true; # Keep search in Activities overview
+      startup-status = 0; # Skip the Activities overview on login
+      theme = false; # Don't apply extension's theme
+      window-maximized-on-create = true; # Auto-maximize new windows
     };
 
+    # Clipboard Indicator: clipboard history with keyboard shortcuts
     "org/gnome/shell/extensions/clipboard-indicator" = {
-      cache-size = 10;
+      cache-size = 10; # Number of items to persist across restarts
       clear-history = [ ];
       disable-down-arrow = true;
-      display-mode = 1;
-      history-size = 200;
-      move-item-first = true;
-      next-entry = [ "<Shift><Control>p" ];
+      display-mode = 1; # Compact display mode
+      history-size = 200; # Total items to keep in history
+      move-item-first = true; # Move selected item to top of history
+      next-entry = [ "<Shift><Control>p" ]; # Next clipboard entry
       paste-button = false;
-      prev-entry = [ "<Shift><Control>o" ];
+      prev-entry = [ "<Shift><Control>o" ]; # Previous clipboard entry
       private-mode-binding = [ ];
-      strip-text = true;
-      toggle-menu = [ "<Shift><Control>i" ];
-      topbar-preview-size = 9;
+      strip-text = true; # Strip formatting when pasting
+      toggle-menu = [ "<Shift><Control>i" ]; # Toggle clipboard menu
+      topbar-preview-size = 9; # Characters shown in top bar preview
     };
 
+    # Quick Lofi: internet radio player configuration
+    # Pre-configured with all SomaFM channels for one-click streaming
     "org/gnome/shell/extensions/quick-lofi" = {
       volume = 75;
       set-popup-max-height = false;
 
-      # SomaFM Radios (all channels as of 2025-09-21)
+      # SomaFM radio stations (all channels as of 2025-09-21)
+      # SomaFM is a listener-supported internet radio service
       radios = [
         "SomaFM Beat Blender - https://api.somafm.com/beatblender130.pls"
         "SomaFM Black Rock FM - https://api.somafm.com/brfm130.pls"
@@ -97,25 +117,28 @@
       ];
     };
 
+    # Picture of the Day: set desktop wallpaper from Bing's daily image
     "org/gnome/shell/extensions/swsnr-picture-of-the-day" = {
       selected-source = "bing";
     };
 
+    # AppIndicator: system tray icon appearance settings
     "org/gnome/shell/extensions/appindicator" = {
-      icon-brightness = -0.1;
-      icon-opacity = 255;
-      icon-saturation = 0.8;
-      icon-size = 18;
-      tray-pos = "right";
+      icon-brightness = -0.1; # Slightly dimmed icons
+      icon-opacity = 255; # Fully opaque
+      icon-saturation = 0.8; # Slightly desaturated
+      icon-size = 18; # Icon size in pixels
+      tray-pos = "right"; # Position tray on the right side of top bar
     };
 
+    # Caffeine: prevent screen blanking/screensaver activation
     "org/gnome/shell/extensions/caffeine" = {
       indicator-position = 17;
       indicator-position-index = 3;
-      screen-blank = "never";
-      show-indicator = "only-active";
-      show-notifications = false;
-      toggle-shortcut = [ "<Super>o" ];
+      screen-blank = "never"; # Never blank screen when active
+      show-indicator = "only-active"; # Only show icon when caffeine is on
+      show-notifications = false; # Don't notify on toggle
+      toggle-shortcut = [ "<Super>o" ]; # Super+O to toggle
     };
   };
 }
