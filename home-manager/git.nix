@@ -62,6 +62,24 @@
           pu = "push";
           puf = "!git push --force-with-lease --force-if-includes"; # Safe force push
           br = "!git co $(git branch --list --sort=-committerdate|fzf --height 15)"; # Interactive branch switch via fzf
+          # open: Open the current GitHub repo in a browser
+          # Usage: git open [path]
+          # Supports both SSH and HTTPS remote URLs; errors on non-GitHub remotes
+          open = ''
+            !f() { \
+              url="$(git remote get-url origin 2>/dev/null)" || { echo "no remote 'origin'" >&2; return 1; }; \
+              case "$url" in \
+                git@github.com:*) repo="''${url#git@github.com:}" ;; \
+                https://github.com/*) repo="''${url#https://github.com/}" ;; \
+                *) echo "not a github repo" >&2; return 1 ;; \
+              esac; \
+              repo="''${repo%.git}"; \
+              branch="$(git rev-parse --abbrev-ref HEAD)"; \
+              path="''${1:+/tree/$branch/$1}"; \
+              : "''${path:=/tree/$branch}"; \
+              xdg-open "https://github.com/$repo$path"; \
+            }; f
+          ''; # Open GitHub repo in browser at current branch and optional path
         };
 
         # Sign all commits with SSH key
