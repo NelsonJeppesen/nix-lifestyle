@@ -30,6 +30,12 @@
       url = "github:GitAlias/gitalias";
       flake = false;
     };
+
+    # GitHub Notifications Redux: GNOME Shell extension for GitHub notifications
+    gnome-github-notifications-redux = {
+      url = "github:NelsonJeppesen/gnome-github-notifications-redux/main";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
   };
 
   outputs =
@@ -38,6 +44,7 @@
       home-manager,
       agenix,
       gitalias,
+      gnome-github-notifications-redux,
       ...
     }:
     let
@@ -88,7 +95,7 @@
 
         # Pass extra arguments to all modules so they can access agenix and gitalias
         extraSpecialArgs = {
-          inherit agenix gitalias;
+          inherit agenix gitalias gnome-github-notifications-redux;
         };
       };
     };

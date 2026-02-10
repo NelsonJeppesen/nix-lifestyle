@@ -9,7 +9,8 @@
 # - Picture of the Day: wallpaper from Bing's daily image
 # - Run-or-Raise: focus-or-launch apps via keyboard shortcuts
 # - Quick Lofi: internet radio player with SomaFM stations
-{ pkgs, ... }:
+# - GitHub Notifications Redux: GitHub notification count in top bar
+{ pkgs, gnome-github-notifications-redux, ... }:
 {
   # Deploy run-or-raise shortcut configuration
   # This maps keyboard shortcuts to apps (focus if running, launch if not)
@@ -30,6 +31,13 @@
       # Requires socat and mpv packages (installed in home.nix)
       #   https://github.com/eucaue/gnome-shell-extension-quick-lofi
       { package = pkgs.gnomeExtensions.quick-lofi; }
+
+      # GitHub Notifications Redux: notification count in top bar with desktop alerts
+      #   https://github.com/NelsonJeppesen/gnome-github-notifications-redux
+      {
+        id = "github-notifications-redux@jeppesen.io";
+        package = gnome-github-notifications-redux.packages.${pkgs.system}.default;
+      }
     ];
   };
 
