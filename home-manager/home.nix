@@ -11,11 +11,6 @@
   # Allow installation of proprietary packages (Chrome, 1Password, Zoom, etc.)
   nixpkgs.config.allowUnfree = true;
 
-  # programs.kubecolor.enable = true;
-
-  # fabric-ai: CLI tool for running AI prompts against text
-  programs.fabric-ai.enable = true;
-
   # Import all per-application/concern modules
   imports = [
     ./chrome-apps.nix # Chrome PWA wrappers (Slack, ChatGPT)
@@ -175,16 +170,11 @@
 
       pkgs.wireshark # Network protocol analyzer
 
-      # ── AI/LLM CLI tools ────────────────────────────────────────────
-      pkgs.aichat # Multi-provider AI chat CLI
-      #pkgs.chatgpt-cli
-      #pkgs.shell-gpt
-
       # ── Networking tools ────────────────────────────────────────────
       pkgs.wireguard-tools # WireGuard VPN management
 
       # ── Kubernetes tools ────────────────────────────────────────────
-      pkgs.fluxcd # GitOps continuous delivery for Kubernetes
+      # pkgs.fluxcd # GitOps continuous delivery for Kubernetes
       pkgs.k9s # Terminal UI for Kubernetes clusters
 
       # ── YAML/JSON/TOML data tools ──────────────────────────────────
@@ -215,7 +205,6 @@
       pkgs.ripgrep # Fast grep alternative
       pkgs.sd # sed alternative for find-and-replace
       pkgs.vault # HashiCorp Vault secrets management CLI
-      pkgs.walk # Terminal file manager with fuzzy filtering
       pkgs.wget # HTTP/FTP file downloader
       pkgs.whois # Domain/IP WHOIS lookup
       pkgs.wl-clipboard # Wayland clipboard utilities (wl-copy, wl-paste)

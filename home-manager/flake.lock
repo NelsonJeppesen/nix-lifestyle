@@ -87,11 +87,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1770671530,
-        "narHash": "sha256-mnQrWt2MnKwU5su9ongMOwowXpQv/0wUsZ6BBMAQ5MQ=",
+        "lastModified": 1770830092,
+        "narHash": "sha256-hsg0CVGknYgOxr/WmZsXUEmtf1MhRdXuW1pzvefDog8=",
         "owner": "NelsonJeppesen",
         "repo": "gnome-github-notifications-redux",
-        "rev": "f227c0326ad36f3b123fa28c86dac116be06d0fb",
+        "rev": "3dfd3a01ad5afd62ccc101684bad0427bb9e5d11",
         "type": "github"
       },
       "original": {
@@ -129,11 +129,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1770654520,
-        "narHash": "sha256-mg5WZMIPGsFu9MxSrUcuJUPMbfMsF77el5yb/7rc10k=",
+        "lastModified": 1770910055,
+        "narHash": "sha256-6HJVLBtbf2ub4a3P9YG+a3CTzzUcy4HpLz4IQdiyVxY=",
         "owner": "nix-community",
         "repo": "home-manager",
-        "rev": "6c4fdbe1ad198fac36c320fd45c5957324a80b8e",
+        "rev": "0825a0922a5d677f5f984bb79524569bbd1f9954",
         "type": "github"
       },
       "original": {

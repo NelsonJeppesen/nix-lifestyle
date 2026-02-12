@@ -8,7 +8,7 @@
 # - SSH-forced URLs for GitHub and Bitbucket (no HTTPS prompts)
 # - Fast-forward-only pulls to prevent accidental merge commits
 # - Auto-setup remote on push for new branches
-# - Git worktree switcher for multi-branch workflows
+# - lazyworktree TUI for multi-branch workflows
 { config, gitalias, ... }:
 {
   # Generate the SSH allowed_signers file from the user's ed25519 public key.
@@ -23,9 +23,11 @@
 
   programs = {
 
-    # git-worktree-switcher: quickly switch between git worktrees with fzf
-    git-worktree-switcher = {
+    lazyworktree = {
       enable = true;
+      settings = {
+        worktree_dir = "~/source/.worktrees";
+      };
     };
 
     # difftastic: structural diff tool that understands syntax
@@ -62,6 +64,7 @@
           pu = "push";
           puf = "!git push --force-with-lease --force-if-includes"; # Safe force push
           br = "!git co $(git branch --list --sort=-committerdate|fzf --height 15)"; # Interactive branch switch via fzf
+          wt = "!lazyworktree"; # TUI worktree manager
           # open: Open the current GitHub repo in a browser
           # Usage: git open [path]
           # Supports both SSH and HTTPS remote URLs; errors on non-GitHub remotes

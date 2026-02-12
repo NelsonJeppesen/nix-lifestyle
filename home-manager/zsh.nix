@@ -6,10 +6,10 @@
 # - Atuin for shell history sync (syncs to local server at 192.168.5.0)
 # - Starship cross-shell prompt with Kubernetes context and AWS profile display
 # - fzf-tab plugin for tab completion with fuzzy matching
-# - Custom functions: ap (AWS profile), ar (AWS region), nsr (nix-shell-run), rgreplace
+# - Custom functions: ap (AWS profile), ar (AWS region), nsr (nix-shell-run), rgreplace, wt (worktree jump)
 # - Extensive shell aliases for terraform, kubectl, git, clipboard, and notes
 # - Kitty terminal tab title integration (shows PWD and running command)
-{ pkgs, ... }:
+{ config, pkgs, ... }:
 {
   programs = {
     # direnv: automatically load/unload .envrc environment variables per directory
@@ -60,7 +60,7 @@
 
         # Custom prompt layout: main info on first line, directory/git on second
         # Kubernetes context is pushed to the right side of the first line
-        format = "$all$fill$kubernetes$line_break$directory$git_branch$git_status$jobs$battery$time$status$os$container$shell$character";
+        format = "$all$fill$kubernetes$line_break$directory$git_branch$git_status\${custom.worktree}$jobs$battery$time$status$os$container$shell$character";
 
         # Directory display: show up to 9 levels, highlight repo root
         directory = {
@@ -107,6 +107,14 @@
               context_alias = "$aws$cluster";
             }
           ];
+        };
+
+        # Show worktree name when inside a git worktree
+        custom.worktree = {
+          when = "test -f .git"; # .git is a file (not dir) inside worktrees
+          command = "basename $(pwd)";
+          format = "[wt:$output]($style) ";
+          style = "bold cyan";
         };
       };
     };
@@ -192,6 +200,20 @@
           local run_cmd="''${2:-$1}"
           set -x
           nix-shell --packages "$pkg" --run "$run_cmd"
+        }
+
+        # ── lazyworktree: TUI git worktree manager ───────────────────
+        # Source built-in shell functions (worktree_jump, worktree_go_last)
+        source ${pkgs.lazyworktree}/share/lazyworktree/functions.shell
+
+        # wt: jump to a worktree in the current repo via lazyworktree TUI
+        wt() {
+          local toplevel
+          toplevel="$(git rev-parse --show-toplevel 2>/dev/null)" || {
+            echo "wt: not inside a git repo" >&2
+            return 1
+          }
+          worktree_jump "$toplevel" "$@"
         }
 
         # rgreplace: bulk search and replace across files using ripgrep + sed
