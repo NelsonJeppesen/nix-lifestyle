@@ -157,6 +157,8 @@
       pkgs.ssm-session-manager-plugin # AWS Systems Manager session plugin
       pkgs.terraform # Infrastructure as code
 
+      pkgs.codex
+
       # "A terminal spreadsheet multitool for discovering and arranging data"
       #pkgs.visidata
 
