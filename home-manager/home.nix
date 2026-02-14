@@ -158,6 +158,7 @@
       pkgs.terraform # Infrastructure as code
 
       pkgs.codex
+      pkgs.telegram-desktop
 
       # "A terminal spreadsheet multitool for discovering and arranging data"
       #pkgs.visidata
