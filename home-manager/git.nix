@@ -65,6 +65,17 @@
           puf = "!git push --force-with-lease --force-if-includes"; # Safe force push
           br = "!git co $(git branch --list --sort=-committerdate|fzf --height 15)"; # Interactive branch switch via fzf
           wt = "!lazyworktree"; # TUI worktree manager
+          # git alias app: interactive add -p that includes untracked files
+          # Uses fzf to select which untracked files to intent-to-add before patching
+          app = ''
+            !f() { \
+              untracked=$(git ls-files --others --exclude-standard); \
+              if [ -n "$untracked" ]; then \
+                echo "$untracked" | fzf --multi --preview 'cat {}' --header 'Select untracked files to include in patch review' | xargs -r git add -N; \
+              fi; \
+              git add -p; \
+            }; f
+          '';
           # open: Open the current GitHub repo in a browser
           # Usage: git open [path]
           # Supports both SSH and HTTPS remote URLs; errors on non-GitHub remotes

@@ -150,6 +150,7 @@
 
       # ── Cloud and infrastructure tools ──────────────────────────────
       #pkgs.ansible_2_16
+      pkgs.google-cloud-sdk
       pkgs.awscli2 # AWS CLI v2
       pkgs.oci-cli # Oracle Cloud Infrastructure CLI
       pkgs.opentofu # Open-source Terraform fork
