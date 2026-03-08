@@ -12,7 +12,9 @@
   };
 
   environment.systemPackages = [ pkgs.openclaw ];
-
+  nixpkgs.config.permittedInsecurePackages = [
+    "openclaw-2026.2.26"
+  ];
   systemd.services.openclaw = {
     description = "OpenClaw Gateway";
     after = [ "network.target" ];
@@ -26,6 +28,9 @@
   };
 
   networking.firewall = {
-    allowedTCPPorts = [ 22 18789 ];
+    allowedTCPPorts = [
+      22
+      18789
+    ];
   };
 }
