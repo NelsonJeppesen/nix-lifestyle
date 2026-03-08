@@ -1,18 +1,31 @@
 {
   config,
   pkgs,
-  stdenv,
   lib,
   ...
 }:
 {
 
-  users.users.openclaw.isNormalUser = lib.mkDefault true;
-  users.users.openclaw.extraGroups = lib.mkDefault [
-    "docker"
-  ];
+  users.users.openclaw = {
+    isNormalUser = lib.mkDefault true;
+    extraGroups = lib.mkDefault [ "docker" ];
+  };
+
+  environment.systemPackages = [ pkgs.openclaw ];
+
+  systemd.services.openclaw = {
+    description = "OpenClaw Gateway";
+    after = [ "network.target" ];
+    wantedBy = [ "multi-user.target" ];
+    serviceConfig = {
+      ExecStart = "${pkgs.openclaw}/bin/openclaw gateway";
+      User = "openclaw";
+      Restart = "on-failure";
+      RestartSec = 5;
+    };
+  };
 
   networking.firewall = {
-    allowedTCPPorts = [ 22 ];
+    allowedTCPPorts = [ 22 18789 ];
   };
 }
