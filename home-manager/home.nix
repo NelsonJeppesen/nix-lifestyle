@@ -13,6 +13,7 @@
 
   # Import all per-application/concern modules
   imports = [
+    ./chrome.nix # Google Chrome browser (extensions via NixOS managed policies)
     ./chrome-apps.nix # Chrome PWA wrappers (ChatGPT, OpenCode)
     ./editorconfig.nix # Global editorconfig settings
     ./firefox.nix # Firefox browser with custom search engines
@@ -127,7 +128,8 @@
       #pkgs.source-code-pro
 
       # ── GUI applications ────────────────────────────────────────────
-      pkgs.google-chrome # Web browser (also used by chrome-apps.nix PWAs)
+      # Chrome itself is provided by programs.google-chrome (chrome.nix);
+      # chrome-apps.nix uses pkgs.google-chrome directly for PWA wrappers.
       pkgs._1password-gui # Password manager
 
       #pkgs.ecapture # eBPF-based TLS capture tool

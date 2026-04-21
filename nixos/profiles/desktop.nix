@@ -1,5 +1,7 @@
 { pkgs, ... }:
 {
+  imports = [ ./chrome-policies.nix ];
+
   hardware.logitech.wireless = {
     enable = true;
     enableGraphical = true;
