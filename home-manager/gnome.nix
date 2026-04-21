@@ -22,8 +22,8 @@ let
   #
   # See: https://github.com/flameshot-org/flameshot/issues/2848
   #
-  # NOTE: The flameshot package itself is patched in flake.nix to pull an
-  # unreleased commit that fixes clipboard copy under GNOME Wayland.
+  # Resolved upstream in flameshot v14.0.rc1 (now in nixpkgs nixos-unstable);
+  # this wrapper is retained as a simple non-DBus launcher for keybindings.
   flameshot-gui = pkgs.writeShellScriptBin "flameshot-gui" "${pkgs.flameshot}/bin/flameshot gui";
 in
 {
