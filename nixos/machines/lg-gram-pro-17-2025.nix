@@ -52,14 +52,11 @@
   '';
 
   # iwd power-save off (TLP's WIFI_PWR_* doesn't always reach iwd reliably).
-  environment.etc."iwd/main.conf".text = ''
-    [General]
-    EnableNetworkConfiguration=false
-    [Scan]
-    DisablePeriodicScan=false
-    [DriverQuirks]
-    DefaultPowerSave=false
-  '';
+  networking.wireless.iwd.settings = {
+    General.EnableNetworkConfiguration = false;
+    Scan.DisablePeriodicScan = false;
+    DriverQuirks.DefaultPowerSave = false;
+  };
 
   # Surface useful audio diagnostics packages
   environment.systemPackages = with pkgs; [
