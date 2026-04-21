@@ -45,6 +45,7 @@
 
         # Misc
         pkgs.typos-lsp # Spellcheck-like LSP for source code typos
+        pkgs.vscode-langservers-extracted # JSON / HTML / CSS / ESLint LSPs
         pkgs.yaml-language-server # YAML LSP with JSON schema support
       ];
 
@@ -83,6 +84,14 @@
         -- opencode.nvim configuration (set early for plugin init)
         vim.o.autoread = true
         vim.g.opencode_opts = {}
+
+        -- Disable arrow keys to encourage proper vim motions.
+        for _, key in ipairs({ "<Up>", "<Down>", "<Left>", "<Right>" }) do
+          vim.keymap.set({ "i", "v" }, key, "<Nop>", { silent = true })
+          vim.keymap.set("n", key,
+            ':echo "Arrow keys are disabled!"<CR>',
+            { silent = true })
+        end
       '';
 
       # ── Plugin configuration ────────────────────────────────────────
@@ -149,15 +158,16 @@
           config = ''
             require('treewalker').setup({})
 
-            -- movement
-            vim.keymap.set({ 'n', 'v' }, '<C-k>', '<cmd>Treewalker Up<cr>', { silent = true, desc = "Treewalker Up" })
-            vim.keymap.set({ 'n', 'v' }, '<C-j>', '<cmd>Treewalker Down<cr>', { silent = true, desc = "Treewalker Down" })
-            vim.keymap.set({ 'n', 'v' }, '<C-h>', '<cmd>Treewalker Left<cr>', { silent = true, desc = "Treewalker Left" })
-            vim.keymap.set({ 'n', 'v' }, '<C-l>', '<cmd>Treewalker Right<cr>', { silent = true, desc = "Treewalker Right" })
+            -- movement (Alt+hjkl; Ctrl+hjkl is reserved for window navigation
+            -- via mini.basics mappings.windows = true)
+            vim.keymap.set({ 'n', 'v' }, '<M-k>', '<cmd>Treewalker Up<cr>',    { silent = true, desc = "Treewalker Up" })
+            vim.keymap.set({ 'n', 'v' }, '<M-j>', '<cmd>Treewalker Down<cr>',  { silent = true, desc = "Treewalker Down" })
+            vim.keymap.set({ 'n', 'v' }, '<M-h>', '<cmd>Treewalker Left<cr>',  { silent = true, desc = "Treewalker Left" })
+            vim.keymap.set({ 'n', 'v' }, '<M-l>', '<cmd>Treewalker Right<cr>', { silent = true, desc = "Treewalker Right" })
 
             -- swapping
-            vim.keymap.set('n', '<C-S-k>', '<cmd>Treewalker SwapUp<cr>', { silent = true, desc = "Treewalker SwapUp" })
-            vim.keymap.set('n', '<C-S-j>', '<cmd>Treewalker SwapDown<cr>', { silent = true, desc = "Treewalker SwapDown" })
+            vim.keymap.set('n', '<M-S-k>', '<cmd>Treewalker SwapUp<cr>',   { silent = true, desc = "Treewalker SwapUp" })
+            vim.keymap.set('n', '<M-S-j>', '<cmd>Treewalker SwapDown<cr>', { silent = true, desc = "Treewalker SwapDown" })
           '';
         }
 
@@ -304,7 +314,7 @@
               { "<leader>lD", desc = "Goto Declaration", function() Snacks.picker.lsp_declarations() end },
               { "<leader>lI", desc = "Goto Implementation", function() Snacks.picker.lsp_implementations() end },
               { "<leader>ld", desc = "Goto Definition", function() Snacks.picker.lsp_definitions() end },
-              { "<leader>lf", desc = "Format Document", function() vim.lsp.buf.format() end },
+              -- <leader>lf is registered by conform.nvim (formatter with LSP fallback)
               { "<leader>lr", desc = "References", function() Snacks.picker.lsp_references() end, nowait = true },
               { "<leader>ly", desc = "Goto T[y]pe Definition", function() Snacks.picker.lsp_type_definitions() end },
               { "<leader>ls", desc = "LSP Symbols", function() Snacks.picker.lsp_symbols() end },
@@ -460,16 +470,16 @@
             -- Enable all configured language servers
             -- https://github.com/neovim/nvim-lspconfig/tree/master/lsp
             vim.lsp.enable('bashls')
+            vim.lsp.enable('jsonls')
             vim.lsp.enable('nixd')
             vim.lsp.enable('phpactor')
             vim.lsp.enable('pylsp')
             vim.lsp.enable('ruby_lsp')
             vim.lsp.enable('terraformls')
-            vim.lsp.enable('tflint')
             vim.lsp.enable('typos_lsp')
             vim.lsp.enable('yamlls')
 
-            -- vim.lsp.enable('jsonls') missing vscode-json-language-server
+            -- NOTE: tflint is a linter, not an LSP; run via nvim-lint or CLI.
           '';
         }
 
@@ -545,18 +555,70 @@
         }
 
         # nvim-treesitter: syntax highlighting and code parsing via tree-sitter
-        # Installs all available grammars for maximum language coverage
+        # Installs all available grammars for maximum language coverage.
+        # Calling `configs.setup{}` is required on the master branch (which is
+        # what nixpkgs ships) to suppress the legacy-API deprecation notice;
+        # parsers come bundled via withAllGrammars (no install needed).
         #   https://tree-sitter.github.io/tree-sitter
         {
           plugin = nvim-treesitter.withAllGrammars;
           type = "lua";
           config = ''
-            -- nvim-treesitter v0.10+ uses new API - just enable highlighting via autocmd
-            vim.api.nvim_create_autocmd('FileType', {
-              pattern = '*',
-              callback = function()
-                pcall(vim.treesitter.start)
-              end,
+            require("nvim-treesitter.configs").setup({
+              -- parsers are provided by withAllGrammars; never install at runtime
+              ensure_installed = {},
+              auto_install = false,
+              sync_install = false,
+              ignore_install = {},
+              modules = {},
+
+              highlight = {
+                enable = true,
+                additional_vim_regex_highlighting = false,
+              },
+              indent = { enable = true },
+
+              -- nvim-treesitter-textobjects (selection + movement + swap)
+              textobjects = {
+                select = {
+                  enable = true,
+                  lookahead = true,
+                  keymaps = {
+                    ["af"] = "@function.outer", ["if"] = "@function.inner",
+                    ["ac"] = "@class.outer",    ["ic"] = "@class.inner",
+                    ["ab"] = "@block.outer",    ["ib"] = "@block.inner",
+                    ["aa"] = "@parameter.outer",["ia"] = "@parameter.inner",
+                    ["ai"] = "@conditional.outer",["ii"] = "@conditional.inner",
+                    ["al"] = "@loop.outer",     ["il"] = "@loop.inner",
+                  },
+                },
+                move = {
+                  enable = true,
+                  set_jumps = true,
+                  goto_next_start = {
+                    ["]f"] = "@function.outer", ["]c"] = "@class.outer",
+                    ["]b"] = "@block.outer",    ["]p"] = "@parameter.inner",
+                    ["]i"] = "@conditional.outer", ["]o"] = "@loop.outer",
+                    ["]m"] = "@call.outer",     ["]s"] = "@scope",
+                  },
+                  goto_next_end = {
+                    ["]B"] = "@block.inner",    ["]I"] = "@conditional.inner",
+                    ["]M"] = "@call.inner",     ["]O"] = "@loop.inner",
+                    ["]S"] = "@scope",
+                  },
+                  goto_previous_start = {
+                    ["[f"] = "@function.outer", ["[c"] = "@class.outer",
+                    ["[b"] = "@block.outer",    ["[p"] = "@parameter.inner",
+                    ["[i"] = "@conditional.outer", ["[o"] = "@loop.outer",
+                    ["[m"] = "@call.outer",     ["[s"] = "@scope",
+                  },
+                  goto_previous_end = {
+                    ["[B"] = "@block.inner",    ["[I"] = "@conditional.inner",
+                    ["[M"] = "@call.inner",     ["[O"] = "@loop.inner",
+                    ["[S"] = "@scope",
+                  },
+                },
+              },
             })
           '';
         }
@@ -726,12 +788,21 @@
           plugin = nvim-navic;
           type = "lua";
           config = ''
-            local navic = require("nvim-navic").setup({
-              lsp = {auto_attach = true},
-              click = true
+            require("nvim-navic").setup({
+              lsp = { auto_attach = true },
+              click = true,
             })
 
-            vim.o.winbar = "%{%v:lua.require'nvim-navic'.get_location()%}"
+            -- Set winbar only on buffers where navic actually attached, so
+            -- non-LSP buffers don't show stale/empty breadcrumbs.
+            vim.api.nvim_create_autocmd("LspAttach", {
+              callback = function(args)
+                local client = vim.lsp.get_client_by_id(args.data.client_id)
+                if client and client.server_capabilities.documentSymbolProvider then
+                  vim.wo.winbar = "%{%v:lua.require'nvim-navic'.get_location()%}"
+                end
+              end,
+            })
           '';
         }
 
@@ -795,34 +866,12 @@
         }
       ];
 
-      # Vimscript configuration (runs after plugins)
+      # Vimscript configuration (runs after plugins). Arrow-key disabling has
+      # been moved to initLua (vim.keymap.set form) — this block is reserved
+      # for the few options that don't have first-class Lua equivalents.
       extraConfig = ''
         set background=dark
         set relativenumber
-
-        " ── Disable arrow keys to encourage proper vim motions ──────
-        " Remove newbie crutches in Insert Mode
-        inoremap <Down>   <Nop>
-        inoremap <Left>   <Nop>
-        inoremap <Right>  <Nop>
-        inoremap <Up>     <Nop>
-
-        " Remove newbie crutches in Normal Mode
-        nnoremap <Down>    :echo "Arrow keys are disabled!"<CR>
-        nnoremap <Left>    :echo "Arrow keys are disabled!"<CR>
-        nnoremap <Right>   :echo "Arrow keys are disabled!"<CR>
-        nnoremap <Up>      :echo "Arrow keys are disabled!"<CR>
-
-        "nnoremap h <Nop>
-        "nnoremap j <Nop>
-        "nnoremap k <Nop>
-        "nnoremap l <Nop>
-
-        " Remove newbie crutches in Visual Mode
-        vnoremap <Down>   <Nop>
-        vnoremap <Left>   <Nop>
-        vnoremap <Right>  <Nop>
-        vnoremap <Up>     <Nop>
       '';
     };
   };
