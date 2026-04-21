@@ -483,9 +483,6 @@
           '';
         }
 
-        # Treesitter textobjects: navigate and select code by semantic units
-        nvim-treesitter-textobjects
-
         # trouble.nvim: structured diagnostics list with filtering and preview
         # https://github.com/folke/trouble.nvim
         {
@@ -555,71 +552,81 @@
         }
 
         # nvim-treesitter: syntax highlighting and code parsing via tree-sitter
-        # Installs all available grammars for maximum language coverage.
-        # Calling `configs.setup{}` is required on the master branch (which is
-        # what nixpkgs ships) to suppress the legacy-API deprecation notice;
-        # parsers come bundled via withAllGrammars (no install needed).
-        #   https://tree-sitter.github.io/tree-sitter
+        # Nixpkgs ships the rewritten `main` branch where the legacy
+        # `nvim-treesitter.configs` module no longer exists. Highlight, indent
+        # and folds are now driven directly by Neovim's built-in tree-sitter
+        # APIs (`:h treesitter`); we just enable them via FileType autocmds.
+        # Parsers come bundled via withAllGrammars (no install needed).
+        #   https://github.com/nvim-treesitter/nvim-treesitter/tree/main
         {
           plugin = nvim-treesitter.withAllGrammars;
           type = "lua";
           config = ''
-            require("nvim-treesitter.configs").setup({
-              -- parsers are provided by withAllGrammars; never install at runtime
-              ensure_installed = {},
-              auto_install = false,
-              sync_install = false,
-              ignore_install = {},
-              modules = {},
-
-              highlight = {
-                enable = true,
-                additional_vim_regex_highlighting = false,
-              },
-              indent = { enable = true },
-
-              -- nvim-treesitter-textobjects (selection + movement + swap)
-              textobjects = {
-                select = {
-                  enable = true,
-                  lookahead = true,
-                  keymaps = {
-                    ["af"] = "@function.outer", ["if"] = "@function.inner",
-                    ["ac"] = "@class.outer",    ["ic"] = "@class.inner",
-                    ["ab"] = "@block.outer",    ["ib"] = "@block.inner",
-                    ["aa"] = "@parameter.outer",["ia"] = "@parameter.inner",
-                    ["ai"] = "@conditional.outer",["ii"] = "@conditional.inner",
-                    ["al"] = "@loop.outer",     ["il"] = "@loop.inner",
-                  },
-                },
-                move = {
-                  enable = true,
-                  set_jumps = true,
-                  goto_next_start = {
-                    ["]f"] = "@function.outer", ["]c"] = "@class.outer",
-                    ["]b"] = "@block.outer",    ["]p"] = "@parameter.inner",
-                    ["]i"] = "@conditional.outer", ["]o"] = "@loop.outer",
-                    ["]m"] = "@call.outer",     ["]s"] = "@scope",
-                  },
-                  goto_next_end = {
-                    ["]B"] = "@block.inner",    ["]I"] = "@conditional.inner",
-                    ["]M"] = "@call.inner",     ["]O"] = "@loop.inner",
-                    ["]S"] = "@scope",
-                  },
-                  goto_previous_start = {
-                    ["[f"] = "@function.outer", ["[c"] = "@class.outer",
-                    ["[b"] = "@block.outer",    ["[p"] = "@parameter.inner",
-                    ["[i"] = "@conditional.outer", ["[o"] = "@loop.outer",
-                    ["[m"] = "@call.outer",     ["[s"] = "@scope",
-                  },
-                  goto_previous_end = {
-                    ["[B"] = "@block.inner",    ["[I"] = "@conditional.inner",
-                    ["[M"] = "@call.inner",     ["[O"] = "@loop.inner",
-                    ["[S"] = "@scope",
-                  },
-                },
-              },
+            -- Enable highlight + indent + folds for any filetype that has a
+            -- registered parser. pcall guards against filetypes whose parser
+            -- isn't bundled (treesitter raises on unknown languages).
+            vim.api.nvim_create_autocmd("FileType", {
+              callback = function(args)
+                local lang = vim.treesitter.language.get_lang(args.match)
+                if not lang or not vim.treesitter.language.add(lang) then return end
+                pcall(vim.treesitter.start, args.buf, lang)
+                vim.bo[args.buf].indentexpr = "v:lua.require'nvim-treesitter'.indentexpr()"
+                vim.wo[0][0].foldexpr = "v:lua.vim.treesitter.foldexpr()"
+                vim.wo[0][0].foldmethod = "expr"
+              end,
             })
+          '';
+        }
+
+        # nvim-treesitter-textobjects: select / move by syntactic objects
+        # The `main` branch exposes setup() for global options; keymaps are
+        # set explicitly per object (no more nested `keymaps` table).
+        {
+          plugin = nvim-treesitter-textobjects;
+          type = "lua";
+          config = ''
+            require("nvim-treesitter-textobjects").setup({
+              select = { lookahead = true },
+              move   = { set_jumps = true },
+            })
+
+            local sel  = function(q) return function() require("nvim-treesitter-textobjects.select").select_textobject(q, "textobjects") end end
+            local nxts = function(q) return function() require("nvim-treesitter-textobjects.move").goto_next_start(q, "textobjects") end end
+            local nxte = function(q) return function() require("nvim-treesitter-textobjects.move").goto_next_end(q,   "textobjects") end end
+            local prvs = function(q) return function() require("nvim-treesitter-textobjects.move").goto_previous_start(q, "textobjects") end end
+            local prve = function(q) return function() require("nvim-treesitter-textobjects.move").goto_previous_end(q,   "textobjects") end end
+
+            -- Selection (operator + visual)
+            for lhs, q in pairs({
+              ["af"] = "@function.outer", ["if"] = "@function.inner",
+              ["ac"] = "@class.outer",    ["ic"] = "@class.inner",
+              ["ab"] = "@block.outer",    ["ib"] = "@block.inner",
+              ["aa"] = "@parameter.outer",["ia"] = "@parameter.inner",
+              ["ai"] = "@conditional.outer",["ii"] = "@conditional.inner",
+              ["al"] = "@loop.outer",     ["il"] = "@loop.inner",
+            }) do vim.keymap.set({ "x", "o" }, lhs, sel(q)) end
+
+            -- Movement (next / previous, start / end)
+            for lhs, q in pairs({
+              ["]f"] = "@function.outer", ["]c"] = "@class.outer",
+              ["]b"] = "@block.outer",    ["]p"] = "@parameter.inner",
+              ["]i"] = "@conditional.outer", ["]o"] = "@loop.outer",
+              ["]m"] = "@call.outer",
+            }) do vim.keymap.set({ "n", "x", "o" }, lhs, nxts(q)) end
+            for lhs, q in pairs({
+              ["]B"] = "@block.inner",    ["]I"] = "@conditional.inner",
+              ["]M"] = "@call.inner",     ["]O"] = "@loop.inner",
+            }) do vim.keymap.set({ "n", "x", "o" }, lhs, nxte(q)) end
+            for lhs, q in pairs({
+              ["[f"] = "@function.outer", ["[c"] = "@class.outer",
+              ["[b"] = "@block.outer",    ["[p"] = "@parameter.inner",
+              ["[i"] = "@conditional.outer", ["[o"] = "@loop.outer",
+              ["[m"] = "@call.outer",
+            }) do vim.keymap.set({ "n", "x", "o" }, lhs, prvs(q)) end
+            for lhs, q in pairs({
+              ["[B"] = "@block.inner",    ["[I"] = "@conditional.inner",
+              ["[M"] = "@call.inner",     ["[O"] = "@loop.inner",
+            }) do vim.keymap.set({ "n", "x", "o" }, lhs, prve(q)) end
           '';
         }
 
