@@ -9,22 +9,30 @@
 #
 # The servers are registered with home-manager's MCP module so OpenCode
 # and other MCP-compatible tools can discover and connect to them.
-{ pkgs, ... }:
+{ lib, pkgs, ... }:
 {
   programs.mcp = {
     enable = true;
     servers = {
       # GitHub MCP server: interact with GitHub repos, PRs, issues, and actions
+      # Requires `stdio` subcommand to act as an MCP server over stdin/stdout,
+      # and a personal access token via GITHUB_PERSONAL_ACCESS_TOKEN.
+      # The token is sourced from $GITHUB_TOKEN already exported by `gh auth`.
       github = {
-        command = "${pkgs.github-mcp-server}/bin/github-mcp-server";
+        command = lib.getExe pkgs.github-mcp-server;
+        args = [ "stdio" ];
+        env = {
+          GITHUB_PERSONAL_ACCESS_TOKEN = "{env:GITHUB_TOKEN}";
+        };
       };
       # Terraform MCP server: search modules, providers, and registry docs
       terraform = {
-        command = "${pkgs.terraform-mcp-server}/bin/terraform-mcp-server";
+        command = lib.getExe pkgs.terraform-mcp-server;
+        args = [ "stdio" ];
       };
       # Kubernetes MCP server: query cluster resources, pods, logs, etc.
       k8s = {
-        command = "${pkgs.mcp-k8s-go}/bin/mcp-k8s-go";
+        command = lib.getExe pkgs.mcp-k8s-go;
       };
     };
   };

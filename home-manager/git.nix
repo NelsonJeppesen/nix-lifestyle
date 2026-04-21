@@ -14,10 +14,15 @@
   # Generate the SSH allowed_signers file from the user's ed25519 public key.
   # This file is required for git to verify SSH-signed commits.
   # Runs after writeBoundary so home.file entries are already in place.
+  # Quoted paths handle home directories containing spaces/metacharacters.
   home.activation.createAllowedSigners = config.lib.dag.entryAfter [ "writeBoundary" ] ''
-    if [ -f "${config.home.homeDirectory}/.ssh/id_ed25519.pub" ]; then
-      $DRY_RUN_CMD rm -f ${config.home.homeDirectory}/.ssh/allowed_signers
-      $DRY_RUN_CMD echo "* $(cat ${config.home.homeDirectory}/.ssh/id_ed25519.pub)" > ${config.home.homeDirectory}/.ssh/allowed_signers
+    pubkey="${config.home.homeDirectory}/.ssh/id_ed25519.pub"
+    out="${config.home.homeDirectory}/.ssh/allowed_signers"
+    if [ -r "$pubkey" ]; then
+      $DRY_RUN_CMD install -m 600 /dev/null "$out"
+      $DRY_RUN_CMD sh -c "printf '* %s\n' \"\$(cat \"$pubkey\")\" > \"$out\""
+    else
+      $VERBOSE_ECHO "git.nix: $pubkey missing; skipping allowed_signers generation"
     fi
   '';
 
@@ -121,7 +126,7 @@
         # Push to current branch by default and auto-create upstream tracking
         push = {
           default = "current";
-          autoSetupRemote = "true";
+          autoSetupRemote = true;
         };
 
         # Store credentials on disk (used for non-SSH remotes)

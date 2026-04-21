@@ -2,7 +2,7 @@
 #
 # OpenCode is a terminal-based AI coding assistant (similar to Cursor/Aider).
 # This module configures:
-# - Default model: Claude Opus 4.6 via GitHub Copilot
+# - Default model: Claude Opus 4.7 via GitHub Copilot
 # - MCP server integration (GitHub, Terraform, Kubernetes)
 # - Web UI for browser-based interaction
 # - Shell aliases for quick access (o, oc, or, etc.)
@@ -28,7 +28,7 @@
     web.enable = true; # Enable browser-based web UI
 
     settings = {
-      # Use Claude Opus 4.6 via GitHub Copilot as the default model
+      # Use Claude Opus 4.7 via GitHub Copilot as the default model
       model = "github-copilot/claude-opus-4.7";
     };
 

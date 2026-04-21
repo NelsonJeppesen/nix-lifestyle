@@ -1,0 +1,25 @@
+#!/usr/bin/env bash
+# rgreplace: bulk search-and-replace across files using ripgrep + sed.
+# Usage: rgreplace <search> <replace> [path]
+#
+# Both <search> and <replace> are escaped before being passed to sed, so
+# delimiters (|), backslashes, ampersands, and newlines are safe.
+set -euo pipefail
+
+if [ "$#" -lt 2 ]; then
+  echo "usage: rgreplace <search> <replace> [path]" >&2
+  exit 64
+fi
+
+search=$1
+replace=$2
+target=${3:-.}
+
+# Escape regex metacharacters in the search pattern for sed BRE compatibility.
+# Escape `&` and `\` in the replacement, plus the chosen delimiter `|`.
+esc_search=$(printf '%s' "$search" | sed -e 's/[]\/$*.^[|]/\\&/g')
+esc_replace=$(printf '%s' "$replace" | sed -e 's/[\/&|]/\\&/g')
+
+# rg -0 / xargs -0 is null-delimited so filenames with spaces/newlines work.
+rg -l -0 -- "$search" "$target" \
+  | xargs -0 -r -n1 sed -i "s|${esc_search}|${esc_replace}|g"

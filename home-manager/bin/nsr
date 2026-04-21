@@ -1,0 +1,17 @@
+#!/usr/bin/env bash
+# nsr: Nix Shell Run -- run a command from a transient nix-shell.
+# Usage: nsr <package> [command]
+# If [command] is omitted the package name is reused as the command.
+set -euo pipefail
+
+if [ "$#" -lt 1 ]; then
+  echo "usage: nsr <package> [command...]" >&2
+  exit 64
+fi
+
+pkg="$1"
+shift
+run_cmd="${*:-$pkg}"
+
+set -x
+exec nix-shell --packages "$pkg" --run "$run_cmd"

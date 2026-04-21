@@ -6,11 +6,43 @@
 # - Atuin for shell history sync (syncs to local server at 192.168.5.0)
 # - Starship cross-shell prompt with Kubernetes context and AWS profile display
 # - fzf-tab plugin for tab completion with fuzzy matching
-# - Custom functions: ap (AWS profile), ar (AWS region), nsr (nix-shell-run), rgreplace, wt (worktree jump)
+# - Custom functions:
+#     ap  -- AWS profile switcher (mutates current shell)
+#     ar  -- AWS region switcher (mutates current shell)
+#     rst -- reset env (mutates current shell)
+#     nsr, wt, rgreplace -- packaged via writeShellApplication
+#     (gets shellcheck + PATH wrapping). See ./bin/.
 # - Extensive shell aliases for terraform, kubectl, git, clipboard, and notes
 # - Kitty terminal tab title integration (shows PWD and running command)
-{ config, pkgs, ... }:
+{ pkgs, ... }:
+let
+  # Build small CLIs from ./bin/* using writeShellApplication so each script
+  # is shellcheck-validated at build time and has its runtime deps on PATH.
+  # Functions that need to mutate the *current* shell (cd, source, unset
+  # AWS_PROFILE, jump to a worktree) stay inline in initContent below.
+  nsr = pkgs.writeShellApplication {
+    name = "nsr";
+    text = builtins.readFile ./bin/nsr;
+    runtimeInputs = [ pkgs.nix ];
+  };
+
+  rgreplace = pkgs.writeShellApplication {
+    name = "rgreplace";
+    text = builtins.readFile ./bin/rgreplace;
+    runtimeInputs = [
+      pkgs.ripgrep
+      pkgs.findutils
+      pkgs.gnused
+    ];
+  };
+in
 {
+  # Make the built scripts available on PATH for interactive use.
+  home.packages = [
+    nsr
+    rgreplace
+  ];
+
   programs = {
     # direnv: automatically load/unload .envrc environment variables per directory
     direnv.enable = true;
@@ -20,7 +52,6 @@
       enable = true;
       defaultOptions = [
         "--layout=reverse" # Show results top-to-bottom (feels more natural)
-        # "--color=bw"
       ];
     };
 
@@ -139,7 +170,7 @@
         # Show worktree name when inside a git worktree
         custom.worktree = {
           # Detects both linked worktrees (.git is a file) and the main
-          # worktree (.git is a directory) — anything inside a git repo.
+          # worktree (.git is a directory) -- anything inside a git repo.
           when = "git rev-parse --is-inside-work-tree";
           command = "basename \"$(git rev-parse --show-toplevel)\"";
           format = "[wt:$output]($style) ";
@@ -159,113 +190,12 @@
           name = "fzf-tab";
           src = pkgs.zsh-fzf-tab;
         }
-        # {
-        #   file = "share/zsh-vi-mode/zsh-vi-mode.plugin.zsh";
-        #   name = "zsh-vi-mode";
-        #   src = pkgs.zsh-vi-mode;
-        # }
       ];
 
       autosuggestion.enable = true; # Fish-like autosuggestions based on history
       defaultKeymap = "emacs"; # Emacs-style line editing (Ctrl+A/E, etc.)
       enableCompletion = true; # Enable zsh completion system
       syntaxHighlighting.enable = true; # Real-time syntax highlighting as you type
-
-      # Shell initialization code (runs on every new shell)
-      initContent = ''
-        # Tab/title management is handled by kitty's shell integration
-        # (programs.kitty.shellIntegration.enableZshIntegration in kitty.nix);
-        # avoid duplicate OSC1/OSC2 escapes here.
-
-        # ── Auto-cd to source directory on new terminal ─────────────
-        # If opening a new terminal (not over SSH), cd to ~/source and clear
-        if [[ "$TERM" != "linux" && "$(pwd)" = "$HOME" && ! "$SSH_CLIENT" ]]; then
-          cd ~/source
-          clear
-        fi
-
-        # ── Custom shell functions ──────────────────────────────────
-
-        # ap: AWS Profile switcher
-        # Usage: ap [query] -- fuzzy-select an AWS profile and export it
-        # Persists selection to ~/.aws/sticky.profile so direnv can source it
-        ap() {
-          local query="$1"
-          local profile
-          profile="$(${pkgs.awscli2}/bin/aws configure list-profiles | sort | ${pkgs.fzf}/bin/fzf --exact --query="$query" --select-1)"
-          if [ -n "$profile" ]; then
-            echo export AWS_PROFILE="$profile" > ~/.aws/sticky.profile
-            source ~/.aws/sticky.profile
-          fi
-        }
-
-        # ar: AWS Region switcher
-        # Usage: ar [query] -- fuzzy-select an AWS region and export it
-        # Persists selection to ~/.aws/sticky.region
-        ar() {
-          local query="$1"
-          local region
-          region="$(printf '%s\n' us-east-1 ca-central-1 eu-central-1 ap-southeast-2 | ${pkgs.fzf}/bin/fzf --exact --query="$query" --select-1)"
-          if [ -n "$region" ]; then
-            echo export AWS_REGION="$region" > ~/.aws/sticky.region
-            source ~/.aws/sticky.region
-          fi
-        }
-
-        # nsr: Nix Shell Run -- quickly run a command from a nix package
-        # Usage: nsr <package> [command]
-        # If command is omitted, uses the package name as the command
-        nsr() {
-          if [ -z "$1" ]; then
-            echo "usage: nsr <package> [command]" >&2
-            return 1
-          fi
-          local pkg="$1"
-          local run_cmd="''${2:-$1}"
-          set -x
-          nix-shell --packages "$pkg" --run "$run_cmd"
-        }
-
-        # ── lazyworktree: TUI git worktree manager ───────────────────
-        # Source built-in shell functions (worktree_jump, worktree_go_last)
-        source ${pkgs.lazyworktree}/share/lazyworktree/functions.zsh
-
-        # wt: jump to a worktree in the current repo via lazyworktree TUI
-        wt() {
-          local toplevel
-          toplevel="$(git rev-parse --show-toplevel 2>/dev/null)" || {
-            echo "wt: not inside a git repo" >&2
-            return 1
-          }
-          worktree_jump "$toplevel" "$@"
-        }
-
-        # rgreplace: bulk search and replace across files using ripgrep + sed
-        # Usage: rgreplace <search> <replace> [path]
-        rgreplace() {
-          if [ $# -lt 2 ]; then
-            echo "usage: rgreplace <search> <replace> [path]" >&2
-            return 1
-          fi
-          local search="$1"
-          local replace="$2"
-          local path="''${3:-.}"
-          ${pkgs.ripgrep}/bin/rg -l -- "$search" "$path" | ${pkgs.findutils}/bin/xargs -r -n1 ${pkgs.gnused}/bin/sed -i "s|$search|$replace|g"
-        }
-
-        # rst: reset shell environment -- clear AWS/kube context, return to ~/source.
-        # Defined as a function (not a shellAlias) because zsh aliases can't span
-        # multiple commands cleanly.
-        rst() {
-          cd ~/source || return
-          ${pkgs.kubectx}/bin/kubectx --unset
-          : > ~/.aws/sticky.profile
-          : > ~/.aws/sticky.region
-          unset AWS_PROFILE AWS_REGION
-          clear
-        }
-        # ------------------------------------------------------------
-      '';
 
       # Environment variables set for every zsh session
       sessionVariables = {
@@ -293,12 +223,9 @@
         da = "direnv allow"; # Quick allow for .envrc changes
 
         # Notes (nb-based note-taking)
-        # n = "vim $(ls ~/personal/notes/*.md | fzf --multi)";
         nw = "nb edit work-$(date +%Y-%m).md      2>/dev/null || nb add --title work-$(date +%Y-%m)"; # Work notes (monthly)
         np = "nb edit personal-$(date +%Y-%m).md  2>/dev/null || nb add --title personal-$(date +%Y-%m)"; # Personal notes (monthly)
         ns = "$EDITOR $(mktemp)"; # Scratch note in temp file
-
-        # Reset environment: see rst() function in initContent
 
         # Calculator (fend)
         f = "fend";
@@ -321,6 +248,81 @@
         uc = "kubectx"; # Quick context switch
         ucu = "kubectx --unset"; # Unset current context
       };
+
+      # ── Shell init (large blob; kept last per AGENTS.md "module structure") ──
+      initContent = ''
+        # Tab/title management is handled by kitty's shell integration
+        # (programs.kitty.shellIntegration.enableZshIntegration in kitty.nix);
+        # avoid duplicate OSC1/OSC2 escapes here.
+
+        # ── Auto-cd to source directory on new terminal ─────────────
+        # If opening a new terminal (not over SSH), cd to ~/source and clear
+        if [[ "$TERM" != "linux" && "$(pwd)" = "$HOME" && -z "$SSH_CLIENT" ]]; then
+          cd ~/source
+          clear
+        fi
+
+        # ── Custom shell functions ──────────────────────────────────
+        # These mutate the *current* shell (cd, source, unset env) so they
+        # cannot be packaged as standalone binaries; the heavier scripts
+        # (nsr, wt, rgreplace) live in ./bin/* and are built via
+        # pkgs.writeShellApplication for shellcheck coverage.
+
+        # ap: AWS Profile switcher
+        # Usage: ap [query] -- fuzzy-select an AWS profile and export it
+        # Persists selection to ~/.aws/sticky.profile so direnv can source it
+        ap() {
+          local query="$1"
+          local profile
+          mkdir -p ~/.aws
+          profile="$(${pkgs.awscli2}/bin/aws configure list-profiles | sort | ${pkgs.fzf}/bin/fzf --exact --query="$query" --select-1)" || return
+          if [ -n "$profile" ]; then
+            print -r -- "export AWS_PROFILE=''${(q)profile}" > ~/.aws/sticky.profile
+            source ~/.aws/sticky.profile
+          fi
+        }
+
+        # ar: AWS Region switcher
+        # Usage: ar [query] -- fuzzy-select an AWS region and export it
+        # Persists selection to ~/.aws/sticky.region
+        ar() {
+          local query="$1"
+          local region
+          mkdir -p ~/.aws
+          region="$(printf '%s\n' us-east-1 ca-central-1 eu-central-1 ap-southeast-2 | ${pkgs.fzf}/bin/fzf --exact --query="$query" --select-1)" || return
+          if [ -n "$region" ]; then
+            print -r -- "export AWS_REGION=''${(q)region}" > ~/.aws/sticky.region
+            source ~/.aws/sticky.region
+          fi
+        }
+
+        # ── lazyworktree: TUI git worktree manager ───────────────────
+        # Source built-in shell functions (worktree_jump, worktree_go_last)
+        source ${pkgs.lazyworktree}/share/lazyworktree/functions.zsh
+
+        # wt: jump to a worktree in the current repo via lazyworktree TUI
+        wt() {
+          local toplevel
+          toplevel="$(git rev-parse --show-toplevel 2>/dev/null)" || {
+            echo "wt: not inside a git repo" >&2
+            return 1
+          }
+          worktree_jump "$toplevel" "$@"
+        }
+
+        # rst: reset shell environment -- clear AWS/kube context, return to ~/source.
+        # Defined as a function (not a shellAlias) because zsh aliases can't span
+        # multiple commands cleanly, and it must mutate the current shell.
+        rst() {
+          cd ~/source || return
+          ${pkgs.kubectx}/bin/kubectx --unset
+          mkdir -p ~/.aws
+          : > ~/.aws/sticky.profile
+          : > ~/.aws/sticky.region
+          unset AWS_PROFILE AWS_REGION
+          clear
+        }
+      '';
     };
   };
 }
