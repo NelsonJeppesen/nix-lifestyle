@@ -67,6 +67,9 @@ echo lg-gram-pro-17-2025 > /mnt/etc/nixos/.hostname  # pick one in nixos/machine
 
 # 8. Install
 nixos-install --upgrade
+
+# 9. Enroll TPM2 for automatic LUKS unlock
+sudo systemd-cryptenroll /dev/nvme0n1p2 --tpm2-device=auto --tpm2-pcrs=0+7
 ```
 
 After first boot: enable Home Manager (see section 5) to pull in the user environment.
