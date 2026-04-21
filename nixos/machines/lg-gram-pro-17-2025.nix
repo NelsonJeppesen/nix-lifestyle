@@ -16,6 +16,7 @@
     ../profiles/intel.nix
     ../profiles/networking.nix
     ../profiles/s3fs.nix
+    ../profiles/tailscale.nix
     ../profiles/wifi.nix
     ../profiles/x86_64.nix
     ../profiles/zsh.nix

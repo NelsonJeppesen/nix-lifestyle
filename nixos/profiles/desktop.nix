@@ -1,4 +1,4 @@
-{ ... }:
+{ pkgs, ... }:
 {
   hardware.logitech.wireless = {
     enable = true;
@@ -12,7 +12,13 @@
   boot.loader.systemd-boot.configurationLimit = 14;
   boot.loader.systemd-boot.consoleMode = "max";
   boot.loader.systemd-boot.enable = true;
-  # boot.plymouth.enable = true;
+  boot.plymouth = {
+    enable = true;
+    theme = "hexa_retro";
+    themePackages = [
+      (pkgs.adi1090x-plymouth-themes.override { selected_themes = [ "hexa_retro" ]; })
+    ];
+  };
 
   # Pipewire
   security.rtkit.enable = true;

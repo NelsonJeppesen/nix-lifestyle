@@ -7,6 +7,7 @@
 
   boot = {
     kernelPackages = pkgs.linuxPackages_latest;
+    initrd.systemd.enable = true;
     loader = {
       efi.canTouchEfiVariables = true;
       systemd-boot = {
@@ -50,9 +51,9 @@
             luks = {
               size = "100%";
               content = {
-                #extraOpenArgs = [ "--allow-discards" ];
                 settings = {
                   allowDiscards = true;
+                  crypttabExtraOpts = [ "tpm2-device=auto" ];
                 };
                 name = "crypted";
                 type = "luks";

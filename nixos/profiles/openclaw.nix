@@ -27,6 +27,11 @@
     };
   };
 
+  # prevent sleep when laptop lid is closed
+  services.logind.lidSwitch = "ignore";
+  services.logind.lidSwitchDocked = "ignore";
+  services.logind.lidSwitchExternalPower = "ignore";
+
   networking.firewall = {
     allowedTCPPorts = [
       22
