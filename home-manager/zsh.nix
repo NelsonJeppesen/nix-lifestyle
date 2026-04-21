@@ -144,14 +144,9 @@
 
       # Shell initialization code (runs on every new shell)
       initContent = ''
-        # ── Kitty tab title integration ─────────────────────────────
-        # Show current directory name as tab title when idle
-        function set-title-precmd() {printf "\e]2;%s\a" "''${PWD/*\//}"}
-        add-zsh-hook precmd set-title-precmd
-
-        # Show running command name as tab title while executing
-        function set-title-preexec() {printf "\e]2;%s\a" "$1"}
-        add-zsh-hook preexec set-title-preexec
+        # Tab/title management is handled by kitty's shell integration
+        # (programs.kitty.shellIntegration.enableZshIntegration in kitty.nix);
+        # avoid duplicate OSC1/OSC2 escapes here.
 
         # ── Auto-cd to source directory on new terminal ─────────────
         # If opening a new terminal (not over SSH), cd to ~/source and clear
