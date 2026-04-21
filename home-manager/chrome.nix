@@ -37,8 +37,5 @@
 
     # GNOME desktop, not Plasma
     plasmaSupport = false;
-
-    # Native messaging hosts (browserpass, plasma-browser-integration, etc.)
-    nativeMessagingHosts = [ ];
   };
 }
