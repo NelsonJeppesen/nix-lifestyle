@@ -52,8 +52,8 @@
 
       # Lua configuration that runs before plugins load
       initLua = ''
-        -- Suppress deprecation warning for vim.tbl_islist (renamed to vim.islist)
-        vim.tbl_islist = vim.islist
+        -- Enable 24-bit RGB color in the TUI (required by colorizer and themes)
+        vim.opt.termguicolors = true
 
         -- Editor defaults: 2-space indentation, no swap files
         vim.opt.expandtab   = true
@@ -61,6 +61,9 @@
         vim.opt.softtabstop = 2
         vim.opt.swapfile    = false
         vim.opt.showmode    = false  -- Disable mode display for statusline plugins.
+
+        -- Limit LSP log to errors only (prevents lsp.log from growing to GBs)
+        vim.lsp.log.set_level("ERROR")
 
         -- Configure LSP/diagnostic icons (Nerd Font symbols)
         vim.diagnostic.config({
@@ -111,6 +114,32 @@
           '';
         }
 
+        # mini.surround: add/delete/replace surrounding delimiters (quotes, brackets)
+        # sa = add, sd = delete, sr = replace (followed by delimiter char)
+        # https://github.com/echasnovski/mini.surround
+        {
+          plugin = mini-surround;
+          type = "lua";
+          config = ''require("mini.surround").setup()'';
+        }
+
+        # mini.pairs: auto-close brackets, quotes, and parentheses
+        # https://github.com/echasnovski/mini.pairs
+        {
+          plugin = mini-pairs;
+          type = "lua";
+          config = ''require("mini.pairs").setup()'';
+        }
+
+        # flash.nvim: label-based jump motions (press s then type target chars)
+        # By the same author as snacks/noice; faster than repeated w/f/search
+        # https://github.com/folke/flash.nvim
+        {
+          plugin = flash-nvim;
+          type = "lua";
+          config = ''require("flash").setup()'';
+        }
+
         # treewalker.nvim: move around code in a syntax-tree-aware manner
         # Ctrl+hjkl navigates between AST nodes, Ctrl+Shift+jk swaps nodes
         #   https://github.com/aaronik/treewalker.nvim/
@@ -121,14 +150,14 @@
             require('treewalker').setup({})
 
             -- movement
-            vim.keymap.set({ 'n', 'v' }, '<C-k>', '<cmd>Treewalker Up<cr>', { silent = true })
-            vim.keymap.set({ 'n', 'v' }, '<C-j>', '<cmd>Treewalker Down<cr>', { silent = true })
-            vim.keymap.set({ 'n', 'v' }, '<C-h>', '<cmd>Treewalker Left<cr>', { silent = true })
-            vim.keymap.set({ 'n', 'v' }, '<C-l>', '<cmd>Treewalker Right<cr>', { silent = true })
+            vim.keymap.set({ 'n', 'v' }, '<C-k>', '<cmd>Treewalker Up<cr>', { silent = true, desc = "Treewalker Up" })
+            vim.keymap.set({ 'n', 'v' }, '<C-j>', '<cmd>Treewalker Down<cr>', { silent = true, desc = "Treewalker Down" })
+            vim.keymap.set({ 'n', 'v' }, '<C-h>', '<cmd>Treewalker Left<cr>', { silent = true, desc = "Treewalker Left" })
+            vim.keymap.set({ 'n', 'v' }, '<C-l>', '<cmd>Treewalker Right<cr>', { silent = true, desc = "Treewalker Right" })
 
             -- swapping
-            vim.keymap.set('n', '<C-S-k>', '<cmd>Treewalker SwapUp<cr>', { silent = true })
-            vim.keymap.set('n', '<C-S-j>', '<cmd>Treewalker SwapDown<cr>', { silent = true })
+            vim.keymap.set('n', '<C-S-k>', '<cmd>Treewalker SwapUp<cr>', { silent = true, desc = "Treewalker SwapUp" })
+            vim.keymap.set('n', '<C-S-j>', '<cmd>Treewalker SwapDown<cr>', { silent = true, desc = "Treewalker SwapDown" })
           '';
         }
 
@@ -174,27 +203,40 @@
         }
 
         # ── Common plugin dependencies ────────────────────────────────
-        dressing-nvim # Better vim.ui.select and vim.ui.input
         mini-icons # Icon provider for various plugins
         nui-nvim # UI component library
         plenary-nvim # Lua utility functions (used by many plugins)
         render-markdown-nvim # Render markdown with formatting in buffers
 
-        # nvim-notify: notification manager for async LSP/plugin messages
-        #   https://github.com/rcarriga/nvim-notify
+        # fidget.nvim: lightweight LSP progress indicator (bottom-right corner)
+        # Replaces noice LSP progress with a less intrusive display
+        # https://github.com/j-hui/fidget.nvim
         {
-          plugin = nvim-notify;
+          plugin = fidget-nvim;
           type = "lua";
-          config = "vim.notify = require('notify')";
+          config = ''require("fidget").setup({})'';
         }
 
-        # noice.nvim: replaces the built-in UI for messages, cmdline, and popupmenu
-        # Provides a modern floating UI experience
+        # noice.nvim: modern command line UI replacement
+        # Popups, notifications, and LSP messages are disabled per user preference
         #   https://github.com/folke/noice.nvim/
         {
           plugin = noice-nvim;
           type = "lua";
-          config = ''require("noice").setup({})'';
+          config = ''
+            require("noice").setup({
+              cmdline = { enabled = true },
+              messages = { enabled = false },
+              notify = { enabled = false },
+              popupmenu = { enabled = false },
+              lsp = {
+                progress = { enabled = false },
+                hover = { enabled = false },
+                signature = { enabled = false },
+                message = { enabled = false },
+              },
+            })
+          '';
         }
 
         # which-key.nvim: displays available keybindings in a popup as you type
@@ -211,12 +253,15 @@
                  padding = { 1, 2, 1, 2 },
                  no_overlap = false,
                },
+               triggers = {
+                 { "<auto>", mode = "nxsot" },
+                 { "s", mode = { "n", "x" } },
+               },
             }
 
             wk.add({
               -- Quick access bindings
               { 'q', desc = "precognition peek", function() require("precognition").peek() end},
-              { '<leader>q', desc = "precognition toggle", function() require("precognition").toggle() end},
               { '<c-\\>', desc = "Toggle Terminal", function() require("toggleterm").toggle() end, mode = { "n", "i", "t" } },
 
               { "<leader>fml", desc = "FML" ,"<cmd>CellularAutomaton make_it_rain<cr>"},
@@ -233,24 +278,25 @@
               -- Quit group
               { "<leader>q", group = "Quit" },
               { "<leader>qq", desc = "Quit", "<cmd>q<cr>" },
-              { "<leader>qa", desc = "Quit", "<cmd>qa<cr>" },
+              { "<leader>qa", desc = "Quit All", "<cmd>qa<cr>" },
               { "<leader>qf", desc = "Quit [force]", "<cmd>qa!<cr>" },
 
               -- Write group
               { "<leader>w", group = "Write" },
               { "<leader>wq", desc = "Write Quit", "<cmd>wq<cr>" },
               { "<leader>ww", desc = "Write", "<cmd>w<cr>" },
-              { "<leader>a", group = "Avante" },
 
               -- OpenCode AI integration group
               { "<leader>o", group = "OpenCode" },
-              { "<leader>oa", desc = "Ask OpenCode" },
-              { "<leader>og", desc = "Toggle OpenCode" },
-              { "<leader>op", desc = "Add to Prompt" },
-              { "<leader>ox", desc = "Execute Action" },
-              { "<leader>os", desc = "Scroll Up" },
-              { "<leader>od", desc = "Scroll Down" },
-              { "<leader>oc", desc = "Stop OpenCode" },
+
+              -- Diagnostics group (trouble.nvim)
+              { "<leader>x", group = "Diagnostics" },
+              { "<leader>xx", desc = "Diagnostics (Trouble)", "<cmd>Trouble diagnostics toggle<cr>" },
+              { "<leader>xX", desc = "Buffer Diagnostics", "<cmd>Trouble diagnostics toggle filter.buf=0<cr>" },
+              { "<leader>xs", desc = "Symbols (Trouble)", "<cmd>Trouble symbols toggle focus=false<cr>" },
+              { "<leader>xl", desc = "Location List", "<cmd>Trouble loclist toggle<cr>" },
+              { "<leader>xq", desc = "Quickfix List", "<cmd>Trouble qflist toggle<cr>" },
+              { "<leader>xt", desc = "Todo Comments", "<cmd>Trouble todo toggle<cr>" },
 
               -- LSP group: language server interactions
               { "<leader>l", group = "LSP" },
@@ -282,6 +328,9 @@
               { "<leader>gS", desc = "Git Stash", function() Snacks.picker.git_stash() end },
               { "<leader>gd", desc = "Git Diff (Hunks)", function() Snacks.picker.git_diff() end },
               { "<leader>gf", desc = "Git Log File", function() Snacks.picker.git_log_file() end },
+              { "<leader>gD", desc = "Diffview Open", "<cmd>DiffviewOpen<cr>" },
+              { "<leader>gc", desc = "Diffview Close", "<cmd>DiffviewClose<cr>" },
+              { "<leader>gh", desc = "Diffview File History", "<cmd>DiffviewFileHistory %<cr>" },
 
               -- Search/Grep group: content search and exploration
               { "<leader>s", group = "Search/Grep" },
@@ -292,7 +341,6 @@
               { '<leader>s"', desc = "Registers", function() Snacks.picker.registers() end },
               { '<leader>s/', desc = "Search History", function() Snacks.picker.search_history() end },
               { "<leader>sa", desc = "Autocmds", function() Snacks.picker.autocmds() end },
-              { "<leader>sb", desc = "Buffer Lines", function() Snacks.picker.lines() end },
               { "<leader>sc", desc = "Command History", function() Snacks.picker.command_history() end },
               { "<leader>sC", desc = "Commands", function() Snacks.picker.commands() end },
               { "<leader>sd", desc = "Diagnostics", function() Snacks.picker.diagnostics() end },
@@ -317,6 +365,7 @@
               { "<leader>ug", desc = "Decode Base64-gzip", "<cmd>%!base64 -d|gzip -d<cr>" },
               { "<leader>uj", desc = "Format JSON", "<cmd>%!jq .<cr>" },
               { "<leader>uC", desc = "Colorschemes", function() Snacks.picker.colorschemes() end },
+              { "<leader>up", desc = "Precognition Toggle", function() require("precognition").toggle() end },
 
               { "<leader>ut", desc = "Table Mode: Toggle", "<cmd>TableModeToggle<cr>" },
               { "<leader>ur", desc = "Table Mode: Realign", "<cmd>TableModeRealign<cr>" },
@@ -351,6 +400,50 @@
               { "]o", desc = "Next Loop Outer" },
               { "]p", desc = "Next Parameter Inner" },
               { "]s", desc = "Next Scope Outer" },
+
+              -- Surround (mini.surround)
+              { "s",  group = "Surround" },
+              { "sa", desc = "Add Surrounding", mode = { "n", "v" } },
+              { "sd", desc = "Delete Surrounding" },
+              { "sf", desc = "Find Right" },
+              { "sF", desc = "Find Left" },
+              { "sh", desc = "Highlight Surrounding" },
+              { "sn", desc = "Update n_lines" },
+              { "sr", desc = "Replace Surrounding" },
+
+              -- Toggle options (mini.basics)
+              { "\\",  group = "Toggle" },
+              { "\\b", desc = "Background" },
+              { "\\c", desc = "Cursorline" },
+              { "\\C", desc = "Cursorcolumn" },
+              { "\\d", desc = "Diagnostics" },
+              { "\\h", desc = "Inlay Hints" },
+              { "\\i", desc = "Ignorecase" },
+              { "\\l", desc = "List" },
+              { "\\n", desc = "Number" },
+              { "\\r", desc = "Relativenumber" },
+              { "\\s", desc = "Spell" },
+              { "\\w", desc = "Wrap" },
+
+              -- Goto prefix
+              { "g",   group = "Goto" },
+              { "go",  desc = "Add Empty Line Below" },
+              { "gO",  desc = "Add Empty Line Above" },
+
+              -- LSP defaults (Neovim 0.11+)
+              { "gr",  group = "LSP (builtin)" },
+              { "grn", desc = "Rename" },
+              { "gra", desc = "Code Action", mode = { "n", "v" } },
+              { "grr", desc = "References" },
+              { "gri", desc = "Implementation" },
+
+              -- Todo comment navigation
+              { "]t", desc = "Next Todo Comment" },
+              { "[t", desc = "Previous Todo Comment" },
+
+              -- Misc implicit bindings
+              { "K",     desc = "Hover Documentation" },
+              { "<C-s>", desc = "Save", mode = { "n", "i", "x" } },
             })
           '';
         }
@@ -383,24 +476,47 @@
         # Treesitter textobjects: navigate and select code by semantic units
         nvim-treesitter-textobjects
 
-        # blink.pairs: rainbow highlighting and intelligent auto-pairs
-        # https://github.com/Saghen/blink.pairs
-        #{
-        #  plugin = blink-pairs;
-        #  type = "lua";
-        #  config = "require('blink.pairs').setup({})";
-        #}
+        # trouble.nvim: structured diagnostics list with filtering and preview
+        # https://github.com/folke/trouble.nvim
+        {
+          plugin = trouble-nvim;
+          type = "lua";
+          config = ''require("trouble").setup({})'';
+        }
 
-        # copilot.lua: GitHub Copilot integration for Neovim
-        # https://github.com/zbirenbaum/copilot.lua
+        # todo-comments.nvim: highlight TODO/FIXME/HACK/NOTE in code
+        # Integrates with Trouble for searchable todo list
+        # https://github.com/folke/todo-comments.nvim
+        {
+          plugin = todo-comments-nvim;
+          type = "lua";
+          config = ''require("todo-comments").setup({})'';
+        }
+
+        # conform.nvim: formatter engine with per-filetype configuration
+        # Formatters (nixfmt, shfmt) are in extraPackages; use <leader>lf to format
+        # https://github.com/stevearc/conform.nvim
+        {
+          plugin = conform-nvim;
+          type = "lua";
+          config = ''
+            require("conform").setup({
+              formatters_by_ft = {
+                nix = { "nixfmt" },
+                sh = { "shfmt" },
+                bash = { "shfmt" },
+              },
+            })
+            -- Override <leader>lf to use conform with LSP fallback
+            vim.keymap.set("n", "<leader>lf", function()
+              require("conform").format({ async = true, lsp_format = "fallback" })
+            end, { desc = "Format Document" })
+          '';
+        }
 
         # blink-copilot: Copilot source for blink.cmp completion
         # https://github.com/fang2hou/blink-copilot
-        {
-          plugin = blink-copilot;
-          type = "lua";
-          config = "";
-        }
+        blink-copilot
 
         # snacks.nvim: collection of QoL plugins (picker, explorer, terminal, etc.)
         # Only a few modules are enabled; the rest are explicitly disabled
@@ -431,7 +547,6 @@
         # nvim-treesitter: syntax highlighting and code parsing via tree-sitter
         # Installs all available grammars for maximum language coverage
         #   https://tree-sitter.github.io/tree-sitter
-        nvim-treesitter-textobjects
         {
           plugin = nvim-treesitter.withAllGrammars;
           type = "lua";
@@ -464,59 +579,32 @@
           '';
         }
 
-        # Avante / CodeCompanion (disabled, keeping config for reference)
-        # {
-        #   plugin = codecompanion-nvim;
-        #   type = "lua";
-        #   config = ''
-        #     require("codecompanion").setup({
-        #       strategies = {
-        #         chat = {
-        #           name = "copilot",
-        #           model = "gpt-4.1",
-        #         },
-        #       }
-        #     })
-        #   '';
-        # }
-        #
-        # avante.nvim: "Use your Neovim like using Cursor AI IDE!"
-        #   https://github.com/yetone/avante.nvim
-        copilot-lua
-        # {
-        #   plugin = avante-nvim;
-        #   type = "lua";
-        #   config = ''
-        #     require("copilot").setup({
-        #       suggestion = { enabled = false },
-        #       panel = { enabled = false },
-        #       filetypes = { markdown = true, help = true },
-        #     })
-        #     require("avante").setup({
-        #       provider = "copilot",
-        #       providers = { copilot = {} },
-        #     })
-        #   '';
-        # }
+        # copilot.lua: GitHub Copilot integration for Neovim
+        # Required by blink-copilot for completion source
+        # https://github.com/zbirenbaum/copilot.lua
+        {
+          plugin = copilot-lua;
+          type = "lua";
+          config = ''
+            require("copilot").setup({
+              suggestion = { enabled = false },
+              panel = { enabled = false },
+              filetypes = { markdown = true, help = true },
+            })
+          '';
+        }
 
         # blink.cmp: fast, batteries-included completion engine
         # Sources: Copilot (highest priority), LSP, path, snippets, buffer
         # https://github.com/Saghen/blink.cmp
-        blink-cmp-avante
         {
           plugin = blink-cmp;
           type = "lua";
           config = ''
             require("blink.cmp").setup({
               sources = {
-                default = { 'avante', 'copilot', 'lsp', 'path', 'snippets', 'buffer' },
+                default = { 'copilot', 'lsp', 'path', 'snippets', 'buffer' },
                 providers = {
-                  avante = {
-                    async = true,
-                    module = 'blink-cmp-avante',
-                    name = 'avante',
-                    score_offset = 75,
-                  },
                   copilot = {
                     async = true,
                     module = "blink-copilot",
@@ -553,12 +641,11 @@
               local result = handle and handle:read("*l") or ""
               if handle then handle:close() end
               if result:find("prefer%-dark") then
-                vim.o.background = "dark"
                 vim.cmd("colorscheme tokyonight-night")
               else
-                vim.o.background = "dark"
-                vim.cmd("colorscheme tokyonight-moon")
+                vim.cmd("colorscheme tokyonight-day")
               end
+              vim.o.background = "dark"
             end
             -- Re-apply on focus to detect system theme changes
             vim.api.nvim_create_autocmd({ "VimEnter", "FocusGained" }, { callback = apply_theming })
@@ -582,28 +669,18 @@
         # https://github.com/akinsho/bufferline.nvim
         {
           plugin = bufferline-nvim;
-          type = "viml";
+          type = "lua";
           config = ''
-            lua <<EOF
-              require("bufferline").setup{
-                options={
-                  max_name_length=38,
-                  max_prefix_length=35,
-                                separator_style='thick',  -- Better separation for buffers.
-                  show_buffer_close_icons=false,
-                  show_buffer_icons=false,
-                  show_close_icon=false,
-                }
+            require("bufferline").setup{
+              options = {
+                max_name_length = 38,
+                max_prefix_length = 35,
+                separator_style = 'thick',
+                show_buffer_close_icons = false,
+                show_buffer_icons = false,
+                show_close_icon = false,
               }
-            EOF
-            "nnoremap <silent> <C-h>  :BufferLineCyclePrev<CR>
-            "nnoremap <silent> <C-l>  :BufferLineCycleNext<CR>
-            "nnoremap <silent> <C-j>  <C-w>w
-            "nnoremap <silent> <C-k>  <C-w>w
-            "nnoremap <silent> <C-left>  :BufferLineCyclePrev<CR>
-            "nnoremap <silent> <C-right> :BufferLineCycleNext<CR>
-            "nnoremap <silent> <C-up>    <C-w>w
-            "nnoremap <silent> <C-down>  <C-w>w
+            }
           '';
         }
 
@@ -637,6 +714,11 @@
           config = "require('gitsigns').setup()";
         }
 
+        # diffview.nvim: tabpage git diff/merge viewer with file tree
+        # Open with <leader>gD, close with <leader>gc, file history with <leader>gh
+        # https://github.com/sindrets/diffview.nvim
+        diffview-nvim
+
         # nvim-navic: breadcrumb navigation in the winbar showing current code context
         # Auto-attaches to LSP servers that support documentSymbols
         # https://github.com/SmiteshP/nvim-navic
@@ -654,7 +736,7 @@
         }
 
         # lualine.nvim: fast statusline written in Lua
-        # Uses papercolor_light theme with minimal separators
+        # Uses auto theme detection to match the active colorscheme
         # https://github.com/hoob3rt/lualine.nvim
         {
           plugin = lualine-nvim;
@@ -662,7 +744,7 @@
           config = ''
             require('lualine').setup {
               options = {
-                theme = 'papercolor_light',
+                theme = 'auto',
                 section_separators = " ",
                 component_separators = " "
               },
@@ -680,16 +762,16 @@
 
         # numb.nvim: peek lines when typing :<number> (before pressing Enter)
         # https://github.com/nacro90/numb.nvim/
-        { plugin = numb-nvim; }
+        {
+          plugin = numb-nvim;
+          type = "lua";
+          config = "require('numb').setup()";
+        }
 
         # vim-illuminate: highlight other uses of the word under cursor
         # Uses LSP, treesitter, or regex matching automatically
         # https://github.com/RRethy/vim-illuminate
-        {
-          plugin = vim-illuminate;
-          type = "lua";
-          config = "";
-        }
+        vim-illuminate
 
         ## ───────────────────── Vimscript Plugins ─────────────────────
 
@@ -715,6 +797,7 @@
 
       # Vimscript configuration (runs after plugins)
       extraConfig = ''
+        set background=dark
         set relativenumber
 
         " ── Disable arrow keys to encourage proper vim motions ──────

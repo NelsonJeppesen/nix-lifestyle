@@ -84,7 +84,7 @@
         # AWS profile and region display with short region aliases
         aws = {
           # $duration
-          format = "\\[[$profile]($style) $region\\]";
+          format = "\\[[$profile]($style) $region $duration\\]";
           region_aliases = {
             ap-southeast-2 = "apse2";
             ca-central-1 = "cac1";
@@ -204,7 +204,7 @@
 
         # ── lazyworktree: TUI git worktree manager ───────────────────
         # Source built-in shell functions (worktree_jump, worktree_go_last)
-        source ${pkgs.lazyworktree}/share/lazyworktree/functions.shell
+        source ${pkgs.lazyworktree}/share/lazyworktree/functions.zsh
 
         # wt: jump to a worktree in the current repo via lazyworktree TUI
         wt() {

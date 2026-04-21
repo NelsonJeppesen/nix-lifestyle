@@ -9,6 +9,7 @@
 # - Picture of the Day: wallpaper from Bing's daily image
 # - Run-or-Raise: focus-or-launch apps via keyboard shortcuts
 # - Quick Lofi: internet radio player with SomaFM stations
+# - Tailscale Status: Tailscale VPN status indicator in top bar
 # - GitHub Notifications Redux: GitHub notification count in top bar
 { pkgs, gnome-github-notifications-redux, ... }:
 {
@@ -26,6 +27,7 @@
       { package = pkgs.gnomeExtensions.just-perfection; } # UI customization tweaks
       { package = pkgs.gnomeExtensions.picture-of-the-day; } # Daily wallpaper
       { package = pkgs.gnomeExtensions.run-or-raise; } # Keyboard-driven app switching
+      { package = pkgs.gnomeExtensions.tailscale-status; } # Tailscale VPN status
 
       # Quick Lofi: play internet radio (SomaFM, etc.) from the GNOME top bar
       # Requires socat and mpv packages (installed in home.nix)
@@ -36,7 +38,7 @@
       #   https://github.com/NelsonJeppesen/gnome-github-notifications-redux
       {
         id = "github-notifications-redux@jeppesen.io";
-        package = gnome-github-notifications-redux.packages.${pkgs.system}.default;
+        package = gnome-github-notifications-redux.packages.${pkgs.stdenv.hostPlatform.system}.default;
       }
     ];
   };

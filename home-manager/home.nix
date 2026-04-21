@@ -13,7 +13,7 @@
 
   # Import all per-application/concern modules
   imports = [
-    ./chrome-apps.nix # Chrome PWA wrappers (Slack, ChatGPT)
+    ./chrome-apps.nix # Chrome PWA wrappers (ChatGPT, OpenCode)
     ./editorconfig.nix # Global editorconfig settings
     ./firefox.nix # Firefox browser with custom search engines
     ./git.nix # Git config, signing, aliases, difftastic
@@ -88,7 +88,6 @@
 
     # ── Dotfile symlinks ──────────────────────────────────────────────
     # These map static config files from ./dotfiles/ into the home directory
-    file.".config/aichat/config.yaml".source = ./dotfiles/aichat.yaml; # aichat CLI config
     file.".config/curlrc".source = ./dotfiles/curlrc; # curl defaults (--no-progress-meter)
     file.".config/fend/config.toml".source = ./dotfiles/fend.toml; # fend calculator config
     file.".digrc".source = ./dotfiles/digrc; # dig defaults (+noall +answer)
@@ -98,6 +97,7 @@
 
     # ── Packages ──────────────────────────────────────────────────────
     packages = [
+      pkgs.kafkactl
 
       # ── Nixpkgs maintainer tools ───────────────────────────────────
       pkgs.nixpkgs-review # Review tool for nixpkgs pull requests
@@ -146,20 +146,20 @@
       pkgs.zoom-us # Video conferencing
       #pinnedZoom
       pkgs.kitty # Terminal emulator (configured in kitty.nix)
-      # pkgs.slack # Using Chrome PWA wrapper instead (see chrome-apps.nix)
+      pkgs.slack
 
       # ── Cloud and infrastructure tools ──────────────────────────────
       #pkgs.ansible_2_16
       pkgs.google-cloud-sdk
       pkgs.awscli2 # AWS CLI v2
       pkgs.oci-cli # Oracle Cloud Infrastructure CLI
-      pkgs.opentofu # Open-source Terraform fork
-      pkgs.packer # Machine image builder
+      # pkgs.opentofu # Open-source Terraform fork
+      # pkgs.packer # Machine image builder
       pkgs.ssm-session-manager-plugin # AWS Systems Manager session plugin
       pkgs.terraform # Infrastructure as code
 
-      pkgs.codex
-      pkgs.telegram-desktop
+      # pkgs.codex
+      # pkgs.telegram-desktop
 
       # "A terminal spreadsheet multitool for discovering and arranging data"
       #pkgs.visidata

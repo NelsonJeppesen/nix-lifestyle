@@ -37,19 +37,6 @@ let
     --disable-features=DesktopPWAsLinkCapturing,IntentPickerPWALinkCapturing
   '';
 
-  # Slack PWA: runs in its own Chrome profile as a standalone app window
-  slack-chrome = pkgs.writeShellScriptBin "slack" ''
-    #!/usr/bin/env bash
-    PROFILE_DIR="$HOME/.local/share/slack-chrome-profile"
-    exec ${chrome}/bin/google-chrome-stable \
-      --user-data-dir="$PROFILE_DIR" \
-      --app="https://app.slack.com/client" \
-      --class="slack" \
-      --name="slack" \
-      ${common_flags} \
-      "$@"
-  '';
-
   # ChatGPT PWA: runs in its own Chrome profile as a standalone app window
   chatgpt-chrome = pkgs.writeShellScriptBin "chatgpt" ''
     #!/usr/bin/env bash
@@ -62,10 +49,23 @@ let
       ${common_flags} \
       "$@"
   '';
+
+  # OpenCode PWA: web interface for OpenCode running locally
+  opencode-chrome = pkgs.writeShellScriptBin "opencode-web" ''
+    #!/usr/bin/env bash
+    PROFILE_DIR="$HOME/.local/share/opencode-chrome-profile"
+    exec ${chrome}/bin/google-chrome-stable \
+      --user-data-dir="$PROFILE_DIR" \
+      --app="http://localhost:4096" \
+      --class="opencode" \
+      --name="opencode" \
+      ${common_flags} \
+      "$@"
+  '';
 in
 {
   home.packages = [
-    slack-chrome
     chatgpt-chrome
+    opencode-chrome
   ];
 }
