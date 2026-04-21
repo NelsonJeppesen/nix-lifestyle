@@ -41,6 +41,5 @@ let
   };
 in
 {
-  environment.etc."opt/chrome/policies/managed/policies.json".text =
-    builtins.toJSON policies;
+  environment.etc."opt/chrome/policies/managed/policies.json".text = builtins.toJSON policies;
 }

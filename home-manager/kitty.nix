@@ -120,8 +120,7 @@
         # OSC52 clipboard control: allow kitty to read/write the clipboard so
         # nvim/yank-over-ssh works. `*-ask` requires a confirmation popup the
         # first time; switch to `read-clipboard read-primary` to skip it.
-        clipboard_control =
-          "write-clipboard write-primary read-clipboard-ask read-primary-ask no-append";
+        clipboard_control = "write-clipboard write-primary read-clipboard-ask read-primary-ask no-append";
 
         # Remote control socket: required for `kitty @ set-colors` and other
         # `kitty @` commands (used for live theme switching, etc.).
