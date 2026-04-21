@@ -29,7 +29,7 @@
 
     settings = {
       # Use Claude Opus 4.6 via GitHub Copilot as the default model
-      model = "github-copilot/claude-opus-4.6";
+      model = "github-copilot/claude-opus-4.7";
     };
 
     # ── Custom slash commands ─────────────────────────────────────
