@@ -33,7 +33,7 @@
       settings = {
         filter_mode = "workspace"; # Filter history by current git repo/directory
         keymap_mode = "emacs"; # Use emacs-style keybindings in search UI
-        search_node = "fulltext"; # Full-text search across command history
+        search_mode = "fulltext"; # Full-text search across command history
         secrets_filter = true; # Automatically filter out commands containing secrets
         show_preview = true; # Show command preview in search results
         sync_address = "http://192.168.5.0:8888"; # Self-hosted Atuin sync server on LAN
@@ -44,6 +44,7 @@
     # Displays git status, AWS profile/region, Kubernetes context, and directory
     starship = {
       enable = true;
+      enableZshIntegration = true;
       settings = {
         # Disable noisy/unhelpful prompt modules
         cmd_duration.disabled = true;
@@ -51,16 +52,46 @@
         python.disabled = true;
         terraform.disabled = true;
 
-        #right_format = "$kubernetes$line_break";
+        # Catppuccin Mocha palette (matches kitty's Catppuccin theme pair)
+        palette = "catppuccin_mocha";
+        palettes.catppuccin_mocha = {
+          rosewater = "#f5e0dc";
+          flamingo = "#f2cdcd";
+          pink = "#f5c2e7";
+          mauve = "#cba6f7";
+          red = "#f38ba8";
+          maroon = "#eba0ac";
+          peach = "#fab387";
+          yellow = "#f9e2af";
+          green = "#a6e3a1";
+          teal = "#94e2d5";
+          sky = "#89dceb";
+          sapphire = "#74c7ec";
+          blue = "#89b4fa";
+          lavender = "#b4befe";
+          text = "#cdd6f4";
+          subtext1 = "#bac2de";
+          subtext0 = "#a6adc8";
+          overlay2 = "#9399b2";
+          overlay1 = "#7f849c";
+          overlay0 = "#6c7086";
+          surface2 = "#585b70";
+          surface1 = "#45475a";
+          surface0 = "#313244";
+          base = "#1e1e2e";
+          mantle = "#181825";
+          crust = "#11111b";
+        };
 
         # Fill character between left and right prompt sections
         fill = {
           symbol = " ";
         };
 
-        # Custom prompt layout: main info on first line, directory/git on second
-        # Kubernetes context is pushed to the right side of the first line
-        format = "$all$fill$kubernetes$line_break$directory$git_branch$git_status\${custom.worktree}$jobs$battery$time$status$os$container$shell$character";
+        # Custom prompt layout. NOTE: $all is intentionally NOT used; it
+        # would re-render every module already listed below (kubernetes,
+        # git_branch, git_status, directory, battery, time, ...).
+        format = "$username$hostname$aws$nix_shell$cmd_duration$fill$kubernetes$line_break$directory$git_branch$git_status\${custom.worktree}$character";
 
         # Directory display: show up to 9 levels, highlight repo root
         directory = {
@@ -70,20 +101,16 @@
 
         # Git status indicators (modified, staged, ahead/behind)
         git_status = {
-          format = "([$all_status$ahead_behind]($style))\\] ";
-          #up_to_date = "[✓](green)";
-          #stashed = "[\\$\\($count\\)](green)";
-          #deleted = "[--\\($count\\)](red)";
+          format = "([\\[$all_status$ahead_behind\\]]($style)) ";
         };
 
         # Git branch display format
         git_branch = {
-          format = "\\[[$branch(:$remote_branch)]($style) ";
+          format = "\\[[$branch(:$remote_branch)]($style)\\] ";
         };
 
         # AWS profile and region display with short region aliases
         aws = {
-          # $duration
           format = "\\[[$profile]($style) $region $duration\\]";
           region_aliases = {
             ap-southeast-2 = "apse2";
@@ -111,8 +138,10 @@
 
         # Show worktree name when inside a git worktree
         custom.worktree = {
-          when = "test -f .git"; # .git is a file (not dir) inside worktrees
-          command = "basename $(pwd)";
+          # Detects both linked worktrees (.git is a file) and the main
+          # worktree (.git is a directory) — anything inside a git repo.
+          when = "git rev-parse --is-inside-work-tree";
+          command = "basename \"$(git rev-parse --show-toplevel)\"";
           format = "[wt:$output]($style) ";
           style = "bold cyan";
         };
@@ -223,6 +252,18 @@
           local path="''${3:-.}"
           ${pkgs.ripgrep}/bin/rg -l -- "$search" "$path" | ${pkgs.findutils}/bin/xargs -r -n1 ${pkgs.gnused}/bin/sed -i "s|$search|$replace|g"
         }
+
+        # rst: reset shell environment -- clear AWS/kube context, return to ~/source.
+        # Defined as a function (not a shellAlias) because zsh aliases can't span
+        # multiple commands cleanly.
+        rst() {
+          cd ~/source || return
+          ${pkgs.kubectx}/bin/kubectx --unset
+          : > ~/.aws/sticky.profile
+          : > ~/.aws/sticky.region
+          unset AWS_PROFILE AWS_REGION
+          clear
+        }
         # ------------------------------------------------------------
       '';
 
@@ -231,9 +272,6 @@
         DIRENV_LOG_FORMAT = ""; # Silence direnv "loading .envrc" messages
         MANPAGER = "vim +Man!"; # Use vim as the man page viewer
         NIXPKGS_ALLOW_UNFREE = "1"; # Allow unfree packages in nix-shell
-
-        # Enable system clipboard integration for zsh-vi-mode (if re-enabled)
-        ZVM_SYSTEM_CLIPBOARD_ENABLED = true;
       };
 
       # ── Shell aliases ─────────────────────────────────────────────
@@ -246,7 +284,7 @@
 
         # Clipboard (Wayland-only via wl-clipboard)
         cbc = "${pkgs.wl-clipboard}/bin/wl-copy"; # Pipe to clipboard
-        cbp = "${pkgs.wl-clipboard}/bin/wl-"; # Paste from clipboard
+        cbp = "${pkgs.wl-clipboard}/bin/wl-paste"; # Paste from clipboard
 
         # Git
         g = "${pkgs.git}/bin/git";
@@ -260,16 +298,7 @@
         np = "nb edit personal-$(date +%Y-%m).md  2>/dev/null || nb add --title personal-$(date +%Y-%m)"; # Personal notes (monthly)
         ns = "$EDITOR $(mktemp)"; # Scratch note in temp file
 
-        # Reset environment: clear AWS/kube context and go back to ~/source
-        rst = ''
-          cd ~/source
-          kubectx --unset
-          echo > ~/.aws/sticky.profile
-          echo > ~/.aws/sticky.region
-          unset AWS_PROFILE
-          unset AWS_REGION
-          clear
-        '';
+        # Reset environment: see rst() function in initContent
 
         # Calculator (fend)
         f = "fend";
@@ -280,7 +309,7 @@
         ta = "${pkgs.terraform}/bin/terraform apply";
         ti = "${pkgs.terraform}/bin/terraform init";
         tp = "${pkgs.terraform}/bin/terraform plan";
-        tpv = "${pkgs.terraform}/bin/terraform plan -no-color | vim"; # Plan output in vim for review
+        tpv = "${pkgs.terraform}/bin/terraform plan -no-color | nvim -"; # Plan output in nvim for review
         tpwb = "${pkgs.terraform}/bin/terraform plan -no-color | grep 'will be'"; # Quick summary of what will change
         tsd = "echo $(${pkgs.terraform}/bin/terraform state list|fzf --multi)|xargs -n1 ${pkgs.terraform}/bin/terraform state rm"; # Fuzzy state remove
         tss = "${pkgs.terraform}/bin/terraform state show $(${pkgs.terraform}/bin/terraform state list|fzf)"; # Fuzzy state show
