@@ -37,9 +37,28 @@
     # is still 0x6e on this machine via:
     #   grep -v '   0$' /sys/firmware/acpi/interrupts/gpe*
     "acpi_mask_gpe=0x6e"
+    # i8042/EC race at cold boot intermittently fails controller probe
+    # ("Can't read CTR ... probe with driver i8042 failed with error -5"),
+    # leaving the internal keyboard dead. Force a reset and skip PNP path.
+    "i8042.reset=force"
+    "i8042.nopnp"
+    "i8042.unlock"
   ];
 
   boot.blacklistedKernelModules = [ "i915" ];
+
+  # Load the real KMS driver in initrd so Plymouth comes up on `xe` directly
+  # instead of starting on `simpledrm` (efifb) and flipping mid-boot. This
+  # eliminates the resolution-change flicker between Plymouth and GDM.
+  boot.initrd.kernelModules = [ "xe" ];
+  # systemd-in-initrd gives Plymouth a cleaner handoff to the display manager.
+  boot.initrd.systemd.enable = true;
+
+  # 2880x1800 panel: Plymouth's auto-detect picks 1x and renders the splash
+  # postage-stamp sized. Force 2x for a HiDPI splash matching the panel.
+  boot.plymouth.extraConfig = ''
+    DeviceScale=2
+  '';
 
   # AX211 / BE200 Wi-Fi tuning + Intel SOF audio (Meteor/Arrow Lake).
   # AX211 is prone to disconnects with default power_save=1 + uapsd; both
