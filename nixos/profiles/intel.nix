@@ -1,3 +1,7 @@
+# intel.nix - Intel iGPU + CPU baseline (modesetting, VA-API, microcode)
+#
+# Battery-tuned bits (TLP, thermald, iwd, etc.) live in laptop_power.nix
+# so this profile is safe to import on Intel desktops/NUCs as well.
 {
   pkgs,
   ...
@@ -28,8 +32,8 @@
   # Update microcode when available
   hardware.cpu.intel.updateMicrocode = true;
 
-  # Ensure modules used for efficient disk encryption are loaded
-  # early in the boot process
+  # Load the Intel `xe` GPU driver early so KMS comes up in initrd
+  # (needed for a clean Plymouth handoff on Meteor/Arrow Lake).
   boot.initrd.kernelModules = [ "xe" ];
 
   boot.initrd.availableKernelModules = [
