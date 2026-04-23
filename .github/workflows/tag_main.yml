@@ -1,3 +1,7 @@
+# Tag every push to main with a UTC timestamp tag (YYYY-MM-DD-HH-MM).
+# Provides easy "what was deployed when" rollback points without manual
+# release management. Tags are pushed back to the repo using the default
+# GITHUB_TOKEN with explicit `contents: write` scope.
 name: Tag Commit with Timestamp
 
 on:
@@ -5,13 +9,23 @@ on:
     branches:
       - main
 
+# Serialize tag jobs so two pushes within the same minute don't both try
+# to create (and push) the same timestamp tag.
+concurrency:
+  group: tag-main
+  cancel-in-progress: false
+
+# Restrict the implicit GITHUB_TOKEN to the minimum scope this job needs.
+permissions:
+  contents: write
+
 jobs:
   timestamp-tag:
     runs-on: ubuntu-latest
 
     steps:
       - name: Checkout
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - name: Set up Git
         run: |
