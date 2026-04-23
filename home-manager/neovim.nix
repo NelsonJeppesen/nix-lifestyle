@@ -62,6 +62,7 @@
         vim.opt.softtabstop = 2
         vim.opt.swapfile    = false
         vim.opt.showmode    = false  -- Disable mode display for statusline plugins.
+        vim.opt.foldenable  = false  -- Disable folding entirely.
 
         -- Limit LSP log to errors only (prevents lsp.log from growing to GBs)
         vim.lsp.log.set_level("ERROR")
@@ -132,22 +133,71 @@
           config = ''require("mini.surround").setup()'';
         }
 
-        # mini.pairs: auto-close brackets, quotes, and parentheses
-        # https://github.com/echasnovski/mini.pairs
+        # mini.ai: extended a/i text objects (arguments, function calls, etc.)
+        # Adds: a/i a (argument), a/i f (function call), a/i o (block/cond/loop),
+        # a/i q (quote), a/i b (bracket), a/i ? (user prompt), and more.
+        # https://github.com/echasnovski/mini.ai
         {
-          plugin = mini-pairs;
+          plugin = mini-ai;
           type = "lua";
-          config = ''require("mini.pairs").setup()'';
+          config = ''
+            local ai = require("mini.ai")
+            ai.setup({
+              n_lines = 500,
+              custom_textobjects = {
+                o = ai.gen_spec.treesitter({
+                  a = { "@block.outer", "@conditional.outer", "@loop.outer" },
+                  i = { "@block.inner", "@conditional.inner", "@loop.inner" },
+                }),
+                f = ai.gen_spec.treesitter({ a = "@function.outer", i = "@function.inner" }),
+                c = ai.gen_spec.treesitter({ a = "@class.outer",    i = "@class.inner" }),
+              },
+            })
+          '';
         }
 
-        # flash.nvim: label-based jump motions (press s then type target chars)
-        # By the same author as snacks/noice; faster than repeated w/f/search
-        # https://github.com/folke/flash.nvim
+        # nvim-various-textobjs: extra text objects (indent, value, key, url, etc.)
+        # Notable: ii/ai indent, iv/av value (after =/:), ik/ak key, iS/aS subword,
+        # gc inside comment, gG entire buffer, !/!! diagnostic, im/am chain member.
+        # https://github.com/chrisgrieser/nvim-various-textobjs
         {
-          plugin = flash-nvim;
+          plugin = nvim-various-textobjs;
           type = "lua";
-          config = ''require("flash").setup()'';
+          config = ''
+            require("various-textobjs").setup({
+              keymaps = { useDefaults = true },
+            })
+          '';
         }
+
+        # nvim-autopairs: treesitter-aware auto-pair for brackets, quotes, etc.
+        # Smarter than mini.pairs: skips pairing inside strings/comments and
+        # when the cursor is adjacent to word characters (no apostrophe woes).
+        # https://github.com/windwp/nvim-autopairs
+        {
+          plugin = nvim-autopairs;
+          type = "lua";
+          config = ''
+            require("nvim-autopairs").setup({
+              check_ts = true, -- use treesitter to decide context
+              ts_config = {
+                lua  = { "string" },        -- don't pair inside lua strings
+                javascript = { "template_string" },
+              },
+              fast_wrap = {                  -- <M-e> to wrap next obj in pair
+                map = "<M-e>",
+                chars = { "{", "[", "(", '"', "'" },
+                end_key = "$",
+                keys = "qwertyuiopzxcvbnmasdfghjkl",
+                check_comma = true,
+                highlight = "Search",
+                highlight_grey = "Comment",
+              },
+            })
+          '';
+        }
+
+        # flash.nvim removed: was unused (s key bound to mini.surround).
 
         # treewalker.nvim: move around code in a syntax-tree-aware manner
         # Ctrl+hjkl navigates between AST nodes, Ctrl+Shift+jk swaps nodes
@@ -319,6 +369,10 @@
               { "<leader>ly", desc = "Goto T[y]pe Definition", function() Snacks.picker.lsp_type_definitions() end },
               { "<leader>ls", desc = "LSP Symbols", function() Snacks.picker.lsp_symbols() end },
               { "<leader>lS", desc = "LSP Workspace Symbols", function() Snacks.picker.lsp_workspace_symbols() end },
+              { "<leader>lR", desc = "Rename", vim.lsp.buf.rename },
+              { "<leader>la", desc = "Code Action", vim.lsp.buf.code_action, mode = { "n", "v" } },
+              { "<leader>ln", desc = "Next Diagnostic", function() vim.diagnostic.jump({ count = 1, float = true }) end },
+              { "<leader>lp", desc = "Prev Diagnostic", function() vim.diagnostic.jump({ count = -1, float = true }) end },
 
               -- Find group: file and buffer navigation
               { "<leader>f", group = "Find" },
@@ -341,6 +395,15 @@
               { "<leader>gD", desc = "Diffview Open", "<cmd>DiffviewOpen<cr>" },
               { "<leader>gc", desc = "Diffview Close", "<cmd>DiffviewClose<cr>" },
               { "<leader>gh", desc = "Diffview File History", "<cmd>DiffviewFileHistory %<cr>" },
+
+              -- Merge conflicts (headhunter.nvim)
+              { "<leader>gm", group = "Merge Conflicts" },
+              { "<leader>gmh", desc = "Take HEAD",   "<cmd>HeadhunterTakeHead<cr>" },
+              { "<leader>gmo", desc = "Take Origin", "<cmd>HeadhunterTakeOrigin<cr>" },
+              { "<leader>gmb", desc = "Take Both",   "<cmd>HeadhunterTakeBoth<cr>" },
+              { "<leader>gmq", desc = "Quickfix Conflicts", "<cmd>HeadhunterQuickfix<cr>" },
+              { "]g", desc = "Next Conflict" },
+              { "[g", desc = "Previous Conflict" },
 
               -- Search/Grep group: content search and exploration
               { "<leader>s", group = "Search/Grep" },
@@ -421,18 +484,48 @@
               { "sn", desc = "Update n_lines" },
               { "sr", desc = "Replace Surrounding" },
 
+              -- Text objects (operator-pending: use after d/c/v/y)
+              -- mini.ai + nvim-various-textobjs + treesitter-textobjects
+              { "i", group = "Inner Text Object", mode = "o" },
+              { "a", group = "Around Text Object", mode = "o" },
+              { "if", desc = "Inner Function", mode = { "o", "x" } },
+              { "af", desc = "Around Function", mode = { "o", "x" } },
+              { "ic", desc = "Inner Class", mode = { "o", "x" } },
+              { "ac", desc = "Around Class", mode = { "o", "x" } },
+              { "ib", desc = "Inner Block", mode = { "o", "x" } },
+              { "ab", desc = "Around Block", mode = { "o", "x" } },
+              { "ia", desc = "Inner Argument", mode = { "o", "x" } },
+              { "aa", desc = "Around Argument", mode = { "o", "x" } },
+              { "io", desc = "Inner Block/Cond/Loop (mini.ai)", mode = { "o", "x" } },
+              { "ao", desc = "Around Block/Cond/Loop (mini.ai)", mode = { "o", "x" } },
+              { "iq", desc = "Inner Quote (mini.ai)", mode = { "o", "x" } },
+              { "aq", desc = "Around Quote (mini.ai)", mode = { "o", "x" } },
+              { "ii", desc = "Inner Indent (various-textobjs)", mode = { "o", "x" } },
+              { "ai", desc = "Around Indent (various-textobjs)", mode = { "o", "x" } },
+              { "iv", desc = "Inner Value (various-textobjs)", mode = { "o", "x" } },
+              { "av", desc = "Around Value (various-textobjs)", mode = { "o", "x" } },
+              { "ik", desc = "Inner Key (various-textobjs)", mode = { "o", "x" } },
+              { "ak", desc = "Around Key (various-textobjs)", mode = { "o", "x" } },
+              { "iS", desc = "Inner Subword (various-textobjs)", mode = { "o", "x" } },
+              { "aS", desc = "Around Subword (various-textobjs)", mode = { "o", "x" } },
+              { "gG", desc = "Entire Buffer (various-textobjs)", mode = { "o", "x" } },
+              { "gc", desc = "Inside Comment (various-textobjs)", mode = { "o", "x" } },
+
               -- Toggle options (mini.basics)
               { "\\",  group = "Toggle" },
               { "\\b", desc = "Background" },
               { "\\c", desc = "Cursorline" },
               { "\\C", desc = "Cursorcolumn" },
               { "\\d", desc = "Diagnostics" },
+              { "\\g", desc = "Git Blame Line", "<cmd>Gitsigns toggle_current_line_blame<cr>" },
+              { "\\G", desc = "Git Blame Full", "<cmd>Gitsigns blame<cr>" },
               { "\\h", desc = "Inlay Hints" },
               { "\\i", desc = "Ignorecase" },
               { "\\l", desc = "List" },
               { "\\n", desc = "Number" },
               { "\\r", desc = "Relativenumber" },
               { "\\s", desc = "Spell" },
+              { "\\t", desc = "Table Mode", "<cmd>TableModeToggle<cr>" },
               { "\\w", desc = "Wrap" },
 
               -- Goto prefix
@@ -454,6 +547,7 @@
               -- Misc implicit bindings
               { "K",     desc = "Hover Documentation" },
               { "<C-s>", desc = "Save", mode = { "n", "i", "x" } },
+              { "<M-e>", desc = "Autopairs Fast Wrap", mode = "i" },
             })
           '';
         }
@@ -464,8 +558,10 @@
           plugin = nvim-lspconfig;
           type = "lua";
           config = ''
-            -- Show diagnostics inline for the current line only
-            vim.diagnostic.config({ virtual_lines = { current_line = true }})
+            -- Diagnostics: tiny-inline-diagnostic.nvim renders the message; we
+            -- disable the built-in virtual_text/virtual_lines to avoid double
+            -- display.
+            vim.diagnostic.config({ virtual_text = false, virtual_lines = false })
 
             -- Enable all configured language servers
             -- https://github.com/neovim/nvim-lspconfig/tree/master/lsp
@@ -562,17 +658,16 @@
           plugin = nvim-treesitter.withAllGrammars;
           type = "lua";
           config = ''
-            -- Enable highlight + indent + folds for any filetype that has a
+            -- Enable highlight + indent for any filetype that has a
             -- registered parser. pcall guards against filetypes whose parser
             -- isn't bundled (treesitter raises on unknown languages).
+            -- Folding intentionally disabled.
             vim.api.nvim_create_autocmd("FileType", {
               callback = function(args)
                 local lang = vim.treesitter.language.get_lang(args.match)
                 if not lang or not vim.treesitter.language.add(lang) then return end
                 pcall(vim.treesitter.start, args.buf, lang)
                 vim.bo[args.buf].indentexpr = "v:lua.require'nvim-treesitter'.indentexpr()"
-                vim.wo[0][0].foldexpr = "v:lua.vim.treesitter.foldexpr()"
-                vim.wo[0][0].foldmethod = "expr"
               end,
             })
           '';
@@ -722,13 +817,8 @@
           '';
         }
 
-        # neoscroll.nvim: smooth scrolling animations
-        # https://github.com/karb94/neoscroll.nvim/
-        {
-          plugin = neoscroll-nvim;
-          type = "lua";
-          config = "require('neoscroll').setup({})";
-        }
+        # neoscroll-nvim → replaced by mini-animate (covers cursor, scroll,
+        # window open/close/resize in one consistent system).
 
         # markdown-preview.nvim: live markdown preview in browser
         # https://github.com/iamcco/markdown-preview.nvim/
@@ -753,12 +843,72 @@
           '';
         }
 
-        # highlight-undo.nvim: briefly highlight changed text after undo/redo
-        # https://github.com/tzachar/highlight-undo.nvim/
+        # tiny-glimmer.nvim: smooth animations for yank, paste, undo/redo, search.
+        # Replaces highlight-undo.nvim (it was the inspiration) and provides one
+        # consistent animation system across all edit operations.
+        # https://github.com/rachartier/tiny-glimmer.nvim
         {
-          plugin = highlight-undo-nvim;
+          plugin = tiny-glimmer-nvim;
           type = "lua";
-          config = "require('highlight-undo').setup({duration = 500})";
+          config = ''
+            require("tiny-glimmer").setup({
+              overwrite = {
+                auto_map = true,
+                yank   = { enabled = true,  default_animation = "fade" },
+                paste  = { enabled = true,  default_animation = "reverse_fade" },
+                search = { enabled = true,  default_animation = "pulse" },
+                undo   = { enabled = true,  default_animation = {
+                  name = "fade",
+                  settings = { from_color = "DiffDelete", max_duration = 500, min_duration = 500 },
+                }},
+                redo   = { enabled = true,  default_animation = {
+                  name = "fade",
+                  settings = { from_color = "DiffAdd",    max_duration = 500, min_duration = 500 },
+                }},
+              },
+              hijack_ft_disabled = { "snacks_dashboard", "oil" },
+            })
+          '';
+        }
+
+        # tiny-inline-diagnostic.nvim: prettier inline LSP diagnostics with
+        # arrows pointing to the offending column. Replaces the built-in
+        # virtual_text/virtual_lines display (disabled in nvim-lspconfig above).
+        # https://github.com/rachartier/tiny-inline-diagnostic.nvim
+        {
+          plugin = tiny-inline-diagnostic-nvim;
+          type = "lua";
+          config = ''
+            require("tiny-inline-diagnostic").setup({
+              preset = "modern",
+              options = {
+                show_source = { enabled = true, if_many = true },
+                multilines  = { enabled = true, always_show = false },
+                show_all_diags_on_cursorline = false,
+                enable_on_insert = false,
+              },
+            })
+          '';
+        }
+
+        # tiny-devicons-auto-colors.nvim: auto-tints mini-icons / devicons to
+        # match the active colorscheme palette. Re-applies on ColorScheme so it
+        # follows the GNOME day/night switching configured below.
+        # https://github.com/rachartier/tiny-devicons-auto-colors.nvim
+        {
+          plugin = tiny-devicons-auto-colors-nvim;
+          type = "lua";
+          config = ''
+            local function apply_devicon_colors()
+              local ok, colors = pcall(function()
+                return require("tokyonight.colors").setup()
+              end)
+              if not ok then return end
+              require("tiny-devicons-auto-colors").setup({ colors = colors })
+            end
+            apply_devicon_colors()
+            vim.api.nvim_create_autocmd("ColorScheme", { callback = apply_devicon_colors })
+          '';
         }
 
         # toggleterm.nvim: floating terminal overlay (Ctrl+\\ to toggle)
@@ -781,6 +931,27 @@
           plugin = gitsigns-nvim;
           type = "lua";
           config = "require('gitsigns').setup()";
+        }
+
+        # headhunter.nvim: navigate and resolve git merge conflicts in-buffer
+        # Defaults clash with our <leader>g* git pickers, so remap to <leader>gm*
+        # (m for "merge"). Conflict navigation uses ]g/[g (no clash).
+        # https://github.com/StackInTheWild/headhunter.nvim
+        {
+          plugin = headhunter-nvim;
+          type = "lua";
+          config = ''
+            require("headhunter").setup({
+              keys = {
+                prev        = "[g",
+                next        = "]g",
+                take_head   = "<leader>gmh",
+                take_origin = "<leader>gmo",
+                take_both   = "<leader>gmb",
+                quickfix    = "<leader>gmq",
+              },
+            })
+          '';
         }
 
         # diffview.nvim: tabpage git diff/merge viewer with file tree
@@ -836,6 +1007,41 @@
           plugin = mini-indentscope;
           type = "lua";
           config = "require('mini.indentscope').setup()";
+        }
+
+        # mini.animate: animate cursor moves, scrolling, and window open/close/
+        # resize. Replaces neoscroll.nvim with a unified animation system.
+        # https://github.com/echasnovski/mini.animate
+        {
+          plugin = mini-animate;
+          type = "lua";
+          config = ''
+            local animate = require("mini.animate")
+            animate.setup({
+              cursor = { enable = false }, -- handled by smear-cursor.nvim
+              scroll = { enable = true, timing = animate.gen_timing.linear({ duration = 120, unit = "total" }) },
+              resize = { enable = true, timing = animate.gen_timing.linear({ duration = 100, unit = "total" }) },
+              open   = { enable = false }, -- avoid conflicts with noice/snacks pickers
+              close  = { enable = false },
+            })
+          '';
+        }
+
+        # smear-cursor.nvim: leave a fading "smear" trail when the cursor jumps.
+        # Pure cosmetic; pairs with mini.animate's cursor animation.
+        # https://github.com/sphamba/smear-cursor.nvim
+        {
+          plugin = smear-cursor-nvim;
+          type = "lua";
+          config = ''
+            require("smear_cursor").setup({
+              smear_between_buffers = true,
+              smear_between_neighbor_lines = true,
+              stiffness = 0.7,
+              trailing_stiffness = 0.5,
+              hide_target_hack = false,
+            })
+          '';
         }
 
         # numb.nvim: peek lines when typing :<number> (before pressing Enter)
