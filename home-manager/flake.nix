@@ -31,7 +31,7 @@
 
     # GitHub Notifications Redux: GNOME Shell extension for GitHub notifications
     gnome-github-notifications-redux = {
-      url = "github:NelsonJeppesen/gnome-github-notifications-redux/main";
+      url = "github:NelsonJeppesen/gnome-github-notifications-redux/review-01";
       inputs.nixpkgs.follows = "nixpkgs";
     };
   };
