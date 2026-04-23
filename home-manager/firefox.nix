@@ -20,17 +20,16 @@
         # Hide the tab bar via userChrome CSS
         # A sidebar tab extension (e.g., Tree Style Tab) is used instead
         # for vertical tab management
-        userChrome = "\n          #TabsToolbar\n          { visibility: collapse; }\n          #sidebar-box #sidebar-header {\n            display: none !important;\n          }\n        ";
-
-        # Chrome-style auto suspend (disabled, using native Firefox instead)
-        #extensions = with pkgs.firefox-addons; [
-        #  auto-tab-discard
-        #];
+        userChrome = ''
+          #TabsToolbar { visibility: collapse; }
+          #sidebar-box #sidebar-header {
+            display: none !important;
+          }
+        '';
 
         settings = {
           # ── GPU acceleration and rendering ──────────────────────
-          "gfx.webrender.all" = true; # Enable WebRender for all content
-          "gfx.webrender.enabled" = true;
+          "gfx.webrender.all" = true; # Enable WebRender for all content (covers webrender.enabled)
           "layers.acceleration.force-enabled" = true; # Force GPU layer acceleration
           "layout.css.backdrop-filter.enabled" = true; # Enable CSS backdrop-filter
           "svg.context-properties.content.enabled" = true; # SVG context properties
@@ -52,11 +51,6 @@
           # Lower frame rate when idle to save power (Wayland compositor path)
           "layout.frame_rate" = 30;
           "gfx.webrender.compositor.force-enabled" = true;
-
-          # ── Disable prefetching (saves bandwidth, disabled for now) ──
-          #"network.prefetch-next" = false;
-          #"network.dns.disablePrefetch" = true;
-          #"network.predictor.enabled" = false;
 
           # ── Wayland integration ─────────────────────────────────
           "widget.wayland.async-dnd" = true; # Async drag-and-drop on Wayland
