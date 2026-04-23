@@ -10,28 +10,15 @@
 # - Nautilus sidebar bookmarks for quick access to project directories
 {
   pkgs,
+  config,
   ...
 }:
-let
-  # Flameshot wrapper script to work around GNOME Wayland DBus issue.
-  #
-  # Under GNOME Wayland, launching flameshot via its DBus interface does not
-  # work correctly -- the screenshot region selector fails to appear or hangs.
-  # This wrapper invokes flameshot directly as a subprocess instead of relying
-  # on DBus activation, which sidesteps the issue entirely.
-  #
-  # See: https://github.com/flameshot-org/flameshot/issues/2848
-  #
-  # Resolved upstream in flameshot v14.0.rc1 (now in nixpkgs nixos-unstable);
-  # this wrapper is retained as a simple non-DBus launcher for keybindings.
-  flameshot-gui = pkgs.writeShellScriptBin "flameshot-gui" "${pkgs.flameshot}/bin/flameshot gui";
-in
 {
 
   # Nautilus sidebar bookmarks for quick navigation
   home.file.".config/gtk-3.0/bookmarks".text = ''
-    file:///home/nelson/source/personal
-    file:///home/nelson/source
+    file://${config.home.homeDirectory}/source/personal
+    file://${config.home.homeDirectory}/source
     file:///s3fs s3fs
   '';
 
@@ -48,7 +35,7 @@ in
 
     # GNOME interface preferences
     "org/gnome/desktop/interface" = {
-      toolkit-accessibility = false;
+      toolkit-accessibility = false; # Disable ATK/AT-SPI bridge (no screen readers in use)
       accent-color = "pink"; # System-wide accent color
       clock-format = "12h";
       enable-hot-corners = false; # Disable hot corners to prevent accidental triggers
@@ -167,11 +154,11 @@ in
     };
 
     # Custom keybinding: Print key launches flameshot screenshot tool
-    # Uses the wrapper script (see flameshot-gui above) instead of DBus
-    # activation to work around GNOME Wayland compatibility issues
+    # Invoked directly (not via DBus activation) for reliable behavior on
+    # GNOME Wayland.
     "org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom0" = {
       binding = "Print";
-      command = "${flameshot-gui}/bin/flameshot-gui";
+      command = "${pkgs.flameshot}/bin/flameshot gui";
       name = "flameshot screenshot";
     };
 
