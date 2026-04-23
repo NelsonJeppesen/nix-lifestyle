@@ -3,12 +3,6 @@
 {
   system.stateVersion = "26.05";
 
-  # nixpkgs.hostPlatform = {
-  #   gcc.arch = "native";
-  #   gcc.tune = "native";
-  #   system = "x86_64-linux";
-  # };
-
   imports = [
     # ../profiles/factorio.nix
     ../profiles/desktop.nix
