@@ -1,7 +1,11 @@
+# shared.nix - Cross-host baseline (always imported via configuration.nix)
+#
+# Sets up: keyd Caps→layer remap, locale, zsh as default shell, nix flakes,
+# Wayland session env, neovim as system editor, nightly nix-gc, openssh,
+# the `nelson` user with standard groups, and a minimal package set.
 {
   config,
   pkgs,
-  stdenv,
   lib,
   ...
 }:
@@ -14,7 +18,7 @@
         main = {
           capslock = "layer(capslock)";
         };
-        "capslock:M" = {};
+        "capslock:M" = { };
 
       };
     };
@@ -25,7 +29,7 @@
   }; # monday is the start of the week
 
   console.earlySetup = lib.mkDefault true; # Set virtual console options in initrd
-  environment.defaultPackages = lib.mkDefault [ ]; # Remove default pacakges
+  environment.defaultPackages = lib.mkDefault [ ]; # Remove default packages
   nixpkgs.config.allowUnfree = true; # Chrome, steam etc
   programs.zsh.enable = true;
   security.sudo.extraConfig = "Defaults timestamp_timeout=600";
@@ -58,7 +62,7 @@
     };
   };
 
-  services.sshd.enable = lib.mkDefault true;
+  services.openssh.enable = lib.mkDefault true;
   users.users.nelson.isNormalUser = lib.mkDefault true;
 
   users.users.nelson.extraGroups = lib.mkDefault [
