@@ -1,9 +1,16 @@
+# gnome.nix - GDM + GNOME desktop with unused services trimmed off
+#
+# User-side GNOME tweaks (dconf, keybindings, extensions) live in
+# home-manager/gnome.nix. This module only handles the system-level
+# session, display manager, and the trim-down of bundled services.
 { lib, pkgs, ... }:
 {
   services = {
     displayManager.gdm.enable = true;
     desktopManager.gnome.enable = true;
 
+    # Disable GNOME services that ship by default but aren't used here
+    # (no Evolution mail, no online accounts, no Tracker indexing, etc.)
     gnome = {
       evolution-data-server.enable = lib.mkForce false;
       games.enable = false;
