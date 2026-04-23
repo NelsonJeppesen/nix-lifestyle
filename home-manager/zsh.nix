@@ -10,7 +10,8 @@
 #     ap  -- AWS profile switcher (mutates current shell)
 #     ar  -- AWS region switcher (mutates current shell)
 #     rst -- reset env (mutates current shell)
-#     nsr, wt, rgreplace -- packaged via writeShellApplication
+#     wt  -- jump to a git worktree (inline; uses lazyworktree functions)
+#     nsr, rgreplace -- packaged via writeShellApplication
 #     (gets shellcheck + PATH wrapping). See ./bin/.
 # - Extensive shell aliases for terraform, kubectl, git, clipboard, and notes
 # - Kitty terminal tab title integration (shows PWD and running command)
@@ -225,7 +226,7 @@ in
         # Notes (nb-based note-taking)
         nw = "nb edit work-$(date +%Y-%m).md      2>/dev/null || nb add --title work-$(date +%Y-%m)"; # Work notes (monthly)
         np = "nb edit personal-$(date +%Y-%m).md  2>/dev/null || nb add --title personal-$(date +%Y-%m)"; # Personal notes (monthly)
-        ns = "$EDITOR $(mktemp)"; # Scratch note in temp file
+        ns = "$EDITOR $(mktemp --suffix=.md)"; # Scratch markdown note in temp file
 
         # Calculator (fend)
         f = "fend";
