@@ -1,4 +1,4 @@
-# LG Gram 17 2022 Intel 12th Gen
+# openclaw
 { ... }:
 {
   system.stateVersion = "25.11";
