@@ -82,7 +82,7 @@
         bold_font = "auto";
         italic_font = "auto";
         bold_italic_font = "auto";
-        font_size = 14;
+        font_size = 17.5;
 
         # Window border colors (active = blue, inactive = gray)
         active_border_color = "#74B3CE";
