@@ -109,8 +109,9 @@
         # Use zdiff3 conflict markers (shows base version in addition to ours/theirs)
         merge.conflictstyle = "zdiff3";
 
-        # Force SSH for GitHub and Bitbucket (avoids HTTPS credential prompts)
+        # Force SSH for GitHub, GitLab, and Bitbucket (avoids HTTPS credential prompts)
         url."git@github.com:".insteadOf = "https://github.com/";
+        url."git@gitlab.com:".insteadOf = "https://gitlab.com/";
         url."git@bitbucket.org:".insteadOf = "https://bitbucket.org/";
 
         # Sort branches by most recent commit (most useful at top)
@@ -129,7 +130,9 @@
           autoSetupRemote = true;
         };
 
-        # Store credentials on disk (used for non-SSH remotes)
+        # Plaintext credential fallback at ~/.git-credentials for any remote
+        # not covered by the SSH insteadOf rules above. SSH-forced hosts never
+        # touch this file.
         credential = {
           helper = "store";
         };
