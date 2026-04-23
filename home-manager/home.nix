@@ -58,26 +58,26 @@
     # direnv .envrc for personal projects (API keys, tokens, etc.)
     "envrc_personal" = {
       file = /etc/secrets/encrypted/envrc.personal.age;
-      path = "/home/nelson/source/personal/.envrc";
+      path = "${config.home.homeDirectory}/source/personal/.envrc";
     };
 
     # AWS credentials for personal account
     "awscredentials.personal" = {
       file = "/etc/secrets/encrypted/awscredentials.personal.age";
-      path = "/home/nelson/source/personal/.aws/credentials";
+      path = "${config.home.homeDirectory}/source/personal/.aws/credentials";
     };
 
     # Kubernetes config (decrypted to .orig so it can be copied and modified
     # for context switching without overwriting the managed file)
     "kubeconfig.personal" = {
       file = /etc/secrets/encrypted/kubeconfig.personal.age;
-      path = "/home/nelson/source/personal/.kube/config.orig";
+      path = "${config.home.homeDirectory}/source/personal/.kube/config.orig";
     };
 
     # direnv .envrc for the root source directory
     "envrc_root" = {
       file = /etc/secrets/encrypted/envrc.root.age;
-      path = "/home/nelson/source/.envrc";
+      path = "${config.home.homeDirectory}/source/.envrc";
     };
   };
 
@@ -132,6 +132,14 @@
       # chrome-apps.nix uses pkgs.google-chrome directly for PWA wrappers.
       pkgs._1password-gui # Password manager
 
+      # ── Notes ───────────────────────────────────────────────────────
+      pkgs.qownnotes # Plain-text/markdown notes app with tray icon
+      # Required by qownnotes (Qt6) to find GTK file-chooser GSettings
+      # schema; without these it aborts with
+      # "Settings schema 'org.gtk.Settings.FileChooser' is not installed".
+      pkgs.gsettings-desktop-schemas
+      pkgs.gtk3
+
       #pkgs.ecapture # eBPF-based TLS capture tool
 
       #pkgs.libreoffice
@@ -173,6 +181,9 @@
       # Dependencies for the GNOME Quick Lofi extension (internet radio player)
       pkgs.socat # Multipurpose relay (used for mpv IPC)
       pkgs.mpv # Media player (backend for Quick Lofi)
+
+      # Dependency for the GNOME SoundBar extension (top-bar audio visualizer)
+      pkgs.cava # Console audio visualizer
 
       pkgs.wireshark # Network protocol analyzer
 
@@ -234,10 +245,6 @@
       pkgs.shfmt # Shell script formatter
       pkgs.yamllint # YAML linter
       pkgs.markdownlint-cli # Markdown linter and style checker
-
-      # ── Data transformation tools ───────────────────────────────────
-      pkgs.dasel # Query and update structured data (JSON/YAML/TOML/XML/CSV)
-      pkgs.yj # Convert between YAML/TOML/JSON/HCL formats
     ];
   };
 }
