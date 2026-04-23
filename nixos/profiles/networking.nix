@@ -1,3 +1,6 @@
+# networking.nix - Common network setup: systemd-networkd, firewall holes
+# for KDE Connect (1714-1764) and Spotify Connect (57621), and the
+# NetworkManager VPN plugins for OpenVPN/Fortinet SSL VPN.
 { pkgs, lib, ... }:
 {
 
