@@ -1,3 +1,6 @@
+# x86_64.nix - x86_64 hardware baseline: latest kernel, systemd-boot,
+# podman (docker-compat), and the disko-managed disk layout (LUKS+TPM2,
+# btrfs root, EFI system partition).
 { pkgs, lib, ... }:
 
 {
@@ -11,7 +14,6 @@
     loader = {
       efi.canTouchEfiVariables = true;
       systemd-boot = {
-        #consoleMode = "auto";
         enable = true;
       };
     };
@@ -27,6 +29,9 @@
 
   disko.devices = {
     disk = {
+      # Attribute name is leftover from VM days; the actual device is
+      # /dev/nvme0n1 below. Renaming the attr would change partition
+      # labels and risk a remount, so it's left alone.
       vdb = {
         type = "disk";
         device = "/dev/nvme0n1";
