@@ -6,9 +6,11 @@
 # - Caffeine: prevent screen blanking with a toggle (Super+O)
 # - Clipboard Indicator: clipboard history manager (Ctrl+Shift+I to toggle)
 # - Just Perfection: fine-tune GNOME Shell UI elements
-# - Picture of the Day: wallpaper from Bing's daily image
+# - Overview Calculator: inline calculator in the Activities overview
+# - Picture of the Day: daily-rotating wallpaper (Stålenhag, Bing, APOD, …)
 # - Run-or-Raise: focus-or-launch apps via keyboard shortcuts
 # - Quick Lofi: internet radio player with SomaFM stations
+# - SoundBar: real-time audio visualizer in the top bar (requires cava)
 # - Tailscale Status: Tailscale VPN status indicator in top bar
 # - GitHub Notifications Redux: GitHub notification count in top bar
 { pkgs, gnome-github-notifications-redux, ... }:
@@ -25,8 +27,10 @@
       { package = pkgs.gnomeExtensions.caffeine; } # Inhibit screen blanking
       { package = pkgs.gnomeExtensions.clipboard-indicator; } # Clipboard history
       { package = pkgs.gnomeExtensions.just-perfection; } # UI customization tweaks
+      { package = pkgs.gnomeExtensions.overview-calculator; } # Calculator in Activities overview
       { package = pkgs.gnomeExtensions.picture-of-the-day; } # Daily wallpaper
       { package = pkgs.gnomeExtensions.run-or-raise; } # Keyboard-driven app switching
+      { package = pkgs.gnomeExtensions.soundbar; } # Top-bar audio visualizer (requires cava)
       { package = pkgs.gnomeExtensions.tailscale-status; } # Tailscale VPN status
 
       # Quick Lofi: play internet radio (SomaFM, etc.) from the GNOME top bar
@@ -127,9 +131,11 @@
       ];
     };
 
-    # Picture of the Day: set desktop wallpaper from Bing's daily image
+    # Picture of the Day: set desktop wallpaper from a daily-rotating source.
+    # Currently set to Simon Stålenhag artwork; see extension for other sources
+    # (bing, apod, wikimedia, etc.).
     "org/gnome/shell/extensions/swsnr-picture-of-the-day" = {
-      selected-source = "bing";
+      selected-source = "stalenhag";
     };
 
     # AppIndicator: system tray icon appearance settings
