@@ -28,7 +28,7 @@ let
     --disable-renderer-backgrounding
     --renderer-process-limit=4
     --disk-cache-size=65536
-    --media-cache-size=65537
+    --media-cache-size=65536
     --ignore-gpu-blocklist
     --enable-features=VaapiVideoEncoder,VaapiVideoDecoder,WaylandWindowDecorations
     --ozone-platform=wayland
@@ -39,7 +39,6 @@ let
 
   # ChatGPT PWA: runs in its own Chrome profile as a standalone app window
   chatgpt-chrome = pkgs.writeShellScriptBin "chatgpt" ''
-    #!/usr/bin/env bash
     PROFILE_DIR="$HOME/.local/share/chatgpt-chrome-profile"
     exec ${chrome}/bin/google-chrome-stable \
       --user-data-dir="$PROFILE_DIR" \
@@ -52,7 +51,6 @@ let
 
   # OpenCode PWA: web interface for OpenCode running locally
   opencode-chrome = pkgs.writeShellScriptBin "opencode-web" ''
-    #!/usr/bin/env bash
     PROFILE_DIR="$HOME/.local/share/opencode-chrome-profile"
     exec ${chrome}/bin/google-chrome-stable \
       --user-data-dir="$PROFILE_DIR" \
