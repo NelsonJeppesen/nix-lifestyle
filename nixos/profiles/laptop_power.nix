@@ -17,6 +17,24 @@
 {
   services.thermald.enable = false;
 
+  # TLP <=1.9.x still writes vm.laptop_mode (deprecated since kernel 6.5,
+  # ignored by the kernel which logs a warning on every change). Pre-set the
+  # sysctl so TLP's write is a no-op and the dmesg/journal noise stops.
+  # Safe to remove once TLP drops the write (>=1.6 upstream, but still
+  # present in 1.9.1 nixpkgs). See `tlp: vm.laptop_mode is deprecated`.
+  boot.kernel.sysctl."vm.laptop_mode" = 0;
+
+  # Suppress systemd-rfkill: NixOS's TLP module already masks it (TLP manages
+  # radio devices itself), but masking alone still leaves the rfkill udev
+  # rule's `SYSTEMD_WANTS=systemd-rfkill.service` triggering "Failed to
+  # enqueue SYSTEMD_WANTS job, ignoring: Unit systemd-rfkill.socket is
+  # masked" on every rfkill device add. Suppressing the unit entirely
+  # silences the udev/systemd contention.
+  systemd.suppressedSystemUnits = [
+    "systemd-rfkill.service"
+    "systemd-rfkill.socket"
+  ];
+
   # TLP and power-profiles-daemon are mutually exclusive.
   services.power-profiles-daemon.enable = false;
 
