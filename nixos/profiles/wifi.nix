@@ -1,3 +1,9 @@
+# wifi.nix - iwd-managed Wi-Fi credentials sourced from agenix.
+#
+# Each network's credential file is decrypted into /run/agenix at boot,
+# then iwd's ExecStartPre installs it into /var/lib/iwd/<NAME>.{8021x,psk}
+# with mode 0600 so iwd will pick it up. This avoids putting plaintext
+# credentials into the Nix store.
 { pkgs, ... }:
 
 {
@@ -5,9 +11,9 @@
   age.secrets.wifi-0x01.file = /etc/secrets/encrypted/wifi.0x01.age;
   age.secrets.wifi-0x02.file = /etc/secrets/encrypted/wifi.0x02.age;
 
-  # 2) On every iwd start, recreate /var/lib/iwd/WeWorkWiFi.8021x from the secret
+  # On every iwd start, copy each decrypted secret into iwd's state dir
+  # with the filename iwd expects.
   systemd.services.iwd = {
-    # Keep existing settings, just extend serviceConfig
     serviceConfig = {
       ExecStartPre = [
         # Ensure directory exists
