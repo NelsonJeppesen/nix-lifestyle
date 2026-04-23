@@ -18,7 +18,22 @@
     enable = true;
     theme = "polaroid";
     themePackages = [
-      (pkgs.adi1090x-plymouth-themes.override { selected_themes = [ "polaroid" ]; })
+      # Patch the polaroid script for the smoothest possible animation:
+      # display every frame, one per refresh tick. Upstream uses
+      # `Math.Int(progress/2)` with `progress++`, showing each frame for
+      # 2 ticks (~50Hz → ~15s/cycle, visibly slow). Dropping the divisor
+      # and keeping `progress++` advances exactly 1 frame/tick — every
+      # frame shown, no skips, no rounding jitter (~7.5s/cycle, ~2x).
+      # This is the maximum speed achievable without skipping frames.
+      ((pkgs.adi1090x-plymouth-themes.override {
+        selected_themes = [ "polaroid" ];
+      }).overrideAttrs
+        (old: {
+          postPatch = (old.postPatch or "") + ''
+            substituteInPlace polaroid/polaroid.script \
+              --replace-fail "Math.Int(progress / 2) % 392" "progress % 392"
+          '';
+        }))
     ];
   };
 
