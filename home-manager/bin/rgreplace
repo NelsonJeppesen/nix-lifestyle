@@ -1,13 +1,43 @@
 #!/usr/bin/env bash
-# rgreplace: bulk search-and-replace across files using ripgrep + sed.
+# rgreplace: bulk regex search-and-replace across files using ripgrep + sed.
 # Usage: rgreplace <search> <replace> [path]
 #
-# Both <search> and <replace> are escaped before being passed to sed, so
-# delimiters (|), backslashes, ampersands, and newlines are safe.
+# <search> is a regex (passed to both `rg` and `sed`); the script escapes
+# sed BRE metacharacters in it before splicing into `s|…|…|g`. <replace>
+# is a sed replacement string with `&`, `\`, and `|` escaped.
+#
+# Files are discovered with `rg -l -0` (null-delimited so spaces/newlines
+# in paths are safe) and edited in place.
 set -euo pipefail
 
+usage() {
+  cat <<'EOF'
+rgreplace -- bulk regex search-and-replace across files
+
+Usage: rgreplace <search> <replace> [path]
+
+  <search>   Regex pattern (used by both ripgrep and sed BRE).
+  <replace>  sed replacement string. Backreferences \1..\9 work.
+  [path]     Directory or file to recurse into. Defaults to '.'.
+
+Options:
+  -h, --help    Show this help message.
+
+Examples:
+  rgreplace 'foo' 'bar' src/
+  rgreplace '\bcolour\b' 'color'
+EOF
+}
+
+case "${1-}" in
+-h | --help)
+  usage
+  exit 0
+  ;;
+esac
+
 if [ "$#" -lt 2 ]; then
-  echo "usage: rgreplace <search> <replace> [path]" >&2
+  usage >&2
   exit 64
 fi
 
@@ -21,5 +51,5 @@ esc_search=$(printf '%s' "$search" | sed -e 's/[]\/$*.^[|]/\\&/g')
 esc_replace=$(printf '%s' "$replace" | sed -e 's/[\/&|]/\\&/g')
 
 # rg -0 / xargs -0 is null-delimited so filenames with spaces/newlines work.
-rg -l -0 -- "$search" "$target" \
-  | xargs -0 -r -n1 sed -i "s|${esc_search}|${esc_replace}|g"
+rg -l -0 -- "$search" "$target" |
+  xargs -0 -r -n1 sed -i "s|${esc_search}|${esc_replace}|g"
