@@ -1,11 +1,34 @@
 #!/usr/bin/env bash
 # nsr: Nix Shell Run -- run a command from a transient nix-shell.
-# Usage: nsr <package> [command]
+# Usage: nsr <package> [command...]
 # If [command] is omitted the package name is reused as the command.
+# Examples:
+#   nsr jq                        # runs `jq` (no args)
+#   nsr jq jq -r .foo data.json   # runs `jq -r .foo data.json` inside the shell
 set -euo pipefail
 
+usage() {
+  cat <<'EOF'
+nsr -- Nix Shell Run
+
+Usage: nsr <package> [command...]
+
+If [command] is omitted, the package name is reused as the command.
+
+Options:
+  -h, --help    Show this help message.
+EOF
+}
+
+case "${1-}" in
+-h | --help)
+  usage
+  exit 0
+  ;;
+esac
+
 if [ "$#" -lt 1 ]; then
-  echo "usage: nsr <package> [command...]" >&2
+  usage >&2
   exit 64
 fi
 
