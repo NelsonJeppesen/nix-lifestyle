@@ -122,6 +122,11 @@
       edge-tiling = true; # Enable window snapping to screen edges
     };
 
+    # Free Super+P (default switch-monitor) so it can be grabbed by other apps
+    "org/gnome/mutter/keybindings" = {
+      switch-monitor = [ "XF86Display" ];
+    };
+
     # Shell keybindings: free up keys for custom use
     "org/gnome/shell/keybindings" = {
       show-screenshot-ui = [ ]; # Free up Print key for flameshot
