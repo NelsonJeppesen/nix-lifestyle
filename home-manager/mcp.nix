@@ -29,15 +29,18 @@ in
           GITHUB_PERSONAL_ACCESS_TOKEN = "{env:GITHUB_TOKEN}";
         };
       };
+
       # Terraform MCP server: search modules, providers, and registry docs
       terraform = {
         command = lib.getExe pkgs.terraform-mcp-server;
         args = [ "stdio" ];
       };
+
       # Kubernetes MCP server: query cluster resources, pods, logs, etc.
       k8s = {
         command = lib.getExe pkgs.mcp-k8s-go;
       };
+
       # Memory MCP server: persistent knowledge graph memory across sessions.
       # MEMORY_FILE_PATH pins storage to a stable XDG-style location so the
       # graph survives package updates and is easy to back up.
