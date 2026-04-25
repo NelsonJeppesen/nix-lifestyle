@@ -49,6 +49,11 @@
       model = "github-copilot/claude-opus-4.7";
       # Disable automatic update checks / version popup at startup
       autoupdate = false;
+      # oh-my-openagent: multi-agent harness (Sisyphus, Oracle, Atlas, …).
+      # Auto-installed from npm on next opencode launch; routes agents
+      # through GitHub Copilot + OpenAI fallback chains by default.
+      # Docs: https://github.com/code-yeongyu/oh-my-openagent
+      plugin = [ "oh-my-openagent" ];
     };
 
     # ── Global context / instructions ─────────────────────────────
