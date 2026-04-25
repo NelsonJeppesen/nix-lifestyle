@@ -7,9 +7,9 @@
 { pkgs, ... }:
 
 {
-  age.secrets.wifi-wework.file = /etc/secrets/encrypted/wifi.wework.age;
-  age.secrets.wifi-0x01.file = /etc/secrets/encrypted/wifi.0x01.age;
-  age.secrets.wifi-0x02.file = /etc/secrets/encrypted/wifi.0x02.age;
+  age.secrets.wifi-wework.file = "/etc/secrets/encrypted/wifi.wework.age";
+  age.secrets.wifi-0x01.file = "/etc/secrets/encrypted/wifi.0x01.age";
+  age.secrets.wifi-0x02.file = "/etc/secrets/encrypted/wifi.0x02.age";
 
   # On every iwd start, copy each decrypted secret into iwd's state dir
   # with the filename iwd expects.

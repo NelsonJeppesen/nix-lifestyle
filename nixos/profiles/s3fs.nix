@@ -7,7 +7,7 @@
 # - allow_other lets non-root users access the mount (FUSE security boundary)
 { config, pkgs, ... }:
 {
-  age.secrets.s3fs-creds.file = /etc/secrets/encrypted/s3fs.creds.age;
+  age.secrets.s3fs-creds.file = "/etc/secrets/encrypted/s3fs.creds.age";
   environment.systemPackages = with pkgs; [ s3fs ];
 
   fileSystems."/s3fs" = {

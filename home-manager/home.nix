@@ -57,7 +57,7 @@
   age.secrets = {
     # direnv .envrc for personal projects (API keys, tokens, etc.)
     "envrc_personal" = {
-      file = /etc/secrets/encrypted/envrc.personal.age;
+      file = "/etc/secrets/encrypted/envrc.personal.age";
       path = "${config.home.homeDirectory}/source/personal/.envrc";
     };
 
@@ -70,13 +70,13 @@
     # Kubernetes config (decrypted to .orig so it can be copied and modified
     # for context switching without overwriting the managed file)
     "kubeconfig.personal" = {
-      file = /etc/secrets/encrypted/kubeconfig.personal.age;
+      file = "/etc/secrets/encrypted/kubeconfig.personal.age";
       path = "${config.home.homeDirectory}/source/personal/.kube/config.orig";
     };
 
     # direnv .envrc for the root source directory
     "envrc_root" = {
-      file = /etc/secrets/encrypted/envrc.root.age;
+      file = "/etc/secrets/encrypted/envrc.root.age";
       path = "${config.home.homeDirectory}/source/.envrc";
     };
   };

@@ -42,4 +42,4 @@ sudo nixos-rebuild switch --flake /etc/nixos          # host inferred from $HOST
 sudo nixos-rebuild switch --flake /etc/nixos#<host>   # explicit
 sudo nixos-rebuild build  --flake /etc/nixos --dry-run
 ```
-`--impure` may be required if a host's profile reads `age.secrets` paths during eval.
+`age.secrets.<x>.file` must be a quoted string (`"/etc/secrets/encrypted/<x>.age"`); using an unquoted path literal forces `--impure`.
