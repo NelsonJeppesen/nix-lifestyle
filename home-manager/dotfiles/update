@@ -7,8 +7,12 @@ sudo fwupdmgr refresh
 sudo fwupdmgr update
 
 tput setaf 1
+echo -e '\nUpdating NixOS flake inputs [system]...\033[0m'
+sudo nix flake update --flake /etc/nixos
+
+tput setaf 1
 echo -e '\nNixOS Switch [system]...\033[0m'
-sudo nixos-rebuild switch
+sudo nixos-rebuild switch --flake /etc/nixos
 
 tput setaf 1
 echo -e '\nUpdating Home-Manager flake inputs [user]...\033[0m'

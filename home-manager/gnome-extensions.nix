@@ -13,7 +13,12 @@
 # - SoundBar: real-time audio visualizer in the top bar (requires cava)
 # - Tailscale Status: Tailscale VPN status indicator in top bar
 # - GitHub Notifications Redux: GitHub notification count in top bar
-{ pkgs, gnome-github-notifications-redux, ... }:
+{
+  pkgs,
+  lib,
+  gnome-github-notifications-redux,
+  ...
+}:
 {
   # Deploy run-or-raise shortcut configuration
   # This maps keyboard shortcuts to apps (focus if running, launch if not)
@@ -22,16 +27,58 @@
   programs.gnome-shell = {
     enable = true;
     extensions = [
-      { package = pkgs.gnomeExtensions.appindicator; } # System tray icons
       # { package = pkgs.gnomeExtensions.bitcoin-markets; } # BTC price in top bar
+      { package = pkgs.gnomeExtensions.dynamic-music-pill; } # System tray icons
+      { package = pkgs.gnomeExtensions.blur-my-shell; }
+
+      { package = pkgs.gnomeExtensions.appindicator; } # System tray icons
       { package = pkgs.gnomeExtensions.caffeine; } # Inhibit screen blanking
       { package = pkgs.gnomeExtensions.clipboard-indicator; } # Clipboard history
       { package = pkgs.gnomeExtensions.just-perfection; } # UI customization tweaks
       { package = pkgs.gnomeExtensions.overview-calculator; } # Calculator in Activities overview
       { package = pkgs.gnomeExtensions.picture-of-the-day; } # Daily wallpaper
       { package = pkgs.gnomeExtensions.run-or-raise; } # Keyboard-driven app switching
-      { package = pkgs.gnomeExtensions.soundbar; } # Top-bar audio visualizer (requires cava)
-      { package = pkgs.gnomeExtensions.tailscale-status; } # Tailscale VPN status
+      { package = pkgs.gnomeExtensions.unblank; } # Show wallpaper sharply on lock screen (no blur/dim)
+
+      # Tailscale Status, patched so runtime toggles use `tailscale set`
+      # instead of `tailscale up --reset`. With `services.tailscale.extraSetFlags
+      # = [ "--operator=nelson" ]`, `set` works as the unprivileged user; the
+      # original `up --reset` flow drops the operator and falls back to
+      # `pkexec`, which is what triggers the constant root prompts when
+      # changing exit nodes / shields / accept-routes from the top bar.
+      # Also skip `--login-server=` for `set` commands (it's not a valid flag
+      # for `tailscale set` and would cause the call to fail → pkexec retry).
+      {
+        package = pkgs.gnomeExtensions.tailscale-status.overrideAttrs (old: {
+          postPatch = (old.postPatch or "") + ''
+            substituteInPlace extension.js \
+              --replace-fail \
+                'cmdTailscale({ args: ["up", "--exit-node=" + node.address, "--reset"] })' \
+                'cmdTailscale({ args: ["set", "--exit-node=" + node.address], addLoginServer: false })' \
+              --replace-fail \
+                'cmdTailscale({ args: ["up", "--exit-node=", "--reset"] });' \
+                'cmdTailscale({ args: ["set", "--exit-node="], addLoginServer: false });' \
+              --replace-fail \
+                'cmdTailscale({ args: ["up", "--shields-up"] });' \
+                'cmdTailscale({ args: ["set", "--shields-up=true"], addLoginServer: false });' \
+              --replace-fail \
+                'cmdTailscale({ args: ["up", "--shields-up=false", "--reset"] });' \
+                'cmdTailscale({ args: ["set", "--shields-up=false"], addLoginServer: false });' \
+              --replace-fail \
+                'cmdTailscale({ args: ["up", "--accept-routes"] });' \
+                'cmdTailscale({ args: ["set", "--accept-routes=true"], addLoginServer: false });' \
+              --replace-fail \
+                'cmdTailscale({ args: ["up", "--accept-routes=false", "--reset"] });' \
+                'cmdTailscale({ args: ["set", "--accept-routes=false"], addLoginServer: false });' \
+              --replace-fail \
+                'cmdTailscale({ args: ["up", "--exit-node-allow-lan-access"] });' \
+                'cmdTailscale({ args: ["set", "--exit-node-allow-lan-access=true"], addLoginServer: false });' \
+              --replace-fail \
+                'cmdTailscale({ args: ["up", "--exit-node-allow-lan-access=false", "--reset"] });' \
+                'cmdTailscale({ args: ["set", "--exit-node-allow-lan-access=false"], addLoginServer: false });'
+          '';
+        });
+      }
 
       # Quick Lofi: play internet radio (SomaFM, etc.) from the GNOME top bar
       # Requires socat and mpv packages (installed in home.nix)
@@ -147,6 +194,12 @@
       tray-pos = "right"; # Position tray on the right side of top bar
     };
 
+    # Unblank: keep wallpaper visible on lock screen instead of blanking
+    "org/gnome/shell/extensions/unblank" = {
+      power = true; # Keep unblank behavior active on battery/AC
+      time = 1800; # Seconds before screen blanks (30 minutes)
+    };
+
     # Caffeine: prevent screen blanking/screensaver activation
     "org/gnome/shell/extensions/caffeine" = {
       indicator-position = 17;
@@ -156,5 +209,133 @@
       show-notifications = false; # Don't notify on toggle
       toggle-shortcut = [ "<Super>o" ]; # Super+O to toggle
     };
+
+    # Blur My Shell: define reusable blur "pipelines" and apply one to the
+    # lock screen. The `pipelines` schema is a deeply-nested gvariant
+    # (a{sa{sv}} with `av` effects whose `params` are `a{sv}`), so we build
+    # it explicitly with lib.hm.gvariant helpers.
+    "org/gnome/shell/extensions/blur-my-shell" =
+      let
+        g = lib.hm.gvariant;
+        # An a{sv} attribute dict: list of dictionary entries, value side variant-wrapped.
+        mkAsv =
+          attrs:
+          g.mkArray
+            (g.type.dictionaryEntryOf [
+              g.type.string
+              g.type.variant
+            ])
+            (
+              lib.mapAttrsToList (
+                k: v:
+                g.mkDictionaryEntry [
+                  k
+                  (g.mkVariant v)
+                ]
+              ) attrs
+            );
+        # A single effect entry: a{sv} dict with type/id/params keys.
+        mkEffect =
+          {
+            type,
+            id,
+            params,
+          }:
+          mkAsv {
+            inherit type id;
+            params = mkAsv params;
+          };
+        # A pipeline: a{sv} dict with name + effects (av).
+        mkPipeline =
+          { name, effects }:
+          mkAsv {
+            inherit name;
+            effects = g.mkArray g.type.variant (map (e: g.mkVariant (mkEffect e)) effects);
+          };
+        # Outer a{sa{sv}}: list of dict entries keyed by pipeline id, value is the pipeline a{sv}.
+        pipelinesValue =
+          g.mkArray
+            (g.type.dictionaryEntryOf [
+              g.type.string
+              (g.type.arrayOf (
+                g.type.dictionaryEntryOf [
+                  g.type.string
+                  g.type.variant
+                ]
+              ))
+            ])
+            (
+              lib.mapAttrsToList
+                (
+                  k: v:
+                  g.mkDictionaryEntry [
+                    k
+                    (mkPipeline v)
+                  ]
+                )
+                {
+                  pipeline_default = {
+                    name = "Default";
+                    effects = [
+                      {
+                        type = "native_static_gaussian_blur";
+                        id = "effect_000000000000";
+                        params = {
+                          radius = 30;
+                          brightness = g.mkDouble 0.6;
+                        };
+                      }
+                    ];
+                  };
+                  pipeline_default_rounded = {
+                    name = "Default rounded";
+                    effects = [
+                      {
+                        type = "native_static_gaussian_blur";
+                        id = "effect_000000000001";
+                        params = {
+                          radius = 30;
+                          brightness = g.mkDouble 0.6;
+                        };
+                      }
+                      {
+                        type = "corner";
+                        id = "effect_000000000002";
+                        params = {
+                          radius = 24;
+                        };
+                      }
+                    ];
+                  };
+                  # Empty pipeline used by the lock screen to disable blur entirely
+                  # while still letting the extension be enabled elsewhere.
+                  pipeline_03754227297483 = {
+                    name = "nothing";
+                    effects = [ ];
+                  };
+                }
+            );
+      in
+      {
+        settings-version = 2;
+        pipelines = pipelinesValue;
+      };
+
+    # Lock screen: enable Blur My Shell hook but route through the empty
+    # "nothing" pipeline so the lock screen stays sharp (paired with the
+    # `unblank` extension above).
+    "org/gnome/shell/extensions/blur-my-shell/lockscreen" = {
+      blur = true;
+      pipeline = "pipeline_03754227297483";
+    };
+
+    # Disable blur on all other surfaces; only the lock screen hook is used
+    # (and even that routes through the empty pipeline).
+    "org/gnome/shell/extensions/blur-my-shell/panel".blur = false;
+    "org/gnome/shell/extensions/blur-my-shell/overview".blur = false;
+    "org/gnome/shell/extensions/blur-my-shell/dash-to-dock".blur = false;
+    "org/gnome/shell/extensions/blur-my-shell/screenshot".blur = false;
+    "org/gnome/shell/extensions/blur-my-shell/window-list".blur = false;
+    "org/gnome/shell/extensions/blur-my-shell/coverflow-alt-tab".blur = false;
   };
 }

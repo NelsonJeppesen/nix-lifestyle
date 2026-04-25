@@ -1,12 +1,17 @@
 # x86_64.nix - x86_64 hardware baseline: latest kernel, systemd-boot,
 # podman (docker-compat), and the disko-managed disk layout (LUKS+TPM2,
 # btrfs root, EFI system partition).
-{ pkgs, lib, ... }:
+#
+# `disko` is provided as a flake input via specialArgs (see ../flake.nix).
+{
+  pkgs,
+  lib,
+  disko,
+  ...
+}:
 
 {
-  imports = [
-    "${builtins.fetchTarball "https://github.com/nix-community/disko/archive/master.tar.gz"}/module.nix"
-  ];
+  imports = [ disko.nixosModules.disko ];
 
   boot = {
     kernelPackages = pkgs.linuxPackages_latest;

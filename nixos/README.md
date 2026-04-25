@@ -1,33 +1,33 @@
 # nixos
 
-1. boot NixOS ISO
-2. configure networking
-3. prep system
-```
-sudo nix-channel --add https://nixos.org/channels/nixos-unstable nixos
-sudo nix-channel --add https://github.com/ryantm/agenix/archive/main.tar.gz agenix
-sudo nix-channel --update
+System layer (flake). See top-level `README.md` for layout and daily use; this file is bootstrap-only.
+
+## First install (from NixOS ISO)
+
+```sh
+# 1. Network + experimental features
+iwctl station wlan0 connect <SSID>
+
+# 2. Partition + format with disko
+sudo nix --extra-experimental-features 'nix-command flakes' run \
+  github:nix-community/disko -- \
+  --mode disko ./profiles/x86_64.nix
+
+# 3. Pull encrypted secrets repo (private)
+cd /etc && git clone git@github.com:NelsonJeppesen/secrets.git
+
+# 4. Drop this repo onto /mnt and link
+sudo cp -r /path/to/nix-lifestyle /mnt/
+sudo mkdir -p /mnt/etc
+sudo ln -sf /mnt/nix-lifestyle/nixos /mnt/etc/nixos
+
+# 5. Install for a host that exists in nixos/flake.nix
+sudo nixos-install --flake /mnt/etc/nixos#lg-gram-pro-17-2025
 ```
 
-4. format and mount disks
-```
-sudo nix run \
-  --extra-experimental-features nix-command \
-  --extra-experimental-features flakes      \
-  github:nix-community/disko                \
-  -- --mode disko  ./profiles/x86_64.nix
-```
+## Rebuild
 
-5. download `nixage` secrets
-```
-cd /etc
-git clone git@github.com:NelsonJeppesen/secrets.git
-```
-
-```
-sudo cp -r ../../nix-lifestyle /mnt
-sudo mkdir /mnt/etc
-sudo cd /mnt/etc
-sudo ln -s ../nix-lifestyle/nixos .
-sudo nixos-install --upgrade
+```sh
+sudo nixos-rebuild switch --flake /etc/nixos          # host inferred from $HOSTNAME
+sudo nixos-rebuild switch --flake /etc/nixos#<other>  # explicit host
 ```
