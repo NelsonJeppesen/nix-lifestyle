@@ -64,18 +64,19 @@ Then bring up the user layer (see `home-manager/README.md`).
 ## Daily use
 
 ```bash
-# Update everything (firmware → nixos flake → home-manager flake)
-update                     # ~/.local/bin/update, see home-manager/dotfiles/update
+# Switch system then user via nh (sequential, fast path, no input refresh).
+# Firmware fires randomly ~1% of invocations.
+update                     # -u refresh inputs, -f force firmware, -F skip firmware, -a = -u -f
 
 # System only
 sudo nixos-rebuild switch --flake /etc/nixos          # hostname inferred from $HOSTNAME
 sudo nixos-rebuild switch --flake /etc/nixos#<other>  # explicit host
 
 # User only
-home-manager switch --flake ~/.config/home-manager#nelson --impure
+home-manager switch --flake ~/.config/home-manager#nelson
 ```
 
-`--impure` is required for the home layer because `age.secrets` reference absolute paths under `/etc/secrets/encrypted/`. The same is true for any system rebuild that touches age secrets — the `update` script handles this.
+Both layers eval pure (no `--impure`); `age.secrets.<x>.file` entries use quoted strings so the encrypted files at `/etc/secrets/encrypted/` are not copied into the store at eval time.
 
 Garbage collection runs weekly (30d retention) via `nixos/profiles/shared.nix`.
 

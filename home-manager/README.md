@@ -15,15 +15,15 @@ ln -s ~/s/nix-lifestyle/home-manager ~/.config/home-manager
 
 # 3. Initial install + switch
 nix --extra-experimental-features 'nix-command flakes' \
-  run home-manager/master -- init --switch ~/.config/home-manager#nelson --impure
+  run home-manager/master -- init --switch ~/.config/home-manager#nelson
 ```
 
 ## Rebuild
 
 ```sh
-home-manager switch --flake ~/.config/home-manager#nelson --impure
+home-manager switch --flake ~/.config/home-manager#nelson
 ```
 
-`--impure` is mandatory — `age.secrets` reference absolute paths under `/etc/secrets/encrypted/` which pure-eval rejects.
+Eval is pure (no `--impure`); `age.secrets.<name>.file` entries are quoted strings so the encrypted files at `/etc/secrets/encrypted/` are referenced at runtime, not copied into the store at eval time.
 
-The `update` script (symlinked to `~/.local/bin/update` from `dotfiles/update`) refreshes flake inputs for both layers and switches.
+The `update` script (symlinked to `~/.local/bin/update` from `dotfiles/update`) switches both layers sequentially via `nh` (system first, then user — sequential keeps nh's TUI legible; nh handles sudo). Default = switch from current `flake.lock`; firmware fires randomly ~1% of invocations. Pass `-u` to refresh flake inputs (both layers in parallel) first, `-f` to force firmware this run, `-F` to skip the firmware roll, `-a` for `-u -f`, `-h` for help.

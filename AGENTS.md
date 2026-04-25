@@ -12,9 +12,9 @@ See `nixos/AGENTS.md` and `home-manager/AGENTS.md` for layer-specific rules.
 
 ## BUILD
 - System: `sudo nixos-rebuild switch --flake /etc/nixos` (`/etc/nixos` symlinks to `nixos/`; hostname inferred from `$HOSTNAME` if `#name` omitted); dry: append `--dry-run`
-- Home:   `home-manager switch --flake ~/.config/home-manager#nelson --impure`
-- `--impure` is required for both layers when `age.secrets` reference `/etc/secrets/encrypted/*.age` absolute paths
-- Convenience wrapper: `~/.local/bin/update` (symlinked from `home-manager/dotfiles/update`) refreshes flake inputs for both layers and switches
+- Home:   `home-manager switch --flake ~/.config/home-manager#nelson`
+- `age.secrets.<x>.file` MUST be a string (`"/etc/secrets/encrypted/<x>.age"`), never an unquoted path literal — string form keeps eval pure (no copy into store), so `--impure` is not required
+- Convenience wrapper: `~/.local/bin/update` (symlinked from `home-manager/dotfiles/update`) switches both layers sequentially via `nh` (system first, then home; sequential keeps nh's TUI legible — nh handles sudo). Default = switch from current `flake.lock`; firmware fires randomly ~1% of invocations. Flags: `-u` refresh flake inputs (both layers in parallel) before switching; `-f` force firmware this run; `-F` skip the firmware roll; `-a` = `-u -f`; `-h` help
 - "Test" = successful dry build with no activation; no other test suite exists
 
 ## CONVENTIONS (deviations from generic Nix style)

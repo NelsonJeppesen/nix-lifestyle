@@ -102,6 +102,7 @@
 
       # ── Nixpkgs maintainer tools ───────────────────────────────────
       pkgs.nixpkgs-review # Review tool for nixpkgs pull requests
+      pkgs.nh # Nix helper: nicer CLI for nixos-rebuild + home-manager (used by `update`)
 
       # ── Games ───────────────────────────────────────────────────────
       #pkgs.mindustry

@@ -11,11 +11,11 @@ Flake-based. Single output: `homeConfigurations."nelson"` for `x86_64-linux`. In
 
 ## BUILD
 ```
-home-manager switch --flake ~/.config/home-manager#nelson --impure
+home-manager switch --flake ~/.config/home-manager#nelson
 ```
-`--impure` is mandatory: `age.secrets` reference absolute paths under `/etc/secrets/encrypted/`. Without it pure-eval rejects the read.
+`age.secrets.<name>.file` MUST be a quoted string (`"/etc/secrets/encrypted/<name>.age"`); a bare path literal copies the file into the store at eval time and breaks pure-eval, forcing `--impure`.
 
-The `update` script (in `dotfiles/`, symlinked to `~/.local/bin/update`) refreshes inputs for both flakes and switches both layers.
+The `update` script (in `dotfiles/`, symlinked to `~/.local/bin/update`) switches both layers sequentially via `nh` (system first via `nh os switch /etc/nixos`, then user via `nh home switch ~/.config/home-manager -c nelson`); sequential keeps nh's TUI/diff output legible. Default = switch from current `flake.lock`; firmware fires randomly ~1% of invocations. Flags: `-u` refresh flake inputs (both layers in parallel), `-f` force firmware this run, `-F` skip the firmware roll, `-a` = `-u -f`, `-h` help. `nh` itself comes from `pkgs.nh` in `home.packages`.
 
 ## WHERE TO LOOK
 | Task                          | Location                          |
@@ -35,7 +35,7 @@ The `update` script (in `dotfiles/`, symlinked to `~/.local/bin/update`) refresh
 - New flake inputs: declare in `flake.nix`, list in the `outputs` argument set, expose via `extraSpecialArgs`, then accept as a function arg where used
 
 ## ANTI-PATTERNS
-- Calling `home-manager switch` without `--impure` (will fail evaluating `age.secrets`)
+- Writing `age.secrets.<name>.file = /etc/secrets/...;` as a bare path literal — pure-eval will reject it; always use a quoted string
 - Adding a top-level `flake.nix` to the repo root or merging this flake with `nixos/flake.nix` — they are intentionally separate
 - Bumping `home.stateVersion` casually — only with explicit migration intent
 - Putting executables in `dotfiles/` and using `home.file` instead of `home.packages` for installable binaries

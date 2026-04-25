@@ -1,28 +1,81 @@
 #!/usr/bin/env bash
-set -u
+# update - Switch NixOS + Home Manager via nh, with optional flake-input refresh.
+#
+# Default: build & switch both layers from current flake.lock (fast path).
+#          Firmware update runs randomly ~1% of invocations (skip with -F).
+# Flags:
+#   -u, --update     Refresh flake inputs (both layers, in parallel) before switching.
+#   -f, --firmware   Force firmware refresh + apply via fwupdmgr this run.
+#   -F, --no-firmware  Skip firmware even if the random roll would have run it.
+#   -a, --all        Equivalent to -u -f.
+#   -h, --help       Show this help.
+#
+# Switches run sequentially (system first, then home) so `nh`'s rich TUI
+# output (build progress, generation diff via nvd) stays legible. nh handles
+# sudo escalation for the system layer; no manual sudo caching needed.
+set -euo pipefail
 
-tput setaf 1
-echo -e '\nUpdating firmware [system]...\033[0m'
-sudo fwupdmgr refresh
-sudo fwupdmgr update
+UPDATE_INPUTS=0
+FW_FORCE=0
+FW_SKIP=0
+for arg in "$@"; do
+  case "$arg" in
+  -u | --update) UPDATE_INPUTS=1 ;;
+  -f | --firmware) FW_FORCE=1 ;;
+  -F | --no-firmware) FW_SKIP=1 ;;
+  -a | --all)
+    UPDATE_INPUTS=1
+    FW_FORCE=1
+    ;;
+  -h | --help)
+    sed -n '/^# update -/,/^[^#]/p' "$0" | sed -e '$d' -e 's/^# \?//'
+    exit 0
+    ;;
+  *)
+    echo "update: unknown flag: $arg" >&2
+    exit 2
+    ;;
+  esac
+done
 
-tput setaf 1
-echo -e '\nUpdating NixOS flake inputs [system]...\033[0m'
-sudo nix flake update --flake /etc/nixos
+red() {
+  tput setaf 1 2>/dev/null || true
+  echo -e "\n$*\033[0m"
+}
 
-tput setaf 1
-echo -e '\nNixOS Switch [system]...\033[0m'
-sudo nixos-rebuild switch --flake /etc/nixos
+command -v nh >/dev/null || {
+  echo "update: nh not found on PATH (expected pkgs.nh from home-manager)." >&2
+  exit 1
+}
 
-tput setaf 1
-echo -e '\nUpdating Home-Manager flake inputs [user]...\033[0m'
-cd ~/.config/home-manager || exit 1
-nix flake update
+# Decide firmware: explicit force/skip wins; otherwise 1-in-100 random roll.
+FW_RUN=0
+if [ "$FW_FORCE" = 1 ]; then
+  FW_RUN=1
+elif [ "$FW_SKIP" = 0 ] && [ "$((RANDOM % 100))" -eq 0 ]; then
+  FW_RUN=1
+  red "Firmware roll triggered (1-in-100). Pass -F to skip in future runs."
+fi
 
-tput setaf 1
-echo -e '\nHome-Manager Switch [user]...\033[0m'
-home-manager switch --flake ~/.config/home-manager#nelson --impure
+if [ "$FW_RUN" = 1 ]; then
+  red "Updating firmware [system]..."
+  sudo fwupdmgr refresh
+  sudo fwupdmgr update
+fi
 
-tput setaf 1
-echo -e '\nCRUD secret files [start agenix service]...\033[0m'
-systemctl start --user agenix
+if [ "$UPDATE_INPUTS" = 1 ]; then
+  red "Refreshing flake inputs [system + user] in parallel..."
+  sudo nix flake update --flake /etc/nixos &
+  SYS_UPD_PID=$!
+  nix flake update --flake "$HOME/.config/home-manager" &
+  HM_UPD_PID=$!
+  wait "$SYS_UPD_PID" "$HM_UPD_PID"
+fi
+
+red "Switching system layer via nh..."
+nh os switch /etc/nixos
+
+red "Switching user layer via nh..."
+nh home switch "$HOME/.config/home-manager" -c nelson
+
+red "Done."
