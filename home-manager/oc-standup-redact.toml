@@ -1,0 +1,46 @@
+title = "oc-standup redaction rules"
+
+[[rules]]
+id = "synthetic-aws-key"
+description = "Synthetic AWS access key sentinel"
+regex = '''SYNTHETIC_AKIA[0-9A-Z]{16}'''
+
+[[rules]]
+id = "synthetic-github-pat"
+description = "Synthetic GitHub PAT sentinel"
+regex = '''ghp_SYNTHETIC[A-Za-z0-9]{26}'''
+
+[[rules]]
+id = "synthetic-jwt"
+description = "Synthetic JWT sentinel"
+regex = '''eyJ\.SYNTHETIC\.TOKEN'''
+
+[[rules]]
+id = "aws-access-key"
+description = "AWS access key ID"
+regex = '''\b(A3T[A-Z0-9]|AKIA|AGPA|AIDA|AROA|ASIA)[A-Z0-9]{16}\b'''
+
+[[rules]]
+id = "github-pat"
+description = "GitHub personal access token"
+regex = '''\bgh[pousr]_[A-Za-z0-9_]{20,}\b'''
+
+[[rules]]
+id = "bearer-token"
+description = "Authorization bearer token"
+regex = '''Authorization:\s*Bearer\s+[A-Za-z0-9._\-~=+/]+'''
+
+[[rules]]
+id = "jwt"
+description = "JWT-like token"
+regex = '''\beyJ[A-Za-z0-9_-]+\.[A-Za-z0-9_-]+\.[A-Za-z0-9_-]+\b'''
+
+[[rules]]
+id = "pem-private-key"
+description = "PEM private key block"
+regex = '''-----BEGIN [A-Z0-9 ]*PRIVATE KEY-----'''
+
+[[rules]]
+id = "generic-secret-assignment"
+description = "Generic secret assignment"
+regex = '''(?i)\b(password|passwd|secret|token|api[_-]?key|access[_-]?key)\b\s*[:=]\s*[^[:space:]]+'''

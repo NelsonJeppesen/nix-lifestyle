@@ -24,6 +24,7 @@
     ./mcp.nix # Model Context Protocol servers for AI tools
     ./neovim.nix # Neovim editor with LSP, plugins, and keymaps
     ./opencode.nix # OpenCode AI coding assistant
+    ./opencode-standup.nix # Standup note generation wrapper + /standup command
     ./zsh.nix # Zsh shell, prompt, aliases, and functions
   ];
 
