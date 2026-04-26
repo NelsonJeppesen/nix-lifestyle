@@ -17,6 +17,7 @@
     ./chrome-apps.nix # Chrome PWA wrappers (ChatGPT, OpenCode)
     ./editorconfig.nix # Global editorconfig settings
     ./firefox.nix # Firefox browser with custom search engines
+    ./flameshot.nix # Flameshot daemon + Print-key tray-trigger script
     ./git.nix # Git config, signing, aliases, difftastic
     ./gnome-extensions.nix # GNOME Shell extensions and their settings
     ./gnome.nix # GNOME desktop dconf settings and keybindings

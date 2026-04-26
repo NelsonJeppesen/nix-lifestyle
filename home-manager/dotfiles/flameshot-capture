@@ -1,0 +1,48 @@
+#!/usr/bin/env bash
+# flameshot-capture - GNOME Wayland workaround for flameshot CLI capture
+#
+# Background:
+#   `flameshot gui` (the CLI path) calls org.freedesktop.portal.Screenshot
+#   with parent_window="" hard-coded in screengrabber.cpp. As of GNOME 46,
+#   xdg-desktop-portal-gnome rejects empty parent_window strings, logging:
+#     "Failed to associate portal window with parent window ''"
+#   Result: "flameshot: error: Unable to capture screen" + Screenshot aborted.
+#
+#   See upstream:
+#     - https://github.com/flameshot-org/flameshot/issues/4663 (root cause)
+#     - https://github.com/flameshot-org/flameshot/issues/4600 (this workaround)
+#     - https://github.com/flameshot-org/flameshot/pull/4664   (open fix)
+#
+# Workaround:
+#   Flameshot's daemon exposes org.flameshot.Flameshot.captureScreen on the
+#   session bus. Calling it triggers Flameshot::gui() from inside the
+#   long-lived daemon, which has a real window context the portal accepts --
+#   the same code path the tray's "Take Screenshot" entry uses. This works
+#   even with `disabledTrayIcon = true`, so it does not require an
+#   appindicator/StatusNotifierWatcher to be present.
+#
+# Requires:
+#   - flameshot daemon running (services.flameshot enables a user systemd
+#     service tied to graphical-session.target)
+
+set -euo pipefail
+
+# Wait briefly for the daemon's bus name to appear (e.g. just after login).
+for _ in $(seq 1 20); do
+  if gdbus call --session \
+    --dest=org.freedesktop.DBus \
+    --object-path=/org/freedesktop/DBus \
+    --method=org.freedesktop.DBus.NameHasOwner \
+    org.flameshot.Flameshot 2>/dev/null | grep -q true; then
+    break
+  fi
+  sleep 0.1
+done
+
+if ! gdbus call --session \
+  --dest=org.flameshot.Flameshot \
+  --object-path=/ \
+  --method=org.flameshot.Flameshot.captureScreen >/dev/null 2>&1; then
+  notify-send -u critical "flameshot" "captureScreen failed; is the flameshot daemon running?"
+  exit 1
+fi
