@@ -7,6 +7,7 @@ let
       atuin
       coreutils
       findutils
+      gh
       git
       gitleaks
       gnugrep
