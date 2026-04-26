@@ -55,7 +55,17 @@
       # Auto-installed from npm on next opencode launch; routes agents
       # through GitHub Copilot + OpenAI fallback chains by default.
       # Docs: https://github.com/code-yeongyu/oh-my-openagent
-      plugin = [ "oh-my-openagent" ];
+      #
+      # open-plan-annotator: intercepts plan-mode and opens a browser UI
+      # for annotating/approving the agent's plan. Works with the new
+      # `prometheus` planner from oh-my-openagent; on approval it hands
+      # off to `sisyphus` (configured in dotfiles/open-plan-annotator.json,
+      # since the upstream default of `build` is hidden by oh-my-openagent).
+      # Docs: https://github.com/ndom91/open-plan-annotator
+      plugin = [
+        "oh-my-openagent"
+        "open-plan-annotator@latest"
+      ];
     };
 
     # ── Global context / instructions ─────────────────────────────

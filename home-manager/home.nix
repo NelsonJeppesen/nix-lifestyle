@@ -95,6 +95,8 @@
     file.".local/bin/update".source = ./dotfiles/update; # System update script
     file.".local/bin/n".source = ./dotfiles/n; # Quick notes launcher (fzf + nb)
     file.".terraform.d/plugin-cache/.empty".source = ./dotfiles/empty; # Ensure terraform plugin cache dir exists
+    file.".config/opencode/oh-my-openagent.json".source = ./dotfiles/oh-my-openagent.json; # Pin every oh-my-openagent agent/category to github-copilot (no Anthropic fallback)
+    file.".config/opencode/open-plan-annotator.json".source = ./dotfiles/open-plan-annotator.json; # open-plan-annotator: hand off approved plan to `sisyphus` (oh-my-openagent's implementation primary; `build` is hidden)
 
     # ── Packages ──────────────────────────────────────────────────────
     packages = [

@@ -1,0 +1,174 @@
+{
+  "$schema": "./node_modules/oh-my-openagent/dist/oh-my-opencode.schema.json",
+
+  "//": "Force every oh-my-openagent agent + category to use the github-copilot provider.",
+  "//1": "Both `model` (primary) and `fallback_models` (every retry slot) are pinned to",
+  "//2": "github-copilot/* so the hardcoded fallback chain that lists `anthropic` first",
+  "//3": "is never consulted. Managed by ~/.config/home-manager/opencode.nix.",
+
+  "model_fallback": true,
+
+  "agents": {
+    "sisyphus": {
+      "model": "github-copilot/claude-opus-4.7",
+      "fallback_models": [
+        "github-copilot/claude-opus-4.7",
+        "github-copilot/gpt-5.4",
+        "github-copilot/claude-sonnet-4.6"
+      ]
+    },
+    "sisyphus-junior": {
+      "model": "github-copilot/claude-sonnet-4.6",
+      "fallback_models": [
+        "github-copilot/claude-sonnet-4.6",
+        "github-copilot/gpt-5.4",
+        "github-copilot/claude-opus-4.7"
+      ]
+    },
+    "hephaestus": {
+      "model": "github-copilot/gpt-5.4",
+      "fallback_models": [
+        "github-copilot/gpt-5.4",
+        "github-copilot/claude-opus-4.7"
+      ]
+    },
+    "oracle": {
+      "model": "github-copilot/gpt-5.4",
+      "fallback_models": [
+        "github-copilot/gpt-5.4",
+        "github-copilot/gemini-3.1-pro",
+        "github-copilot/claude-opus-4.7"
+      ]
+    },
+    "librarian": {
+      "model": "github-copilot/gpt-5.4-mini",
+      "fallback_models": [
+        "github-copilot/gpt-5.4-mini",
+        "github-copilot/claude-haiku-4.5",
+        "github-copilot/gpt-5.4"
+      ]
+    },
+    "explore": {
+      "model": "github-copilot/gpt-5.4-mini",
+      "fallback_models": [
+        "github-copilot/gpt-5.4-mini",
+        "github-copilot/claude-haiku-4.5",
+        "github-copilot/gpt-5.4"
+      ]
+    },
+    "multimodal-looker": {
+      "model": "github-copilot/gpt-5.4",
+      "fallback_models": [
+        "github-copilot/gpt-5.4",
+        "github-copilot/gemini-3.1-pro",
+        "github-copilot/claude-opus-4.7"
+      ]
+    },
+    "prometheus": {
+      "model": "github-copilot/claude-opus-4.7",
+      "fallback_models": [
+        "github-copilot/claude-opus-4.7",
+        "github-copilot/gpt-5.4",
+        "github-copilot/gemini-3.1-pro"
+      ]
+    },
+    "metis": {
+      "model": "github-copilot/claude-opus-4.7",
+      "fallback_models": [
+        "github-copilot/claude-opus-4.7",
+        "github-copilot/gpt-5.4"
+      ]
+    },
+    "momus": {
+      "model": "github-copilot/gpt-5.4",
+      "fallback_models": [
+        "github-copilot/gpt-5.4",
+        "github-copilot/claude-opus-4.7",
+        "github-copilot/gemini-3.1-pro"
+      ]
+    },
+    "atlas": {
+      "model": "github-copilot/claude-sonnet-4.6",
+      "fallback_models": [
+        "github-copilot/claude-sonnet-4.6",
+        "github-copilot/gpt-5.4",
+        "github-copilot/claude-opus-4.7"
+      ]
+    },
+    "build": {
+      "model": "github-copilot/claude-opus-4.7",
+      "fallback_models": [
+        "github-copilot/claude-opus-4.7",
+        "github-copilot/gpt-5.4",
+        "github-copilot/claude-sonnet-4.6"
+      ]
+    }
+  },
+
+  "categories": {
+    "visual-engineering": {
+      "model": "github-copilot/gemini-3.1-pro",
+      "fallback_models": [
+        "github-copilot/gemini-3.1-pro",
+        "github-copilot/claude-opus-4.7",
+        "github-copilot/gpt-5.4"
+      ]
+    },
+    "ultrabrain": {
+      "model": "github-copilot/gpt-5.4",
+      "fallback_models": [
+        "github-copilot/gpt-5.4",
+        "github-copilot/gemini-3.1-pro",
+        "github-copilot/claude-opus-4.7"
+      ]
+    },
+    "deep": {
+      "model": "github-copilot/gpt-5.4",
+      "fallback_models": [
+        "github-copilot/gpt-5.4",
+        "github-copilot/claude-opus-4.7",
+        "github-copilot/gemini-3.1-pro"
+      ]
+    },
+    "artistry": {
+      "model": "github-copilot/gemini-3.1-pro",
+      "fallback_models": [
+        "github-copilot/gemini-3.1-pro",
+        "github-copilot/claude-opus-4.7",
+        "github-copilot/gpt-5.4"
+      ]
+    },
+    "quick": {
+      "model": "github-copilot/gpt-5.4-mini",
+      "fallback_models": [
+        "github-copilot/gpt-5.4-mini",
+        "github-copilot/claude-haiku-4.5",
+        "github-copilot/gemini-3-flash"
+      ]
+    },
+    "unspecified-low": {
+      "model": "github-copilot/claude-sonnet-4.6",
+      "fallback_models": [
+        "github-copilot/claude-sonnet-4.6",
+        "github-copilot/gpt-5.4-mini",
+        "github-copilot/gemini-3-flash"
+      ]
+    },
+    "unspecified-high": {
+      "model": "github-copilot/claude-opus-4.7",
+      "fallback_models": [
+        "github-copilot/claude-opus-4.7",
+        "github-copilot/gpt-5.4",
+        "github-copilot/gemini-3.1-pro"
+      ]
+    },
+    "writing": {
+      "model": "github-copilot/gemini-3-flash",
+      "fallback_models": [
+        "github-copilot/gemini-3-flash",
+        "github-copilot/claude-sonnet-4.6",
+        "github-copilot/gpt-5.4-mini"
+      ]
+    }
+  }
+}
