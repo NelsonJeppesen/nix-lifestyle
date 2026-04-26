@@ -67,6 +67,7 @@ MAX_ATUIN_ROWS=500
 MAX_SESSION_COUNT=8
 MAX_SESSION_BYTES=200000
 MAX_SECTION_LINES=40
+MAX_PRS=20
 REDACT_CONFIG_PATH="${HOME}/.config/home-manager/oc-standup-redact.toml"
 
 TMP_DIR="$(mktemp -d "${TMPDIR:-/tmp}/oc-standup.XXXXXX")"
@@ -86,13 +87,17 @@ else
 fi
 
 DAY_OF_WEEK="$(date -d "${TODAY}" +%u)"
-if [ "${DAY_OF_WEEK}" = "1" ]; then
-  START="$(date -d "${TODAY} -4 days" +%F)"
-else
-  START="$(date -d "${TODAY} -1 day" +%F)"
-fi
+# Fri/Sat/Sun/Mon walk back to the most recent Thursday so a Monday (or
+# weekend) standup covers Thu/Fri/Sat/Sun activity in one note.
+case "${DAY_OF_WEEK}" in
+5) START="$(date -d "${TODAY} -1 day" +%F)" ;;
+6) START="$(date -d "${TODAY} -2 days" +%F)" ;;
+7) START="$(date -d "${TODAY} -3 days" +%F)" ;;
+1) START="$(date -d "${TODAY} -4 days" +%F)" ;;
+*) START="$(date -d "${TODAY} -1 day" +%F)" ;;
+esac
 END="${TODAY}"
-OUTPUT_PATH="${STANDUP_DIR}/${START}.md"
+OUTPUT_PATH="${STANDUP_DIR}/${TODAY}.md"
 WINDOW_AFTER="${START} 00:00"
 WINDOW_BEFORE="${END} 00:00"
 START_MS="$(($(date -d "${WINDOW_AFTER}" +%s) * 1000))"
@@ -107,11 +112,13 @@ fi
 ATUIN_RAW="${RAW_DIR}/atuin.txt"
 SESSIONS_RAW="${RAW_DIR}/sessions.txt"
 GIT_RAW="${RAW_DIR}/git.txt"
+PRS_RAW="${RAW_DIR}/prs.txt"
 
 mkdir -p "${RAW_DIR}"
 : >"${ATUIN_RAW}"
 : >"${SESSIONS_RAW}"
 : >"${GIT_RAW}"
+: >"${PRS_RAW}"
 
 VISIBILITY=
 if [ -f "${VISIBILITY_FILE}" ]; then
@@ -239,12 +246,12 @@ collect_git() {
 
       {
         printf '=== REPO %s ===\n' "${repo_root}"
-        git -C "${repo_root}" log \
+        git -C "${repo_root}" log --remotes=origin \
           --since "${WINDOW_AFTER}" \
           --until "${WINDOW_BEFORE}" \
           --author "${repo_email}" \
           --no-merges \
-          --pretty=format:'%h %ae %s'
+          --pretty=format:'%h %aI %ae %s'
         printf '\n\n'
       } >>"${GIT_RAW}"
     fi
@@ -252,6 +259,61 @@ collect_git() {
     find "${SOURCE_ROOT}" \
       \( -path '*/node_modules' -o -path '*/.direnv' -o -path '*/result' -o -path '*/result-*' \) -prune -o \
       -name .git -type d -print
+  )
+}
+
+collect_prs() {
+  local search_json
+  local pr_count
+  local repo_with_owner
+  local pr_number
+  local pr_title
+  local pr_url
+  local pr_updated
+  local pr_decision
+
+  search_json="${TMP_DIR}/prs-search.json"
+  if ! gh search prs \
+    --author=@me \
+    --state=open \
+    --draft=false \
+    --updated=">=${START}" \
+    --limit "${MAX_PRS}" \
+    --json repository,number,title,url,updatedAt \
+    >"${search_json}" 2>/dev/null; then
+    return
+  fi
+
+  pr_count="$(jq 'length' "${search_json}")"
+  if [ "${pr_count}" = "0" ]; then
+    return
+  fi
+
+  while IFS=$'\t' read -r repo_with_owner pr_number pr_title pr_url pr_updated; do
+    [ -n "${pr_number}" ] || continue
+    pr_decision="$(gh pr view "${pr_number}" \
+      --repo "${repo_with_owner}" \
+      --json reviewDecision \
+      --jq '.reviewDecision // "NONE"' 2>/dev/null || echo "UNKNOWN")"
+    printf '%s|%s#%s|%s|%s|%s\n' \
+      "${pr_updated}" \
+      "${repo_with_owner}" \
+      "${pr_number}" \
+      "${pr_decision}" \
+      "${pr_title}" \
+      "${pr_url}" >>"${PRS_RAW}"
+  done < <(
+    jq -r '
+      .[]
+      | [
+          .repository.nameWithOwner,
+          (.number | tostring),
+          .title,
+          .url,
+          .updatedAt
+        ]
+      | @tsv
+    ' "${search_json}"
   )
 }
 
@@ -315,15 +377,18 @@ build_digest() {
   local redacted_atuin
   local redacted_sessions
   local redacted_git
+  local redacted_prs
 
   digest_path="$1"
   redacted_atuin="${TMP_DIR}/atuin.redacted.txt"
   redacted_sessions="${TMP_DIR}/sessions.redacted.txt"
   redacted_git="${TMP_DIR}/git.redacted.txt"
+  redacted_prs="${TMP_DIR}/prs.redacted.txt"
 
   redact_source_or_placeholder "${ATUIN_RAW}" "atuin" "${redacted_atuin}"
   redact_source_or_placeholder "${SESSIONS_RAW}" "sessions" "${redacted_sessions}"
   redact_source_or_placeholder "${GIT_RAW}" "git" "${redacted_git}"
+  redact_source_or_placeholder "${PRS_RAW}" "prs" "${redacted_prs}"
 
   {
     printf 'standup_window_start=%s\n' "${START}"
@@ -335,6 +400,8 @@ build_digest() {
     sed -n "1,${MAX_SECTION_LINES}p" "${redacted_sessions}"
     printf '\n## Git summary\n'
     sed -n "1,${MAX_SECTION_LINES}p" "${redacted_git}"
+    printf '\n## Open PR summary\n'
+    sed -n "1,${MAX_SECTION_LINES}p" "${redacted_prs}"
   } >"${digest_path}"
 }
 
@@ -390,7 +457,7 @@ ensure_notes_repo_ready() {
     exit 1
   fi
 
-  target_rel="standup/${START}.md"
+  target_rel="standup/${TODAY}.md"
   target_status="$(git -C "${NOTES_REPO}" status --porcelain --untracked-files=all -- "${target_rel}")"
   if [ -n "${target_status}" ] && printf '%s' "${target_status}" | grep -qv '^?? '; then
     echo "oc-standup: target standup file already has local modifications" >&2
@@ -420,8 +487,8 @@ commit_and_maybe_push() {
   local relative_path
   local commit_message
 
-  relative_path="standup/${START}.md"
-  commit_message="standup: ${START}"
+  relative_path="standup/${TODAY}.md"
+  commit_message="standup: ${TODAY}"
 
   git -C "${NOTES_REPO}" add -- "${relative_path}"
   if git -C "${NOTES_REPO}" diff --cached --quiet -- "${relative_path}"; then
@@ -438,10 +505,12 @@ commit_and_maybe_push() {
 collect_atuin
 collect_sessions
 collect_git
+collect_prs
 
 echo "atuin_raw=${ATUIN_RAW}"
 echo "sessions_raw=${SESSIONS_RAW}"
 echo "git_raw=${GIT_RAW}"
+echo "prs_raw=${PRS_RAW}"
 
 if [ "${DRY_RUN}" = "1" ]; then
   echo "dry-run: collectors complete; write/commit/push skipped"
