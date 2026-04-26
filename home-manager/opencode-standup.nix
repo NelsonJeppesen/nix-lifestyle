@@ -7,6 +7,7 @@ let
       atuin
       coreutils
       findutils
+      gawk
       gh
       git
       gitleaks

@@ -215,11 +215,15 @@ collect_git() {
   local repo_email
   local fallback_email
   local common_dir
+  local origin_url
   local seen_common_dirs
+  local seen_origins
 
   fallback_email="$(git config --global --get user.email || true)"
   seen_common_dirs="${TMP_DIR}/git-common-dirs.txt"
+  seen_origins="${TMP_DIR}/git-origins.txt"
   : >"${seen_common_dirs}"
+  : >"${seen_origins}"
 
   while IFS= read -r git_dir; do
     repo_root="$(dirname "${git_dir}")"
@@ -236,12 +240,22 @@ collect_git() {
     fi
 
     if git -C "${repo_root}" rev-parse --is-inside-work-tree >/dev/null 2>&1; then
-      common_dir="$(git -C "${repo_root}" rev-parse --git-common-dir 2>/dev/null || true)"
+      common_dir="$(git -C "${repo_root}" rev-parse --path-format=absolute --git-common-dir 2>/dev/null || true)"
       if [ -n "${common_dir}" ] && grep -Fxq "${common_dir}" "${seen_common_dirs}"; then
+        continue
+      fi
+      # Sibling clones (e.g. parallel worktrees t1/t2/t3/t4 of the same upstream
+      # repo) have distinct common-dirs but identical origin URLs — dedup by
+      # origin to avoid multiplying commit counts in the digest.
+      origin_url="$(git -C "${repo_root}" remote get-url origin 2>/dev/null || true)"
+      if [ -n "${origin_url}" ] && grep -Fxq "${origin_url}" "${seen_origins}"; then
         continue
       fi
       if [ -n "${common_dir}" ]; then
         printf '%s\n' "${common_dir}" >>"${seen_common_dirs}"
+      fi
+      if [ -n "${origin_url}" ]; then
+        printf '%s\n' "${origin_url}" >>"${seen_origins}"
       fi
 
       {
@@ -257,7 +271,7 @@ collect_git() {
     fi
   done < <(
     find "${SOURCE_ROOT}" \
-      \( -path '*/node_modules' -o -path '*/.direnv' -o -path '*/result' -o -path '*/result-*' \) -prune -o \
+      \( -path '*/node_modules' -o -path '*/.direnv' -o -path '*/.terraform' -o -path '*/result' -o -path '*/result-*' \) -prune -o \
       -name .git -type d -print
   )
 }
@@ -265,12 +279,8 @@ collect_git() {
 collect_prs() {
   local search_json
   local pr_count
-  local repo_with_owner
-  local pr_number
-  local pr_title
-  local pr_url
-  local pr_updated
-  local pr_decision
+  local pr_rows
+  local pr_lines_dir
 
   search_json="${TMP_DIR}/prs-search.json"
   if ! gh search prs \
@@ -289,32 +299,49 @@ collect_prs() {
     return
   fi
 
-  while IFS=$'\t' read -r repo_with_owner pr_number pr_title pr_url pr_updated; do
-    [ -n "${pr_number}" ] || continue
-    pr_decision="$(gh pr view "${pr_number}" \
-      --repo "${repo_with_owner}" \
-      --json reviewDecision \
-      --jq '.reviewDecision // "NONE"' 2>/dev/null || echo "UNKNOWN")"
-    printf '%s|%s#%s|%s|%s|%s\n' \
-      "${pr_updated}" \
-      "${repo_with_owner}" \
-      "${pr_number}" \
-      "${pr_decision}" \
-      "${pr_title}" \
-      "${pr_url}" >>"${PRS_RAW}"
-  done < <(
-    jq -r '
-      .[]
-      | [
-          .repository.nameWithOwner,
-          (.number | tostring),
-          .title,
-          .url,
-          .updatedAt
-        ]
-      | @tsv
-    ' "${search_json}"
-  )
+  pr_rows="${TMP_DIR}/prs-rows.tsv"
+  pr_lines_dir="${TMP_DIR}/pr-lines"
+  mkdir -p "${pr_lines_dir}"
+
+  jq -r '
+    .[]
+    | [
+        .repository.nameWithOwner,
+        (.number | tostring),
+        .title,
+        .url,
+        .updatedAt
+      ]
+    | @tsv
+  ' "${search_json}" >"${pr_rows}"
+
+  # Parallel `gh pr view` (xargs -P) with per-worker output files to
+  # avoid stdout interleaving; `timeout` caps any hung gh call.
+  local worker_script="${TMP_DIR}/pr-worker.sh"
+  cat >"${worker_script}" <<'WORKER'
+#!/usr/bin/env bash
+set -euo pipefail
+IFS=$'\t' read -r repo num title url updated outfile <<<"$1"
+decision="$(timeout 15 gh pr view "$num" \
+  --repo "$repo" \
+  --json reviewDecision \
+  --jq '.reviewDecision // "NONE"' 2>/dev/null || echo "UNKNOWN")"
+printf '%s|%s#%s|%s|%s|%s\n' \
+  "$updated" "$repo" "$num" "$decision" "$title" "$url" >"$outfile"
+WORKER
+  chmod +x "${worker_script}"
+
+  awk -F'\t' -v dir="${pr_lines_dir}" '{
+    printf "%s\t%s\t%s\t%s\t%s\t%s/%04d.line\n", $1, $2, $3, $4, $5, dir, NR
+  }' "${pr_rows}" |
+    xargs -d '\n' -P 8 -I{} "${worker_script}" {}
+
+  shopt -s nullglob
+  local pr_line_files=("${pr_lines_dir}"/*.line)
+  shopt -u nullglob
+  if [ "${#pr_line_files[@]}" -gt 0 ]; then
+    cat "${pr_line_files[@]}" >>"${PRS_RAW}"
+  fi
 }
 
 redaction_hits() {
@@ -412,7 +439,7 @@ summarize_digest() {
 
   digest_path="$1"
   output_path="$2"
-  prompt="Write a concise markdown standup note for the provided activity digest. Include sections: Yesterday, In Progress, Next. Use only information grounded in the attached digest. Do not mention secrets, tokens, or raw command noise."
+  prompt="Write a concise markdown standup note for the provided activity digest. Start directly with the section headings (## Yesterday, ## In Progress, ## Next) — do not include any top-level # heading or title; the wrapper adds it. Use only information grounded in the attached digest. Do not mention secrets, tokens, or raw command noise."
 
   if [ "${NO_LLM}" = "1" ]; then
     {
@@ -437,7 +464,7 @@ render_final_note() {
   final_note_path="$2"
 
   {
-    printf '# Standup %s\n\n' "${START}"
+    printf '# Standup %s\n\n' "${TODAY}"
     cat "${model_output_path}"
     printf '\n'
   } >"${final_note_path}"

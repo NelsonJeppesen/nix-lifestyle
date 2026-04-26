@@ -130,6 +130,7 @@
       #pkgs.redhat-official-fonts
       #pkgs.roboto-mono
       #pkgs.source-code-pro
+      pkgs.circumflex
 
       # ── GUI applications ────────────────────────────────────────────
       # Chrome itself is provided by programs.google-chrome (chrome.nix);
