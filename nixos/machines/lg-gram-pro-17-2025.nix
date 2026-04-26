@@ -11,6 +11,7 @@
     ../profiles/laptop_power.nix
     ../profiles/lg_gram_common.nix
     ../profiles/networking.nix
+    ../profiles/nix-ld.nix
     ../profiles/s3fs.nix
     ../profiles/tailscale.nix
     ../profiles/wifi.nix
