@@ -14,7 +14,6 @@
   # Import all per-application/concern modules
   imports = [
     ./chrome.nix # Google Chrome browser (extensions via NixOS managed policies)
-    ./chrome-apps.nix # Chrome PWA wrappers (ChatGPT, OpenCode)
     ./editorconfig.nix # Global editorconfig settings
     ./firefox.nix # Firefox browser with custom search engines
     ./flameshot.nix # Flameshot daemon + Print-key tray-trigger script
