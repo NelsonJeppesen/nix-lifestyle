@@ -30,6 +30,7 @@
       # { package = pkgs.gnomeExtensions.bitcoin-markets; } # BTC price in top bar
       { package = pkgs.gnomeExtensions.dynamic-music-pill; } # System tray icons
       { package = pkgs.gnomeExtensions.blur-my-shell; }
+      { package = pkgs.gnomeExtensions.penguin-ai-chatbot; }
 
       { package = pkgs.gnomeExtensions.appindicator; } # System tray icons
       { package = pkgs.gnomeExtensions.caffeine; } # Inhibit screen blanking
