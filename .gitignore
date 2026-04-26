@@ -1,3 +1,4 @@
 nixos/falcon/
 nixos/.hostname
 result
+home-manager/.sisyphus/
