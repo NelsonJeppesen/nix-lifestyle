@@ -30,6 +30,36 @@ let
   };
 
   memoryFile = "${config.home.homeDirectory}/.local/share/mcp-memory/memory.json";
+
+  # Helper for awslabs/mcp servers launched via `uv tool run` against PyPI.
+  # All such servers ship as `awslabs.<name>-mcp-server` on PyPI; we pin to
+  # @latest because uv caches resolved versions per-machine, so this is
+  # reproducible per-tool-cache, not per-eval. Default environment sets
+  # FASTMCP_LOG_LEVEL=ERROR to silence the framework's chatty INFO logs that
+  # would otherwise interleave with MCP stdio traffic; per-server `env`
+  # entries are merged on top.
+  mkAwslabsMcp =
+    {
+      name, # e.g. "cloudtrail" -> awslabs.cloudtrail-mcp-server
+      extraArgs ? [ ], # appended after the package spec (e.g. [ "--readonly" ])
+      env ? { }, # merged on top of the default environment
+      enabled ? false,
+    }:
+    {
+      type = "local";
+      inherit enabled;
+      command = [
+        (lib.getExe pkgs.uv)
+        "tool"
+        "run"
+        "awslabs.${name}-mcp-server@latest"
+      ]
+      ++ extraArgs;
+      environment = {
+        FASTMCP_LOG_LEVEL = "ERROR";
+      }
+      // env;
+    };
 in
 {
   # Shell aliases for quick OpenCode invocation
@@ -134,16 +164,9 @@ in
         #     from the shell (typically set per-project via direnv `.envrc`),
         #     so the agent operates against whatever account/region the user is
         #     currently in.
-        aws-api = {
-          type = "local";
-          enabled = false;
-          command = [
-            (lib.getExe pkgs.uv)
-            "tool"
-            "run"
-            "awslabs.aws-api-mcp-server@latest"
-          ];
-          environment = {
+        aws-api = mkAwslabsMcp {
+          name = "aws-api";
+          env = {
             READ_OPERATIONS_ONLY = "true";
           };
         };
@@ -160,37 +183,13 @@ in
         #
         # FASTMCP_LOG_LEVEL=ERROR silences the framework's chatty INFO logs that
         # would otherwise interleave with MCP stdio traffic.
-        cloudtrail = {
-          type = "local";
-          enabled = false;
-          command = [
-            (lib.getExe pkgs.uv)
-            "tool"
-            "run"
-            "awslabs.cloudtrail-mcp-server@latest"
-          ];
-          environment = {
-            FASTMCP_LOG_LEVEL = "ERROR";
-          };
-        };
+        cloudtrail = mkAwslabsMcp { name = "cloudtrail"; };
 
         # CloudWatch MCP server (awslabs/mcp): query CloudWatch logs, metrics,
         # and alarms. Read-only by virtue of the underlying API surface
         # (FilterLogEvents, GetMetricData, DescribeAlarms, …); IAM is the
         # ultimate gate. AWS_PROFILE / AWS_REGION inherited from the shell.
-        cloudwatch = {
-          type = "local";
-          enabled = false;
-          command = [
-            (lib.getExe pkgs.uv)
-            "tool"
-            "run"
-            "awslabs.cloudwatch-mcp-server@latest"
-          ];
-          environment = {
-            FASTMCP_LOG_LEVEL = "ERROR";
-          };
-        };
+        cloudwatch = mkAwslabsMcp { name = "cloudwatch"; };
 
         # IAM MCP server (awslabs/mcp): inspect users, roles, policies,
         # attachments, and simulate policy evaluations.
@@ -199,19 +198,9 @@ in
         # mutating tools (create/delete/attach/detach). Mutations to IAM
         # should always go through the regular `aws` CLI in a PTY so they
         # remain explicit and auditable.
-        iam = {
-          type = "local";
-          enabled = false;
-          command = [
-            (lib.getExe pkgs.uv)
-            "tool"
-            "run"
-            "awslabs.iam-mcp-server@latest"
-            "--readonly"
-          ];
-          environment = {
-            FASTMCP_LOG_LEVEL = "ERROR";
-          };
+        iam = mkAwslabsMcp {
+          name = "iam";
+          extraArgs = [ "--readonly" ];
         };
 
         # EKS MCP server (awslabs/mcp): query clusters, nodegroups, addons,
@@ -223,53 +212,21 @@ in
         # contents respectively; both should go through `kubectl` / `eksctl`
         # in a PTY so they stay explicit. AWS_PROFILE / AWS_REGION inherited
         # from the shell; KUBECONFIG falls through to the default ~/.kube/config.
-        eks = {
-          type = "local";
-          enabled = false;
-          command = [
-            (lib.getExe pkgs.uv)
-            "tool"
-            "run"
-            "awslabs.eks-mcp-server@latest"
-          ];
-          environment = {
-            FASTMCP_LOG_LEVEL = "ERROR";
-          };
-        };
+        eks = mkAwslabsMcp { name = "eks"; };
 
         # AWS Network MCP server (awslabs/mcp): inspect VPCs, subnets, route
         # tables, security groups, NACLs, TGWs, etc. Read-only by API surface;
         # useful for connectivity debugging without leaving the chat.
-        aws-network = {
-          type = "local";
-          enabled = false;
-          command = [
-            (lib.getExe pkgs.uv)
-            "tool"
-            "run"
-            "awslabs.aws-network-mcp-server@latest"
-          ];
-          environment = {
-            FASTMCP_LOG_LEVEL = "ERROR";
-          };
-        };
+        aws-network = mkAwslabsMcp { name = "aws-network"; };
 
         # AWS Documentation MCP server (awslabs/mcp): search and fetch official
         # AWS docs (service docs, API references, CLI references). No AWS creds
         # required — pure documentation retrieval. AWS_DOCUMENTATION_PARTITION
         # selects the doc set (`aws` for commercial, `aws-cn` / `aws-us-gov`
         # for the partitioned regions).
-        aws-documentation = {
-          type = "local";
-          enabled = false;
-          command = [
-            (lib.getExe pkgs.uv)
-            "tool"
-            "run"
-            "awslabs.aws-documentation-mcp-server@latest"
-          ];
-          environment = {
-            FASTMCP_LOG_LEVEL = "ERROR";
+        aws-documentation = mkAwslabsMcp {
+          name = "aws-documentation";
+          env = {
             AWS_DOCUMENTATION_PARTITION = "aws";
           };
         };
@@ -277,19 +234,7 @@ in
         # AWS Pricing MCP server (awslabs/mcp): query the public AWS Pricing
         # API for on-demand / reserved / savings-plan pricing. Useful for
         # cost-estimating Terraform changes before merging. Read-only.
-        aws-pricing = {
-          type = "local";
-          enabled = false;
-          command = [
-            (lib.getExe pkgs.uv)
-            "tool"
-            "run"
-            "awslabs.aws-pricing-mcp-server@latest"
-          ];
-          environment = {
-            FASTMCP_LOG_LEVEL = "ERROR";
-          };
-        };
+        aws-pricing = mkAwslabsMcp { name = "aws-pricing"; };
 
         # Billing & Cost Management MCP server (awslabs/mcp): query Cost
         # Explorer, budgets, anomalies, Savings Plans, and Storage Lens.
@@ -299,19 +244,7 @@ in
         # Known issue: awslabs/mcp#3258 — dynamic AWS_PROFILE selection can be
         # flaky; if you hit auth errors, set AWS_PROFILE explicitly in the
         # shell that launches opencode rather than relying on direnv handover.
-        billing-cost-management = {
-          type = "local";
-          enabled = false;
-          command = [
-            (lib.getExe pkgs.uv)
-            "tool"
-            "run"
-            "awslabs.billing-cost-management-mcp-server@latest"
-          ];
-          environment = {
-            FASTMCP_LOG_LEVEL = "ERROR";
-          };
-        };
+        billing-cost-management = mkAwslabsMcp { name = "billing-cost-management"; };
 
         # Kubernetes MCP server: query cluster resources, pods, logs, etc.
         k8s = {
