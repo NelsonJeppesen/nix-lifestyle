@@ -65,11 +65,20 @@ if [ "$FW_RUN" = 1 ]; then
   sudo fwupdmgr update
 fi
 
+# Authenticate flake fetches against GitHub to avoid the 60 req/hr
+# unauthenticated API limit (nixpkgs + home-manager + agenix + ... each
+# hit api.github.com on `flake update`). `gh auth token` reuses the
+# existing gh login; falls back to no-op if gh is unavailable.
+GH_TOKEN_ARGS=()
+if command -v gh >/dev/null && GH_TOKEN="$(gh auth token 2>/dev/null)" && [ -n "$GH_TOKEN" ]; then
+  GH_TOKEN_ARGS=(--access-tokens "github.com=$GH_TOKEN")
+fi
+
 if [ "$UPDATE_INPUTS" = 1 ]; then
   red "Refreshing flake inputs [system + user] in parallel..."
-  sudo nix flake update --flake /etc/nixos &
+  sudo nix flake update "${GH_TOKEN_ARGS[@]}" --flake /etc/nixos &
   SYS_UPD_PID=$!
-  nix flake update --flake "$HOME/.config/home-manager" &
+  nix flake update "${GH_TOKEN_ARGS[@]}" --flake "$HOME/.config/home-manager" &
   HM_UPD_PID=$!
   wait "$SYS_UPD_PID" "$HM_UPD_PID"
 fi
