@@ -164,7 +164,7 @@ in
         #     from the shell (typically set per-project via direnv `.envrc`),
         #     so the agent operates against whatever account/region the user is
         #     currently in.
-        aws-api = mkAwslabsMcp {
+        "[aws] api" = mkAwslabsMcp {
           name = "aws-api";
           env = {
             READ_OPERATIONS_ONLY = "true";
@@ -183,13 +183,13 @@ in
         #
         # FASTMCP_LOG_LEVEL=ERROR silences the framework's chatty INFO logs that
         # would otherwise interleave with MCP stdio traffic.
-        aws-cloudtrail = mkAwslabsMcp { name = "cloudtrail"; };
+        "[aws] cloudtrail" = mkAwslabsMcp { name = "cloudtrail"; };
 
         # CloudWatch MCP server (awslabs/mcp): query CloudWatch logs, metrics,
         # and alarms. Read-only by virtue of the underlying API surface
         # (FilterLogEvents, GetMetricData, DescribeAlarms, …); IAM is the
         # ultimate gate. AWS_PROFILE / AWS_REGION inherited from the shell.
-        aws-cloudwatch = mkAwslabsMcp { name = "cloudwatch"; };
+        "[aws] cloudwatch" = mkAwslabsMcp { name = "cloudwatch"; };
 
         # IAM MCP server (awslabs/mcp): inspect users, roles, policies,
         # attachments, and simulate policy evaluations.
@@ -198,7 +198,7 @@ in
         # mutating tools (create/delete/attach/detach). Mutations to IAM
         # should always go through the regular `aws` CLI in a PTY so they
         # remain explicit and auditable.
-        aws-iam = mkAwslabsMcp {
+        "[aws] iam" = mkAwslabsMcp {
           name = "iam";
           extraArgs = [ "--readonly" ];
         };
@@ -212,19 +212,19 @@ in
         # contents respectively; both should go through `kubectl` / `eksctl`
         # in a PTY so they stay explicit. AWS_PROFILE / AWS_REGION inherited
         # from the shell; KUBECONFIG falls through to the default ~/.kube/config.
-        aws-eks = mkAwslabsMcp { name = "eks"; };
+        "[aws] eks" = mkAwslabsMcp { name = "eks"; };
 
         # AWS Network MCP server (awslabs/mcp): inspect VPCs, subnets, route
         # tables, security groups, NACLs, TGWs, etc. Read-only by API surface;
         # useful for connectivity debugging without leaving the chat.
-        aws-network = mkAwslabsMcp { name = "aws-network"; };
+        "[aws] network" = mkAwslabsMcp { name = "aws-network"; };
 
         # AWS Documentation MCP server (awslabs/mcp): search and fetch official
         # AWS docs (service docs, API references, CLI references). No AWS creds
         # required — pure documentation retrieval. AWS_DOCUMENTATION_PARTITION
         # selects the doc set (`aws` for commercial, `aws-cn` / `aws-us-gov`
         # for the partitioned regions).
-        aws-documentation = mkAwslabsMcp {
+        "[aws] documentation" = mkAwslabsMcp {
           name = "aws-documentation";
           env = {
             AWS_DOCUMENTATION_PARTITION = "aws";
@@ -234,7 +234,7 @@ in
         # AWS Pricing MCP server (awslabs/mcp): query the public AWS Pricing
         # API for on-demand / reserved / savings-plan pricing. Useful for
         # cost-estimating Terraform changes before merging. Read-only.
-        aws-pricing = mkAwslabsMcp { name = "aws-pricing"; };
+        "[aws] pricing" = mkAwslabsMcp { name = "aws-pricing"; };
 
         # Billing & Cost Management MCP server (awslabs/mcp): query Cost
         # Explorer, budgets, anomalies, Savings Plans, and Storage Lens.
@@ -244,7 +244,7 @@ in
         # Known issue: awslabs/mcp#3258 — dynamic AWS_PROFILE selection can be
         # flaky; if you hit auth errors, set AWS_PROFILE explicitly in the
         # shell that launches opencode rather than relying on direnv handover.
-        aws-billing-cost-management = mkAwslabsMcp { name = "billing-cost-management"; };
+        "[aws] billing-cost-management" = mkAwslabsMcp { name = "billing-cost-management"; };
 
         # Kubernetes MCP server: query cluster resources, pods, logs, etc.
         k8s = {

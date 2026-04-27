@@ -88,7 +88,7 @@
     SOUND_POWER_SAVE_ON_BAT = 1;
 
     USB_AUTOSUSPEND = 1;
-    USB_DENYLIST_BTUSB = 1;
+    USB_DENYLIST_BTUSB = 0;
     USB_EXCLUDE_PHONE = 1;
 
     # AX211/BE200 hate powersave=1 — leave OFF on both rails (cost ~0.5-1 W

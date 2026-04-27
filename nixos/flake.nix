@@ -41,12 +41,14 @@
       mkSystem =
         hostname:
         nixpkgs.lib.nixosSystem {
-          inherit system;
           specialArgs = { inherit agenix disko; };
           modules = [
             ./configuration.nix
             ./machines/${hostname}.nix
-            { networking.hostName = hostname; }
+            {
+              networking.hostName = hostname;
+              nixpkgs.hostPlatform = system;
+            }
           ];
         };
     in

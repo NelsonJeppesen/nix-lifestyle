@@ -107,7 +107,7 @@
       # ── Nixpkgs maintainer tools ───────────────────────────────────
       pkgs.nixpkgs-review # Review tool for nixpkgs pull requests
       pkgs.nh # Nix helper: nicer CLI for nixos-rebuild + home-manager (used by `update`)
-      pkgs.nixfmt-rfc-style # Canonical RFC-style Nix formatter (per repo AGENTS.md)
+      pkgs.nixfmt # Canonical RFC-style Nix formatter (per repo AGENTS.md)
 
       # ── Games ───────────────────────────────────────────────────────
       #pkgs.mindustry
