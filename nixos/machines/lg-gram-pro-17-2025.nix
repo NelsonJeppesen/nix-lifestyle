@@ -1,7 +1,7 @@
 # LG Gram Pro 17 2025 17Z90TP-G (Intel Core Ultra, Meteor/Arrow Lake)
 { lib, pkgs, ... }:
 {
-  system.stateVersion = "26.05";
+  system.stateVersion = "25.11";
 
   imports = [
     # ../profiles/factorio.nix
