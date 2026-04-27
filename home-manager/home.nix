@@ -21,7 +21,6 @@
     ./gnome-extensions.nix # GNOME Shell extensions and their settings
     ./gnome.nix # GNOME desktop dconf settings and keybindings
     ./kitty.nix # Kitty terminal emulator
-    ./mcp.nix # Model Context Protocol servers for AI tools
     ./neovim.nix # Neovim editor with LSP, plugins, and keymaps
     ./opencode.nix # OpenCode AI coding assistant
     ./opencode-standup.nix # Standup note generation wrapper + /standup command
@@ -106,6 +105,7 @@
       # ── Nixpkgs maintainer tools ───────────────────────────────────
       pkgs.nixpkgs-review # Review tool for nixpkgs pull requests
       pkgs.nh # Nix helper: nicer CLI for nixos-rebuild + home-manager (used by `update`)
+      pkgs.nixfmt-rfc-style # Canonical RFC-style Nix formatter (per repo AGENTS.md)
 
       # ── Games ───────────────────────────────────────────────────────
       #pkgs.mindustry
