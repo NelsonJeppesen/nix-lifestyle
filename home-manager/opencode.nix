@@ -183,13 +183,13 @@ in
         #
         # FASTMCP_LOG_LEVEL=ERROR silences the framework's chatty INFO logs that
         # would otherwise interleave with MCP stdio traffic.
-        cloudtrail = mkAwslabsMcp { name = "cloudtrail"; };
+        aws-cloudtrail = mkAwslabsMcp { name = "cloudtrail"; };
 
         # CloudWatch MCP server (awslabs/mcp): query CloudWatch logs, metrics,
         # and alarms. Read-only by virtue of the underlying API surface
         # (FilterLogEvents, GetMetricData, DescribeAlarms, …); IAM is the
         # ultimate gate. AWS_PROFILE / AWS_REGION inherited from the shell.
-        cloudwatch = mkAwslabsMcp { name = "cloudwatch"; };
+        aws-cloudwatch = mkAwslabsMcp { name = "cloudwatch"; };
 
         # IAM MCP server (awslabs/mcp): inspect users, roles, policies,
         # attachments, and simulate policy evaluations.
@@ -198,7 +198,7 @@ in
         # mutating tools (create/delete/attach/detach). Mutations to IAM
         # should always go through the regular `aws` CLI in a PTY so they
         # remain explicit and auditable.
-        iam = mkAwslabsMcp {
+        aws-iam = mkAwslabsMcp {
           name = "iam";
           extraArgs = [ "--readonly" ];
         };
@@ -212,7 +212,7 @@ in
         # contents respectively; both should go through `kubectl` / `eksctl`
         # in a PTY so they stay explicit. AWS_PROFILE / AWS_REGION inherited
         # from the shell; KUBECONFIG falls through to the default ~/.kube/config.
-        eks = mkAwslabsMcp { name = "eks"; };
+        aws-eks = mkAwslabsMcp { name = "eks"; };
 
         # AWS Network MCP server (awslabs/mcp): inspect VPCs, subnets, route
         # tables, security groups, NACLs, TGWs, etc. Read-only by API surface;
@@ -244,7 +244,7 @@ in
         # Known issue: awslabs/mcp#3258 — dynamic AWS_PROFILE selection can be
         # flaky; if you hit auth errors, set AWS_PROFILE explicitly in the
         # shell that launches opencode rather than relying on direnv handover.
-        billing-cost-management = mkAwslabsMcp { name = "billing-cost-management"; };
+        aws-billing-cost-management = mkAwslabsMcp { name = "billing-cost-management"; };
 
         # Kubernetes MCP server: query cluster resources, pods, logs, etc.
         k8s = {
