@@ -75,6 +75,8 @@ in
     osd = "opencode run '/summary daily'"; # Daily shell history summary
     osw = "opencode run '/summary weekly'"; # Weekly shell history summary
     ocm = "opencode run 'create commit and push'"; # AI-assisted commit and push
+
+    ou = "rm -rvf ~/.cache/opencode/node_modules ~/.cache/opencode/packages/"; # clean plugin cache
   };
 
   # `os`: fzf-pick one of the last 16 sessions and resume it.
