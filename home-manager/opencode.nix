@@ -8,11 +8,21 @@
 # - Shell aliases for quick access (o, oc, or, etc.)
 # - Custom slash commands for shell history analysis and Terraform workflows
 # - Specialized agents for Terraform/DevOps and code review
-{ ... }:
+{ config, lib, ... }:
+let
+  # Derive a "no oh-my-openagent" variant of the managed opencode config
+  # by dropping that single plugin entry from settings.plugin.
+  # Used by the `op` alias to launch with all plugins except omo.
+  opencodeNoOmoSettings = config.programs.opencode.settings // {
+    plugin = lib.filter (p: !lib.hasPrefix "oh-my-openagent" p) config.programs.opencode.settings.plugin;
+  };
+in
 {
   # Shell aliases for quick OpenCode invocation
   programs.zsh.shellAliases = {
-    o = "opencode"; # Launch OpenCode
+    o = "opencode --pure"; # Launch vanilla OpenCode (no plugins)
+    omo = "opencode"; # Launch OpenCode with oh-my-openagent (plugins from config)
+    op = "OPENCODE_CONFIG=${config.xdg.configHome}/opencode/opencode.no-omo.json opencode"; # All plugins except oh-my-openagent
     oc = "opencode --continue"; # Continue previous conversation
     or = "opencode run"; # Run a command through OpenCode
 
@@ -65,6 +75,10 @@
         # since the upstream default of `build` is hidden by oh-my-openagent).
         # Docs: https://github.com/ndom91/open-plan-annotator
         "open-plan-annotator@latest"
+
+        # OpenCode plugin for interactive PTY management - run background
+        # processes, send input, read output with regex filtering
+        "opencode-pty"
       ];
     };
 
@@ -124,4 +138,10 @@
       '';
     };
   };
+
+  # Alternate config: identical to the managed opencode.json but with
+  # `oh-my-openagent` filtered out of the plugin list. Selected via the
+  # `op` alias above by setting OPENCODE_CONFIG.
+  xdg.configFile."opencode/opencode.no-omo.json".text =
+    builtins.toJSON opencodeNoOmoSettings;
 }
