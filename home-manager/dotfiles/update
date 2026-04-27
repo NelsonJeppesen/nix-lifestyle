@@ -48,6 +48,8 @@ command -v nh >/dev/null || {
   exit 1
 }
 
+sudo echo 'sudo verified'
+
 # Decide firmware: explicit force/skip wins; otherwise 1-in-100 random roll.
 FW_RUN=0
 if [ "$FW_FORCE" = 1 ]; then
