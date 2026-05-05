@@ -93,6 +93,41 @@
             ':echo "Arrow keys are disabled!"<CR>',
             { silent = true })
         end
+
+        -- Suppress :intro splash on bare `nvim` invocations.
+        vim.opt.shortmess:append("I")
+
+        -- Bare `nvim` (no file args, no stdin, single empty buffer): point
+        -- the buffer at a fresh path under ./.notes/ in the cwd so writes
+        -- land somewhere persistent (and gitignored — see git.nix), then
+        -- drop straight into insert mode.
+        -- Skips when opening files, piping into nvim, or restoring a session.
+        vim.api.nvim_create_autocmd("VimEnter", {
+          callback = function()
+            if vim.fn.argc() ~= 0 then return end
+            if vim.g.SessionLoad then return end
+            if vim.fn.line2byte("$") ~= -1 then return end -- stdin produced content
+            if #vim.api.nvim_list_bufs() ~= 1 then return end
+            local buf = vim.api.nvim_get_current_buf()
+            if vim.api.nvim_buf_get_name(buf) ~= "" then return end
+            if vim.bo[buf].buftype ~= "" then return end -- skip dashboards / special buffers
+
+            -- ./.notes/scratch-<6 hex>.md under the cwd. Lazily mkdir on
+            -- first :write via BufWritePre so we don't litter the directory
+            -- when the user just :q's without saving.
+            local id = string.format("%06x", math.random(0, 0xffffff))
+            local dir = vim.fn.getcwd() .. "/.notes"
+            local path = dir .. "/scratch-" .. id .. ".md"
+            vim.api.nvim_buf_set_name(buf, path)
+            vim.bo[buf].filetype = "markdown"
+            vim.api.nvim_create_autocmd("BufWritePre", {
+              buffer = buf,
+              once = true,
+              callback = function() vim.fn.mkdir(dir, "p") end,
+            })
+            vim.cmd("startinsert")
+          end,
+        })
       '';
 
       # ── Plugin configuration ────────────────────────────────────────

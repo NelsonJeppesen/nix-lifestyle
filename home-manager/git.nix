@@ -54,6 +54,7 @@
       # Global gitignore patterns
       ignores = [
         ".envrc" # direnv files often contain secrets
+        ".notes/" # nvim scratch buffers (see neovim.nix VimEnter autocmd)
       ];
 
       settings = {
