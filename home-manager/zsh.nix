@@ -203,10 +203,14 @@ in
         DIRENV_LOG_FORMAT = ""; # Silence direnv "loading .envrc" messages
         MANPAGER = "vim +Man!"; # Use vim as the man page viewer
         NIXPKGS_ALLOW_UNFREE = "1"; # Allow unfree packages in nix-shell
+        TFENV_CONFIG_DIR = "$HOME/.cache/tfenv"; # dont write to readonly nix store
       };
 
       # ── Shell aliases ─────────────────────────────────────────────
       shellAliases = {
+
+        okta-awscli = "uvx okta-awscli";
+
         # System
         reboot-bios = "systemctl reboot --firmware-setup"; # Reboot directly into UEFI/BIOS
 
