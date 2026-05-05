@@ -83,9 +83,9 @@
 
   home = {
     # NixOS/home-manager state version -- do not change without migration
-    # Pinned to released 25.11 semantics; bump only after reading
+    # Pinned to released 26.05 semantics; bump only after reading
     # https://nix-community.github.io/home-manager/release-notes.xhtml
-    stateVersion = "25.11";
+    stateVersion = "26.05";
     username = "nelson";
     homeDirectory = "/home/nelson";
 
