@@ -22,13 +22,16 @@
       # Auto-theme files: kitty switches between these based on the desktop's
       # color-scheme preference (org.freedesktop.appearance via xdg-desktop-portal).
       # Pair: Catppuccin Latte (light) / Catppuccin Mocha (dark).
-      ".config/kitty/light-theme.auto.conf".source =
-        pkgs.kitty-themes + "/share/kitty-themes/themes/Catppuccin-Latte.conf";
       ".config/kitty/dark-theme.auto.conf".source =
-        pkgs.kitty-themes + "/share/kitty-themes/themes/Catppuccin-Mocha.conf";
-      # No preference: default to dark
+        pkgs.kitty-themes + "/share/kitty-themes/themes/rose-pine.conf";
+
+      # On the GNOME desktop, the desktop reports the color preference as no-preference when
+      # the “Dark style” is not enabled. So use no-preference-theme.auto.conf to select colors
+      # for light mode on GNOME
       ".config/kitty/no-preference-theme.auto.conf".source =
-        pkgs.kitty-themes + "/share/kitty-themes/themes/Catppuccin-Mocha.conf";
+        pkgs.kitty-themes + "/share/kitty-themes/themes/rose-pine-moon.conf";
+      ".config/kitty/light-theme.auto.conf".source =
+        pkgs.kitty-themes + "/share/kitty-themes/themes/rose-pine-moon.conf";
     };
   };
 
