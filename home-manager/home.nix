@@ -187,12 +187,16 @@
 
       # Dependencies for the GNOME Quick Lofi extension (internet radio player)
       pkgs.socat # Multipurpose relay (used for mpv IPC)
-      pkgs.mpv # Media player (backend for Quick Lofi)
+      # youtubeSupport=false drops the yt-dlp wrapper PATH entry, which on
+      # nixpkgs unstable transitively pulls deno -> rusty_v8 (~1 GB librusty_v8.a).
+      # Linking deno OOMs on this 7.5 GiB laptop and isn't in the binary cache yet.
+      # Quick Lofi only streams internet radio URLs, so YouTube support is unused.
+      (pkgs.mpv.override { youtubeSupport = false; }) # Media player (backend for Quick Lofi)
 
       # Dependency for the GNOME SoundBar extension (top-bar audio visualizer)
       pkgs.cava # Console audio visualizer
 
-      pkgs.wireshark # Network protocol analyzer
+      # pkgs.wireshark # Network protocol analyzer
 
       # ── Networking tools ────────────────────────────────────────────
       pkgs.wireguard-tools # WireGuard VPN management
