@@ -1,5 +1,5 @@
 # LG Gram Pro 17 2025 17Z90TP-G (Intel Core Ultra, Meteor/Arrow Lake)
-{ lib, pkgs, ... }:
+{ pkgs, ... }:
 {
   system.stateVersion = "26.05";
 
@@ -77,8 +77,4 @@
     sof-tools
     alsa-utils
   ];
-
-  # lg_gram_common already disables Bluetooth at boot via mkDefault; allow
-  # override here if ever desired.
-  hardware.bluetooth.powerOnBoot = lib.mkForce false;
 }

@@ -6,8 +6,8 @@
 #   battery charge threshold via /sys/devices/platform/lg-laptop/battery_care_limit).
 # - Enables upower so battery state is reported to the desktop.
 #
-# Battery charge cap and Bluetooth power-on policy are now configured per
-# machine (or in laptop_power.nix) rather than here.
+# Battery charge cap is now configured per machine (or in laptop_power.nix)
+# rather than here.
 { lib, ... }:
 {
   # Fix ACPI errors:
