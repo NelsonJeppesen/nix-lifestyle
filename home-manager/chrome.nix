@@ -25,8 +25,15 @@
       "--password-store=basic" # don't prompt for kwallet/gnome-keyring
 
       # Wayland / GPU
+      # Chrome 147 removed the direct `--use-gl=egl` backend; only ANGLE-mediated
+      # backends remain. Without an ANGLE selection the GPU process crashes on
+      # boot and the whole pipeline (compositing, raster, video decode) falls
+      # back to software. `--use-angle=gl` is the only ANGLE backend currently
+      # compatible with `--ozone-platform=wayland` (vulkan errors out with
+      # "not compatible with Vulkan"); it routes through Mesa's iris driver
+      # and re-enables hardware compositing + VAAPI video decode.
       "--ozone-platform=wayland"
-      "--use-gl=egl"
+      "--use-angle=gl"
       "--ignore-gpu-blocklist"
       "--enable-features=VaapiVideoEncoder,VaapiVideoDecoder,WaylandWindowDecorations"
 
