@@ -92,6 +92,7 @@
     # ── Dotfile symlinks ──────────────────────────────────────────────
     # These map static config files from ./dotfiles/ into the home directory
     file.".config/curlrc".source = ./dotfiles/curlrc; # curl defaults (--no-progress-meter)
+    file.".terraform-version".source = ./dotfiles/terraform-version; # default to latest
     file.".config/fend/config.toml".source = ./dotfiles/fend.toml; # fend calculator config
     file.".digrc".source = ./dotfiles/digrc; # dig defaults (+noall +answer)
     file.".local/bin/update".source = ./dotfiles/update; # System update script
@@ -173,7 +174,8 @@
       # pkgs.opentofu # Open-source Terraform fork
       # pkgs.packer # Machine image builder
       pkgs.ssm-session-manager-plugin # AWS Systems Manager session plugin
-      pkgs.terraform # Infrastructure as code
+      # pkgs.terraform # Infrastructure as code
+      pkgs.tfenv
 
       # pkgs.codex
       # pkgs.telegram-desktop

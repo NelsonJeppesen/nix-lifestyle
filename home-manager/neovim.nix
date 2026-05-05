@@ -39,7 +39,7 @@
         pkgs.ruby-lsp # Ruby language server
 
         # Terraform
-        pkgs.terraform # Needed by terraform-ls for validation
+        # pkgs.terraform # Needed by terraform-ls for validation
         pkgs.terraform-ls # Official Terraform language server
         pkgs.tflint # Terraform linter
 

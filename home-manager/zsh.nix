@@ -237,15 +237,15 @@ in
         fc = "clear;fend";
 
         # Terraform aliases (short commands for daily IaC work)
-        t = "${pkgs.terraform}/bin/terraform";
-        ta = "${pkgs.terraform}/bin/terraform apply";
-        ti = "${pkgs.terraform}/bin/terraform init";
-        tp = "${pkgs.terraform}/bin/terraform plan";
-        tpv = "${pkgs.terraform}/bin/terraform plan -no-color | nvim -"; # Plan output in nvim for review
-        tpwb = "${pkgs.terraform}/bin/terraform plan -no-color | grep 'will be'"; # Quick summary of what will change
-        tsd = "echo $(${pkgs.terraform}/bin/terraform state list|fzf --multi)|xargs -n1 ${pkgs.terraform}/bin/terraform state rm"; # Fuzzy state remove
-        tss = "${pkgs.terraform}/bin/terraform state show $(${pkgs.terraform}/bin/terraform state list|fzf)"; # Fuzzy state show
-        tt = "echo $(${pkgs.terraform}/bin/terraform state list|fzf --multi)|xargs -n1 ${pkgs.terraform}/bin/terraform taint"; # Fuzzy taint
+        t = "terraform";
+        ta = "terraform apply";
+        ti = "terraform init";
+        tp = "terraform plan";
+        tpv = "terraform plan -no-color | nvim -"; # Plan output in nvim for review
+        tpwb = "terraform plan -no-color | grep 'will be'"; # Quick summary of what will change
+        tsd = "echo $(terraform state list|fzf --multi)|xargs -n1 terraform state rm"; # Fuzzy state remove
+        tss = "terraform state show $(terraform state list|fzf)"; # Fuzzy state show
+        tt = "echo $(terraform state list|fzf --multi)|xargs -n1 terraform taint"; # Fuzzy taint
 
         # Kubernetes aliases
         k = "kubectl";
