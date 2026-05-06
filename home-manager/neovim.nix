@@ -82,9 +82,10 @@
           update_in_insert = false,
         })
 
-        -- opencode.nvim configuration (set early for plugin init)
+        -- Required by opencode.nvim so file edits made by the agent are
+        -- picked up automatically; opencode_opts itself is set inside the
+        -- plugin's config block below.
         vim.o.autoread = true
-        vim.g.opencode_opts = {}
 
         -- Disable arrow keys to encourage proper vim motions.
         for _, key in ipairs({ "<Up>", "<Down>", "<Left>", "<Right>" }) do
@@ -420,7 +421,25 @@
           type = "lua";
           config = ''
             require('snacks').setup({
-                picker = { enabled = true},
+                -- input + picker are required for the full opencode.nvim UX
+                -- (completion + recent-prompt history in ask(), nicer
+                -- previews + multi-send in select()).
+                input = { enabled = true },
+                picker = {
+                  enabled = true,
+                  -- Upstream-recommended action so picker results can be
+                  -- multi-sent into opencode with <a-a>.
+                  actions = {
+                    opencode_send = function(...) return require("opencode").snacks_picker_send(...) end,
+                  },
+                  win = {
+                    input = {
+                      keys = {
+                        ["<a-a>"] = { "opencode_send", mode = { "n", "i" } },
+                      },
+                    },
+                  },
+                },
                 explorer = { enabled = true},
                 terminal = { enabled = true},
 
@@ -428,7 +447,6 @@
                 bigfile = { enabled = false },
                 dashboard = { enabled = false },
                 indent = { enabled = false },
-                input = { enabled = false },
                 notifier = { enabled = false },
                 quickfile = { enabled = false },
                 scope = { enabled = false },
@@ -523,14 +541,54 @@
           plugin = opencode-nvim;
           type = "lua";
           config = ''
-            -- opencode keybindings (set after plugin loads)
-            vim.keymap.set({ "n", "x" }, "<leader>oa", function() require("opencode").ask("@this: ", { submit = true }) end, { desc = "Ask opencode" })
-            vim.keymap.set({ "n", "x" }, "<leader>ox", function() require("opencode").select() end, { desc = "Execute opencode action" })
-            vim.keymap.set({ "n", "x" }, "<leader>op", function() require("opencode").prompt("@this") end, { desc = "Add to opencode prompt" })
-            vim.keymap.set({ "n", "t" }, "<leader>og", function() require("opencode").toggle() end, { desc = "Toggle opencode" })
-            vim.keymap.set("n", "<leader>os", function() require("opencode").command("session.half.page.up") end, { desc = "Scroll up" })
-            vim.keymap.set("n", "<leader>od", function() require("opencode").command("session.half.page.down") end, { desc = "Scroll down" })
-            vim.keymap.set("n", "<leader>oc", function() require("opencode").stop() end, { desc = "Stop opencode" })
+            -- Plugin options. Must be a table (even if empty) before any
+            -- opencode.nvim require(); the plugin reads vim.g.opencode_opts
+            -- on first call. Goto definition on opencode.Opts for the full
+            -- option surface.
+            ---@type opencode.Opts
+            vim.g.opencode_opts = {}
+
+            -- <leader>oa  Ask: free-form prompt with @-context completion
+            --             (snacks.input). End the prompt with a SPACE to keep
+            --             editing instead of submitting on <CR>.
+            vim.keymap.set({ "n", "x" }, "<leader>oa",
+              function() require("opencode").ask("@this: ", { submit = true }) end,
+              { desc = "Ask opencode" })
+
+            -- <leader>ox  Select: pick a built-in prompt (explain/fix/test/
+            --             implement/...) or a session/server command.
+            vim.keymap.set({ "n", "x" }, "<leader>ox",
+              function() require("opencode").select() end,
+              { desc = "Opencode: select prompt/action" })
+
+            -- <leader>op{motion}  Operator: add a range to opencode and
+            --             dot-repeat. e.g. <leader>opip = inner paragraph,
+            --             <leader>opap = around, <leader>op<leader>op = line.
+            -- Replaces the previous prompt("@this") binding which fired off a
+            -- bare context with no instruction attached.
+            vim.keymap.set({ "n", "x" }, "<leader>op",
+              function() return require("opencode").operator("@this ") end,
+              { desc = "Opencode operator (range -> opencode)", expr = true })
+
+            vim.keymap.set({ "n", "t" }, "<leader>og",
+              function() require("opencode").toggle() end,
+              { desc = "Toggle opencode" })
+            vim.keymap.set("n", "<leader>os",
+              function() require("opencode").command("session.half.page.up") end,
+              { desc = "Opencode scroll up" })
+            vim.keymap.set("n", "<leader>od",
+              function() require("opencode").command("session.half.page.down") end,
+              { desc = "Opencode scroll down" })
+            vim.keymap.set("n", "<leader>oc",
+              function() require("opencode").stop() end,
+              { desc = "Opencode stop" })
+
+            -- Notify when opencode finishes responding so we don't have to
+            -- pop the terminal back open to find out.
+            vim.api.nvim_create_autocmd("User", {
+              pattern = "OpencodeEvent:session.idle",
+              callback = function() vim.notify("opencode: idle") end,
+            })
           '';
         }
 
