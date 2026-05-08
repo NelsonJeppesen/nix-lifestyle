@@ -87,8 +87,12 @@
     # 1s autosuspend (10s caused pop-on-resume on some LG Gram revisions)
     SOUND_POWER_SAVE_ON_BAT = 1;
 
-    USB_AUTOSUSPEND = 1;
-    USB_DENYLIST_BTUSB = 0;
+    # USB autosuspend off across the board. With it on, Logitech Unifying
+    # receivers (046d:c52b, 046d:c548) and the internal BT controller
+    # (8087:0037) suspend after 2s idle and need ~50–500 ms to wake on the
+    # next HID event, presenting as mouse/keyboard hitching. Cost of
+    # leaving it off: ~0.5 W on battery — acceptable for the latency win.
+    USB_AUTOSUSPEND = 0;
     USB_EXCLUDE_PHONE = 1;
 
     # AX211/BE200 hate powersave=1 — leave OFF on both rails (cost ~0.5-1 W
@@ -102,6 +106,9 @@
   # iwd is preferred on modern Intel Wi-Fi (AX2xx / BE2xx).
   networking.networkmanager.wifi.backend = "iwd";
 
-  # powertop --auto-tune at boot (additive to TLP, mostly idempotent)
-  powerManagement.powertop.enable = true;
+  # powertop --auto-tune disabled: it unconditionally writes 'auto' to every
+  # USB device's power/control, which silently undoes USB_AUTOSUSPEND=0 above
+  # and re-introduces HID/BT input lag. TLP alone covers the same ground for
+  # the knobs we actually want.
+  powerManagement.powertop.enable = false;
 }
