@@ -34,10 +34,18 @@
     "acpi_mask_gpe=0x6e"
     # i8042/EC race at cold boot intermittently fails controller probe
     # ("Can't read CTR ... probe with driver i8042 failed with error -5"),
-    # leaving the internal keyboard dead. Force a reset and skip PNP path.
+    # leaving the internal keyboard dead until the next power cycle.
+    # `probe_defer` retries the probe via deferred-probe once dependent
+    # platform/EC drivers are up — this is what actually rescues the
+    # cold-boot CTR-read race; `reset=force` alone runs too late because
+    # the driver bails on the very first CTR read failure. `kbdreset`
+    # resets the keyboard device on the KBD port (independent of the
+    # controller reset). `nopnp` + `unlock` are kept for completeness.
     "i8042.reset=force"
     "i8042.nopnp"
     "i8042.unlock"
+    "i8042.probe_defer"
+    "i8042.kbdreset"
   ];
 
   boot.blacklistedKernelModules = [ "i915" ];
