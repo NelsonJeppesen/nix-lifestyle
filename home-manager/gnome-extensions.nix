@@ -32,6 +32,8 @@
       { package = pkgs.gnomeExtensions.blur-my-shell; }
       { package = pkgs.gnomeExtensions.penguin-ai-chatbot; }
 
+      { package = pkgs.gnomeExtensions.touchpad-gesture-customization; }
+
       { package = pkgs.gnomeExtensions.appindicator; } # System tray icons
       { package = pkgs.gnomeExtensions.caffeine; } # Inhibit screen blanking
       { package = pkgs.gnomeExtensions.clipboard-indicator; } # Clipboard history

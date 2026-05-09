@@ -91,7 +91,7 @@
 
     # Disable tap-to-click on touchpad (prefer physical clicks)
     "org/gnome/desktop/peripherals/touchpad" = {
-      tap-to-click = false;
+      tap-to-click = true;
     };
 
     # Hide notifications on the lock screen for privacy
