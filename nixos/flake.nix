@@ -23,6 +23,14 @@
       url = "github:nix-community/disko";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+
+    # comin: GitOps for NixOS — pulls this flake from a Git remote and
+    # switches the system on every push. Currently only enabled on
+    # `openclaw` (see profiles/comin.nix).
+    comin = {
+      url = "github:nlewo/comin";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
   };
 
   outputs =
@@ -31,6 +39,7 @@
       nixpkgs,
       agenix,
       disko,
+      comin,
       ...
     }:
     let
@@ -41,7 +50,7 @@
       mkSystem =
         hostname:
         nixpkgs.lib.nixosSystem {
-          specialArgs = { inherit agenix disko; };
+          specialArgs = { inherit agenix disko comin; };
           modules = [
             ./configuration.nix
             ./machines/${hostname}.nix

@@ -1,8 +1,16 @@
-# openclaw.nix - openclaw gateway service + dedicated user
+# openclaw.nix - openclaw gateway service + dedicated system user
 #
-# Sets up a systemd service running `openclaw gateway` as the openclaw
-# user, opens TCP/22 and TCP/18789, and prevents the host from sleeping
-# when the lid closes (this is a stationary deployment).
+# Runs `openclaw gateway` as a system service under a dedicated `openclaw`
+# user. Listens on TCP/18789. Lid-switch ignores keep the host running when
+# the laptop lid is closed (this is a stationary always-on deployment).
+#
+# Notes:
+# - HOME is forced to /var/lib/openclaw (managed by systemd's StateDirectory)
+#   so the service no longer depends on /home/openclaw being created at first
+#   login. Previously the missing home dir caused the unit to silently no-op
+#   until someone logged in graphically and triggered home creation.
+# - The insecure-package allowlist tracks `pkgs.openclaw.name` instead of a
+#   hardcoded version string, so it doesn't go stale on every upstream bump.
 {
   config,
   pkgs,
@@ -10,31 +18,54 @@
   ...
 }:
 {
-
   users.users.openclaw = {
-    isNormalUser = lib.mkDefault true;
-    extraGroups = lib.mkDefault [ "docker" ];
+    isSystemUser = true;
+    group = "openclaw";
+    extraGroups = [ "docker" ];
+    description = "OpenClaw gateway service account";
   };
+  users.groups.openclaw = { };
 
   environment.systemPackages = [ pkgs.openclaw ];
-  # openclaw 2026.2.26 has known CVEs that the upstream maintainer hasn't
-  # patched; pin the marker so nix-build doesn't refuse the package.
-  nixpkgs.config.permittedInsecurePackages = [
-    "openclaw-2026.2.26"
-  ];
+
+  # Upstream openclaw ships with known CVEs (see
+  # nixpkgs.knownVulnerabilities). Allowlist by computed name so version
+  # bumps don't require touching this file.
+  nixpkgs.config.permittedInsecurePackages = [ pkgs.openclaw.name ];
+
   systemd.services.openclaw = {
     description = "OpenClaw Gateway";
-    after = [ "network.target" ];
+    after = [ "network-online.target" ];
+    wants = [ "network-online.target" ];
     wantedBy = [ "multi-user.target" ];
     serviceConfig = {
       ExecStart = "${pkgs.openclaw}/bin/openclaw gateway";
       User = "openclaw";
+      Group = "openclaw";
+
+      # systemd creates /var/lib/openclaw owned by openclaw:openclaw on
+      # every start — no manual mkdir, no /home/openclaw, no login required.
+      StateDirectory = "openclaw";
+      StateDirectoryMode = "0750";
+      WorkingDirectory = "/var/lib/openclaw";
+      Environment = [ "HOME=/var/lib/openclaw" ];
+
       Restart = "on-failure";
       RestartSec = 5;
+
+      # Light sandboxing — openclaw is an exposed network service.
+      NoNewPrivileges = true;
+      PrivateTmp = true;
+      ProtectSystem = "strict";
+      ProtectHome = true;
+      ProtectKernelTunables = true;
+      ProtectKernelModules = true;
+      ProtectControlGroups = true;
+      ReadWritePaths = [ "/var/lib/openclaw" ];
     };
   };
 
-  # prevent sleep when laptop lid is closed
+  # Stationary deployment: never sleep on lid close, regardless of power.
   services.logind.lidSwitch = "ignore";
   services.logind.lidSwitchDocked = "ignore";
   services.logind.lidSwitchExternalPower = "ignore";
