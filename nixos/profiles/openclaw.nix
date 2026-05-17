@@ -39,7 +39,11 @@
     wants = [ "network-online.target" ];
     wantedBy = [ "multi-user.target" ];
     serviceConfig = {
-      ExecStart = "${pkgs.openclaw}/bin/openclaw gateway";
+      # --bind=tailnet listens only on the tailscale0 interface. Combined
+      # with trustedInterfaces in profiles/tailscale.nix, this makes the
+      # gateway reachable from any tailnet peer without exposing 18789 on
+      # the LAN or wider internet.
+      ExecStart = "${pkgs.openclaw}/bin/openclaw gateway --bind=tailnet";
       User = "openclaw";
       Group = "openclaw";
 
@@ -83,10 +87,12 @@
   '';
   services.desktopManager.gnome.extraGSettingsOverridePackages = [ pkgs.gnome-settings-daemon ];
 
+  # Only SSH is exposed on the public firewall; the gateway port (18789)
+  # is reached via tailscale0, which profiles/tailscale.nix marks as a
+  # trusted interface (all ports permitted on the tailnet).
   networking.firewall = {
     allowedTCPPorts = [
       22
-      18789
     ];
   };
 }
