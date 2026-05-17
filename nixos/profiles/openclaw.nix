@@ -67,11 +67,10 @@
 
   # Stationary deployment: never sleep on lid close, regardless of power.
   #
-  # logind alone is insufficient when a GNOME session is active —
-  # gnome-settings-daemon's power plugin installs an inhibitor and takes
-  # over lid handling, falling back to its own gsettings keys. Both layers
-  # must be set to "ignore"/"nothing" or the lid will still suspend the
-  # host on close.
+  # GNOME 49+ removed lid-close-*-action from gnome-settings-daemon and
+  # delegates lid handling back to logind, so HandleLidSwitch=ignore is
+  # again authoritative. We still pin GSD's idle-suspend keys to 'nothing'
+  # so an idle GNOME session can't suspend the box on its own.
   services.logind.settings.Login = {
     HandleLidSwitch = "ignore";
     HandleLidSwitchDocked = "ignore";
@@ -79,8 +78,6 @@
   };
   services.desktopManager.gnome.extraGSettingsOverrides = ''
     [org.gnome.settings-daemon.plugins.power]
-    lid-close-ac-action='nothing'
-    lid-close-battery-action='nothing'
     sleep-inactive-ac-type='nothing'
     sleep-inactive-battery-type='nothing'
   '';
