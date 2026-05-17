@@ -66,9 +66,25 @@
   };
 
   # Stationary deployment: never sleep on lid close, regardless of power.
-  services.logind.lidSwitch = "ignore";
-  services.logind.lidSwitchDocked = "ignore";
-  services.logind.lidSwitchExternalPower = "ignore";
+  #
+  # logind alone is insufficient when a GNOME session is active —
+  # gnome-settings-daemon's power plugin installs an inhibitor and takes
+  # over lid handling, falling back to its own gsettings keys. Both layers
+  # must be set to "ignore"/"nothing" or the lid will still suspend the
+  # host on close.
+  services.logind.settings.Login = {
+    HandleLidSwitch = "ignore";
+    HandleLidSwitchDocked = "ignore";
+    HandleLidSwitchExternalPower = "ignore";
+  };
+  services.desktopManager.gnome.extraGSettingsOverrides = ''
+    [org.gnome.settings-daemon.plugins.power]
+    lid-close-ac-action='nothing'
+    lid-close-battery-action='nothing'
+    sleep-inactive-ac-type='nothing'
+    sleep-inactive-battery-type='nothing'
+  '';
+  services.desktopManager.gnome.extraGSettingsOverridePackages = [ pkgs.gnome-settings-daemon ];
 
   networking.firewall = {
     allowedTCPPorts = [
