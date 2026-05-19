@@ -1,8 +1,21 @@
 # openclaw.nix - openclaw gateway service + dedicated system user
 #
 # Runs `openclaw gateway` as a system service under a dedicated `openclaw`
-# user. Listens on TCP/18789. Lid-switch ignores keep the host running when
-# the laptop lid is closed (this is a stationary always-on deployment).
+# user. The gateway binds to loopback (127.0.0.1:18789) and `tailscale serve`
+# fronts it with HTTPS on the tailnet, injecting tailscale identity headers
+# (`tailscale-user-login`) so Control UI/WS clients on the tailnet authenticate
+# without a shared token. Per upstream docs (docs/gateway/remote.md) this is
+# the preferred "always-on gateway in a tailnet" deployment. Lid-switch ignores
+# keep the host running when the laptop lid is closed (always-on deployment).
+#
+# Why not `--bind=tailnet` (prior config)?
+# - Direct tailnet bind works, but exposes the gateway on tailscale0:18789
+#   in plaintext ws:// with no HTTPS termination and no identity headers, so
+#   it relies on a shared token for auth.
+# - `tailscale serve` keeps the gateway loopback-only, terminates TLS via
+#   Tailscale's per-tailnet HTTPS cert, and gives us tokenless identity auth
+#   for the Control UI + WebSocket. PATH access to `tailscale` is provided
+#   by profiles/tailscale.nix.
 #
 # Notes:
 # - HOME is forced to /var/lib/openclaw (managed by systemd's StateDirectory)
@@ -35,15 +48,25 @@
 
   systemd.services.openclaw = {
     description = "OpenClaw Gateway";
-    after = [ "network-online.target" ];
+    after = [
+      "network-online.target"
+      "tailscaled.service"
+    ];
     wants = [ "network-online.target" ];
+    requires = [ "tailscaled.service" ];
     wantedBy = [ "multi-user.target" ];
+
+    # `tailscale` must be on PATH so openclaw can invoke `tailscale serve`
+    # and `tailscale whois` for identity-header verification.
+    path = [ pkgs.tailscale ];
+
     serviceConfig = {
-      # --bind=tailnet listens only on the tailscale0 interface. Combined
-      # with trustedInterfaces in profiles/tailscale.nix, this makes the
-      # gateway reachable from any tailnet peer without exposing 18789 on
-      # the LAN or wider internet.
-      ExecStart = "${pkgs.openclaw}/bin/openclaw gateway --bind=tailnet";
+      # `--tailscale serve` keeps gateway.bind at its loopback default and
+      # asks openclaw to configure `tailscale serve` for the Control UI +
+      # WebSocket. Combined with the gateway's `allowTailscale` default,
+      # tailnet peers authenticate via tailscale identity headers — no
+      # shared token required for Control UI/WS access.
+      ExecStart = "${pkgs.openclaw}/bin/openclaw gateway --tailscale serve";
       User = "openclaw";
       Group = "openclaw";
 
@@ -87,9 +110,11 @@
   '';
   services.desktopManager.gnome.extraGSettingsOverridePackages = [ pkgs.gnome-settings-daemon ];
 
-  # Only SSH is exposed on the public firewall; the gateway port (18789)
-  # is reached via tailscale0, which profiles/tailscale.nix marks as a
-  # trusted interface (all ports permitted on the tailnet).
+  # Only SSH is exposed on the public firewall. The gateway binds to
+  # loopback only; `tailscale serve` proxies tailnet traffic in-process
+  # via tailscaled, so no extra TCP port needs opening here. Tailnet peers
+  # still have full access via the trusted tailscale0 interface declared
+  # in profiles/tailscale.nix.
   networking.firewall = {
     allowedTCPPorts = [
       22

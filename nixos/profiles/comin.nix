@@ -27,7 +27,7 @@
           name = "main";
           operation = "switch";
         };
-        poller.period = 60;
+        poller.period = 100;
       }
     ];
     # Keep a few extra boot entries so a bad deploy is one rollback away.
