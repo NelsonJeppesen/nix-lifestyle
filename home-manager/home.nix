@@ -24,6 +24,7 @@
     ./neovim.nix # Neovim editor with LSP, plugins, and keymaps
     ./opencode.nix # OpenCode AI coding assistant
     ./opencode-standup.nix # Standup note generation wrapper + /standup command
+    ./tailscale-systray.nix # Tailscale's official system tray app (autostart via systemd --user)
     ./zsh.nix # Zsh shell, prompt, aliases, and functions
   ];
 
@@ -178,7 +179,7 @@
       pkgs.tfenv
 
       # pkgs.codex
-      # pkgs.telegram-desktop
+      pkgs.telegram-desktop
 
       # "A terminal spreadsheet multitool for discovering and arranging data"
       #pkgs.visidata

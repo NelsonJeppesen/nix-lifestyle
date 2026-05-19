@@ -11,8 +11,10 @@
 # - Run-or-Raise: focus-or-launch apps via keyboard shortcuts
 # - Quick Lofi: internet radio player with SomaFM stations
 # - SoundBar: real-time audio visualizer in the top bar (requires cava)
-# - Tailscale Status: Tailscale VPN status indicator in top bar
 # - GitHub Notifications Redux: GitHub notification count in top bar
+#
+# Tailscale's top-bar indicator is no longer a GNOME extension; the
+# upstream `tailscale systray` app is used instead (see tailscale-systray.nix).
 {
   pkgs,
   lib,
@@ -42,46 +44,6 @@
       { package = pkgs.gnomeExtensions.picture-of-the-day; } # Daily wallpaper
       { package = pkgs.gnomeExtensions.run-or-raise; } # Keyboard-driven app switching
       { package = pkgs.gnomeExtensions.unblank; } # Show wallpaper sharply on lock screen (no blur/dim)
-
-      # Tailscale Status, patched so runtime toggles use `tailscale set`
-      # instead of `tailscale up --reset`. With `services.tailscale.extraSetFlags
-      # = [ "--operator=nelson" ]`, `set` works as the unprivileged user; the
-      # original `up --reset` flow drops the operator and falls back to
-      # `pkexec`, which is what triggers the constant root prompts when
-      # changing exit nodes / shields / accept-routes from the top bar.
-      # Also skip `--login-server=` for `set` commands (it's not a valid flag
-      # for `tailscale set` and would cause the call to fail → pkexec retry).
-      {
-        package = pkgs.gnomeExtensions.tailscale-status.overrideAttrs (old: {
-          postPatch = (old.postPatch or "") + ''
-            substituteInPlace extension.js \
-              --replace-fail \
-                'cmdTailscale({ args: ["up", "--exit-node=" + node.address, "--reset"] })' \
-                'cmdTailscale({ args: ["set", "--exit-node=" + node.address], addLoginServer: false })' \
-              --replace-fail \
-                'cmdTailscale({ args: ["up", "--exit-node=", "--reset"] });' \
-                'cmdTailscale({ args: ["set", "--exit-node="], addLoginServer: false });' \
-              --replace-fail \
-                'cmdTailscale({ args: ["up", "--shields-up"] });' \
-                'cmdTailscale({ args: ["set", "--shields-up=true"], addLoginServer: false });' \
-              --replace-fail \
-                'cmdTailscale({ args: ["up", "--shields-up=false", "--reset"] });' \
-                'cmdTailscale({ args: ["set", "--shields-up=false"], addLoginServer: false });' \
-              --replace-fail \
-                'cmdTailscale({ args: ["up", "--accept-routes"] });' \
-                'cmdTailscale({ args: ["set", "--accept-routes=true"], addLoginServer: false });' \
-              --replace-fail \
-                'cmdTailscale({ args: ["up", "--accept-routes=false", "--reset"] });' \
-                'cmdTailscale({ args: ["set", "--accept-routes=false"], addLoginServer: false });' \
-              --replace-fail \
-                'cmdTailscale({ args: ["up", "--exit-node-allow-lan-access"] });' \
-                'cmdTailscale({ args: ["set", "--exit-node-allow-lan-access=true"], addLoginServer: false });' \
-              --replace-fail \
-                'cmdTailscale({ args: ["up", "--exit-node-allow-lan-access=false", "--reset"] });' \
-                'cmdTailscale({ args: ["set", "--exit-node-allow-lan-access=false"], addLoginServer: false });'
-          '';
-        });
-      }
 
       # Quick Lofi: play internet radio (SomaFM, etc.) from the GNOME top bar
       # Requires socat and mpv packages (installed in home.nix)

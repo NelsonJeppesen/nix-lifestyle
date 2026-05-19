@@ -36,6 +36,12 @@
     group = "openclaw";
     extraGroups = [ "docker" ];
     description = "OpenClaw gateway service account";
+    # Real shell + home so `sudo -iu openclaw` works for diagnostics
+    # (`openclaw gateway call …` reads ~/.openclaw/openclaw.json). The
+    # service itself still uses StateDirectory + Environment=HOME=… below.
+    home = "/var/lib/openclaw";
+    createHome = true;
+    shell = pkgs.bashInteractive;
   };
   users.groups.openclaw = { };
 
@@ -77,7 +83,7 @@
       WorkingDirectory = "/var/lib/openclaw";
       Environment = [ "HOME=/var/lib/openclaw" ];
 
-      Restart = "on-failure";
+      Restart = "always";
       RestartSec = 5;
 
       # Light sandboxing — openclaw is an exposed network service.
