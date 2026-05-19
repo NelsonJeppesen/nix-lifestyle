@@ -74,10 +74,13 @@
   '';
 
   # iwd power-save off (TLP's WIFI_PWR_* doesn't always reach iwd reliably).
+  # Note: `DriverQuirks.DefaultPowerSave` is not a real iwd option (the key
+  # in `iwd.config(5)` is `PowerSaveDisable`, and it expects a comma-separated
+  # driver glob, not a boolean). Radio power-save is handled by the iwlwifi
+  # modprobe options above instead.
   networking.wireless.iwd.settings = {
     General.EnableNetworkConfiguration = false;
     Scan.DisablePeriodicScan = false;
-    DriverQuirks.DefaultPowerSave = false;
   };
 
   # Surface useful audio diagnostics packages

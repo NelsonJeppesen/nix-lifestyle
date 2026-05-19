@@ -27,13 +27,22 @@
   # same SSID. With NetworkManager's default wpa_supplicant backend the host
   # ping-pongs between BSSIDs every few minutes (see journal: repeated
   # "disconnect from AP X for new auth to Y"). Switch to iwd, which roams
-  # more conservatively, and disable periodic scans + radio power-save since
-  # neither buys us anything on an AC-powered host.
+  # more conservatively by default.
+  #
+  # Notes on iwd settings we are NOT applying:
+  # - `Scan.DisablePeriodicScan = true` looks tempting on a stationary host
+  #   ("we're already connected, why keep scanning?") but it also prevents
+  #   iwd from discovering any SSID while disconnected, so the GNOME Wi-Fi
+  #   list comes up empty after boot until something else (a known network
+  #   appearing, a user-triggered scan) wakes scanning back up. Leave it at
+  #   the default (periodic scan enabled).
+  # - The often-cited `DriverQuirks.DefaultPowerSave = false` is not a real
+  #   iwd option (the key in `iwd.config(5)` is `PowerSaveDisable`, and it
+  #   expects a comma-separated driver glob, not a boolean). Radio power-save
+  #   is handled by the iwlwifi modprobe options below instead.
   networking.networkmanager.wifi.backend = "iwd";
   networking.wireless.iwd.settings = {
     General.EnableNetworkConfiguration = false;
-    Scan.DisablePeriodicScan = true;
-    DriverQuirks.DefaultPowerSave = false;
   };
 
   # Belt-and-braces: keep the iwlwifi radio out of power-save regardless of
