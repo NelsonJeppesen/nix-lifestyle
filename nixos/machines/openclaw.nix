@@ -48,7 +48,21 @@
   # Belt-and-braces: keep the iwlwifi radio out of power-save regardless of
   # what userspace asks for. Matches the AX211/BE200 tuning on the LG Gram
   # Pro 17 2025 — same chip family lives in this Gram too.
+  #
+  # `cfg80211 ieee80211_regdom=US` pins the regulatory domain at module load
+  # time. Without it the kernel relies on country IEs from beacons, and the
+  # local APs broadcast a `US 4` triplet (6 GHz UNII-5 LPI, operating class
+  # 137) that cfg80211 fails to parse:
+  #
+  #   cfg80211: failed to find band with country string 'us 4' and oper class 137
+  #
+  # On failure cfg80211 drops the offending BSS entries entirely, so iwd's
+  # scan results come back empty and GNOME's Wi-Fi list shows no networks
+  # at all (not just no 6 GHz ones). Pinning the regdomain to US skips the
+  # country-IE parsing path and restores 2.4/5 GHz discovery.
+  hardware.wirelessRegulatoryDatabase = true;
   boot.extraModprobeConfig = ''
+    options cfg80211 ieee80211_regdom=US
     options iwlwifi power_save=0 uapsd_disable=1
     options iwlmvm power_scheme=1
   '';
