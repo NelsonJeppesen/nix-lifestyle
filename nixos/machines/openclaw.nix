@@ -2,6 +2,7 @@
 # Managed remotely via comin (see profiles/comin.nix); manual rebuilds are
 # only needed for the initial bootstrap.
 #
+#
 # `laptop_power.nix` is intentionally NOT imported: this host is always on
 # AC, and TLP's powersave defaults trade gateway responsiveness for ~1W of
 # savings we don't care about here.
@@ -62,6 +63,7 @@
   # country-IE parsing path and restores 2.4/5 GHz discovery.
   hardware.wirelessRegulatoryDatabase = true;
   boot.extraModprobeConfig = ''
+    # Pin regdomain at module load (see comment block above).
     options cfg80211 ieee80211_regdom=US
     options iwlwifi power_save=0 uapsd_disable=1
     options iwlmvm power_scheme=1
