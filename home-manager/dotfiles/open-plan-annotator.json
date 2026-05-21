@@ -1,11 +1,9 @@
 {
   "//": "open-plan-annotator config (https://github.com/ndom91/open-plan-annotator).",
-  "//1": "Default handoff agent is `build`, but oh-my-openagent hides `build` and makes",
-  "//2": "`sisyphus` the implementation primary (with `prometheus` as the planner that",
-  "//3": "drives `submit_plan`). Point handoff at `sisyphus` so post-approval execution",
-  "//4": "lands on the active primary agent. Managed by ~/.config/home-manager/opencode.nix.",
+  "//1": "Hand approved plans off to the `build` agent (upstream default).",
+  "//2": "Managed by ~/.config/home-manager/opencode.nix.",
   "implementationHandoff": {
     "enabled": true,
-    "agent": "sisyphus"
+    "agent": "build"
   }
 }

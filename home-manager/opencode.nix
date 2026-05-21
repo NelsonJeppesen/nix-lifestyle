@@ -12,6 +12,12 @@
 # - Custom slash commands (changelog, commit-and-push, update-pr-desc).
 #   No custom agents are defined here yet — see ~/.config/opencode/AGENTS.md
 #   for the global context that ships with every session.
+#
+# This module is also imported into the NixOS `opencode` machine via the
+# home-manager NixOS module (see nixos/profiles/opencode.nix), so that the
+# headless `opencode serve` instance running as nelson gets the same
+# settings, MCP servers, plugins, context, and slash commands as the
+# interactive laptop.
 {
   config,
   lib,
@@ -19,16 +25,6 @@
   ...
 }:
 let
-  # oh-my-openagent is opt-in: kept out of the managed opencode.json so the
-  # default `opencode` (and `op`) launches without it. The `omo` alias layers
-  # it back in via OPENCODE_CONFIG -> opencode.with-omo.json. We can't go the
-  # other way (subtract via OPENCODE_CONFIG) because opencode MERGES configs
-  # rather than replacing them, so a filtered-down override cannot remove a
-  # plugin that the global config already declared.
-  opencodeWithOmoSettings = {
-    plugin = [ "oh-my-openagent@latest" ];
-  };
-
   memoryFile = "${config.home.homeDirectory}/.local/share/mcp-memory/memory.json";
 
   # Helper for awslabs/mcp servers launched via `uv tool run` against PyPI.
@@ -64,8 +60,7 @@ in
 {
   # Shell aliases for quick OpenCode invocation
   programs.zsh.shellAliases = {
-    omo = "OPENCODE_CONFIG=${config.xdg.configHome}/opencode/opencode.with-omo.json opencode"; # Layer oh-my-openagent on top of the managed config
-    o = "opencode"; # Plugins from managed config (currently: everything except oh-my-openagent)
+    o = "opencode"; # Plugins from managed config
     op = "opencode --pure"; # Launch vanilla OpenCode (no plugins)
 
     oc = "opencode --continue"; # Continue previous conversation
@@ -269,18 +264,8 @@ in
       };
 
       plugin = [
-        # NOTE: oh-my-openagent is intentionally NOT listed here. It's opt-in
-        # via the `omo` alias, which layers it back in through OPENCODE_CONFIG.
-        # See opencode.with-omo.json at the bottom of this file. Reason: opencode
-        # merges configs rather than replacing them, so once omo is in the
-        # global config nothing can remove it for a single launch.
-        # Docs: https://github.com/code-yeongyu/oh-my-openagent
-
         # open-plan-annotator: intercepts plan-mode and opens a browser UI
-        # for annotating/approving the agent's plan. Works with the new
-        # `prometheus` planner from oh-my-openagent; on approval it hands
-        # off to `sisyphus` (configured in dotfiles/open-plan-annotator.json,
-        # since the upstream default of `build` is hidden by oh-my-openagent).
+        # for annotating/approving the agent's plan.
         # Docs: https://github.com/ndom91/open-plan-annotator
         "open-plan-annotator@latest"
 
@@ -387,11 +372,6 @@ in
       update-pr-desc = builtins.readFile ./opencode/commands/update-pr-desc.md;
     };
   };
-
-  # Overlay config: merged ON TOP of the managed opencode.json by setting
-  # OPENCODE_CONFIG. Adds oh-my-openagent to the plugin list. Selected via
-  # the `omo` alias above.
-  xdg.configFile."opencode/opencode.with-omo.json".text = builtins.toJSON opencodeWithOmoSettings;
 
   # Ensure the memory file's parent directory exists before the memory
   # MCP server is invoked; mcp-server-memory will create the JSON file

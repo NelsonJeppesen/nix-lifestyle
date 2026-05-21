@@ -31,6 +31,17 @@
       url = "github:nlewo/comin";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+
+    # home-manager: NixOS module form is used on the `opencode` host so
+    # nelson's home-manager opencode config (../home-manager/opencode.nix)
+    # configures the headless `opencode serve` instance running as nelson.
+    # The user-layer flake at home-manager/flake.nix pins its own copy for
+    # interactive laptops; this input is independent and only consumed by
+    # nixos/profiles/opencode.nix.
+    home-manager = {
+      url = "github:nix-community/home-manager";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
   };
 
   outputs =
@@ -40,6 +51,7 @@
       agenix,
       disko,
       comin,
+      home-manager,
       ...
     }:
     let
@@ -50,7 +62,14 @@
       mkSystem =
         hostname:
         nixpkgs.lib.nixosSystem {
-          specialArgs = { inherit agenix disko comin; };
+          specialArgs = {
+            inherit
+              agenix
+              disko
+              comin
+              home-manager
+              ;
+          };
           modules = [
             ./configuration.nix
             ./machines/${hostname}.nix
