@@ -1,9 +1,19 @@
-{ pkgs, config, ... }:
+{
+  pkgs,
+  lib,
+  config,
+  ...
+}:
 
 {
   # make this a server; dont sleep when laptop is closed
   services.logind.settings.Login.HandleLidSwitch = "ignore";
-  networking.wireless.enable = false;
+
+  # Force wpa_supplicant off: NetworkManager's default wifi backend is
+  # wpa_supplicant, which auto-enables `networking.wireless`. We don't
+  # want both daemons fighting over the radio. mkForce because the
+  # collision is otherwise at the same priority and fails eval.
+  networking.wireless.enable = lib.mkForce false;
 
   networking.networkmanager.enable = true;
 

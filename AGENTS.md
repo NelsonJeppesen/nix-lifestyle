@@ -18,7 +18,7 @@ See `nixos/AGENTS.md` and `home-manager/AGENTS.md` for layer-specific rules.
 - "Test" = successful dry build with no activation; no other test suite exists
 
 ## CONVENTIONS (deviations from generic Nix style)
-- Files: hyphen-case (`macbook12-0.nix`, `lg-gram-pro-17-2025.nix`); attrs: snake_case
+- Files: hyphen-case (`opencode.nix`, `lg-gram-pro-17-2025.nix`); attrs: snake_case
 - Module body order: enable flags + package lists first, then large blobs (Lua, `extraConfig`) last
 - Imports order: builtins/pkgs → local `profiles/`/`machines/` → flake inputs via `specialArgs`
 - External deps: add as a flake input and pass through `specialArgs` (see `nixos/flake.nix` `mkSystem` for `agenix` + `disko`); do NOT introduce new `builtins.fetchGit`/`fetchTarball` calls

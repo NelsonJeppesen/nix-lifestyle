@@ -66,7 +66,7 @@
         lg-gram-14-2022 = mkSystem "lg-gram-14-2022";
         lg-gram-17-2022 = mkSystem "lg-gram-17-2022";
         lg-gram-pro-17-2025 = mkSystem "lg-gram-pro-17-2025";
-        macbook12-0 = mkSystem "macbook12-0";
+        opencode = mkSystem "opencode";
         macbook12-1 = mkSystem "macbook12-1";
         macbook12-2 = mkSystem "macbook12-2";
         openclaw = mkSystem "openclaw";
