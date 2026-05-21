@@ -70,14 +70,18 @@ in
       # `tailscale serve` overwrites any prior mapping for the same
       # source/target. The `|| true` keeps a transient tailscaled
       # hiccup from holding the unit down — opencode itself is healthy.
-      ExecStartPost = pkgs.writeShellScript "opencode-tailscale-serve" ''
+      #
+      # `+` prefix = run as root regardless of User=. `tailscale serve`
+      # talks to tailscaled's local API which is root-only, so the
+      # `opencode` service account can't publish the mapping itself.
+      ExecStartPost = "+${pkgs.writeShellScript "opencode-tailscale-serve" ''
         set -eu
         ${pkgs.tailscale}/bin/tailscale serve --bg --https=443 http://127.0.0.1:${toString port} || true
-      '';
+      ''}";
 
       # Tear down the serve mapping on stop so a disabled unit doesn't
-      # leave a stale 502 published on the tailnet.
-      ExecStopPost = "${pkgs.tailscale}/bin/tailscale serve --https=443 off";
+      # leave a stale 502 published on the tailnet. Also needs root.
+      ExecStopPost = "+${pkgs.tailscale}/bin/tailscale serve --https=443 off";
 
       User = "opencode";
       Group = "opencode";
