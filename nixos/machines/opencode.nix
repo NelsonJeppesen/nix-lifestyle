@@ -30,4 +30,9 @@
     # GitOps: this host reconfigures itself from the repo on every push.
     ../profiles/comin.nix
   ];
+  networking.networkmanager.wifi.backend = "iwd";
+  networking.wireless.iwd.settings = {
+    General.EnableNetworkConfiguration = false;
+  };
+
 }
