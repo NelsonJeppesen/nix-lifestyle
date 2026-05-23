@@ -20,6 +20,7 @@
     ../profiles/openclaw.nix
     ../profiles/tailscale.nix
     # ../profiles/wifi.nix
+    ../profiles/console.nix
     ../profiles/x86_64.nix
     ../profiles/zsh.nix
   ];

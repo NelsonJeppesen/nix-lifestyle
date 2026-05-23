@@ -23,6 +23,7 @@
     ../profiles/networking.nix
     ../profiles/x86_64.nix
 
+    ../profiles/console.nix
     # The actual workload + its tailnet HTTPS frontend.
     ../profiles/opencode.nix
     ../profiles/tailscale.nix
