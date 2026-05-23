@@ -9,6 +9,7 @@
 {
   imports = [
     ./chrome-policies.nix
+    ./console.nix
     ./plymouth.nix
   ];
 
@@ -22,7 +23,12 @@
   programs.evolution.enable = false;
 
   boot.loader.systemd-boot.configurationLimit = 14;
-  boot.loader.systemd-boot.consoleMode = "max";
+  # `max` picks the firmware's largest GOP mode, which on a HiDPI panel
+  # shrinks the fixed-size firmware glyph to ant-size. `auto` lets sd-boot
+  # pick a sensibly-sized mode (override per-host with a specific index if
+  # the auto pick is still off).
+  boot.loader.systemd-boot.consoleMode = "auto";
+  boot.loader.systemd-boot.editor = false;
   boot.loader.systemd-boot.enable = true;
 
   # Quiet boot: suppress kernel + udev chatter so Plymouth owns the screen
