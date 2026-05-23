@@ -36,6 +36,7 @@
     # the framebuffer resolution kmscon picks). Bump per-host if needed.
     extraConfig = ''
       font-size=14
+      palette=solarized
     '';
   };
 
