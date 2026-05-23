@@ -7,7 +7,7 @@
 # - Clipboard Indicator: clipboard history manager (Ctrl+Shift+I to toggle)
 # - Just Perfection: fine-tune GNOME Shell UI elements
 # - Overview Calculator: inline calculator in the Activities overview
-# - Picture of the Day: daily-rotating wallpaper (Stålenhag, Bing, APOD, …)
+# - Random Wallpaper: rotating wallpaper sourced from online providers
 # - Run-or-Raise: focus-or-launch apps via keyboard shortcuts
 # - Quick Lofi: internet radio player with SomaFM stations
 # - SoundBar: real-time audio visualizer in the top bar (requires cava)
@@ -30,18 +30,13 @@
     enable = true;
     extensions = [
       # { package = pkgs.gnomeExtensions.bitcoin-markets; } # BTC price in top bar
-      { package = pkgs.gnomeExtensions.dynamic-music-pill; } # System tray icons
-      { package = pkgs.gnomeExtensions.blur-my-shell; }
-      { package = pkgs.gnomeExtensions.penguin-ai-chatbot; }
-
-      { package = pkgs.gnomeExtensions.touchpad-gesture-customization; }
-
       { package = pkgs.gnomeExtensions.appindicator; } # System tray icons
+      { package = pkgs.gnomeExtensions.blur-my-shell; }
       { package = pkgs.gnomeExtensions.caffeine; } # Inhibit screen blanking
       { package = pkgs.gnomeExtensions.clipboard-indicator; } # Clipboard history
+      { package = pkgs.gnomeExtensions.dynamic-music-pill; } # System tray icons
       { package = pkgs.gnomeExtensions.just-perfection; } # UI customization tweaks
-      { package = pkgs.gnomeExtensions.overview-calculator; } # Calculator in Activities overview
-      { package = pkgs.gnomeExtensions.picture-of-the-day; } # Daily wallpaper
+      { package = pkgs.gnomeExtensions.random-wallpaper; } # Rotating wallpaper from online sources
       { package = pkgs.gnomeExtensions.run-or-raise; } # Keyboard-driven app switching
       { package = pkgs.gnomeExtensions.unblank; } # Show wallpaper sharply on lock screen (no blur/dim)
 
@@ -155,13 +150,6 @@
       llm-message-text-color = "rgb(255,255,255)";
       llm-provider = "openai";
       openai-model = "gpt-5.5";
-    };
-
-    # Picture of the Day: set desktop wallpaper from a daily-rotating source.
-    # Currently set to Simon Stålenhag artwork; see extension for other sources
-    # (bing, apod, wikimedia, etc.).
-    "org/gnome/shell/extensions/swsnr-picture-of-the-day" = {
-      selected-source = "stalenhag";
     };
 
     # AppIndicator: system tray icon appearance settings
