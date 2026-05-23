@@ -34,7 +34,6 @@
       { package = pkgs.gnomeExtensions.blur-my-shell; }
       { package = pkgs.gnomeExtensions.caffeine; } # Inhibit screen blanking
       { package = pkgs.gnomeExtensions.clipboard-indicator; } # Clipboard history
-      { package = pkgs.gnomeExtensions.dynamic-music-pill; } # System tray icons
       { package = pkgs.gnomeExtensions.just-perfection; } # UI customization tweaks
       { package = pkgs.gnomeExtensions.random-wallpaper; } # Rotating wallpaper from online sources
       { package = pkgs.gnomeExtensions.run-or-raise; } # Keyboard-driven app switching
