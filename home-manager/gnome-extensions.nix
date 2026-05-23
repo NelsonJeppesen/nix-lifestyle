@@ -288,6 +288,32 @@
         pipelines = pipelinesValue;
       };
 
+    # Random Wallpaper: rotate desktop wallpaper from online sources
+    # (Wallhaven "forest" keyword + Unsplash landscape). Two source IDs are
+    # defined: 1779512747744 (Wallhaven, enabled) and 1779512785834
+    # (Unsplash, disabled). History/timer state is intentionally omitted —
+    # those are ephemeral runtime values managed by the extension.
+    "org/gnome/shell/extensions/space-iflow-randomwallpaper" = {
+      auto-fetch = true;
+      change-lock-screen = false;
+      disable-hover-preview = true;
+      favorites-folder = "/home/nelson/Pictures/randomwallpaper@iflow.space";
+      fetch-on-startup = true;
+      hide-panel-icon = true;
+      hours = 23;
+      sources = [ "1779512747744" ];
+    };
+    "org/gnome/shell/extensions/space-iflow-randomwallpaper/backend-connection" = {
+      backend-connection-available = true;
+      clear-history = false;
+      open-folder = false;
+      pause-timer = false;
+      request-new-wallpaper = false;
+    };
+    "org/gnome/shell/extensions/space-iflow-randomwallpaper/sources/wallhaven/1779512747744" = {
+      keyword = "forest";
+    };
+
     # Lock screen: enable Blur My Shell hook but route through the empty
     # "nothing" pipeline so the lock screen stays sharp (paired with the
     # `unblank` extension above).

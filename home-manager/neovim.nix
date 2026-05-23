@@ -33,7 +33,7 @@
         pkgs.phpactor # PHP language server
 
         # Python
-        pkgs.python313Packages.python-lsp-server # Python LSP
+        # pkgs.python313Packages.python-lsp-server # Python LSP
 
         # Ruby
         pkgs.ruby-lsp # Ruby language server

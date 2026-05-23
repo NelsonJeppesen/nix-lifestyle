@@ -138,10 +138,10 @@
       # ── GUI applications ────────────────────────────────────────────
       # Chrome itself is provided by programs.google-chrome (chrome.nix);
       # chrome-apps.nix uses pkgs.google-chrome directly for PWA wrappers.
-      pkgs._1password-gui # Password manager
+      # pkgs._1password-gui # Password manager
 
       # ── Notes ───────────────────────────────────────────────────────
-      pkgs.qownnotes # Plain-text/markdown notes app with tray icon
+      # pkgs.qownnotes # Plain-text/markdown notes app with tray icon
       # Required by qownnotes (Qt6) to find GTK file-chooser GSettings
       # schema; without these it aborts with
       # "Settings schema 'org.gtk.Settings.FileChooser' is not installed".
@@ -178,7 +178,7 @@
       pkgs.tfenv
 
       # pkgs.codex
-      pkgs.telegram-desktop
+      # pkgs.telegram-desktop
 
       # "A terminal spreadsheet multitool for discovering and arranging data"
       #pkgs.visidata
@@ -196,12 +196,12 @@
       (pkgs.mpv.override { youtubeSupport = false; }) # Media player (backend for Quick Lofi)
 
       # Dependency for the GNOME SoundBar extension (top-bar audio visualizer)
-      pkgs.cava # Console audio visualizer
+      # pkgs.cava # Console audio visualizer
 
       # pkgs.wireshark # Network protocol analyzer
 
       # ── Networking tools ────────────────────────────────────────────
-      pkgs.wireguard-tools # WireGuard VPN management
+      # pkgs.wireguard-tools # WireGuard VPN management
 
       # ── Kubernetes tools ────────────────────────────────────────────
       # pkgs.fluxcd # GitOps continuous delivery for Kubernetes
