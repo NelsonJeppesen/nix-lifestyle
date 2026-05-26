@@ -138,7 +138,7 @@
       # ── GUI applications ────────────────────────────────────────────
       # Chrome itself is provided by programs.google-chrome (chrome.nix);
       # chrome-apps.nix uses pkgs.google-chrome directly for PWA wrappers.
-      # pkgs._1password-gui # Password manager
+      pkgs._1password-gui # Password manager
 
       # ── Notes ───────────────────────────────────────────────────────
       # pkgs.qownnotes # Plain-text/markdown notes app with tray icon

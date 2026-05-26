@@ -296,11 +296,10 @@
       auto-fetch = true;
       change-lock-screen = false;
       disable-hover-preview = true;
-      favorites-folder = "/home/nelson/Pictures/randomwallpaper@iflow.space";
       fetch-on-startup = true;
       hide-panel-icon = true;
-      hours = 23;
-      sources = [ "1779512747744" ];
+      hours = 24;
+      sources = [ "forest" ];
     };
     "org/gnome/shell/extensions/space-iflow-randomwallpaper/backend-connection" = {
       backend-connection-available = true;
@@ -309,8 +308,14 @@
       pause-timer = false;
       request-new-wallpaper = false;
     };
-    "org/gnome/shell/extensions/space-iflow-randomwallpaper/sources/wallhaven/1779512747744" = {
+
+    "org/gnome/shell/extensions/space-iflow-randomwallpaper/sources/general/forest" = {
+      type = 1;
+      name = "forest";
+    };
+    "org/gnome/shell/extensions/space-iflow-randomwallpaper/sources/wallhaven/forest" = {
       keyword = "forest";
+      color = "336600"; # #336600
     };
 
     # Lock screen: enable Blur My Shell hook but route through the empty
