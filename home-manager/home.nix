@@ -97,6 +97,7 @@
     file.".config/fend/config.toml".source = ./dotfiles/fend.toml; # fend calculator config
     file.".digrc".source = ./dotfiles/digrc; # dig defaults (+noall +answer)
     file.".local/bin/update".source = ./dotfiles/update; # System update script
+    file.".local/bin/firmware-update".source = ./dotfiles/firmware-update; # Firmware updates (interactive sudo)
     file.".local/bin/n".source = ./dotfiles/n; # Quick notes launcher (fzf + nb)
     file.".terraform.d/plugin-cache/.empty".source = ./dotfiles/empty; # Ensure terraform plugin cache dir exists
     file.".config/opencode/open-plan-annotator.json".source = ./dotfiles/open-plan-annotator.json; # open-plan-annotator: hand off approved plan to `sisyphus`

@@ -33,6 +33,37 @@
   nixpkgs.config.allowUnfree = true; # Chrome, steam etc
   programs.zsh.enable = true;
   security.sudo.extraConfig = "Defaults timestamp_timeout=600";
+
+  # Allow `nelson` to drive system rebuilds without a sudo password.
+  # The `update` script invokes:
+  #   1. `sudo nix flake update --flake /etc/nixos`         → /run/current-system/sw/bin/nix
+  #   2. `sudo nixos-rebuild switch --flake /etc/nixos`     → /run/current-system/sw/bin/nixos-rebuild
+  # Both are stable symlinks (`/run/current-system/sw/bin/*` re-point on
+  # activation, but the path itself never changes).
+  #
+  # We deliberately do NOT use `nh os switch` for the system layer here:
+  # nh always wraps activation in `sudo env … switch-to-configuration`,
+  # and sudo matches on argv[0] = `env`, which can't be safely allowlisted
+  # (allowing `sudo env` is equivalent to full root). `nh home switch`
+  # for the user layer needs no sudo at all and is still used.
+  #
+  # Firmware updates intentionally NOT covered: those live in the
+  # separate `firmware-update` script which prompts normally.
+  security.sudo.extraRules = [
+    {
+      users = [ "nelson" ];
+      commands = [
+        {
+          command = "/run/current-system/sw/bin/nixos-rebuild";
+          options = [ "NOPASSWD" ];
+        }
+        {
+          command = "/run/current-system/sw/bin/nix";
+          options = [ "NOPASSWD" ];
+        }
+      ];
+    }
+  ];
   services.dbus.implementation = "broker";
   users.defaultUserShell = pkgs.zsh;
 

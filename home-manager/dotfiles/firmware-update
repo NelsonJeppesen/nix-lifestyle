@@ -1,0 +1,41 @@
+#!/usr/bin/env bash
+# firmware-update - Refresh and apply firmware updates via fwupdmgr.
+#
+# Split out of `update` because firmware ops need an interactive sudo
+# prompt (the passwordless sudo rule in nixos/profiles/shared.nix only
+# covers `nixos-rebuild` / `nix`, not `fwupdmgr`). Run this manually
+# when you want firmware updates; it's not part of the regular `update`
+# flow anymore.
+#
+# Flags:
+#   -h, --help    Show this help.
+set -euo pipefail
+
+for arg in "$@"; do
+  case "$arg" in
+  -h | --help)
+    sed -n '/^# firmware-update -/,/^[^#]/p' "$0" | sed -e '$d' -e 's/^# \?//'
+    exit 0
+    ;;
+  *)
+    echo "firmware-update: unknown flag: $arg" >&2
+    exit 2
+    ;;
+  esac
+done
+
+red() {
+  tput setaf 1 2>/dev/null || true
+  echo -e "\n$*\033[0m"
+}
+
+command -v fwupdmgr >/dev/null || {
+  echo "firmware-update: fwupdmgr not found (expected services.fwupd.enable)." >&2
+  exit 1
+}
+
+red "Refreshing firmware metadata..."
+sudo fwupdmgr refresh
+
+red "Applying firmware updates..."
+sudo fwupdmgr update

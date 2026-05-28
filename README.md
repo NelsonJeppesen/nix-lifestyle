@@ -65,8 +65,9 @@ Then bring up the user layer (see `home-manager/README.md`).
 
 ```bash
 # Switch system then user via nh (sequential, fast path, no input refresh).
-# Firmware fires randomly ~1% of invocations.
-update                     # -u refresh inputs, -f force firmware, -F skip firmware, -a = -u -f
+# Passwordless sudo for nixos-rebuild/nix is configured in profiles/shared.nix.
+update                     # -u refresh inputs first, -h help
+firmware-update            # separate, interactive sudo
 
 # System only
 sudo nixos-rebuild switch --flake /etc/nixos          # hostname inferred from $HOSTNAME
