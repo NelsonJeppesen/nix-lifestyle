@@ -34,6 +34,7 @@
       { package = pkgs.gnomeExtensions.blur-my-shell; }
       { package = pkgs.gnomeExtensions.caffeine; } # Inhibit screen blanking
       { package = pkgs.gnomeExtensions.clipboard-indicator; } # Clipboard history
+      { package = pkgs.gnomeExtensions.draw-on-gnome; } # Draw/annotate on the screen
       { package = pkgs.gnomeExtensions.just-perfection; } # UI customization tweaks
       { package = pkgs.gnomeExtensions.random-wallpaper; } # Rotating wallpaper from online sources
       { package = pkgs.gnomeExtensions.run-or-raise; } # Keyboard-driven app switching
@@ -316,6 +317,7 @@
     "org/gnome/shell/extensions/space-iflow-randomwallpaper/sources/wallhaven/forest" = {
       keyword = "forest";
       color = "336600"; # #336600
+      minimal-resolution = "2560x1600";
     };
 
     # Lock screen: enable Blur My Shell hook but route through the empty

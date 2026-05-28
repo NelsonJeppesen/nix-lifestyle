@@ -6,10 +6,11 @@
 # - Accessibility settings (magnifier disabled)
 # - Touchpad, notifications, and sound preferences
 # - Custom keybindings for media controls and window management
-# - Flameshot Print-key binding (the daemon + capture-trigger live in flameshot.nix)
+# - Flameshot Print-key binding (the daemon itself lives in flameshot.nix)
 # - Nautilus sidebar bookmarks for quick access to project directories
 {
   config,
+  pkgs,
   ...
 }:
 {
@@ -157,19 +158,14 @@
       ];
     };
 
-    # Custom keybinding: Print key launches flameshot screenshot tool.
-    # Invokes the flameshot-capture script (installed by flameshot.nix)
-    # rather than `flameshot gui` directly -- the CLI path is broken on
-    # GNOME Wayland (xdg-desktop-portal-gnome rejects the empty parent_window
-    # flameshot v14.0.rc1 sends). The script calls
-    # org.flameshot.Flameshot.captureScreen on the session bus, which runs
-    # the capture from inside the daemon (real window context the portal
-    # accepts) -- same code path the tray's "Take Screenshot" entry uses,
-    # but without depending on the tray icon being enabled. See flameshot.nix
-    # for the full story.
+    # Custom keybinding: Print key launches flameshot.
+    # The CLI path used to be broken on GNOME Wayland (xdg-desktop-portal-gnome
+    # rejected the empty parent_window flameshot v14.0.rc1 sent), so this
+    # used to invoke a D-Bus-based workaround script. That bug is fixed in
+    # flameshot 13.3.0 (current pinned) — `flameshot gui` works directly.
     "org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom0" = {
       binding = "Print";
-      command = "${config.home.homeDirectory}/.local/bin/flameshot-capture";
+      command = "${pkgs.flameshot}/bin/flameshot gui";
       name = "flameshot screenshot";
     };
 
