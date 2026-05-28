@@ -12,6 +12,16 @@
     # Track nixos-unstable for latest packages (matches home-manager flake)
     nixpkgs.url = "github:nixos/nixpkgs/nixos-unstable";
 
+    # Pinned nixpkgs snapshot for Factorio. The upstream factorio
+    # derivation fetches an alpha tarball from factorio.com that requires
+    # account credentials. We prefetch that tarball once with
+    # `nix-prefetch-url`; pinning nixpkgs to a known rev keeps the
+    # version + fixed-output hash stable so future nixpkgs bumps don't
+    # change the expected hash and re-trigger an authenticated download.
+    # Bump this rev only when you intentionally upgrade Factorio (and
+    # re-prefetch the new tarball at that time).
+    nixpkgs-factorio.url = "github:nixos/nixpkgs/64c08a7ca051951c8eae34e3e3cb1e202fe36786";
+
     # agenix: age-encrypted secrets management
     agenix = {
       url = "github:ryantm/agenix";
@@ -48,6 +58,7 @@
     {
       self,
       nixpkgs,
+      nixpkgs-factorio,
       agenix,
       disko,
       comin,
@@ -68,6 +79,7 @@
               disko
               comin
               home-manager
+              nixpkgs-factorio
               ;
           };
           modules = [

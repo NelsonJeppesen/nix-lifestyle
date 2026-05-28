@@ -4,7 +4,7 @@
   system.stateVersion = "26.05";
 
   imports = [
-    # ../profiles/factorio.nix
+    ../profiles/factorio.nix
     ../profiles/desktop.nix
     ../profiles/gnome.nix
     ../profiles/intel.nix
