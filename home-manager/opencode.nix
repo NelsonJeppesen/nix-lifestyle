@@ -97,8 +97,8 @@ in
     web.enable = true; # Enable browser-based web UI
 
     settings = {
-      # Use Claude Opus 4.7 via GitHub Copilot as the default model
-      model = "github-copilot/claude-opus-4.7";
+      # Use Claude Opus 4.8 via GitHub Copilot as the default model
+      model = "github-copilot/claude-opus-4.8";
 
       # Disable automatic update checks / version popup at startup
       autoupdate = false;
