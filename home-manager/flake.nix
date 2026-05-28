@@ -34,6 +34,17 @@
       url = "github:NelsonJeppesen/gnome-github-notifications-redux/review-01";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+
+    # Flameshot built from upstream master (post-v14.0.rc1) which includes
+    # PR #4664 — the fix for the empty parent_window xdg-desktop-portal bug
+    # that breaks `flameshot gui` intermittently on GNOME Wayland.
+    # nixpkgs still ships v13.3.0, which lacks the fix. Pinned to the merge
+    # commit so updates are explicit. Drop once nixpkgs ships a release that
+    # includes 410cfae.
+    flameshot = {
+      url = "github:flameshot-org/flameshot/410cfae9e2ab32c376e3844c0fc41470362c3174";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
   };
 
   outputs =
@@ -43,6 +54,7 @@
       agenix,
       gitalias,
       gnome-github-notifications-redux,
+      flameshot,
       ...
     }:
     let
@@ -61,7 +73,12 @@
 
         # Pass extra arguments to all modules so they can access agenix and gitalias
         extraSpecialArgs = {
-          inherit agenix gitalias gnome-github-notifications-redux;
+          inherit
+            agenix
+            gitalias
+            gnome-github-notifications-redux
+            flameshot
+            ;
         };
       };
     };

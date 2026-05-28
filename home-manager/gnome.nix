@@ -10,7 +10,6 @@
 # - Nautilus sidebar bookmarks for quick access to project directories
 {
   config,
-  pkgs,
   ...
 }:
 {
@@ -158,14 +157,13 @@
       ];
     };
 
-    # Custom keybinding: Print key launches flameshot.
-    # The CLI path used to be broken on GNOME Wayland (xdg-desktop-portal-gnome
-    # rejected the empty parent_window flameshot v14.0.rc1 sent), so this
-    # used to invoke a D-Bus-based workaround script. That bug is fixed in
-    # flameshot 13.3.0 (current pinned) — `flameshot gui` works directly.
+    # Custom keybinding: Print key launches flameshot. Uses the patched
+    # flameshot from services.flameshot.package (see flameshot.nix) so the
+    # CLI path and the daemon are the same binary with the GNOME Wayland
+    # parent_window portal fix applied.
     "org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom0" = {
       binding = "Print";
-      command = "${pkgs.flameshot}/bin/flameshot gui";
+      command = "${config.services.flameshot.package}/bin/flameshot gui";
       name = "flameshot screenshot";
     };
 
