@@ -71,16 +71,27 @@
 
     # Clipboard Indicator: clipboard history with keyboard shortcuts
     "org/gnome/shell/extensions/clipboard-indicator" = {
+      blink-icon-on-copy = true;
       cache-size = 10; # Number of items to persist across restarts
       clear-history = [ ];
       disable-down-arrow = true;
       display-mode = 1; # Compact display mode
       history-size = 200; # Total items to keep in history
-      move-item-first = true; # Move selected item to top of history
+      move-item-first = false; # Move selected item to top of history
       next-entry = [ "<Shift><Control>p" ]; # Next clipboard entry
+      notify-on-copy = false;
+      open-at-cursor = true;
       paste-button = false;
+      paste-on-select = false;
       prev-entry = [ "<Shift><Control>o" ]; # Previous clipboard entry
+      preview-size = 45;
       private-mode-binding = [ ];
+      show-clear-history-button = false;
+      show-delete-button = false;
+      show-preview-button = false;
+      show-private-mode = false;
+      show-settings-button = false;
+      show-tag-button = false;
       strip-text = true; # Strip formatting when pasting
       toggle-menu = [ "<Shift><Control>i" ]; # Toggle clipboard menu
       topbar-preview-size = 9; # Characters shown in top bar preview
