@@ -370,6 +370,12 @@ in
 
       # /update-pr-desc: refresh the current PR's description from commits
       update-pr-desc = builtins.readFile ./opencode/commands/update-pr-desc.md;
+
+      # NOTE: the private /secret1 command is intentionally NOT registered
+      # here. Registering via readFile would embed its prompt in the
+      # world-readable Nix store. Instead it is an agenix secret
+      # (encrypted/opencode.secret1.age) decrypted at run time into
+      # ~/.config/opencode/commands/secret1.md — see home.nix age.secrets.
     };
   };
 
