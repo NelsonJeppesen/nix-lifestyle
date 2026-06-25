@@ -29,6 +29,14 @@
       flake = false;
     };
 
+    # Open Ralph Wiggum: CLI that wraps an AI coding agent in an iterative
+    # "ralph loop". Non-flake input: it's a Bun/TypeScript project with zero
+    # runtime deps, so ralph.nix wraps its ralph.ts source directly with bun.
+    open-ralph-wiggum = {
+      url = "github:Th0rgal/open-ralph-wiggum";
+      flake = false;
+    };
+
     # GitHub Notifications Redux: GNOME Shell extension for GitHub notifications
     gnome-github-notifications-redux = {
       url = "github:NelsonJeppesen/gnome-github-notifications-redux/review-01";
@@ -55,6 +63,7 @@
       gitalias,
       gnome-github-notifications-redux,
       flameshot,
+      open-ralph-wiggum,
       ...
     }:
     let
@@ -78,6 +87,7 @@
             gitalias
             gnome-github-notifications-redux
             flameshot
+            open-ralph-wiggum
             ;
         };
       };

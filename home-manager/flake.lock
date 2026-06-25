@@ -246,6 +246,22 @@
         "type": "github"
       }
     },
+    "open-ralph-wiggum": {
+      "flake": false,
+      "locked": {
+        "lastModified": 1780416820,
+        "narHash": "sha256-qe8+Wr+4JkUU6yUN0zw49aLNct7eOBOF2YSNVbzPy/M=",
+        "owner": "Th0rgal",
+        "repo": "open-ralph-wiggum",
+        "rev": "7559f267b227d74d82776048697615536c2a6b2a",
+        "type": "github"
+      },
+      "original": {
+        "owner": "Th0rgal",
+        "repo": "open-ralph-wiggum",
+        "type": "github"
+      }
+    },
     "root": {
       "inputs": {
         "agenix": "agenix",
@@ -253,7 +269,8 @@
         "gitalias": "gitalias",
         "gnome-github-notifications-redux": "gnome-github-notifications-redux",
         "home-manager": "home-manager_2",
-        "nixpkgs": "nixpkgs_2"
+        "nixpkgs": "nixpkgs_2",
+        "open-ralph-wiggum": "open-ralph-wiggum"
       }
     },
     "systems": {

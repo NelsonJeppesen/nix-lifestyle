@@ -24,6 +24,7 @@
     ./neovim.nix # Neovim editor with LSP, plugins, and keymaps
     ./opencode.nix # OpenCode AI coding assistant
     ./opencode-standup.nix # Standup note generation wrapper + /standup command
+    ./ralph.nix # Open Ralph Wiggum: iterative AI coding loop CLI (defaults to opencode)
     ./tailscale-systray.nix # Tailscale's official system tray app (autostart via systemd --user)
     ./zsh.nix # Zsh shell, prompt, aliases, and functions
   ];
