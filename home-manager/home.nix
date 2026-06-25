@@ -122,7 +122,7 @@
       pkgs.nixfmt # Canonical RFC-style Nix formatter (per repo AGENTS.md)
 
       # ── Games ───────────────────────────────────────────────────────
-      #pkgs.mindustry
+      pkgs.mindustry
       pkgs.vitetris # Terminal tetris clone
 
       # ── Fonts ───────────────────────────────────────────────────────
@@ -249,6 +249,33 @@
       pkgs.wget # HTTP/FTP file downloader
       pkgs.whois # Domain/IP WHOIS lookup
       pkgs.wl-clipboard # Wayland clipboard utilities (wl-copy, wl-paste)
+
+      # notify: shell-agnostic desktop-notification helper (thin libnotify
+      # wrapper) so the `notify` command behaves identically in zsh and scripts.
+      # Usage: notify SUMMARY [BODY]  (-u low|normal|critical, -i ICON)
+      (pkgs.writeShellApplication {
+        name = "notify";
+        runtimeInputs = [ pkgs.libnotify ];
+        text = ''
+          urgency=normal
+          icon=dialog-information
+          while getopts ":u:i:" opt; do
+            case "$opt" in
+              u) urgency=$OPTARG ;;
+              i) icon=$OPTARG ;;
+              *) ;;
+            esac
+          done
+          shift $((OPTIND - 1))
+
+          notify-send \
+            --app-name=notify \
+            --urgency="$urgency" \
+            --icon="$icon" \
+            "''${1:-Notification}" \
+            "''${2:-}"
+        '';
+      })
 
       #pkgs.mariadb
 
