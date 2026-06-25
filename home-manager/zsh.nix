@@ -11,6 +11,7 @@
 #     ar  -- AWS region switcher (mutates current shell)
 #     rst -- reset env (mutates current shell)
 #     wt  -- jump to a git worktree (inline; uses lazyworktree functions)
+#     curl-all-ips -- curl every A/AAAA record behind a DNS name (per-IP)
 #     nsr, rgreplace -- packaged via writeShellApplication
 #     (gets shellcheck + PATH wrapping). See ./bin/.
 # - Extensive shell aliases for terraform, kubectl, git, clipboard, and notes
@@ -123,7 +124,7 @@ in
         # Custom prompt layout. NOTE: $all is intentionally NOT used; it
         # would re-render every module already listed below (kubernetes,
         # git_branch, git_status, directory, battery, time, ...).
-        format = "$username$hostname$aws$nix_shell$cmd_duration$fill$kubernetes$line_break$directory$git_branch$git_status\${custom.worktree}$character";
+        format = "$username$hostname$aws$nix_shell$cmd_duration$fill$kubernetes$line_break$directory$git_branch$git_status$character";
 
         # Directory display: show up to 9 levels, highlight repo root
         directory = {
@@ -167,16 +168,6 @@ in
             }
           ];
         };
-
-        # Show worktree name when inside a git worktree
-        custom.worktree = {
-          # Detects both linked worktrees (.git is a file) and the main
-          # worktree (.git is a directory) -- anything inside a git repo.
-          when = "git rev-parse --is-inside-work-tree";
-          command = "basename \"$(git rev-parse --show-toplevel)\"";
-          format = "[wt:$output]($style) ";
-          style = "bold cyan";
-        };
       };
     };
 
@@ -210,6 +201,7 @@ in
       shellAliases = {
 
         okta-awscli = "uvx okta-awscli";
+        nless = "uvx --from nothing-less  nless";
 
         # System
         reboot-bios = "systemctl reboot --firmware-setup"; # Reboot directly into UEFI/BIOS
@@ -326,6 +318,46 @@ in
           : > ~/.aws/sticky.region
           unset AWS_PROFILE AWS_REGION
           clear
+        }
+
+        # curl-all-ips: curl every A/AAAA record behind a DNS name individually.
+        # Usage: curl-all-ips HOST [PATH] [PORT]   (PATH defaults to /, PORT to 443)
+        # Each request is pinned to one resolved IP via curl --resolve, so the
+        # Host header, SNI, and TLS cert validation all still target HOST while
+        # the connection actually hits that specific backend IP. Prints one line
+        # per IP: the IP plus HTTP status and total time (body discarded). Useful
+        # for spotting a single unhealthy/slow node behind a round-robin record.
+        curl-all-ips() {
+          local host="$1" path="''${2:-/}" port="''${3:-443}"
+          if [[ -z "$host" ]]; then
+            echo "usage: curl-all-ips HOST [PATH] [PORT]" >&2
+            return 1
+          fi
+          # Strip any scheme/path the user may have pasted into HOST.
+          host="''${host#https://}"
+          host="''${host#http://}"
+          host="''${host%%/*}"
+          [[ "$path" = /* ]] || path="/$path"
+
+          local -a ips
+          ips=(''${(f)"$(${pkgs.dnsutils}/bin/dig +short A "$host"; ${pkgs.dnsutils}/bin/dig +short AAAA "$host")"})
+          if (( ''${#ips} == 0 )); then
+            echo "curl-all-ips: no A/AAAA records for $host" >&2
+            return 1
+          fi
+
+          echo "$host -> ''${#ips} IP(s) on :$port$path"
+          local ip
+          for ip in "''${ips[@]}"; do
+            printf '%-39s ' "$ip"
+            ${pkgs.curl}/bin/curl \
+              --silent --show-error --output /dev/null \
+              --max-time 10 \
+              --resolve "$host:$port:$ip" \
+              --write-out 'status=%{http_code} time=%{time_total}s\n' \
+              "https://$host:$port$path" \
+              || echo "request failed"
+          done
         }
       '';
     };
