@@ -209,33 +209,6 @@
           '';
         }
 
-        # nvim-autopairs: treesitter-aware auto-pair for brackets, quotes, etc.
-        # Smarter than mini.pairs: skips pairing inside strings/comments and
-        # when the cursor is adjacent to word characters (no apostrophe woes).
-        # https://github.com/windwp/nvim-autopairs
-        {
-          plugin = nvim-autopairs;
-          type = "lua";
-          config = ''
-            require("nvim-autopairs").setup({
-              check_ts = true, -- use treesitter to decide context
-              ts_config = {
-                lua  = { "string" },        -- don't pair inside lua strings
-                javascript = { "template_string" },
-              },
-              fast_wrap = {                  -- <M-e> to wrap next obj in pair
-                map = "<M-e>",
-                chars = { "{", "[", "(", '"', "'" },
-                end_key = "$",
-                keys = "qwertyuiopzxcvbnmasdfghjkl",
-                check_comma = true,
-                highlight = "Search",
-                highlight_grey = "Comment",
-              },
-            })
-          '';
-        }
-
         # flash.nvim removed: was unused (s key bound to mini.surround).
 
         # treewalker.nvim: move around code in a syntax-tree-aware manner
@@ -376,7 +349,7 @@
             vim.lsp.enable('jsonls')
             vim.lsp.enable('nixd')
             -- vim.lsp.enable('phpactor')
-            vim.lsp.enable('pylsp')
+            -- vim.lsp.enable('pylsp')  -- package commented out in extraPackages
             vim.lsp.enable('ruby_lsp')
             vim.lsp.enable('terraformls')
             vim.lsp.enable('typos_lsp')

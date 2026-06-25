@@ -239,5 +239,4 @@ wk.add({
   -- Misc implicit bindings
   { "K",     desc = "Hover Documentation" },
   { "<C-s>", desc = "Save", mode = { "n", "i", "x" } },
-  { "<M-e>", desc = "Autopairs Fast Wrap", mode = "i" },
 })

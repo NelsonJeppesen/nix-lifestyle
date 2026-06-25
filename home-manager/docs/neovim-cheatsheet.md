@@ -23,7 +23,6 @@ use `hjkl`. Bare `nvim` opens a markdown scratch buffer at
 - [nvim-various-textobjs](#nvim-various-textobjs)
 - [Surround (mini.surround)](#surround-minisurround)
 - [treewalker.nvim (AST navigation)](#treewalkernvim-ast-navigation)
-- [nvim-autopairs](#nvim-autopairs)
 - [hardtime.nvim & precognition.nvim](#hardtimenvim--precognitionnvim)
 - [toggleterm.nvim](#toggletermnvim)
 - [bufferline / lualine / navic / fidget / noice](#bufferline--lualine--navic--fidget--noice)
@@ -67,7 +66,7 @@ Config: `home-manager/neovim/lua/which-key-nvim.lua`
 ## opencode.nvim (AI agent)
 
 Plugin: <https://github.com/nickjvandyke/opencode.nvim>
-Config: `home-manager/neovim.nix:540` · WhichKey group: `<leader>o`
+Config: `home-manager/neovim.nix:529` · WhichKey group: `<leader>o`
 
 ### Mental model
 
@@ -160,7 +159,7 @@ Inside the opencode terminal split, normal-mode:
 ## snacks.nvim (picker / explorer / input / terminal)
 
 Plugin: <https://github.com/folke/snacks.nvim>
-Config: `home-manager/neovim.nix:419`
+Config: `home-manager/neovim.nix:408`
 
 Only `picker`, `explorer`, `terminal`, and `input` modules are enabled.
 Most leader-key bindings under `<leader>f`, `<leader>s`, `<leader>g`, and
@@ -221,11 +220,11 @@ not snacks) — keep them separate, snacks-terminal is for plugin use.
 
 ## LSP & diagnostics
 
-Config: `home-manager/neovim.nix:347` (lspconfig) · servers in
+Config: `home-manager/neovim.nix:338` (lspconfig) · servers in
 `extraPackages` at `home-manager/neovim.nix:23`.
 
-Enabled servers: `bashls`, `jsonls`, `nixd`, `phpactor`, `pylsp`,
-`ruby_lsp`, `terraformls`, `typos_lsp`, `yamlls`. Diagnostics are
+Enabled servers: `bashls`, `jsonls`, `nixd`, `ruby_lsp`,
+`terraformls`, `typos_lsp`, `yamlls`. Diagnostics are
 rendered by tiny-inline-diagnostic.nvim — built-in `virtual_text` /
 `virtual_lines` are off to avoid double display.
 
@@ -255,7 +254,7 @@ rendered by tiny-inline-diagnostic.nvim — built-in `virtual_text` /
 
 ## trouble.nvim & todo-comments.nvim
 
-Config: `home-manager/neovim.nix:374` (trouble), `:382` (todo)
+Config: `home-manager/neovim.nix:365` (trouble), `:374` (todo)
 
 | Key | View |
 |---|---|
@@ -272,7 +271,7 @@ Inside the trouble window: `]t` / `[t` next/prev todo comment,
 
 ## blink.cmp & Copilot
 
-Config: `home-manager/neovim.nix:614` (blink), `:599` (copilot.lua)
+Config: `home-manager/neovim.nix:602` (blink), `:587` (copilot.lua)
 
 Sources, in priority order: **copilot** (score_offset 100) → LSP → path →
 snippets → buffer. Copilot ghost text is shown via blink (suggestion mode
@@ -287,7 +286,6 @@ in `copilot.lua` itself is **off** to avoid double suggestions).
 | `<C-e>` | i | Cancel/hide menu |
 | `<Tab>` | i | Snippet jump forward |
 | `<S-Tab>` | i | Snippet jump backward |
-| `<M-e>` | i | nvim-autopairs **fast wrap** (wrap next obj in pair) |
 
 Documentation popup auto-shows after 100ms; signature help is on with a
 rounded border.
@@ -297,7 +295,7 @@ rounded border.
 ## oil.nvim (filesystem-as-buffer)
 
 Plugin: <https://github.com/stevearc/oil.nvim>
-Config: `home-manager/neovim.nix:271`
+Config: `home-manager/neovim.nix:247`
 
 Open with `<leader>e` or `:Oil`. The buffer **is** the directory — edit it
 like text, `:w` to apply.
@@ -323,8 +321,8 @@ in the sign column come from `oil-git-status-nvim`.
 
 ## Git (gitsigns / diffview / headhunter)
 
-Config: `home-manager/neovim.nix:780` (gitsigns), `:809` (diffview),
-`:790` (headhunter)
+Config: `home-manager/neovim.nix:768` (gitsigns), `:797` (diffview),
+`:778` (headhunter)
 
 ### `<leader>g` Git pickers (Snacks)
 
@@ -366,7 +364,7 @@ command for one-offs).
 
 ## treesitter & textobjects
 
-Config: `home-manager/neovim.nix:466` (parsers), `:489` (textobjects).
+Config: `home-manager/neovim.nix:455` (parsers), `:477` (textobjects).
 All grammars bundled via `withAllGrammars`. Folding is intentionally
 **disabled**.
 
@@ -395,7 +393,7 @@ All moves push to the jumplist (`set_jumps = true`).
 Each module is enabled per-feature (no monolithic setup).
 
 ### mini.basics — sane defaults
-Config: `home-manager/neovim.nix:145`. Enables `options.basic` +
+Config: `home-manager/neovim.nix:149`. Enables `options.basic` +
 `extra_ui`, `mappings.basic` + `windows` + `move_with_alt`.
 Bindings it provides:
 
@@ -408,7 +406,7 @@ Bindings it provides:
 | `<C-s>` | Save buffer (n/i/x) |
 
 ### mini.ai — extended text objects
-Config: `home-manager/neovim.nix:177`. Adds treesitter-backed `o`/`f`/`c`
+Config: `home-manager/neovim.nix:180`. Adds treesitter-backed `o`/`f`/`c`
 on top of standard targets:
 
 | Pair | Object |
@@ -426,7 +424,7 @@ on top of standard targets:
 See dedicated section below.
 
 ### mini.indentscope
-Config: `home-manager/neovim.nix:856`. Animated indent-scope guide.
+Config: `home-manager/neovim.nix:844`. Animated indent-scope guide.
 Adds text objects:
 
 | Key | Action |
@@ -435,7 +433,7 @@ Adds text objects:
 | `ai` / `ii` | Around / inside scope (clashes with various-textobjs indent — various-textobjs wins) |
 
 ### mini.animate
-Config: `home-manager/neovim.nix:865`. Smooth scroll + window resize
+Config: `home-manager/neovim.nix:853`. Smooth scroll + window resize
 animations (cursor handled by smear-cursor; open/close disabled to avoid
 fighting noice/snacks).
 
@@ -444,7 +442,7 @@ fighting noice/snacks).
 ## nvim-various-textobjs
 
 Plugin: <https://github.com/chrisgrieser/nvim-various-textobjs>
-Config: `home-manager/neovim.nix:200`. `useDefaults = true`.
+Config: `home-manager/neovim.nix:203`. `useDefaults = true`.
 
 Most-used:
 
@@ -466,7 +464,7 @@ Most-used:
 ## Surround (mini.surround)
 
 Plugin: <https://github.com/echasnovski/mini.surround>
-Config: `home-manager/neovim.nix:167`. `s` is the prefix (overrides
+Config: `home-manager/neovim.nix:170`. `s` is the prefix (overrides
 default vim `s` — substitute char).
 
 | Key | Action |
@@ -487,7 +485,7 @@ Examples: `saiw"` quote a word · `sd"` strip surrounding quotes ·
 ## treewalker.nvim (AST navigation)
 
 Plugin: <https://github.com/aaronik/treewalker.nvim>
-Config: `home-manager/neovim.nix:242`
+Config: `home-manager/neovim.nix:218`
 
 | Key | Action |
 |---|---|
@@ -498,22 +496,9 @@ Use this to skip past blocks of similar code without counting lines.
 
 ---
 
-## nvim-autopairs
-
-Plugin: <https://github.com/windwp/nvim-autopairs>
-Config: `home-manager/neovim.nix:214`. Treesitter-aware (won't pair
-inside strings/comments, won't pair adjacent to word chars).
-
-| Key | Mode | Action |
-|---|---|---|
-| `<M-e>` | i | **Fast wrap** — wrap next object in pair (chars: `{[("'`) |
-| `<CR>` after `{` | i | Indent + new line + closing brace on its own line |
-
----
-
 ## hardtime.nvim & precognition.nvim
 
-Config: `home-manager/neovim.nix:296` (hardtime), `:287` (precognition)
+Config: `home-manager/neovim.nix:272` (hardtime), `:263` (precognition)
 
 **hardtime** punishes repeated `hjkl` / `wb` spam — forces `f`/`t`/`/`/
 relative line jumps. If a key feels blocked, look at the corner notification
@@ -532,7 +517,7 @@ for a hint. Disable for a buffer with `:Hardtime disable`.
 ## toggleterm.nvim
 
 Plugin: <https://github.com/akinsho/toggleterm.nvim>
-Config: `home-manager/neovim.nix:766`. Floating terminal, curved border,
+Config: `home-manager/neovim.nix:754`. Floating terminal, curved border,
 3% winblend.
 
 | Key | Mode | Action |
@@ -558,7 +543,7 @@ to normal mode (terminal-mode default).
 
 ## Theme (tokyonight + GNOME sync)
 
-Config: `home-manager/neovim.nix:649`
+Config: `home-manager/neovim.nix:637`
 
 Auto-detects GNOME `color-scheme` setting on `VimEnter` and `FocusGained`:
 
@@ -611,7 +596,7 @@ Config: `home-manager/neovim/lua/which-key-nvim.lua:127`
 ## vim-table-mode
 
 Plugin: <https://github.com/dhruvasagar/vim-table-mode>
-Config: `home-manager/neovim.nix:919`. Default mappings disabled — use
+Config: `home-manager/neovim.nix:907`. Default mappings disabled — use
 `<leader>ut` to toggle, then type pipes.
 
 | Key | Action |
@@ -637,7 +622,7 @@ Corner char `\|`, header fill `-` (markdown-friendly).
 - **`<leader>op…` is opencode operator**, not "previous". Treesitter
   prev-* lives on `[`.
 - **Folding is off everywhere.** The treesitter setup intentionally
-  doesn't set `foldexpr`. If you want it, edit `neovim.nix:466`.
+  doesn't set `foldexpr`. If you want it, edit `neovim.nix:455`.
 - **Bare `nvim`** drops you into a scratch markdown file under
   `.notes/` in the cwd. The dir is created lazily on first `:w` and
   is gitignored. Pipe into nvim or pass an arg to skip this.
