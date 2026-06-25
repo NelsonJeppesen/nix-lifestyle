@@ -10,6 +10,7 @@
 # - Nautilus sidebar bookmarks for quick access to project directories
 {
   config,
+  lib,
   ...
 }:
 {
@@ -39,6 +40,29 @@
       clock-format = "12h";
       enable-hot-corners = false; # Disable hot corners to prevent accidental triggers
       show-battery-percentage = true;
+    };
+
+    # Screen idle / blank behaviour.
+    #
+    # The screen now stays at full brightness right up until it blanks at
+    # idle-delay (15 min), then locks. Previously it appeared to "turn off far
+    # too fast" — that was GNOME's *idle dim*, which drops the backlight to
+    # idle-brightness (30%) after only a short idle, long before the 15-min
+    # blank. Disabling idle-dim removes that early dip.
+    #
+    # idle-delay is pinned here (not left to GNOME's default) because the
+    # Caffeine extension rewrites it at runtime — 0 while caffeinated (Super+O),
+    # restoring this value when toggled off — so a known baseline keeps the
+    # off→on cycle deterministic.
+    "org/gnome/desktop/session" = {
+      idle-delay = lib.hm.gvariant.mkUint32 900; # 15 min before blank + lock
+    };
+    "org/gnome/settings-daemon/plugins/power" = {
+      idle-dim = false; # no early backlight dim-to-30% before the blank
+      # No ambient light sensor on this machine (only a gyro in iio, and
+      # iio-sensor-proxy isn't running), so ALS auto-brightness can never
+      # work — leaving it enabled only risks surprise dimming.
+      ambient-enabled = false;
     };
 
     # Magnifier defaults (effectively disabled but configured just in case)
