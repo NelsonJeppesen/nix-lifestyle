@@ -29,8 +29,8 @@
         pkgs.nixd # Nix language server (better than nil for nixpkgs)
         pkgs.nixfmt # Nix formatter (RFC style)
 
-        # PHP
-        pkgs.phpactor # PHP language server
+        # # PHP
+        # pkgs.phpactor # PHP language server
 
         # Python
         # pkgs.python313Packages.python-lsp-server # Python LSP
@@ -64,8 +64,11 @@
         vim.opt.showmode    = false  -- Disable mode display for statusline plugins.
         vim.opt.foldenable  = false  -- Disable folding entirely.
 
-        -- Limit LSP log to errors only (prevents lsp.log from growing to GBs)
-        vim.lsp.log.set_level("ERROR")
+        -- Disable LSP file logging entirely. ERROR-level still let lsp.log
+        -- balloon to multiple GB when a server spams errors, and the on-disk
+        -- log is never used here (diagnostics surface in-editor). "off" stops
+        -- all writes; raise to "ERROR"/"WARN" temporarily when debugging a server.
+        vim.lsp.log.set_level("off")
 
         -- Configure LSP/diagnostic icons (Nerd Font symbols)
         vim.diagnostic.config({
@@ -299,7 +302,19 @@
         }
 
         # ── Common plugin dependencies ────────────────────────────────
-        mini-icons # Icon provider for various plugins
+        # mini.icons: icon provider. setup() + mock_nvim_web_devicons() makes
+        # it answer `require("nvim-web-devicons")` too, so plugins that hard-
+        # require that module (e.g. tiny-devicons-auto-colors) work without
+        # pulling in the separate nvim-web-devicons plugin. Must run before any
+        # such consumer's config below (plugin configs run in listed order).
+        {
+          plugin = mini-icons;
+          type = "lua";
+          config = ''
+            require("mini.icons").setup()
+            require("mini.icons").mock_nvim_web_devicons()
+          '';
+        }
         nui-nvim # UI component library
         plenary-nvim # Lua utility functions (used by many plugins)
         render-markdown-nvim # Render markdown with formatting in buffers
@@ -360,7 +375,7 @@
             vim.lsp.enable('bashls')
             vim.lsp.enable('jsonls')
             vim.lsp.enable('nixd')
-            vim.lsp.enable('phpactor')
+            -- vim.lsp.enable('phpactor')
             vim.lsp.enable('pylsp')
             vim.lsp.enable('ruby_lsp')
             vim.lsp.enable('terraformls')
