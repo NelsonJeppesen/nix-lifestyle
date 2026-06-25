@@ -26,18 +26,18 @@
   services.kmscon = {
     enable = true;
     hwRender = true;
-    fonts = [
-      {
-        name = "JetBrainsMono Nerd Font";
-        package = pkgs.nerd-fonts.jetbrains-mono;
-      }
-    ];
+    # fonts = [
+    #   {
+    #     name = "JetBrainsMono Nerd Font";
+    #     package = pkgs.nerd-fonts.jetbrains-mono;
+    #   }
+    # ];
     # 14pt is a reasonable starting point across panels (it scales with
     # the framebuffer resolution kmscon picks). Bump per-host if needed.
-    extraConfig = ''
-      font-size=14
-      palette=solarized
-    '';
+    # config = ''
+    #   font-size=14
+    #   palette=solarized
+    # '';
   };
 
   # Make the same font available to userspace so anything reading
