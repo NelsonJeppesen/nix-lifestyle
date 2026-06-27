@@ -25,6 +25,7 @@
     ./opencode.nix # OpenCode AI coding assistant
     ./opencode-standup.nix # Standup note generation wrapper + /standup command
     ./ralph.nix # Open Ralph Wiggum: iterative AI coding loop CLI (defaults to opencode)
+    ./slack.nix # Slack wrapped with native-Wayland + GPU/VAAPI flags
     ./tailscale-systray.nix # Tailscale's official system tray app (autostart via systemd --user)
     ./zsh.nix # Zsh shell, prompt, aliases, and functions
   ];
@@ -175,7 +176,7 @@
       pkgs.zoom-us # Video conferencing
       #pinnedZoom
       pkgs.kitty # Terminal emulator (configured in kitty.nix)
-      pkgs.slack
+      # pkgs.slack -> wrapped with Wayland/GPU flags in slack.nix
 
       # ── Cloud and infrastructure tools ──────────────────────────────
       #pkgs.ansible_2_16
