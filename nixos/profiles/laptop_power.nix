@@ -4,8 +4,13 @@
 #
 # Tuned for Intel Core Ultra (Meteor/Arrow Lake) hybrid P+E core CPUs:
 # - powersave governor on both AC and BAT; energy preference (EPP) is the
-#   real knob with HWP. The performance governor on a hybrid CPU pegs
-#   frequencies and increases throttling, *reducing* sustained throughput.
+#   real knob with HWP. The performance *governor* on a hybrid CPU pegs
+#   frequencies and increases throttling, *reducing* sustained throughput —
+#   so the governor stays powersave. EPP, by contrast, is where snappiness
+#   lives: EPP=performance on AC ramps frequency near-instantly on bursty
+#   interactive work (terminal keystroke->render, editor redraw) while still
+#   letting Intel Thread Director park work on E-cores. AC-only, so there is
+#   no battery cost; BAT keeps EPP=power.
 # - CPU_MAX_PERF kept at 100 on both rails; capping max_perf_pct interferes
 #   with Intel Thread Director's E-core preference.
 # - thermald is disabled (HWP + DPTF firmware handle thermals on Core Ultra).
@@ -46,7 +51,11 @@
     CPU_SCALING_GOVERNOR_ON_AC = "powersave";
     CPU_SCALING_GOVERNOR_ON_BAT = "powersave";
 
-    CPU_ENERGY_PERF_POLICY_ON_AC = "balance_performance";
+    # EPP is the real interactive-latency knob with HWP. `performance` on AC
+    # gives near-instant frequency ramp on bursty keystroke->render work
+    # (kitty, neovim, opencode TUI) without pegging clocks the way the
+    # performance *governor* would. AC-only: BAT stays `power` for battery life.
+    CPU_ENERGY_PERF_POLICY_ON_AC = "performance";
     CPU_ENERGY_PERF_POLICY_ON_BAT = "power";
 
     CPU_MAX_PERF_ON_AC = 100;
