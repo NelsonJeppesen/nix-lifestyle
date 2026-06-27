@@ -114,6 +114,20 @@
 
         inactive_text_alpha = 0.5; # Dim inactive window text (50% opacity)
         linux_display_server = "wayland"; # Force Wayland (no XWayland fallback)
+
+        # ── Input/render latency tuning (snappiness) ────────────────
+        # input_delay: ms kitty waits to batch keyboard input before sending
+        # it to the program. Default 3; 0 forwards each keystroke immediately
+        # for the lowest possible keystroke->program latency (nvim, opencode).
+        input_delay = "0";
+        # repaint_delay: ms between screen repaints. Default 10; 8 tightens the
+        # repaint cadence (~125fps cap) for visibly smoother scroll/output.
+        repaint_delay = "8";
+        # sync_to_monitor: align repaints to the monitor's vblank to eliminate
+        # tearing. Costs up to one frame of latency but keeps output clean;
+        # the input_delay=0 above keeps *keystroke* latency unaffected by this.
+        sync_to_monitor = "yes";
+
         scrollback_lines = 30000; # 30K lines of scrollback buffer
         strip_trailing_spaces = "always"; # Remove trailing whitespace on copy
         tab_bar_min_tabs = 1; # Always show tab bar (even with one tab)
