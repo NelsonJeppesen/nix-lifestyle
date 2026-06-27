@@ -17,17 +17,17 @@ use `hjkl`. Bare `nvim` opens a markdown scratch buffer at
 - [trouble.nvim & todo-comments.nvim](#troublenvim--todo-commentsnvim)
 - [blink.cmp & Copilot](#blinkcmp--copilot)
 - [oil.nvim (filesystem-as-buffer)](#oilnvim-filesystem-as-buffer)
-- [Git (gitsigns / diffview / headhunter)](#git-gitsigns--diffview--headhunter)
+- [Git (gitsigns / headhunter)](#git-gitsigns--headhunter)
 - [treesitter & textobjects](#treesitter--textobjects)
 - [mini.\* family](#mini-family)
 - [nvim-various-textobjs](#nvim-various-textobjs)
 - [Surround (mini.surround)](#surround-minisurround)
 - [treewalker.nvim (AST navigation)](#treewalkernvim-ast-navigation)
-- [hardtime.nvim & precognition.nvim](#hardtimenvim--precognitionnvim)
+- [hardtime.nvim](#hardtimenvim)
 - [toggleterm.nvim](#toggletermnvim)
 - [bufferline / lualine / navic / fidget / noice](#bufferline--lualine--navic--fidget--noice)
 - [Theme (tokyonight + GNOME sync)](#theme-tokyonight--gnome-sync)
-- [Eye candy (tiny-glimmer / tiny-inline-diagnostic / smear-cursor / colorizer / mini.indentscope / mini.animate)](#eye-candy)
+- [Eye candy (tiny-glimmer / tiny-inline-diagnostic / smear-cursor / mini.indentscope / mini.animate)](#eye-candy)
 - [Util commands (`<leader>u…`)](#util-commands-leaderu)
 - [vim-table-mode](#vim-table-mode)
 - [Quirks & gotchas](#quirks--gotchas)
@@ -51,7 +51,7 @@ WhichKey groups (popup appears after `<Space>` + delay):
 | `<leader>s` | Search/Grep | grep / lines / registers / jumps / marks / undo / etc. |
 | `<leader>l` | LSP | goto / refs / rename / code action / format / diagnostics |
 | `<leader>x` | Diagnostics | trouble.nvim views |
-| `<leader>g` | Git | branches / log / status / diff / diffview |
+| `<leader>g` | Git | branches / log / status / diff |
 | `<leader>gm` | Merge | headhunter merge-conflict resolution |
 | `<leader>o` | OpenCode | AI agent (see dedicated section) |
 | `<leader>q` | Quit | `q` / `qa` / `qa!` |
@@ -319,10 +319,9 @@ in the sign column come from `oil-git-status-nvim`.
 
 ---
 
-## Git (gitsigns / diffview / headhunter)
+## Git (gitsigns / headhunter)
 
-Config: `home-manager/neovim.nix:768` (gitsigns), `:797` (diffview),
-`:778` (headhunter)
+Config: `home-manager/neovim.nix:749` (gitsigns), `:757` (headhunter)
 
 ### `<leader>g` Git pickers (Snacks)
 
@@ -332,17 +331,6 @@ Config: `home-manager/neovim.nix:768` (gitsigns), `:797` (diffview),
 | `gs` / `gS` | Status / Stash |
 | `gd` | Diff (hunks) |
 | `gf` | Log for current file |
-
-### Diffview (full git diff/merge UI)
-
-| Key | Action |
-|---|---|
-| `<leader>gD` | `:DiffviewOpen` |
-| `<leader>gc` | `:DiffviewClose` |
-| `<leader>gh` | `:DiffviewFileHistory %` |
-
-Inside diffview: `<Tab>` / `<S-Tab>` next/prev change · `gf` go to file ·
-`-` toggle stage · `cc` commit · `?` help.
 
 ### gitsigns (sign column)
 
@@ -496,21 +484,13 @@ Use this to skip past blocks of similar code without counting lines.
 
 ---
 
-## hardtime.nvim & precognition.nvim
+## hardtime.nvim
 
-Config: `home-manager/neovim.nix:272` (hardtime), `:263` (precognition)
+Config: `home-manager/neovim.nix:252` (hardtime)
 
 **hardtime** punishes repeated `hjkl` / `wb` spam — forces `f`/`t`/`/`/
 relative line jumps. If a key feels blocked, look at the corner notification
 for a hint. Disable for a buffer with `:Hardtime disable`.
-
-**precognition** shows virtual-text hints for available motions
-(start of word, etc.).
-
-| Key | Action |
-|---|---|
-| `q` | Peek precognition (hold to view) |
-| `<leader>up` | Toggle precognition permanently |
 
 ---
 
@@ -568,7 +548,6 @@ in `neovim.nix`.
 | `tiny-glimmer-nvim` | Yank (fade) / paste (reverse fade) / search (pulse) / undo (red fade) / redo (green fade). Disabled in `oil` and `snacks_dashboard` buffers. |
 | `tiny-inline-diagnostic-nvim` | Inline LSP diagnostic with arrow → offending column. `modern` preset. Hidden while in insert mode. |
 | `smear-cursor-nvim` | Fading trail when cursor jumps; smears between buffers and neighboring lines. |
-| `nvim-colorizer-lua` | Inline color preview for `#rrggbb`, `rgb()`, named colors. |
 | `mini-indentscope` | Animated indent guide for current scope. |
 | `mini-animate` | Smooth scroll (120ms linear) + window resize (100ms). |
 | `numb-nvim` | Peek line target while typing `:42` (before pressing Enter). |
@@ -588,7 +567,6 @@ Config: `home-manager/neovim/lua/which-key-nvim.lua:127`
 | `ug` | Decode base64-gzip (`%!base64 -d \| gzip -d`) |
 | `uj` | Format JSON via `jq .` |
 | `uC` | Pick a colorscheme |
-| `up` | Toggle precognition |
 | `ut` / `ur` | Table mode toggle / realign |
 
 ---

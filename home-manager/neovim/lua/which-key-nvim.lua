@@ -13,7 +13,6 @@ require("which-key").setup {
 
 wk.add({
   -- Quick access bindings
-  { 'q', desc = "precognition peek", function() require("precognition").peek() end},
   { '<c-\\>', desc = "Toggle Terminal", function() require("toggleterm").toggle() end, mode = { "n", "i", "t" } },
 
   { "<leader>fml", desc = "FML" ,"<cmd>CellularAutomaton make_it_rain<cr>"},
@@ -84,9 +83,6 @@ wk.add({
   { "<leader>gS", desc = "Git Stash", function() Snacks.picker.git_stash() end },
   { "<leader>gd", desc = "Git Diff (Hunks)", function() Snacks.picker.git_diff() end },
   { "<leader>gf", desc = "Git Log File", function() Snacks.picker.git_log_file() end },
-  { "<leader>gD", desc = "Diffview Open", "<cmd>DiffviewOpen<cr>" },
-  { "<leader>gc", desc = "Diffview Close", "<cmd>DiffviewClose<cr>" },
-  { "<leader>gh", desc = "Diffview File History", "<cmd>DiffviewFileHistory %<cr>" },
 
   -- Merge conflicts (headhunter.nvim)
   { "<leader>gm", group = "Merge Conflicts" },
@@ -130,7 +126,6 @@ wk.add({
   { "<leader>ug", desc = "Decode Base64-gzip", "<cmd>%!base64 -d|gzip -d<cr>" },
   { "<leader>uj", desc = "Format JSON", "<cmd>%!jq .<cr>" },
   { "<leader>uC", desc = "Colorschemes", function() Snacks.picker.colorschemes() end },
-  { "<leader>up", desc = "Precognition Toggle", function() require("precognition").toggle() end },
 
   { "<leader>ut", desc = "Table Mode: Toggle", "<cmd>TableModeToggle<cr>" },
   { "<leader>ur", desc = "Table Mode: Realign", "<cmd>TableModeRealign<cr>" },

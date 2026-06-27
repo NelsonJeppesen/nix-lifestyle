@@ -6,7 +6,7 @@
 #   syntax highlighting (treesitter), file management (oil.nvim), and AI integration
 # - TokyoNight colorscheme with auto dark/light detection from GNOME settings
 # - Which-key for discoverable keybindings organized by leader key groups
-# - Arrow keys disabled to encourage proper vim motions (hardtime + precognition)
+# - Arrow keys disabled to encourage proper vim motions (hardtime.nvim)
 # - OpenCode AI assistant integration via opencode.nvim
 { pkgs, ... }:
 {
@@ -53,7 +53,7 @@
 
       # Lua configuration that runs before plugins load
       initLua = ''
-        -- Enable 24-bit RGB color in the TUI (required by colorizer and themes)
+        -- Enable 24-bit RGB color in the TUI (required by themes/colorschemes)
         vim.opt.termguicolors = true
 
         -- Editor defaults: 2-space indentation, no swap files
@@ -233,13 +233,6 @@
           '';
         }
 
-        # nvim-colorizer: display color codes as their actual color inline
-        {
-          plugin = nvim-colorizer-lua;
-          type = "lua";
-          config = ''require("colorizer").setup({})'';
-        }
-
         # oil.nvim: file explorer that lets you edit the filesystem like a buffer
         # Includes git status integration via oil-git-status-nvim
         oil-git-status-nvim
@@ -254,15 +247,6 @@
             })
             require("oil-git-status").setup()
           '';
-        }
-
-        # precognition.nvim: show available vim motions as virtual text hints
-        # Starts hidden; toggle with <leader>q, peek with q
-        # https://github.com/tris203/precognition.nvim
-        {
-          plugin = precognition-nvim;
-          type = "lua";
-          config = ''require("precognition").setup({startVisible = false})'';
         }
 
         # hardtime.nvim: break bad habits by limiting repetitive key presses
@@ -790,11 +774,6 @@
             })
           '';
         }
-
-        # diffview.nvim: tabpage git diff/merge viewer with file tree
-        # Open with <leader>gD, close with <leader>gc, file history with <leader>gh
-        # https://github.com/sindrets/diffview.nvim
-        diffview-nvim
 
         # nvim-navic: breadcrumb navigation in the winbar showing current code context
         # Auto-attaches to LSP servers that support documentSymbols
