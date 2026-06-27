@@ -16,7 +16,10 @@ let
     UrlKeyedAnonymizedDataCollectionEnabled = false;
     SpellCheckServiceEnabled = false;
     AlternateErrorPagesEnabled = false;
-    NetworkPredictionOptions = 2; # 2 = never preload
+    # 0 = default (preload likely next pages on Wi-Fi/Ethernet) for snappier
+    # navigation. Was 2 (never preload); relaxed deliberately, accepting the
+    # minor prefetch-telemetry tradeoff in exchange for faster page loads.
+    NetworkPredictionOptions = 0;
     BackgroundModeEnabled = false;
     PromotionalTabsEnabled = false;
     BrowserAddPersonEnabled = false;

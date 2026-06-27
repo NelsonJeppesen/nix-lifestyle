@@ -37,6 +37,13 @@
       "--ignore-gpu-blocklist"
       "--enable-features=VaapiVideoEncoder,VaapiVideoDecoder,WaylandWindowDecorations"
 
+      # Pin GPU rasterization + zero-copy. Chrome usually auto-enables these,
+      # but on the forced ANGLE-GL path (above) the heuristic can fall back to
+      # software raster; pinning them keeps scrolling/compositing on the iGPU
+      # and uploads textures without a CPU copy. Verify at chrome://gpu.
+      "--enable-gpu-rasterization"
+      "--enable-zero-copy"
+
       # Battery (less aggressive than the per-PWA wrappers; full browser still
       # needs background networking for normal tabs)
       "--disable-backgrounding-occluded-windows"
