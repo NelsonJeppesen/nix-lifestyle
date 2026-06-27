@@ -614,27 +614,35 @@
           '';
         }
 
-        # tokyonight.nvim: dark/light colorscheme with wide plugin support
-        # Auto-detects GNOME dark/light preference and switches accordingly
+        # tokyonight.nvim: dark/light colorscheme with wide plugin support.
+        # Colorscheme switching is driven by auto-dark-mode.nvim (below),
+        # which reacts to the system theme via the freedesktop portal.
         # https://github.com/folke/tokyonight.nvim
+        tokyonight-nvim
+
+        # auto-dark-mode.nvim: switch tokyonight day/night to follow the
+        # system light/dark preference. Reads org.freedesktop.appearance
+        # .color-scheme via the xdg-desktop-portal D-Bus (same source kitty
+        # uses), so it tracks GNOME's setting without polling gsettings on
+        # every focus. set_dark/light_mode fire on change *and* once at
+        # startup, so no manual initial apply is needed. fallback = "dark"
+        # keeps tty/SSH sessions on the dark theme.
+        # https://github.com/f-person/auto-dark-mode.nvim
         {
-          plugin = tokyonight-nvim;
+          plugin = auto-dark-mode-nvim;
           type = "lua";
           config = ''
-            local function apply_theming()
-              local handle = io.popen("gsettings get org.gnome.desktop.interface color-scheme 2>/dev/null")
-              local result = handle and handle:read("*l") or ""
-              if handle then handle:close() end
-              if result:find("prefer%-dark") then
+            require("auto-dark-mode").setup({
+              fallback = "dark",
+              set_dark_mode = function()
+                vim.o.background = "dark"
                 vim.cmd("colorscheme tokyonight-night")
-              else
+              end,
+              set_light_mode = function()
+                vim.o.background = "light"
                 vim.cmd("colorscheme tokyonight-day")
-              end
-              vim.o.background = "dark"
-            end
-            -- Re-apply on focus to detect system theme changes
-            vim.api.nvim_create_autocmd({ "VimEnter", "FocusGained" }, { callback = apply_theming })
-            apply_theming()
+              end,
+            })
           '';
         }
 

@@ -523,16 +523,20 @@ to normal mode (terminal-mode default).
 
 ## Theme (tokyonight + GNOME sync)
 
-Config: `home-manager/neovim.nix:637`
+Config: `home-manager/neovim.nix` (tokyonight + auto-dark-mode.nvim blocks)
 
-Auto-detects GNOME `color-scheme` setting on `VimEnter` and `FocusGained`:
+`auto-dark-mode.nvim` watches the system light/dark preference via the
+`org.freedesktop.appearance.color-scheme` xdg-desktop-portal D-Bus (the
+same source kitty uses) and switches the colorscheme on change:
 
-- `prefer-dark` → `tokyonight-night`
-- otherwise → `tokyonight-day`
+- dark  → `tokyonight-night` (`background=dark`)
+- light → `tokyonight-day` (`background=light`)
 
-Switch your GNOME theme and refocus the terminal — Neovim follows.
-Devicon colors re-tint via `tiny-devicons-auto-colors-nvim` on the
-`ColorScheme` autocmd, so icons stay readable across the switch.
+Switch your GNOME theme — Neovim follows within a few seconds (no
+refocus needed; polled every 3s). On a tty/SSH session where the portal
+is unavailable it falls back to dark. Devicon colors re-tint via
+`tiny-devicons-auto-colors-nvim` on the `ColorScheme` autocmd, so icons
+stay readable across the switch.
 
 Manual override: `:colorscheme <name>` or `<leader>uC` to pick.
 
