@@ -181,14 +181,14 @@
 
       # ── Cloud and infrastructure tools ──────────────────────────────
       #pkgs.ansible_2_16
-      pkgs.google-cloud-sdk
+      # pkgs.google-cloud-sdk
       pkgs.awscli2 # AWS CLI v2
-      pkgs.oci-cli # Oracle Cloud Infrastructure CLI
+      # pkgs.oci-cli # Oracle Cloud Infrastructure CLI
       # pkgs.opentofu # Open-source Terraform fork
       # pkgs.packer # Machine image builder
       pkgs.ssm-session-manager-plugin # AWS Systems Manager session plugin
       # pkgs.terraform # Infrastructure as code
-      pkgs.tfenv
+      # pkgs.tfenv
 
       # pkgs.codex
       # pkgs.telegram-desktop
@@ -239,45 +239,16 @@
       pkgs.fd # Fast find alternative
       pkgs.fend # Arbitrary-precision calculator
       pkgs.gh # GitHub CLI
-      pkgs.gh-dash # GitHub CLI dashboard extension
-      #pkgs.hurl # HTTP testing tool
+      pkgs.hurl # HTTP testing tool
       pkgs.ipcalc # IP subnet calculator
-      pkgs.jira-cli-go # Jira CLI client
-      pkgs.nb # Note-taking and knowledge base CLI
+      # pkgs.nb # Note-taking and knowledge base CLI
       pkgs.p7zip # 7-Zip archiver
       pkgs.ripgrep # Fast grep alternative
-      pkgs.sd # sed alternative for find-and-replace
+      # pkgs.sd # sed alternative for find-and-replace
       pkgs.vault # HashiCorp Vault secrets management CLI
       pkgs.wget # HTTP/FTP file downloader
       pkgs.whois # Domain/IP WHOIS lookup
       pkgs.wl-clipboard # Wayland clipboard utilities (wl-copy, wl-paste)
-
-      # notify: shell-agnostic desktop-notification helper (thin libnotify
-      # wrapper) so the `notify` command behaves identically in zsh and scripts.
-      # Usage: notify SUMMARY [BODY]  (-u low|normal|critical, -i ICON)
-      (pkgs.writeShellApplication {
-        name = "notify";
-        runtimeInputs = [ pkgs.libnotify ];
-        text = ''
-          urgency=normal
-          icon=dialog-information
-          while getopts ":u:i:" opt; do
-            case "$opt" in
-              u) urgency=$OPTARG ;;
-              i) icon=$OPTARG ;;
-              *) ;;
-            esac
-          done
-          shift $((OPTIND - 1))
-
-          notify-send \
-            --app-name=notify \
-            --urgency="$urgency" \
-            --icon="$icon" \
-            "''${1:-Notification}" \
-            "''${2:-}"
-        '';
-      })
 
       #pkgs.mariadb
 
