@@ -5,6 +5,9 @@
 # - Bitcoin Markets: live BTC price ticker in the top bar
 # - Caffeine: prevent screen blanking with a toggle (Super+O)
 # - Clipboard Indicator: clipboard history manager (Ctrl+Shift+I to toggle)
+# - Disable Unredirect: stop the compositor bypassing itself for fullscreen
+#   windows, which on Wayland keeps hide-top-bar / overlays repainting correctly
+# - Hide Top Bar: auto-hide the top bar (intellihide + mouse-to-edge reveal)
 # - Just Perfection: fine-tune GNOME Shell UI elements
 # - Overview Calculator: inline calculator in the Activities overview
 # - Random Wallpaper: rotating wallpaper sourced from online providers
@@ -34,7 +37,9 @@
       { package = pkgs.gnomeExtensions.blur-my-shell; }
       { package = pkgs.gnomeExtensions.caffeine; } # Inhibit screen blanking
       { package = pkgs.gnomeExtensions.clipboard-indicator; } # Clipboard history
+      { package = pkgs.gnomeExtensions.disable-unredirect; } # Disable fullscreen unredirect (fixes Wayland hide-top-bar/overlay glitches)
       { package = pkgs.gnomeExtensions.draw-on-gnome; } # Draw/annotate on the screen
+      { package = pkgs.gnomeExtensions.hide-top-bar; } # Auto-hide the top bar
       { package = pkgs.gnomeExtensions.just-perfection; } # UI customization tweaks
       { package = pkgs.gnomeExtensions.random-wallpaper; } # Rotating wallpaper from online sources
       { package = pkgs.gnomeExtensions.run-or-raise; } # Keyboard-driven app switching
@@ -67,6 +72,14 @@
       startup-status = 0; # Skip the Activities overview on login
       theme = false; # Don't apply extension's theme
       window-maximized-on-create = true; # Auto-maximize new windows
+    };
+
+    # Hide Top Bar: auto-hide the panel; reveal it in the overview, when the
+    # pointer hits the top edge, or (intellihide) when no window needs the space.
+    "org/gnome/shell/extensions/hidetopbar" = {
+      enable-intellihide = true; # Only hide when a window needs the space
+      mouse-sensitive = true; # Reveal the panel when the pointer hits the top edge
+      show-in-overview = true; # Keep the panel visible in the Activities overview
     };
 
     # Clipboard Indicator: clipboard history with keyboard shortcuts
