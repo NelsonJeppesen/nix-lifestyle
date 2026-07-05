@@ -2,21 +2,21 @@
 #
 # OpenCode is a terminal-based AI coding assistant (similar to Cursor/Aider).
 # This module configures:
-# - Default model: Claude Opus 4.7 via GitHub Copilot
-# - MCP servers declared inline. A few low-risk / interactive-auth ones
+# - Default model: Claude Opus 4.8 via GitHub Copilot
+# - MCP servers declared inline. The low-risk / interactive-auth ones
 #   (atlassian, github, memory) default to `enabled = true`; the rest
-#   default to `enabled = false` so they're discoverable in this config
-#   but don't launch (or hit AWS) unless explicitly flipped on.
+#   (terraform, k8s) default to `enabled = false` so they're discoverable
+#   in this config but don't launch unless explicitly flipped on.
 # - Web UI for browser-based interaction
-# - Shell aliases for quick access (o, oc, or, etc.)
-# - Custom slash commands (changelog, commit-and-push, update-pr-desc).
-#   No custom agents are defined here yet — see ~/.config/opencode/AGENTS.md
-#   for the global context that ships with every session.
+# - Shell aliases for quick access (o, oc, ou) plus the `os` session picker.
+#   No custom slash commands or agents are defined here — see
+#   ~/.config/opencode/AGENTS.md for the global context that ships with
+#   every session.
 #
 # This module is also imported into the NixOS `opencode` machine via the
 # home-manager NixOS module (see nixos/profiles/opencode.nix), so that the
 # headless `opencode serve` instance running as nelson gets the same
-# settings, MCP servers, plugins, context, and slash commands as the
+# settings, MCP servers, plugins, and context as the
 # interactive laptop.
 {
   config,
@@ -26,51 +26,12 @@
 }:
 let
   memoryFile = "${config.home.homeDirectory}/.local/share/mcp-memory/memory.json";
-
-  # Helper for awslabs/mcp servers launched via `uv tool run` against PyPI.
-  # All such servers ship as `awslabs.<name>-mcp-server` on PyPI; we pin to
-  # @latest because uv caches resolved versions per-machine, so this is
-  # reproducible per-tool-cache, not per-eval. Default environment sets
-  # FASTMCP_LOG_LEVEL=ERROR to silence the framework's chatty INFO logs that
-  # would otherwise interleave with MCP stdio traffic; per-server `env`
-  # entries are merged on top.
-  mkAwslabsMcp =
-    {
-      name, # e.g. "cloudtrail" -> awslabs.cloudtrail-mcp-server
-      extraArgs ? [ ], # appended after the package spec (e.g. [ "--readonly" ])
-      env ? { }, # merged on top of the default environment
-      enabled ? false,
-    }:
-    {
-      type = "local";
-      inherit enabled;
-      command = [
-        (lib.getExe pkgs.uv)
-        "tool"
-        "run"
-        "awslabs.${name}-mcp-server@latest"
-      ]
-      ++ extraArgs;
-      environment = {
-        FASTMCP_LOG_LEVEL = "ERROR";
-      }
-      // env;
-    };
 in
 {
   # Shell aliases for quick OpenCode invocation
   programs.zsh.shellAliases = {
     o = "opencode"; # Plugins from managed config
-    op = "opencode --pure"; # Launch vanilla OpenCode (no plugins)
-
     oc = "opencode --continue"; # Continue previous conversation
-    or = "opencode run"; # Run a command through OpenCode
-
-    # Pre-built workflows
-    osd = "opencode run '/summary daily'"; # Daily shell history summary
-    osw = "opencode run '/summary weekly'"; # Weekly shell history summary
-    ocm = "opencode run 'create commit and push'"; # AI-assisted commit and push
-
     ou = "rm -rvf ~/.cache/opencode/node_modules ~/.cache/opencode/packages/"; # clean plugin cache
   };
 
@@ -144,105 +105,6 @@ in
           ];
         };
 
-        # AWS API MCP server (awslabs/mcp): exposes the full AWS CLI surface to
-        # the agent via two tools — `call_aws` (validated AWS CLI execution) and
-        # `suggest_aws_commands` (natural-language → CLI suggestions, including
-        # APIs released after the model's knowledge cutoff).
-        #
-        # Not in nixpkgs; upstream ships as a Python package on PyPI. We invoke
-        # it through `uvx` (provided by pkgs.uv) which downloads + caches the
-        # latest version on first use, mirroring upstream's recommended install.
-        #
-        # Safety posture (deliberate):
-        #   - READ_OPERATIONS_ONLY=true  — server refuses any non-read API call,
-        #     regardless of IAM. Mutations go through the regular `aws` CLI in a
-        #     herdr pane so they remain explicit and visible.
-        #   - AWS_REGION / AWS_PROFILE are NOT pinned here; they're inherited
-        #     from the shell (typically set per-project via direnv `.envrc`),
-        #     so the agent operates against whatever account/region the user is
-        #     currently in.
-        "[aws] api" = mkAwslabsMcp {
-          name = "aws-api";
-          env = {
-            READ_OPERATIONS_ONLY = "true";
-          };
-        };
-
-        # CloudTrail MCP server (awslabs/mcp): query CloudTrail event history,
-        # CloudTrail Lake, and Insights. Read-only by nature of the CloudTrail
-        # API surface (LookupEvents, StartQuery, GetQueryResults, etc.), so no
-        # extra safety env-var is needed beyond IAM scoping.
-        #
-        # Same launch pattern as aws-api: `uv tool run` against PyPI; AWS_PROFILE
-        # / AWS_REGION inherited from the shell (direnv per-project), NOT pinned
-        # here. Upstream sample config pins AWS_PROFILE — we deliberately don't,
-        # so the same MCP works across every project's profile.
-        #
-        # FASTMCP_LOG_LEVEL=ERROR silences the framework's chatty INFO logs that
-        # would otherwise interleave with MCP stdio traffic.
-        "[aws] cloudtrail" = mkAwslabsMcp { name = "cloudtrail"; };
-
-        # CloudWatch MCP server (awslabs/mcp): query CloudWatch logs, metrics,
-        # and alarms. Read-only by virtue of the underlying API surface
-        # (FilterLogEvents, GetMetricData, DescribeAlarms, …); IAM is the
-        # ultimate gate. AWS_PROFILE / AWS_REGION inherited from the shell.
-        "[aws] cloudwatch" = mkAwslabsMcp { name = "cloudwatch"; };
-
-        # IAM MCP server (awslabs/mcp): inspect users, roles, policies,
-        # attachments, and simulate policy evaluations.
-        #
-        # `--readonly` is REQUIRED here — the server otherwise exposes
-        # mutating tools (create/delete/attach/detach). Mutations to IAM
-        # should always go through the regular `aws` CLI in a herdr pane so they
-        # remain explicit and auditable.
-        "[aws] iam" = mkAwslabsMcp {
-          name = "iam";
-          extraArgs = [ "--readonly" ];
-        };
-
-        # EKS MCP server (awslabs/mcp): query clusters, nodegroups, addons,
-        # workloads, and events. Wraps `eksctl` / EKS API / kubectl-style
-        # introspection.
-        #
-        # Safety: DO NOT add `--allow-write` or `--allow-sensitive-data-access`
-        # to the command array. Those flags unlock cluster mutations and Secret
-        # contents respectively; both should go through `kubectl` / `eksctl`
-        # in a herdr pane so they stay explicit. AWS_PROFILE / AWS_REGION inherited
-        # from the shell; KUBECONFIG falls through to the default ~/.kube/config.
-        "[aws] eks" = mkAwslabsMcp { name = "eks"; };
-
-        # AWS Network MCP server (awslabs/mcp): inspect VPCs, subnets, route
-        # tables, security groups, NACLs, TGWs, etc. Read-only by API surface;
-        # useful for connectivity debugging without leaving the chat.
-        "[aws] network" = mkAwslabsMcp { name = "aws-network"; };
-
-        # AWS Documentation MCP server (awslabs/mcp): search and fetch official
-        # AWS docs (service docs, API references, CLI references). No AWS creds
-        # required — pure documentation retrieval. AWS_DOCUMENTATION_PARTITION
-        # selects the doc set (`aws` for commercial, `aws-cn` / `aws-us-gov`
-        # for the partitioned regions).
-        "[aws] documentation" = mkAwslabsMcp {
-          name = "aws-documentation";
-          env = {
-            AWS_DOCUMENTATION_PARTITION = "aws";
-          };
-        };
-
-        # AWS Pricing MCP server (awslabs/mcp): query the public AWS Pricing
-        # API for on-demand / reserved / savings-plan pricing. Useful for
-        # cost-estimating Terraform changes before merging. Read-only.
-        "[aws] pricing" = mkAwslabsMcp { name = "aws-pricing"; };
-
-        # Billing & Cost Management MCP server (awslabs/mcp): query Cost
-        # Explorer, budgets, anomalies, Savings Plans, and Storage Lens.
-        # Read-only against the billing APIs; requires the active profile to
-        # have ce:* / budgets:* / cur:* permissions on the payer account.
-        #
-        # Known issue: awslabs/mcp#3258 — dynamic AWS_PROFILE selection can be
-        # flaky; if you hit auth errors, set AWS_PROFILE explicitly in the
-        # shell that launches opencode rather than relying on direnv handover.
-        "[aws] billing-cost-management" = mkAwslabsMcp { name = "billing-cost-management"; };
-
         # Kubernetes MCP server: query cluster resources, pods, logs, etc.
         k8s = {
           type = "local";
@@ -267,10 +129,10 @@ in
         # open-plan-annotator: intercepts plan-mode and opens a browser UI
         # for annotating/approving the agent's plan.
         # Docs: https://github.com/ndom91/open-plan-annotator
-        "open-plan-annotator@latest"
+        # "open-plan-annotator@latest"
 
         # An Opencode plugin for managing git worktrees
-        "open-trees@latest"
+        # "open-trees@latest"
       ];
     };
 
@@ -370,25 +232,6 @@ in
       - If unsure whether a command will prompt, prefer a herdr pane.
     '';
 
-    # ── Custom slash commands ─────────────────────────────────────
-    # These are invoked as /command-name in the OpenCode chat
-    commands = {
-      # /changelog: generate release notes from commits since the last tag
-      #             and write them into CHANGELOG.md (Keep-a-Changelog style).
-      changelog = builtins.readFile ./opencode/commands/changelog.md;
-
-      # /commit-and-push: stage, commit, and push current changes
-      commit-and-push = builtins.readFile ./opencode/commands/commit-and-push.md;
-
-      # /update-pr-desc: refresh the current PR's description from commits
-      update-pr-desc = builtins.readFile ./opencode/commands/update-pr-desc.md;
-
-      # NOTE: the private /secret1 command is intentionally NOT registered
-      # here. Registering via readFile would embed its prompt in the
-      # world-readable Nix store. Instead it is an agenix secret
-      # (encrypted/opencode.secret1.age) decrypted at run time into
-      # ~/.config/opencode/commands/secret1.md — see home.nix age.secrets.
-    };
   };
 
   # herdr agent skill: teaches opencode to DRIVE herdr over its local socket
@@ -420,6 +263,5 @@ in
     pkgs.mcp-k8s-go
     pkgs.mcp-server-memory
     pkgs.terraform-mcp-server
-    pkgs.uv # provides `uv tool run` used to launch awslabs.* MCP servers
   ];
 }
