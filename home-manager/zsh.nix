@@ -11,6 +11,8 @@
 #     ar  -- AWS region switcher (mutates current shell)
 #     rst -- reset env (mutates current shell)
 #     wt  -- jump to a git worktree (inline; uses lazyworktree functions)
+#     hrf -- run a command in a new herdr tab, focusing it
+#     hrn -- run a command in a new herdr tab without focusing it
 #     curl-all-ips -- curl every A/AAAA record behind a DNS name (per-IP)
 #     nsr, rgreplace -- packaged via writeShellApplication
 #     (gets shellcheck + PATH wrapping). See ./bin/.
@@ -292,6 +294,37 @@ in
             source ~/.aws/sticky.region
           fi
         }
+
+        # ── herdr: run a command in a fresh tab ──────────────────────
+        # herdr has no `tab spawn`/`--command`; the flow is: create a tab,
+        # read its root pane id from the JSON, then `pane run` in it. These
+         # wrap that so you can do `hrf vim` / `hrn vim` (all args are joined
+         # into one command line run in the new tab's zsh). Named hrn (not hr)
+         # to avoid colliding with the `hr` = `herdr --remote` alias (herdr.nix).
+
+        # _herdr_new_tab: create a tab and run "$@" in it.
+        # $1 = "focus" | "no-focus"; remaining args = command to run.
+        _herdr_new_tab() {
+          local focus_flag="$1"; shift
+          if [[ -z "$*" ]]; then
+            echo "usage: ''${funcstack[2]} COMMAND [ARGS...]" >&2
+            return 1
+          fi
+          local pane_id
+          pane_id="$(herdr tab create --"$focus_flag" \
+            | ${pkgs.jq}/bin/jq -r '.result.root_pane.pane_id')" || return
+          if [[ -z "$pane_id" || "$pane_id" == "null" ]]; then
+            echo "herdr: could not determine new pane id" >&2
+            return 1
+          fi
+          herdr pane run "$pane_id" "$*"
+        }
+
+        # hrf: launch a command in a new tab and focus it.
+        hrf() { _herdr_new_tab focus "$@"; }
+
+        # hrn: launch a command in a new tab without focusing it.
+        hrn() { _herdr_new_tab no-focus "$@"; }
 
         # ── lazyworktree: TUI git worktree manager ───────────────────
         # Source built-in shell functions (worktree_jump, worktree_go_last)
