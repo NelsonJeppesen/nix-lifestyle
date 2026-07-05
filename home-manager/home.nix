@@ -20,6 +20,7 @@
     ./git.nix # Git config, signing, aliases, difftastic
     ./gnome-extensions.nix # GNOME Shell extensions and their settings
     ./gnome.nix # GNOME desktop dconf settings and keybindings
+    ./herdr.nix # herdr agent multiplexer (wraps opencode/coding agents)
     ./kitty.nix # Kitty terminal emulator
     ./neovim.nix # Neovim editor with LSP, plugins, and keymaps
     ./opencode.nix # OpenCode AI coding assistant

@@ -1,0 +1,152 @@
+herdr — keybindings & usage cheatsheet
+======================================
+
+herdr is a tmux-style terminal multiplexer for AI coding agents. It runs each
+agent in a real pane on a background server that survives detach, and shows
+every agent's state (blocked / working / done / idle) in its sidebar. It does
+NOT replace opencode — you launch opencode inside herdr.
+
+This file is managed by home-manager (herdr.nix). Live keymap: press
+`prefix+?` inside herdr. Full docs: https://herdr.dev/docs/
+
+
+The prefix
+----------
+herdr reserves ONE key: the prefix, `ctrl+b`. Press it, release, then press
+the action key. `prefix+c` = ctrl+b, then c. This keeps herdr out of the way
+of your shell, nvim, and opencode, which own most other chords.
+
+herdr is also fully mouse-native: click panes/tabs/workspaces, drag split
+borders, right-click for menus. You never HAVE to touch a keybinding.
+
+
+Start / detach / reattach
+-------------------------
+  h                    start or attach the herdr server (alias for `herdr`)
+  prefix+q             detach — agents keep running in the background
+  h                    run again to reattach exactly where you left off
+  hr <host>            attach to a remote herdr over ssh (`herdr --remote`)
+                       e.g.  hr ssh://you@server:2222
+
+Nothing dies on detach. Close the laptop, reattach from another terminal or
+from your phone over ssh.
+
+
+Learn these five first
+----------------------
+  prefix+c             new tab
+  prefix+v             split right (vertical)
+  prefix+minus         split down (horizontal)
+  prefix+h/j/k/l       move between panes
+  prefix+w             workspace picker
+
+
+Kitty-aligned direct chords (no prefix needed)
+----------------------------------------------
+These mirror the kitty muscle memory. ctrl+alt is the modifier family herdr
+certifies as safe across terminals, and it does NOT collide with kitty's own
+ctrl+shift bindings.
+
+  ctrl+alt+c           new tab                 (kitty: ctrl+shift+n)
+  ctrl+alt+[           previous tab            (kitty: ctrl+shift+left)
+  ctrl+alt+]           next tab                (kitty: ctrl+shift+right)
+  ctrl+alt+h/j/k/l     focus pane left/down/up/right
+                                               (kitty: ctrl+shift+up/down)
+  ctrl+alt+enter       split right (vertical)  (kitty: ctrl+shift+enter)
+  ctrl+alt+shift+d     split down (horizontal)
+  ctrl+alt+x           close pane              (kitty: ctrl+shift+backspace)
+  ctrl+alt+z           zoom / unzoom pane
+  ctrl+alt+tab         cycle to next pane      (kitty: ctrl+shift+])
+
+Note: on this GNOME host ctrl+alt+l is free. On KDE it is the lock-screen
+shortcut — rebind focus_pane_right in herdr.nix if this config moves to KDE.
+
+
+Prefix reference (everything else)
+----------------------------------
+Panes:
+  prefix+z             zoom the focused pane
+  prefix+x             close pane
+  prefix+shift+h/j/k/l swap panes
+  prefix+r             resize mode
+  prefix+[             copy mode (h/j/k/l move, v select, y copy, q quit)
+
+Tabs:
+  prefix+n / prefix+p  next / previous tab
+  prefix+1..9          jump to tab 1–9
+  prefix+shift+t       rename tab
+  prefix+shift+x       close tab
+
+Workspaces & session:
+  prefix+shift+n       new workspace
+  prefix+shift+w       rename workspace
+  prefix+shift+d       close workspace
+  prefix+g             goto picker
+  prefix+b             toggle sidebar
+  prefix+shift+r       reload config (after a home-manager rebuild)
+  prefix+?             show every active binding
+
+
+Launching opencode
+-------------------
+  prefix+alt+o         open a temporary pane running opencode
+  o                    or just run the opencode alias in any pane
+
+opencode's state (blocked / working / done) shows up in the herdr sidebar
+automatically via the herdr↔opencode integration plugin, which home-manager
+installs at ~/.config/opencode/plugins/herdr-agent-state.js. Reinstall on
+demand with the `ho` alias.
+
+
+Quick start: ~/source/terraform
+===============================
+The terraform monorepo is direnv-driven (.envrc runs source_up, checks AWS
+SSO creds, requests a Vault token, sets TF_PLUGIN_CACHE_DIR, and adds bin/ to
+PATH), uses git worktrees, and ships its own project-local .opencode/ config
+(agents, commands, opencode.jsonc). herdr fits this cleanly — one session, one
+agent per account/stack, panes that survive detach.
+
+IMPORTANT — direnv runs PER PANE. Every herdr pane is a fresh shell, so
+.envrc re-evaluates each time you split or open a tab (fresh SSO check, fresh
+Vault token). If a pane says the .envrc is blocked, run `da` (direnv allow)
+once in it. cd into the repo (or a subdir) BEFORE launching opencode so the
+project .opencode/ config and AWS creds are loaded.
+
+1. Start herdr and land in the repo:
+     h                       # start/attach the server
+     cd ~/source/terraform   # direnv loads creds + bin/ helpers
+     da                      # only if direnv reports .envrc is blocked
+
+2. One workspace for the repo, panes per job. With focus in that first pane:
+     prefix+v                # split right: e.g. left = opencode, right = shell
+     prefix+minus            # split down: e.g. a `terraform plan` watch pane
+     prefix+h / prefix+l     # hop between the opencode pane and your shell
+     ctrl+alt+h / ctrl+alt+l # same, kitty-style direct chords
+
+3. Run opencode INSIDE the repo dir so it picks up .opencode/:
+     o                       # in a pane already cd'd into ~/source/terraform
+     prefix+alt+o            # or a throwaway opencode pane (opens in pane cwd)
+   The sidebar then shows opencode as working / blocked / done at a glance —
+   handy while a plan or apply is running in the neighbouring pane.
+
+4. Working an account/stack? cd into it first; direnv + TF cache follow:
+     cd ~/source/terraform/alc-eng.com      # (or apptentive.com, aws-accounts, …)
+     ti && tp                               # terraform init / plan (zsh aliases)
+   Give that stack its own tab so several plans/applies run side by side:
+     prefix+c                # new tab, then cd into the next stack
+
+5. Parallel branches via worktrees (the repo already uses them). From a Git
+   workspace row in the sidebar, choose "New worktree" to check a branch out
+   under ~/.herdr/worktrees and open it as its own grouped workspace — run a
+   second opencode there without disturbing your main checkout. The shell `wt`
+   command still works too. Closing the parent workspace closes the group but
+   never deletes checkouts or branches.
+
+6. Long apply? Detach and walk away:
+     prefix+q                # detach — plans/applies/opencode keep running
+     h                       # reattach later (or `hr <host>` from elsewhere)
+
+Tip: AWS profile / region are per shell (the `ap` / `ar` pickers, persisted to
+~/.aws/sticky.*). Set them in a pane, then splits from that pane inherit the
+cwd but NOT exported vars — re-run `ap` in a new pane if it needs a different
+profile. `prefix+?` shows every binding live.

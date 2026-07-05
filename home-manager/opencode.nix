@@ -156,7 +156,7 @@ in
         # Safety posture (deliberate):
         #   - READ_OPERATIONS_ONLY=true  — server refuses any non-read API call,
         #     regardless of IAM. Mutations go through the regular `aws` CLI in a
-        #     PTY so they remain explicit and visible.
+        #     herdr pane so they remain explicit and visible.
         #   - AWS_REGION / AWS_PROFILE are NOT pinned here; they're inherited
         #     from the shell (typically set per-project via direnv `.envrc`),
         #     so the agent operates against whatever account/region the user is
@@ -193,7 +193,7 @@ in
         #
         # `--readonly` is REQUIRED here — the server otherwise exposes
         # mutating tools (create/delete/attach/detach). Mutations to IAM
-        # should always go through the regular `aws` CLI in a PTY so they
+        # should always go through the regular `aws` CLI in a herdr pane so they
         # remain explicit and auditable.
         "[aws] iam" = mkAwslabsMcp {
           name = "iam";
@@ -207,7 +207,7 @@ in
         # Safety: DO NOT add `--allow-write` or `--allow-sensitive-data-access`
         # to the command array. Those flags unlock cluster mutations and Secret
         # contents respectively; both should go through `kubectl` / `eksctl`
-        # in a PTY so they stay explicit. AWS_PROFILE / AWS_REGION inherited
+        # in a herdr pane so they stay explicit. AWS_PROFILE / AWS_REGION inherited
         # from the shell; KUBECONFIG falls through to the default ~/.kube/config.
         "[aws] eks" = mkAwslabsMcp { name = "eks"; };
 
@@ -269,10 +269,6 @@ in
         # Docs: https://github.com/ndom91/open-plan-annotator
         "open-plan-annotator@latest"
 
-        # OpenCode plugin for interactive PTY management - run background
-        # processes, send input, read output with regex filtering
-        "opencode-pty@latest"
-
         # An Opencode plugin for managing git worktrees
         "open-trees@latest"
       ];
@@ -323,15 +319,20 @@ in
         them with `delete_observations` and add the corrected one.
       - Keep entity names stable and unique (e.g. repo slugs, hostnames).
 
-      # Interactive Commands (MCP `pty` server / opencode-pty)
+      # Interactive & long-running commands (herdr panes)
 
-      The `opencode-pty` plugin (https://github.com/shekohex/opencode-pty)
-      exposes a background PTY manager. Use it — NOT the `bash` tool — for
-      any command that may prompt for user input, hang waiting on a TTY, or
-      run as a long-lived foreground process. The `bash` tool has no TTY
-      and will silently block or fail on prompts.
+      The `bash` tool has no TTY: any command that prompts for input, waits on
+      a TTY, or runs as a long-lived foreground process will silently block or
+      fail there. Instead, run such commands in a dedicated herdr pane. herdr
+      is the terminal multiplexer this session runs inside; the `herdr` CLI
+      talks to it over a local socket. Full command reference: the `herdr`
+      skill (auto-loaded when `HERDR_ENV=1`), or `herdr <group> --help`.
 
-      ## Always use PTY for
+      Precondition: only usable when `HERDR_ENV=1` (i.e. running inside herdr).
+      If it is not set, say so and ask the user to run the command themselves —
+      do NOT fall back to the `bash` tool for anything interactive.
+
+      ## Run in a herdr pane (NOT the bash tool)
       - `sudo` (password prompt) and anything that may escalate
       - `terraform init` / `plan` / `apply` / `destroy` (provider auth,
         approval prompts, workspace selection, `-var` prompts)
@@ -346,16 +347,27 @@ in
       - `nh os switch` / `nh home switch` / `nixos-rebuild switch`
         (sudo + long-running TUI diff output)
       - `npm login`, `gh auth login`, `docker login`, `helm registry login`
-      - REPLs and watchers the user explicitly wants to interact with
-        (`psql`, `redis-cli`, `nix repl`, `tf console`, `kubectl exec -it`)
+      - long-lived servers, log watchers, and test runners you want to read
+        from later, and REPLs (`psql`, `redis-cli`, `nix repl`, `tf console`,
+        `kubectl exec -it`)
 
       ## How
-      - Start the process via the pty MCP tool, capture its session id, then
-        read output and send input as needed. Surface auth URLs / device
-        codes to the user verbatim and wait for them to complete the action.
+      - Spawn a pane with `herdr pane split <pane_id> --direction right
+        --no-focus` (parse `result.pane.pane_id`), then `herdr pane run
+        <new_pane> "<command>"`.
+      - Read progress with `herdr pane read <pane> --source recent-unwrapped`;
+        block on completion with `herdr wait output <pane> --match "<sentinel>"`
+        (append `&& echo __DONE__` to the command and match that). `wait
+        output` returns the transcript in its own payload — read from that, or
+        settle briefly before a separate `pane read`.
+      - For SECRETS / AUTH (passwords, 2FA, SSO device codes): do NOT type them
+        yourself and do NOT `pane send-text` credentials. Surface the auth
+        URL / device code / prompt to the user verbatim, focus the pane
+        (`herdr pane focus` / tell them which pane), and wait for them to
+        complete it. The human owns credential entry.
       - For non-interactive, short-lived commands (ls, grep, nixfmt, git
-        status, etc.) keep using the `bash` tool — PTY is overhead.
-      - If unsure whether a command will prompt, prefer PTY.
+        status, etc.) keep using the `bash` tool — a herdr pane is overhead.
+      - If unsure whether a command will prompt, prefer a herdr pane.
     '';
 
     # ── Custom slash commands ─────────────────────────────────────
@@ -378,6 +390,19 @@ in
       # ~/.config/opencode/commands/secret1.md — see home.nix age.secrets.
     };
   };
+
+  # herdr agent skill: teaches opencode to DRIVE herdr over its local socket
+  # (split panes, spawn sibling agents, read output, wait on state) when it is
+  # running inside a herdr-managed pane. opencode auto-loads any
+  # skills/<name>/SKILL.md from its global config dir; the frontmatter
+  # `description` gates activation. Vendored verbatim from
+  # github.com/ogulcancelik/herdr//SKILL.md so it is Nix-managed and pinned,
+  # rather than fetched imperatively via `npx skills add`.
+  #
+  # Safe on the headless `opencode serve` machine too: the skill's own first
+  # rule is to stop unless HERDR_ENV=1, which that server never sets, so it
+  # simply stays dormant there.
+  home.file.".config/opencode/skills/herdr/SKILL.md".source = ./dotfiles/herdr-skill.md;
 
   # Ensure the memory file's parent directory exists before the memory
   # MCP server is invoked; mcp-server-memory will create the JSON file
