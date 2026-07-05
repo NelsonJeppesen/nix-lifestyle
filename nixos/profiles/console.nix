@@ -14,8 +14,8 @@
 #   on handoff, disabling kmscon falls back to the kernel VT immediately.
 # - A handful of tools poking /dev/tty* directly (legacy installers, some
 #   recovery utilities) may behave differently. None used here today.
-# - `hwRender = true` requires DRM/KMS access; fine on all current hosts
-#   (Intel xe/i915, Apple AGX via simpledrm fallback).
+# - `config.hwaccel = true` requires DRM/KMS access; fine on all current
+#   hosts (Intel xe/i915, Apple AGX via simpledrm fallback).
 #
 # Font: JetBrainsMono Nerd Font ships the full Nerd Fonts glyph set
 # (Powerline, Devicons, Font Awesome, Material, Octicons, Codicons, etc.)
@@ -25,7 +25,9 @@
 {
   services.kmscon = {
     enable = true;
-    hwRender = true;
+    # hardware-accelerated (DRM/KMS) rendering. Requires hardware.graphics
+    # (asserted by the module) — enabled on all current hosts.
+    config.hwaccel = true;
     # fonts = [
     #   {
     #     name = "JetBrainsMono Nerd Font";
@@ -34,10 +36,12 @@
     # ];
     # 14pt is a reasonable starting point across panels (it scales with
     # the framebuffer resolution kmscon picks). Bump per-host if needed.
-    # config = ''
-    #   font-size=14
-    #   palette=solarized
-    # '';
+    # config is now an attrset (the old kmsconArgs/extraConfig string was
+    # renamed to services.kmscon.config in nixpkgs):
+    # config = {
+    #   font-size = 14;
+    #   palette = "solarized";
+    # };
   };
 
   # Make the same font available to userspace so anything reading
