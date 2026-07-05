@@ -28,4 +28,11 @@
 
   # 8GiB laptop; things get tight
   zramSwap.memoryPercent = 80;
+
+  # Build one derivation at a time. With only 8GiB, parallel builds (default
+  # max-jobs = "auto" = nproc) race for RAM during `update` and OOM. Serializing
+  # trades build throughput for staying alive; `--cores` is left at default so a
+  # single derivation still uses all CPUs. Daemon-wide, so it also covers the
+  # user layer's `nh home switch` (which builds via the same daemon).
+  nix.settings.max-jobs = 1;
 }

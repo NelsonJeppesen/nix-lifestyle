@@ -88,10 +88,10 @@
     # secret: decrypted at run time straight into the opencode global
     # commands dir, so its contents never live in the Nix store or any
     # repo. opencode discovers it as /secret1 at startup.
-    "opencode.secret1" = {
-      file = "/etc/secrets/encrypted/opencode.secret1.age";
-      path = "${config.home.homeDirectory}/.config/opencode/commands/secret1.md";
-    };
+    # "opencode.secret1" = {
+    #   file = "/etc/secrets/encrypted/opencode.secret1.age";
+    #   path = "${config.home.homeDirectory}/.config/opencode/commands/secret1.md";
+    # };
   };
 
   home = {
