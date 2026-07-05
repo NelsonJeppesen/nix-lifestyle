@@ -1,12 +1,17 @@
 # kitty.nix - Kitty terminal emulator configuration
 #
+# kitty is intentionally a "dumb" single-window terminal here: herdr (herdr.nix)
+# owns all multiplexing — tabs, splits, panes, sessions. kitty therefore clears
+# its own shortcuts down to a tiny allowlist (copy/paste, font-size, F1) so the
+# whole ctrl+shift chord space passes through to herdr, and hides its tab bar.
+#
 # Configures the Kitty GPU-accelerated terminal with:
 # - Adwaita Mono font (matching GNOME system font) with Nerd Font symbol mapping
 # - Wayland-native display with IME disabled (reduces latency)
-# - Custom keybindings for tabs, windows, and buffer-to-nvim piping
-# - Catppuccin Latte/Mocha auto-switching via kitty's theme system
-# - Powerline-style tab bar with slanted separators
-# - 30K line scrollback, copy-on-select, and stripped trailing whitespace
+# - Minimal keybindings: copy/paste, font-size, and buffer-to-nvim piping (F1)
+# - Rose Pine (Moon for light / no-preference) auto-switching via kitty's themes
+# - Tab bar hidden (herdr draws its own); 30K scrollback, copy-on-select,
+#   and stripped trailing whitespace
 # - Shell integration sourced into zsh by home-manager
 # - Remote control socket enabled (for `kitty @ set-colors`, etc.)
 { pkgs, ... }:
@@ -21,7 +26,7 @@
 
       # Auto-theme files: kitty switches between these based on the desktop's
       # color-scheme preference (org.freedesktop.appearance via xdg-desktop-portal).
-      # Pair: Catppuccin Latte (light) / Catppuccin Mocha (dark).
+      # Pair: Rose Pine (dark) / Rose Pine Moon (light and no-preference).
       ".config/kitty/dark-theme.auto.conf".source =
         pkgs.kitty-themes + "/share/kitty-themes/themes/rose-pine.conf";
 
@@ -48,21 +53,28 @@
       };
 
       # ── Keybindings ─────────────────────────────────────────────
+      # clear_all_shortcuts (settings below) drops every kitty default so the
+      # ctrl+shift chord space is free for herdr. Only this allowlist is kept,
+      # and all of it stays clear of the keys herdr binds (see herdr.nix).
+      # kitty_mod is ctrl+shift, so these are the usual ctrl+shift+c/v/±.
+      #
+      # NOTE: ctrl+shift+backspace is deliberately NOT re-added here. kitty's
+      # default binds it to font-size reset, but herdr binds it to close_pane
+      # (herdr.nix). Because kitty grabs a chord before forwarding it, keeping
+      # the font-reset binding would swallow the key and herdr would never see
+      # it — so we drop it and let ctrl+shift+backspace pass through to herdr.
+      # Font-size reset is still reachable via `change_font_size` from kitty's
+      # remote control if ever needed.
       keybindings = {
-        "kitty_mod+]" = "next_layout"; # Cycle through layouts
+        # Clipboard
+        "kitty_mod+c" = "copy_to_clipboard";
+        "kitty_mod+v" = "paste_from_clipboard";
 
-        # Window management within a tab
-        "kitty_mod+backspace" = "close_window";
-        "kitty_mod+enter" = "launch --cwd=current"; # New window in current directory
-        "kitty_mod+up" = "prev_window";
-        "kitty_mod+down" = "next_window";
-
-        "kitty_mod+w" = "new_os_window_with_cwd"; # New OS-level window
-
-        # Tab navigation
-        "kitty_mod+left" = "prev_tab";
-        "kitty_mod+right" = "next_tab";
-        "kitty_mod+n" = "new_tab_with_cwd"; # New tab in current directory
+        # Font size — kitty's own defaults, re-added after the clear. Reset
+        # (kitty_mod+backspace) is intentionally omitted; see the note above.
+        "kitty_mod+equal" = "change_font_size all +2.0";
+        "kitty_mod+plus" = "change_font_size all +2.0";
+        "kitty_mod+minus" = "change_font_size all -2.0";
 
         # F1: pipe entire scrollback buffer into nvim in a split
         # Useful for searching/copying terminal output with vim motions
@@ -72,6 +84,12 @@
 
       # ── Terminal settings ───────────────────────────────────────
       settings = {
+
+        # Drop ALL of kitty's built-in keyboard shortcuts, keeping only the
+        # allowlist mapped above. home-manager emits settings before the `map`
+        # lines, so this clear runs first and the allowlist survives it. Frees
+        # the whole ctrl+shift chord space for herdr (herdr.nix).
+        clear_all_shortcuts = "yes";
 
         # Font configuration: use GNOME's default monospace font.
         # Commented alternatives preserved for easy font experimentation.
@@ -130,9 +148,8 @@
 
         scrollback_lines = 30000; # 30K lines of scrollback buffer
         strip_trailing_spaces = "always"; # Remove trailing whitespace on copy
-        tab_bar_min_tabs = 1; # Always show tab bar (even with one tab)
-        tab_bar_style = "powerline"; # Powerline-style tab bar
-        tab_powerline_style = "slanted"; # Slanted separators between tabs
+        # herdr draws its own tab/pane chrome, so hide kitty's tab bar entirely.
+        tab_bar_style = "hidden";
 
         # OSC52 clipboard control: allow kitty to read/write the clipboard so
         # nvim/yank-over-ssh works. `*-ask` requires a confirmation popup the

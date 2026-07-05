@@ -7,13 +7,16 @@
 # you launch opencode (and any other agent) inside of. opencode.nix is left
 # untouched; this module only adds the wrapper around it.
 #
-# Keybindings: herdr is prefix-driven (ctrl+b <key>, like tmux). To keep the
-# muscle memory from kitty.nix (which uses ctrl+shift chords), every common
-# action ALSO gets a direct ctrl+alt chord here. ctrl+alt is the one modifier
-# family herdr's docs certify as safe across terminals — it does not collide
-# with kitty's ctrl+shift bindings, survives terminals without the modern
-# keyboard protocol, and (unlike plain alt) is not eaten by macOS option-key
-# composing. The ctrl+b prefix bindings are kept as-is on top of the chords.
+# Keybindings: herdr binds ONE key per action. Rather than lean on the tmux
+# ctrl+b prefix, the common actions are remapped to direct ctrl+shift chords
+# that mirror the kitty.nix muscle memory (new tab = ctrl+shift+t, and so on).
+# kitty.nix clears its own shortcuts down to a small allowlist (copy/paste,
+# font-size, F1), so the whole ctrl+shift space passes through kitty to herdr;
+# GNOME leaves plain ctrl+shift+arrows unbound (its workspace chords all add
+# Alt or Super), so nothing has to be freed there either. Actions left unlisted
+# keep their prefix defaults (prefix = ctrl+b): workspace picker prefix+w,
+# detach prefix+q, resize prefix+r, copy-mode prefix+[, help prefix+?, and so
+# on — run `herdr --default-config` to see them all.
 #
 # Config lives at ~/.config/herdr/config.toml. herdr has no home-manager
 # module, so the TOML is rendered directly via home.file. `herdr
@@ -24,14 +27,44 @@
   pkgs,
   ...
 }:
+let
+  # Helper bound to ctrl+shift+o (see [[keys.command]] below): open opencode in a
+  # fresh herdr tab that inherits the focused pane's working directory, so
+  # opencode loads the project's .opencode/ config and any direnv-provided
+  # creds. herdr has no native "new tab running X" command, so this drives the
+  # CLI: it creates a focused tab, reads the new root pane id from the JSON
+  # reply, and starts opencode there. herdr runs it detached (type = "shell").
+  ocNewTab = pkgs.writeShellApplication {
+    name = "herdr-oc-new-tab";
+    runtimeInputs = [
+      pkgs.herdr
+      pkgs.jq
+    ];
+    text = ''
+      # HERDR_PANE_ID is set by herdr to the pane that triggered the chord;
+      # follow its foreground cwd so the new tab opens in the same directory.
+      cwd=""
+      if [ -n "''${HERDR_PANE_ID:-}" ]; then
+        cwd="$(herdr pane get "$HERDR_PANE_ID" \
+          | jq -r '.result.pane.foreground_cwd // .result.pane.cwd // empty')"
+      fi
+      if [ -n "$cwd" ]; then
+        pane="$(herdr tab create --focus --cwd "$cwd" | jq -r '.result.root_pane.pane_id')"
+      else
+        pane="$(herdr tab create --focus | jq -r '.result.root_pane.pane_id')"
+      fi
+      exec herdr pane run "$pane" opencode
+    '';
+  };
+in
 {
-  # herdr binary (0.7.0 in the pinned nixpkgs). Installed via home.packages so
+  # herdr binary (0.7.1 in the pinned nixpkgs). Installed via home.packages so
   # updates flow through the flake, not herdr's own curl|sh installer.
   home.packages = [ pkgs.herdr ];
 
   # Shell aliases for quick access. Kept in this module (not zsh.nix) per the
   # repo rule: extend by adding a new <feature>.nix. The opencode aliases
-  # (o/oc/or/…) stay in opencode.nix; you run those inside an `h` session.
+  # (o/oc/ou/…) stay in opencode.nix; you run those inside an `h` session.
   programs.zsh.shellAliases = {
     h = "herdr"; # start or attach the multiplexer server
     hr = "herdr --remote"; # attach to a remote herdr over ssh
@@ -46,13 +79,15 @@
       # overwritten on `home-manager switch`. Reload with `herdr server
       # reload-config` or prefix+shift+r after a rebuild.
 
+      # Skip the first-run onboarding/notification-setup screen. This is a
+      # top-level key, so it MUST stay above the first [section] header.
+      onboarding = false
+
       [theme]
-      # Follow the kitty rose-pine pair (kitty.nix) and switch with the
-      # desktop's light/dark preference, the same signal kitty reads.
-      name = "rose-pine"
-      auto_switch = true
-      light_name = "rose-pine-dawn"
-      dark_name = "rose-pine"
+      # herdr uses gruvbox regardless of the desktop light/dark preference
+      # (kitty keeps its own rose-pine pair in kitty.nix). A single fixed theme,
+      # so auto_switch is left off (its default) and no light/dark pair is set.
+      name = "gruvbox"
 
       [update]
       # Nix owns herdr's version; silence the background update nag. `herdr
@@ -65,43 +100,59 @@
       new_cwd = "follow"
 
       [keys]
-      # Prefix defaults are kept; each line adds a direct ctrl+alt chord that
-      # mirrors the kitty.nix action so the muscle memory carries over.
-      # (prefix = ctrl+b; press it, release, then the action key.)
+      # herdr binds ONE key per action, so each entry REPLACES that action's
+      # prefix default with a single direct ctrl+shift chord. kitty.nix clears
+      # its own shortcuts (keeping only copy/paste, font-size and F1), so these
+      # ctrl+shift chords pass straight through kitty to herdr. Actions not
+      # listed here keep their prefix defaults — run `herdr --default-config`
+      # to see the full set.
 
-      # Tabs — kitty: ctrl+shift+n new, ctrl+shift+left/right cycle.
-      new_tab = ["prefix+c", "ctrl+alt+c"]
-      previous_tab = ["prefix+p", "ctrl+alt+["]
-      next_tab = ["prefix+n", "ctrl+alt+]"]
+      # Tabs — new tab reuses kitty's own ctrl+shift+t muscle memory; [ / ]
+      # step through the tab strip.
+      new_tab = "ctrl+shift+t"
+      previous_tab = "ctrl+shift+left"
+      next_tab = "ctrl+shift+right"
 
-      # Pane focus — kitty: ctrl+shift+up/down cycle windows. h/j/k/l here.
-      focus_pane_left = ["prefix+h", "ctrl+alt+h"]
-      focus_pane_down = ["prefix+j", "ctrl+alt+j"]
-      focus_pane_up = ["prefix+k", "ctrl+alt+k"]
-      # NOTE: ctrl+alt+l is the KDE lock-screen chord. This host is GNOME
-      # (gnome.nix), where it is unbound, so it is safe here. Revisit if this
-      # config is ever reused on KDE.
-      focus_pane_right = ["prefix+l", "ctrl+alt+l"]
+      previous_workspace = "ctrl+shift+up"
+      next_workspace = "ctrl+shift+down"
 
-      # Splits — kitty: ctrl+shift+enter opens a new window (a vertical split).
-      # herdr has no horizontal-split equivalent in kitty, so the horizontal
-      # chord uses herdr's own documented safe fallback (ctrl+alt+shift+d).
-      split_vertical = ["prefix+v", "ctrl+alt+enter"]
-      split_horizontal = ["prefix+minus", "ctrl+alt+shift+d"]
+      previous_agent = "ctrl+shift+["
+      next_agent = "ctrl+shift+]"
 
-      # Pane lifecycle — kitty: ctrl+shift+backspace closes a window;
-      # ctrl+shift+] cycles layout (mapped to next-pane cycling here).
-      close_pane = ["prefix+x", "ctrl+alt+x"]
-      zoom = ["prefix+z", "ctrl+alt+z"]
-      cycle_pane_next = ["prefix+tab", "ctrl+alt+tab"]
+      # Pane focus — h/j/k/l vim motions.
+      focus_pane_left = "ctrl+shift+h"
+      focus_pane_down = "ctrl+shift+j"
+      focus_pane_up = "ctrl+shift+k"
+      focus_pane_right = "ctrl+shift+l"
 
-      # Quick agent launch: open a temporary pane running opencode. Closes when
-      # opencode exits. prefix+alt+o keeps it off the direct-chord space.
+      # Splits — vertical reuses kitty's ctrl+shift+enter "new window" muscle
+      # memory; horizontal is the natural ctrl+shift+d beneath it.
+      split_vertical = "ctrl+shift+enter"
+      split_horizontal = "ctrl+shift+d"
+
+      # Pane lifecycle.
+      close_pane = "ctrl+shift+backspace"
+      zoom = "ctrl+shift+z"
+      cycle_pane_next = "ctrl+shift+tab"
+
+      # Quick agent launch: open opencode in a NEW tab (not a throwaway pane),
+      # landing in the focused pane's directory. type = "shell" runs the helper
+      # detached; it creates the tab and starts opencode in it (see ocNewTab).
       [[keys.command]]
-      key = "prefix+alt+o"
-      type = "pane"
-      command = "opencode"
-      description = "launch opencode in a pane"
+      key = "ctrl+shift+o"
+      type = "shell"
+      command = "${lib.getExe ocNewTab}"
+      description = "open opencode in a new tab"
+
+      [ui]
+      # Skip the name prompt and create tabs immediately with generated names.
+      prompt_new_tab_name = false
+      pane_gaps = false
+
+      [experimental]
+      # Render inline images via the Kitty graphics protocol. kitty is the outer
+      # terminal here, so the graphics-compatible requirement is satisfied.
+      kitty_graphics = true
     '';
 
     # Plain-text keybindings / usage cheatsheet, symlinked into the herdr

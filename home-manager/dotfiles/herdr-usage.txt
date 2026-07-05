@@ -10,11 +10,31 @@ This file is managed by home-manager (herdr.nix). Live keymap: press
 `prefix+?` inside herdr. Full docs: https://herdr.dev/docs/
 
 
-The prefix
-----------
-herdr reserves ONE key: the prefix, `ctrl+b`. Press it, release, then press
-the action key. `prefix+c` = ctrl+b, then c. This keeps herdr out of the way
-of your shell, nvim, and opencode, which own most other chords.
+kitty is a dumb terminal now
+----------------------------
+kitty (kitty.nix) is set up as a single-window terminal with NO tabs, NO
+splits, and its whole shortcut table cleared — herdr does all the multiplexing.
+kitty keeps only a tiny allowlist, and everything else in the ctrl+shift space
+passes straight through to herdr:
+
+  ctrl+shift+c / ctrl+shift+v    copy / paste
+  ctrl+shift+= / ctrl+shift+-    font size bigger / smaller
+  F1                            pipe scrollback into nvim (search/yank output)
+
+Don't reuse those in herdr — every other ctrl+shift chord is herdr's
+(including ctrl+shift+backspace, which herdr uses to close a pane).
+
+
+Two ways to drive herdr
+-----------------------
+1. Direct chords — the common actions are bound to ctrl+shift chords (listed
+   below), reusing kitty muscle memory (new tab = ctrl+shift+t, …). No prefix
+   needed; just press. kitty forwards them untouched.
+2. The prefix — ctrl+b, tmux-style: press it, release, then an action key.
+   Everything NOT bound to a chord still lives under the prefix.
+
+herdr binds exactly ONE key per action, so the ctrl+shift chords REPLACE the old
+prefix shortcuts for those same actions (prefix+c no longer opens a tab, etc.).
 
 herdr is also fully mouse-native: click panes/tabs/workspaces, drag split
 borders, right-click for menus. You never HAVE to touch a keybinding.
@@ -29,73 +49,86 @@ Start / detach / reattach
                        e.g.  hr ssh://you@server:2222
 
 Nothing dies on detach. Close the laptop, reattach from another terminal or
-from your phone over ssh.
+from your phone over ssh. On this host, Super+E opens a fullscreen kitty that
+launches straight into herdr.
 
 
-Learn these five first
-----------------------
-  prefix+c             new tab
-  prefix+v             split right (vertical)
-  prefix+minus         split down (horizontal)
-  prefix+h/j/k/l       move between panes
+Learn these first
+-----------------
+  ctrl+shift+t         new tab
+  ctrl+shift+enter     split right (vertical)
+  ctrl+shift+d         split down (horizontal)
+  ctrl+shift+h/j/k/l   move between panes
+  ctrl+shift+o         open opencode in a new tab
   prefix+w             workspace picker
 
 
-Kitty-aligned direct chords (no prefix needed)
-----------------------------------------------
-These mirror the kitty muscle memory. ctrl+alt is the modifier family herdr
-certifies as safe across terminals, and it does NOT collide with kitty's own
-ctrl+shift bindings.
-
-  ctrl+alt+c           new tab                 (kitty: ctrl+shift+n)
-  ctrl+alt+[           previous tab            (kitty: ctrl+shift+left)
-  ctrl+alt+]           next tab                (kitty: ctrl+shift+right)
-  ctrl+alt+h/j/k/l     focus pane left/down/up/right
-                                               (kitty: ctrl+shift+up/down)
-  ctrl+alt+enter       split right (vertical)  (kitty: ctrl+shift+enter)
-  ctrl+alt+shift+d     split down (horizontal)
-  ctrl+alt+x           close pane              (kitty: ctrl+shift+backspace)
-  ctrl+alt+z           zoom / unzoom pane
-  ctrl+alt+tab         cycle to next pane      (kitty: ctrl+shift+])
-
-Note: on this GNOME host ctrl+alt+l is free. On KDE it is the lock-screen
-shortcut — rebind focus_pane_right in herdr.nix if this config moves to KDE.
-
-
-Prefix reference (everything else)
-----------------------------------
-Panes:
-  prefix+z             zoom the focused pane
-  prefix+x             close pane
-  prefix+shift+h/j/k/l swap panes
-  prefix+r             resize mode
-  prefix+[             copy mode (h/j/k/l move, v select, y copy, q quit)
+Direct chords (no prefix needed)
+--------------------------------
+These reuse kitty's ctrl+shift muscle memory; kitty's own shortcuts are cleared
+(kitty.nix) so the chords reach herdr instead.
 
 Tabs:
-  prefix+n / prefix+p  next / previous tab
-  prefix+1..9          jump to tab 1–9
+  ctrl+shift+t         new tab                 (kitty's old new-tab chord)
+  ctrl+shift+[         previous tab
+  ctrl+shift+]         next tab
+
+Panes:
+  ctrl+shift+h/j/k/l   focus pane left/down/up/right
+  ctrl+shift+enter     split right (vertical)
+  ctrl+shift+d         split down (horizontal)
+  ctrl+shift+backspace close pane
+  ctrl+shift+z         zoom / unzoom pane
+  ctrl+shift+tab       cycle to next pane
+
+Workspaces & agents:
+  ctrl+shift+left/right  previous / next workspace
+  ctrl+shift+down/up     previous / next agent  (step the sidebar's agent rows)
+
+opencode:
+  ctrl+shift+o         open opencode in a NEW tab (in the current pane's dir)
+
+Note: GNOME leaves plain ctrl+shift+arrows unbound (its own workspace chords all
+add Alt or Super), so the workspace/agent chords above reach herdr cleanly.
+
+
+Prefix reference (everything not remapped above)
+------------------------------------------------
+All of these still need the ctrl+b prefix first.
+
+Panes & tabs:
+  prefix+shift+tab     cycle to previous pane
+  prefix+r             resize mode
+  prefix+e             edit scrollback / copy mode
+  prefix+shift+p       rename pane
   prefix+shift+t       rename tab
+  prefix+1..9          jump to tab 1–9
   prefix+shift+x       close tab
 
 Workspaces & session:
+  prefix+w             workspace picker
+  prefix+g             goto picker
   prefix+shift+n       new workspace
   prefix+shift+w       rename workspace
   prefix+shift+d       close workspace
-  prefix+g             goto picker
+  prefix+shift+g       new worktree
   prefix+b             toggle sidebar
+  prefix+s             settings
+  prefix+q             detach
   prefix+shift+r       reload config (after a home-manager rebuild)
   prefix+?             show every active binding
 
 
 Launching opencode
 -------------------
-  prefix+alt+o         open a temporary pane running opencode
+  ctrl+shift+o         open opencode in a new tab, in the focused pane's dir
   o                    or just run the opencode alias in any pane
 
-opencode's state (blocked / working / done) shows up in the herdr sidebar
-automatically via the herdr↔opencode integration plugin, which home-manager
-installs at ~/.config/opencode/plugins/herdr-agent-state.js. Reinstall on
-demand with the `ho` alias.
+New tabs open immediately with a generated name (no name prompt). opencode's
+state (blocked / working / done) shows up in the herdr sidebar automatically
+via the herdr↔opencode integration plugin, which home-manager installs at
+~/.config/opencode/plugins/herdr-agent-state.js. Reinstall on demand with the
+`ho` alias.
 
 
 Quick start: ~/source/terraform
@@ -118,14 +151,13 @@ project .opencode/ config and AWS creds are loaded.
      da                      # only if direnv reports .envrc is blocked
 
 2. One workspace for the repo, panes per job. With focus in that first pane:
-     prefix+v                # split right: e.g. left = opencode, right = shell
-     prefix+minus            # split down: e.g. a `terraform plan` watch pane
-     prefix+h / prefix+l     # hop between the opencode pane and your shell
-     ctrl+alt+h / ctrl+alt+l # same, kitty-style direct chords
+     ctrl+shift+enter        # split right: e.g. left = opencode, right = shell
+     ctrl+shift+d            # split down: e.g. a `terraform plan` watch pane
+     ctrl+shift+h / +l       # hop between the opencode pane and your shell
 
 3. Run opencode INSIDE the repo dir so it picks up .opencode/:
      o                       # in a pane already cd'd into ~/source/terraform
-     prefix+alt+o            # or a throwaway opencode pane (opens in pane cwd)
+     ctrl+shift+o            # or open opencode in a new tab (inherits the cwd)
    The sidebar then shows opencode as working / blocked / done at a glance —
    handy while a plan or apply is running in the neighbouring pane.
 
@@ -133,14 +165,14 @@ project .opencode/ config and AWS creds are loaded.
      cd ~/source/terraform/alc-eng.com      # (or apptentive.com, aws-accounts, …)
      ti && tp                               # terraform init / plan (zsh aliases)
    Give that stack its own tab so several plans/applies run side by side:
-     prefix+c                # new tab, then cd into the next stack
+     ctrl+shift+t            # new tab, then cd into the next stack
 
 5. Parallel branches via worktrees (the repo already uses them). From a Git
-   workspace row in the sidebar, choose "New worktree" to check a branch out
-   under ~/.herdr/worktrees and open it as its own grouped workspace — run a
-   second opencode there without disturbing your main checkout. The shell `wt`
-   command still works too. Closing the parent workspace closes the group but
-   never deletes checkouts or branches.
+   workspace row in the sidebar, choose "New worktree" (or prefix+shift+g) to
+   check a branch out under ~/.herdr/worktrees and open it as its own grouped
+   workspace — run a second opencode there without disturbing your main
+   checkout. The shell `wt` command still works too. Closing the parent
+   workspace closes the group but never deletes checkouts or branches.
 
 6. Long apply? Detach and walk away:
      prefix+q                # detach — plans/applies/opencode keep running
