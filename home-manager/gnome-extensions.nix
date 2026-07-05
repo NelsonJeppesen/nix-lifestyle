@@ -4,7 +4,7 @@
 # - AppIndicator: system tray support for legacy apps
 # - Bitcoin Markets: live BTC price ticker in the top bar
 # - Caffeine: prevent screen blanking with a toggle (Super+O)
-# - Clipboard Indicator: clipboard history manager (Ctrl+Shift+I to toggle)
+# - Clipboard Indicator: clipboard history manager (menu via the top-bar icon; keybindings disabled)
 # - Disable Unredirect: stop the compositor bypassing itself for fullscreen
 #   windows, which on Wayland keeps hide-top-bar / overlays repainting correctly
 # - Hide Top Bar: auto-hide the top bar (intellihide + mouse-to-edge reveal)
@@ -82,7 +82,9 @@
       show-in-overview = true; # Keep the panel visible in the Activities overview
     };
 
-    # Clipboard Indicator: clipboard history with keyboard shortcuts
+    # Clipboard Indicator: clipboard history. Keyboard shortcuts are unbound
+    # (empty lists below) so the <Shift><Control> chords pass through to herdr;
+    # open the history from the top-bar icon instead.
     "org/gnome/shell/extensions/clipboard-indicator" = {
       blink-icon-on-copy = true;
       cache-size = 10; # Number of items to persist across restarts
@@ -91,12 +93,12 @@
       display-mode = 1; # Compact display mode
       history-size = 200; # Total items to keep in history
       move-item-first = false; # Move selected item to top of history
-      next-entry = [ "<Shift><Control>p" ]; # Next clipboard entry
+      next-entry = [ ]; # Unbound: <Shift><Control> chords belong to herdr (herdr.nix)
       notify-on-copy = false;
       open-at-cursor = true;
       paste-button = false;
       paste-on-select = false;
-      prev-entry = [ "<Shift><Control>o" ]; # Previous clipboard entry
+      prev-entry = [ ]; # Unbound: <Shift><Control> chords belong to herdr (herdr.nix)
       preview-size = 45;
       private-mode-binding = [ ];
       show-clear-history-button = false;
@@ -106,7 +108,7 @@
       show-settings-button = false;
       show-tag-button = false;
       strip-text = true; # Strip formatting when pasting
-      toggle-menu = [ "<Shift><Control>i" ]; # Toggle clipboard menu
+      toggle-menu = [ ]; # Unbound: <Shift><Control> chords belong to herdr (herdr.nix)
       topbar-preview-size = 9; # Characters shown in top bar preview
     };
 
