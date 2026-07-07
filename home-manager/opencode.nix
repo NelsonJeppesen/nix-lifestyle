@@ -131,8 +131,23 @@ in
         # Docs: https://github.com/ndom91/open-plan-annotator
         # "open-plan-annotator@latest"
 
-        # An Opencode plugin for managing git worktrees
-        # "open-trees@latest"
+        # open-conclave: multi-agent debate orchestrator. Adds a Conclave
+        # agent that runs parallel sub-agents (Harper/Benjamin/Lucas),
+        # moderated by a Captain with early stopping on consensus.
+        # Docs: https://github.com/martinzokov/open-conclave
+        "open-conclave@latest"
+
+        # opencode-handoff: /handoff command that distills the current
+        # conversation into a focused continuation prompt and opens it in a
+        # fresh session; adds a read_session tool for prior transcripts.
+        # Docs: https://github.com/joshuadavidthomas/opencode-handoff
+        "opencode-handoff@latest"
+
+        # opencode-autotitle: AI-powered automatic session naming. Sets an
+        # instant keyword title on the first message, then refines it with a
+        # cheap model once the response lands. Never overwrites custom titles.
+        # Docs: https://github.com/pawelma/opencode-autotitle
+        # "opencode-autotitle@latest" # "open-trees@latest"
       ];
     };
 
