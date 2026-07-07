@@ -140,7 +140,7 @@
       plugins = with pkgs.vimPlugins; [
 
         # Fun: cellular automaton animation (:CellularAutomaton make_it_rain)
-        cellular-automaton-nvim
+        # cellular-automaton-nvim
 
         # mini.basics: sensible defaults for options, mappings, and autocommands
         # Part of the mini.nvim library by echasnovski
@@ -166,34 +166,34 @@
         # mini.surround: add/delete/replace surrounding delimiters (quotes, brackets)
         # sa = add, sd = delete, sr = replace (followed by delimiter char)
         # https://github.com/echasnovski/mini.surround
-        {
-          plugin = mini-surround;
-          type = "lua";
-          config = ''require("mini.surround").setup()'';
-        }
+        # {
+        #   plugin = mini-surround;
+        #   type = "lua";
+        #   config = ''require("mini.surround").setup()'';
+        # }
 
         # mini.ai: extended a/i text objects (arguments, function calls, etc.)
         # Adds: a/i a (argument), a/i f (function call), a/i o (block/cond/loop),
         # a/i q (quote), a/i b (bracket), a/i ? (user prompt), and more.
         # https://github.com/echasnovski/mini.ai
-        {
-          plugin = mini-ai;
-          type = "lua";
-          config = ''
-            local ai = require("mini.ai")
-            ai.setup({
-              n_lines = 500,
-              custom_textobjects = {
-                o = ai.gen_spec.treesitter({
-                  a = { "@block.outer", "@conditional.outer", "@loop.outer" },
-                  i = { "@block.inner", "@conditional.inner", "@loop.inner" },
-                }),
-                f = ai.gen_spec.treesitter({ a = "@function.outer", i = "@function.inner" }),
-                c = ai.gen_spec.treesitter({ a = "@class.outer",    i = "@class.inner" }),
-              },
-            })
-          '';
-        }
+        # {
+        #   plugin = mini-ai;
+        #   type = "lua";
+        #   config = ''
+        #     local ai = require("mini.ai")
+        #     ai.setup({
+        #       n_lines = 500,
+        #       custom_textobjects = {
+        #         o = ai.gen_spec.treesitter({
+        #           a = { "@block.outer", "@conditional.outer", "@loop.outer" },
+        #           i = { "@block.inner", "@conditional.inner", "@loop.inner" },
+        #         }),
+        #         f = ai.gen_spec.treesitter({ a = "@function.outer", i = "@function.inner" }),
+        #         c = ai.gen_spec.treesitter({ a = "@class.outer",    i = "@class.inner" }),
+        #       },
+        #     })
+        #   '';
+        # }
 
         # nvim-various-textobjs: extra text objects (indent, value, key, url, etc.)
         # Notable: ii/ai indent, iv/av value (after =/:), ik/ak key, iS/aS subword,
@@ -825,13 +825,14 @@
           '';
         }
 
-        # mini.indentscope: animated indent guides showing current scope
-        # https://github.com/echasnovski/mini.indentscope
-        {
-          plugin = mini-indentscope;
-          type = "lua";
-          config = "require('mini.indentscope').setup()";
-        }
+        # mini.indentscope → REMOVED. It recomputed the indent scope AND
+        # animated the indent guide on every CursorMoved, costing ~0.6ms
+        # per move (measured: ~83% of total cursor-move time, 5.8x slower
+        # than with it off) — the dominant remaining source of movement
+        # lag on large HCL/heredoc-heavy Terraform files. Dropped rather
+        # than gated. Re-add https://github.com/echasnovski/mini.indentscope
+        # (ideally with draw.animation disabled) if the scope guide is
+        # wanted back.
 
         # mini.animate: animate cursor moves, scrolling, and window open/close/
         # resize. Replaces neoscroll.nvim with a unified animation system.
@@ -842,7 +843,7 @@
           config = ''
             local animate = require("mini.animate")
             animate.setup({
-              cursor = { enable = false }, -- handled by smear-cursor.nvim
+              cursor = { enable = false }, -- smear-cursor.nvim removed; leave cursor unanimated
               scroll = { enable = true, timing = animate.gen_timing.linear({ duration = 120, unit = "total" }) },
               resize = { enable = true, timing = animate.gen_timing.linear({ duration = 100, unit = "total" }) },
               open   = { enable = false }, -- avoid conflicts with noice/snacks pickers
@@ -851,22 +852,13 @@
           '';
         }
 
-        # smear-cursor.nvim: leave a fading "smear" trail when the cursor jumps.
-        # Pure cosmetic; pairs with mini.animate's cursor animation.
-        # https://github.com/sphamba/smear-cursor.nvim
-        {
-          plugin = smear-cursor-nvim;
-          type = "lua";
-          config = ''
-            require("smear_cursor").setup({
-              smear_between_buffers = true,
-              smear_between_neighbor_lines = true,
-              stiffness = 0.7,
-              trailing_stiffness = 0.5,
-              hide_target_hack = false,
-            })
-          '';
-        }
+        # smear-cursor.nvim → REMOVED. Its per-CursorMoved animation timer
+        # caused severe cursor-movement stutter inside the terminal
+        # multiplexer (herdr), most visible on large HCL/heredoc-heavy
+        # Terraform files. Pure cosmetic, so dropped rather than gated.
+        # Cursor animation is now simply off (mini.animate keeps scroll +
+        # resize). Re-add https://github.com/sphamba/smear-cursor.nvim if
+        # the stutter is later root-caused elsewhere.
 
         # numb.nvim: peek lines when typing :<number> (before pressing Enter)
         # https://github.com/nacro90/numb.nvim/

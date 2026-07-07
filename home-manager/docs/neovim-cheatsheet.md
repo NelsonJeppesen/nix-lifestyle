@@ -27,7 +27,7 @@ use `hjkl`. Bare `nvim` opens a markdown scratch buffer at
 - [toggleterm.nvim](#toggletermnvim)
 - [bufferline / lualine / navic / fidget / noice](#bufferline--lualine--navic--fidget--noice)
 - [Theme (tokyonight + GNOME sync)](#theme-tokyonight--gnome-sync)
-- [Eye candy (tiny-glimmer / tiny-inline-diagnostic / smear-cursor / mini.indentscope / mini.animate)](#eye-candy)
+- [Eye candy (tiny-glimmer / tiny-inline-diagnostic / mini.animate)](#eye-candy)
 - [Util commands (`<leader>u…`)](#util-commands-leaderu)
 - [vim-table-mode](#vim-table-mode)
 - [Quirks & gotchas](#quirks--gotchas)
@@ -411,19 +411,10 @@ on top of standard targets:
 ### mini.surround
 See dedicated section below.
 
-### mini.indentscope
-Config: `home-manager/neovim.nix:844`. Animated indent-scope guide.
-Adds text objects:
-
-| Key | Action |
-|---|---|
-| `[i` / `]i` | Jump to scope start / end (note: clashes with treesitter conditional move — treesitter wins because it's set later) |
-| `ai` / `ii` | Around / inside scope (clashes with various-textobjs indent — various-textobjs wins) |
-
 ### mini.animate
 Config: `home-manager/neovim.nix:853`. Smooth scroll + window resize
-animations (cursor handled by smear-cursor; open/close disabled to avoid
-fighting noice/snacks).
+animations (cursor animation disabled — smear-cursor removed; open/close
+disabled to avoid fighting noice/snacks).
 
 ---
 
@@ -551,8 +542,6 @@ in `neovim.nix`.
 |---|---|
 | `tiny-glimmer-nvim` | Yank (fade) / paste (reverse fade) / search (pulse) / undo (red fade) / redo (green fade). Disabled in `oil` and `snacks_dashboard` buffers. |
 | `tiny-inline-diagnostic-nvim` | Inline LSP diagnostic with arrow → offending column. `modern` preset. Hidden while in insert mode. |
-| `smear-cursor-nvim` | Fading trail when cursor jumps; smears between buffers and neighboring lines. |
-| `mini-indentscope` | Animated indent guide for current scope. |
 | `mini-animate` | Smooth scroll (120ms linear) + window resize (100ms). |
 | `numb-nvim` | Peek line target while typing `:42` (before pressing Enter). |
 | `vim-illuminate` | Highlights other occurrences of the word under cursor. |
