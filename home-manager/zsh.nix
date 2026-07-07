@@ -57,6 +57,11 @@ in
       defaultOptions = [
         "--layout=reverse" # Show results top-to-bottom (feels more natural)
       ];
+      # Yield Ctrl-R to Atuin (below). Both fzf and Atuin bind Ctrl-R for
+      # zsh; an empty command is home-manager's supported way to disable
+      # fzf's history widget so the history manager owns Ctrl-R. fzf keeps
+      # Ctrl-T (files) and Alt-C (cd). See programs.atuin.flags comment.
+      historyWidget.command = "";
     };
 
     # Atuin: replacement shell history that syncs across machines
