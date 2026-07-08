@@ -222,6 +222,7 @@ in
 
         # Git
         g = "${pkgs.git}/bin/git";
+        cdr = "cd \"$(${pkgs.git}/bin/git rev-parse --show-toplevel)\""; # cd to git repo root
 
         # direnv
         da = "direnv allow"; # Quick allow for .envrc changes
