@@ -196,20 +196,26 @@ in
         them with `delete_observations` and add the corrected one.
       - Keep entity names stable and unique (e.g. repo slugs, hostnames).
 
-      # Interactive & long-running commands (herdr panes)
+      # Interactive & long-running commands (herdr tabs)
 
       The `bash` tool has no TTY: any command that prompts for input, waits on
       a TTY, or runs as a long-lived foreground process will silently block or
-      fail there. Instead, run such commands in a dedicated herdr pane. herdr
+      fail there. Instead, run such commands in a dedicated herdr tab. herdr
       is the terminal multiplexer this session runs inside; the `herdr` CLI
       talks to it over a local socket. Full command reference: the `herdr`
       skill (auto-loaded when `HERDR_ENV=1`), or `herdr <group> --help`.
+
+      Do NOT split panes to run things. Always create a new named tab instead,
+      with its label prefixed by `oc: ` (e.g. `oc: terraform apply`,
+      `oc: dev server`) so the tab is clearly attributable to this session.
+      If you do split a pane, always split horizontally (top to bottom,
+      `--direction down`), never vertically (side by side).
 
       Precondition: only usable when `HERDR_ENV=1` (i.e. running inside herdr).
       If it is not set, say so and ask the user to run the command themselves —
       do NOT fall back to the `bash` tool for anything interactive.
 
-      ## Run in a herdr pane (NOT the bash tool)
+      ## Run in a herdr tab (NOT the bash tool)
       - `sudo` (password prompt) and anything that may escalate
       - `terraform init` / `plan` / `apply` / `destroy` (provider auth,
         approval prompts, workspace selection, `-var` prompts)
@@ -229,22 +235,25 @@ in
         `kubectl exec -it`)
 
       ## How
-      - Spawn a pane with `herdr pane split <pane_id> --direction right
-        --no-focus` (parse `result.pane.pane_id`), then `herdr pane run
-        <new_pane> "<command>"`.
-      - Read progress with `herdr pane read <pane> --source recent-unwrapped`;
-        block on completion with `herdr wait output <pane> --match "<sentinel>"`
-        (append `&& echo __DONE__` to the command and match that). `wait
-        output` returns the transcript in its own payload — read from that, or
-        settle briefly before a separate `pane read`.
+      - Create a named tab with `herdr tab create --workspace <id> --label
+        "oc: <short desc>" --no-focus`, then parse the tab's root pane id from
+        `result.root_pane`. Run the command in that pane with `herdr pane run
+        <root_pane> "<command>"`. Get the current workspace id from `herdr
+        workspace list` (or read your own pane's ids from `herdr pane list`).
+      - Read progress with `herdr pane read <root_pane> --source
+        recent-unwrapped`; block on completion with `herdr wait output
+        <root_pane> --match "<sentinel>"` (append `&& echo __DONE__` to the
+        command and match that). `wait output` returns the transcript in its
+        own payload — read from that, or settle briefly before a separate
+        `pane read`.
       - For SECRETS / AUTH (passwords, 2FA, SSO device codes): do NOT type them
         yourself and do NOT `pane send-text` credentials. Surface the auth
-        URL / device code / prompt to the user verbatim, focus the pane
-        (`herdr pane focus` / tell them which pane), and wait for them to
-        complete it. The human owns credential entry.
+        URL / device code / prompt to the user verbatim, focus the tab
+        (`herdr tab focus <tab_id>` / tell them which tab), and wait for them
+        to complete it. The human owns credential entry.
       - For non-interactive, short-lived commands (ls, grep, nixfmt, git
-        status, etc.) keep using the `bash` tool — a herdr pane is overhead.
-      - If unsure whether a command will prompt, prefer a herdr pane.
+        status, etc.) keep using the `bash` tool — a herdr tab is overhead.
+      - If unsure whether a command will prompt, prefer a herdr tab.
     '';
 
   };
