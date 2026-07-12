@@ -52,6 +52,13 @@
       url = "github:nix-community/home-manager";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+
+    # Slack MCP server source used by nelson's shared OpenCode Home Manager
+    # module on the headless opencode host.
+    slack-mcp-server = {
+      url = "github:korotovsky/slack-mcp-server/v1.3.0";
+      flake = false;
+    };
   };
 
   outputs =
@@ -63,6 +70,7 @@
       disko,
       comin,
       home-manager,
+      slack-mcp-server,
       ...
     }:
     let
@@ -80,6 +88,7 @@
               comin
               home-manager
               nixpkgs-factorio
+              slack-mcp-server
               ;
           };
           modules = [

@@ -37,6 +37,13 @@
       flake = false;
     };
 
+    # Slack MCP server source. Built in opencode.nix so the MCP binary is
+    # pinned and does not depend on an imperative npx download.
+    slack-mcp-server = {
+      url = "github:korotovsky/slack-mcp-server/v1.3.0";
+      flake = false;
+    };
+
     # GitHub Notifications Redux: GNOME Shell extension for GitHub notifications
     gnome-github-notifications-redux = {
       url = "github:NelsonJeppesen/gnome-github-notifications-redux/review-01";
@@ -64,6 +71,7 @@
       gnome-github-notifications-redux,
       flameshot,
       open-ralph-wiggum,
+      slack-mcp-server,
       ...
     }:
     let
@@ -88,6 +96,7 @@
             gnome-github-notifications-redux
             flameshot
             open-ralph-wiggum
+            slack-mcp-server
             ;
         };
       };

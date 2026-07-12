@@ -22,10 +22,25 @@
   config,
   lib,
   pkgs,
+  slack-mcp-server,
   ...
 }:
 let
   memoryFile = "${config.home.homeDirectory}/.local/share/mcp-memory/memory.json";
+  slackMcpServer = pkgs.buildGoModule {
+    pname = "slack-mcp-server";
+    version = "1.3.0";
+    src = slack-mcp-server;
+    vendorHash = "sha256-+uQRODO9oL8mGKBmdghTxE6R9Fz+3GJFVTi17306gT8=";
+    subPackages = [ "cmd/slack-mcp-server" ];
+    ldflags = [
+      "-s"
+      "-w"
+      "-X=github.com/korotovsky/slack-mcp-server/pkg/version.Version=v1.3.0"
+      "-X=github.com/korotovsky/slack-mcp-server/pkg/version.BinaryName=slack-mcp-server"
+    ];
+    meta.mainProgram = "slack-mcp-server";
+  };
 in
 {
   # Shell aliases for quick OpenCode invocation
@@ -121,6 +136,21 @@ in
           command = [ (lib.getExe pkgs.mcp-server-memory) ];
           environment = {
             MEMORY_FILE_PATH = memoryFile;
+          };
+        };
+
+        # Slack workspace search, channel history, threads, DMs, and unread
+        # messages. Keep an explicit read-only tool allowlist because upstream
+        # enables some workspace-mutating user-group tools by default. Stealth
+        # mode uses the browser session token and cookie from the environment.
+        slack = {
+          type = "local";
+          enabled = false;
+          command = [ (lib.getExe slackMcpServer) ];
+          environment = {
+            SLACK_MCP_ENABLED_TOOLS = "conversations_history,conversations_replies,conversations_search_messages,conversations_unreads,channels_list,channels_me,usergroups_list,users_search";
+            SLACK_MCP_XOXC_TOKEN = "{env:SLACK_MCP_XOXC_TOKEN}";
+            SLACK_MCP_XOXD_TOKEN = "{env:SLACK_MCP_XOXD_TOKEN}";
           };
         };
       };
@@ -287,5 +317,6 @@ in
     pkgs.mcp-k8s-go
     pkgs.mcp-server-memory
     pkgs.terraform-mcp-server
+    slackMcpServer
   ];
 }

@@ -1,0 +1,239 @@
+#!/usr/bin/env python3
+"""slack-stealth-tokens -- extract Slack stealth-mode MCP credentials.
+
+Reads the two secrets the slack-mcp-server stealth mode needs straight out
+of the locally-installed Slack desktop app, so you never have to open
+DevTools or copy a cookie by hand:
+
+  SLACK_MCP_XOXC_TOKEN  the workspace API token (starts with `xoxc-`),
+                        stored in Slack's Local Storage leveldb.
+  SLACK_MCP_XOXD_TOKEN  the `d` session cookie (starts with `xoxd-`),
+                        stored AES-encrypted in Slack's Cookies sqlite.
+
+The `d` cookie is encrypted with a key derived (PBKDF2) from a password
+kept in the OS keyring under the entry "Slack Safe Storage" / "Slack".
+On Linux, if no keyring entry is found Chromium falls back to the literal
+password "peanuts"; we try the keyring first, then that fallback.
+
+Output formats (default: exports):
+  --export   printf 'export VAR=value' lines, ready to `eval`/`source`.
+  --json     {"SLACK_MCP_XOXC_TOKEN": ..., "SLACK_MCP_XOXD_TOKEN": ...}
+  --envrc    VAR=value lines (no `export`), for a direnv .envrc / age file.
+
+Nothing is written anywhere: tokens only go to stdout. Pipe them into
+your encrypted store yourself; do NOT commit them.
+
+Usage:
+  eval "$(slack-stealth-tokens)"        # load into current shell
+  slack-stealth-tokens --json           # inspect
+  slack-stealth-tokens --envrc >> secret # hand off to your age .envrc
+
+Requires a Slack desktop app that has been logged in at least once.
+Quit Slack first if the leveldb read fails with a lock error.
+"""
+
+import argparse
+import glob
+import hashlib
+import json
+import os
+import shutil
+import sqlite3
+import subprocess
+import sys
+import tempfile
+
+SLACK_DIR = os.path.expanduser("~/.config/Slack")
+COOKIES_DB = os.path.join(SLACK_DIR, "Cookies")
+LEVELDB_DIR = os.path.join(SLACK_DIR, "Local Storage", "leveldb")
+
+# Chromium's Linux AES-CBC cookie encryption constants.
+SALT = b"saltysalt"
+IV = b" " * 16
+ITERATIONS = 1
+KEYLENGTH = 16
+DPAPI_PREFIX = b"v10"
+
+
+def die(msg):
+    print(f"slack-stealth-tokens: {msg}", file=sys.stderr)
+    sys.exit(1)
+
+
+def keyring_password():
+    """Return the Slack Safe Storage password from the OS keyring.
+
+    Falls back to the Chromium Linux default 'peanuts' when secret-tool
+    is unavailable or the entry is missing.
+    """
+    if shutil.which("secret-tool"):
+        for app in ("Slack", "Chromium", "Chrome"):
+            try:
+                out = subprocess.run(
+                    ["secret-tool", "lookup", "application", app],
+                    capture_output=True,
+                    check=False,
+                )
+                if out.returncode == 0 and out.stdout:
+                    return out.stdout.rstrip(b"\n")
+            except OSError:
+                pass
+    return b"peanuts"
+
+
+def decrypt_cookie(encrypted, password):
+    """Decrypt a Chromium v10 AES-128-CBC cookie value."""
+    try:
+        from cryptography.hazmat.primitives.ciphers import (
+            Cipher,
+            algorithms,
+            modes,
+        )
+    except ImportError:
+        die(
+            "python cryptography module not found "
+            "(add pkgs.python3.pkgs.cryptography to runtimeInputs)"
+        )
+
+    if encrypted[:3] != DPAPI_PREFIX:
+        # Unencrypted (older Slack) — value is stored as-is after no prefix.
+        return encrypted.decode("utf-8", "replace")
+
+    key = hashlib.pbkdf2_hmac("sha1", password, SALT, ITERATIONS, KEYLENGTH)
+    decryptor = Cipher(algorithms.AES(key), modes.CBC(IV)).decryptor()
+    data = decryptor.update(encrypted[3:]) + decryptor.finalize()
+
+    # Strip PKCS7 padding.
+    pad = data[-1]
+    if 1 <= pad <= 16:
+        data = data[:-pad]
+
+    # Newer Chromium prepends a 32-byte SHA256 domain hash to the plaintext.
+    text = data.decode("utf-8", "replace")
+    if not text.startswith("xoxd-") and len(data) > 32:
+        text = data[32:].decode("utf-8", "replace")
+    return text
+
+
+def read_xoxd():
+    if not os.path.exists(COOKIES_DB):
+        die(f"Slack cookies db not found at {COOKIES_DB}")
+
+    # Copy so we don't fight Slack for the sqlite lock.
+    with tempfile.NamedTemporaryFile(suffix=".sqlite", delete=False) as tmp:
+        tmp_path = tmp.name
+    try:
+        shutil.copy2(COOKIES_DB, tmp_path)
+        conn = sqlite3.connect(tmp_path)
+        try:
+            rows = conn.execute(
+                "SELECT encrypted_value FROM cookies "
+                "WHERE name='d' AND host_key LIKE '%slack.com' "
+                "ORDER BY LENGTH(encrypted_value) DESC"
+            ).fetchall()
+        finally:
+            conn.close()
+    finally:
+        os.unlink(tmp_path)
+
+    if not rows:
+        die("no `d` cookie for slack.com found — is Slack logged in?")
+
+    password = keyring_password()
+    value = decrypt_cookie(rows[0][0], password)
+    if not value.startswith("xoxd-"):
+        die(f"decrypted cookie does not look like an xoxd token: {value[:12]!r}")
+    return value
+
+
+def read_xoxc():
+    if not os.path.isdir(LEVELDB_DIR):
+        die(f"Slack local storage not found at {LEVELDB_DIR}")
+
+    # The token lives inside the localConfig_v2 JSON blob as
+    # ...\"token\":\"xoxc-...\"... . Scan every leveldb file for it; this is
+    # far more robust than parsing leveldb and avoids the write lock.
+    needle = b"xoxc-"
+    best = None
+    files = sorted(
+        glob.glob(os.path.join(LEVELDB_DIR, "*.ldb"))
+        + glob.glob(os.path.join(LEVELDB_DIR, "*.log"))
+    )
+    for path in files:
+        try:
+            with open(path, "rb") as fh:
+                blob = fh.read()
+        except OSError:
+            continue
+        start = 0
+        while True:
+            i = blob.find(needle, start)
+            if i == -1:
+                break
+            # Token is printable up to the next quote/backslash/control byte.
+            j = i
+            while j < len(blob) and 0x20 <= blob[j] < 0x7F and blob[j] not in b'"\\':
+                j += 1
+            candidate = blob[i:j].decode("ascii", "ignore")
+            if len(candidate) > 20 and (best is None or len(candidate) > len(best)):
+                best = candidate
+            start = i + 1
+
+    if not best:
+        die(
+            "no xoxc token found in Slack local storage — "
+            "log into the Slack desktop app at least once, then retry"
+        )
+    return best
+
+
+def main():
+    ap = argparse.ArgumentParser(
+        prog="slack-stealth-tokens",
+        description="Extract Slack stealth-mode MCP tokens (xoxc + xoxd).",
+    )
+    fmt = ap.add_mutually_exclusive_group()
+    fmt.add_argument(
+        "--export",
+        action="store_const",
+        dest="fmt",
+        const="export",
+        help="emit `export VAR=value` lines (default)",
+    )
+    fmt.add_argument(
+        "--envrc",
+        action="store_const",
+        dest="fmt",
+        const="envrc",
+        help="emit `VAR=value` lines (no export)",
+    )
+    fmt.add_argument(
+        "--json",
+        action="store_const",
+        dest="fmt",
+        const="json",
+        help="emit a JSON object",
+    )
+    ap.set_defaults(fmt="export")
+    args = ap.parse_args()
+
+    xoxc = read_xoxc()
+    xoxd = read_xoxd()
+
+    pairs = {
+        "SLACK_MCP_XOXC_TOKEN": xoxc,
+        "SLACK_MCP_XOXD_TOKEN": xoxd,
+    }
+
+    if args.fmt == "json":
+        print(json.dumps(pairs, indent=2))
+    elif args.fmt == "envrc":
+        for k, v in pairs.items():
+            print(f"{k}={v}")
+    else:
+        for k, v in pairs.items():
+            print(f"export {k}={v}")
+
+
+if __name__ == "__main__":
+    main()

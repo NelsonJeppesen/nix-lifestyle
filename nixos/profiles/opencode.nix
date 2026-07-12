@@ -41,6 +41,7 @@
   pkgs,
   lib,
   home-manager,
+  slack-mcp-server,
   ...
 }:
 let
@@ -59,6 +60,7 @@ in
     useGlobalPkgs = true;
     useUserPackages = true;
     backupFileExtension = "hm-backup";
+    extraSpecialArgs = { inherit slack-mcp-server; };
     users.nelson = {
       imports = [ ../../home-manager/opencode.nix ];
 

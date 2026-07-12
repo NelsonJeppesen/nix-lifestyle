@@ -27,6 +27,7 @@
     ./opencode-standup.nix # Standup note generation wrapper + /standup command
     ./ralph.nix # Open Ralph Wiggum: iterative AI coding loop CLI (defaults to opencode)
     ./slack.nix # Slack wrapped with native-Wayland + GPU/VAAPI flags
+    ./slack-mcp.nix # slack-stealth-tokens: capture xoxc/xoxd for the Slack MCP server
     ./tailscale-systray.nix # Tailscale's official system tray app (autostart via systemd --user)
     ./zsh.nix # Zsh shell, prompt, aliases, and functions
   ];
