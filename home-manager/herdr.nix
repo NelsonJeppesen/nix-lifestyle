@@ -116,6 +116,10 @@ in
       previous_workspace = "ctrl+shift+up"
       next_workspace = "ctrl+shift+down"
 
+      # New space (herdr "workspace"): mirrors new_tab's ctrl+shift+t by adding
+      # shift-n beneath it.
+      new_workspace = "ctrl+shift+n"
+
       previous_agent = "ctrl+shift+["
       next_agent = "ctrl+shift+]"
 
@@ -133,7 +137,10 @@ in
       # Pane lifecycle.
       close_pane = "ctrl+shift+backspace"
       zoom = "ctrl+shift+z"
-      cycle_pane_next = "ctrl+shift+tab"
+      # Cycle pane focus through the layout, either direction. comma/period
+      # (< / >) read as step-back / step-forward and are easy adjacent keys.
+      cycle_pane_next = "ctrl+shift+period"
+      cycle_pane_previous = "ctrl+shift+comma"
 
       # Quick agent launch: open opencode in a NEW tab (not a throwaway pane),
       # landing in the focused pane's directory. type = "shell" runs the helper

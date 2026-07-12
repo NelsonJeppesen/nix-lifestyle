@@ -79,9 +79,11 @@ Panes:
   ctrl+shift+d         split down (horizontal)
   ctrl+shift+backspace close pane
   ctrl+shift+z         zoom / unzoom pane
-  ctrl+shift+tab       cycle to next pane
+  ctrl+shift+.         cycle to next pane
+  ctrl+shift+,         cycle to previous pane
 
 Workspaces & agents:
+  ctrl+shift+n           new workspace
   ctrl+shift+left/right  previous / next workspace
   ctrl+shift+down/up     previous / next agent  (step the sidebar's agent rows)
 
@@ -97,7 +99,6 @@ Prefix reference (everything not remapped above)
 All of these still need the ctrl+b prefix first.
 
 Panes & tabs:
-  prefix+shift+tab     cycle to previous pane
   prefix+r             resize mode
   prefix+e             edit scrollback / copy mode
   prefix+shift+p       rename pane
@@ -108,7 +109,6 @@ Panes & tabs:
 Workspaces & session:
   prefix+w             workspace picker
   prefix+g             goto picker
-  prefix+shift+n       new workspace
   prefix+shift+w       rename workspace
   prefix+shift+d       close workspace
   prefix+shift+g       new worktree
