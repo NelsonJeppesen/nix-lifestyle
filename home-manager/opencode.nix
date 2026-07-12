@@ -113,7 +113,7 @@ in
         # Terraform MCP server: search modules, providers, and registry docs.
         terraform = {
           type = "local";
-          enabled = false;
+          enabled = true;
           command = [
             (lib.getExe pkgs.terraform-mcp-server)
             "stdio"
