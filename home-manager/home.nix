@@ -119,6 +119,8 @@
     packages = [
       pkgs.kafkactl
 
+      pkgs.amber-lang # Amber: programming language compiled to Bash (.ab scripts)
+
       # ── Nixpkgs maintainer tools ───────────────────────────────────
       pkgs.nixpkgs-review # Review tool for nixpkgs pull requests
       pkgs.nh # Nix helper: nicer CLI for nixos-rebuild + home-manager (used by `update`)
