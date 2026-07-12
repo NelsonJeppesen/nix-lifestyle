@@ -274,7 +274,7 @@
         }
         nui-nvim # UI component library
         plenary-nvim # Lua utility functions (used by many plugins)
-        render-markdown-nvim # Render markdown with formatting in buffers
+        # render-markdown-nvim # Render markdown with formatting in buffers
 
         # fidget.nvim: lightweight LSP progress indicator (bottom-right corner)
         # Replaces noice LSP progress with a less intrusive display
