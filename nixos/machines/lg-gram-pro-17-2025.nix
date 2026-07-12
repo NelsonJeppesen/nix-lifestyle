@@ -19,14 +19,21 @@
     ../profiles/zsh.nix
   ];
 
-  # GPU: force the new `xe` driver over `i915`.
+  # GPU: use the stable `i915` driver.
   # NOTE: PCI ID 7d51 is Meteor Lake-P (Arc Graphics). On Arrow Lake the IDs
   # differ (7d67/7d45/64a0); verify with `lspci -nn | grep VGA` if upgrading.
-  # The xe driver auto-binds on kernel >= 6.8 for most Meteor Lake IDs, so
-  # `force_probe` may be unnecessary — but keeping it is harmless.
+  #
+  # Switched off `xe` on 2026-07-10: the experimental `xe` driver was hanging
+  # the iGPU (`*ERROR* TLB invalidation fence timeout` + GuC job timeouts /
+  # device coredumps) and hard-freezing the desktop. i915 drives MTL (7d51)
+  # natively on kernel >= 6.8, so no force_probe is needed.
+  # To roll back to `xe`, uncomment the three `xe` lines below (kernelParams,
+  # blacklistedKernelModules, initrd.kernelModules) and re-comment the i915
+  # counterparts.
   boot.kernelParams = [
-    "xe.force_probe=7d51"
-    "i915.force_probe=!7d51"
+    # xe rollback:
+    # "xe.force_probe=7d51"
+    # "i915.force_probe=!7d51"
     # "acpi.ec_no_wakeup=1"
     # GPE storm fix carried from 12th-gen LG Gram. Verify the offending GPE
     # is still 0x6e on this machine via:
@@ -48,12 +55,14 @@
     "i8042.kbdreset"
   ];
 
-  boot.blacklistedKernelModules = [ "i915" ];
+  # xe rollback: [ "i915" ]
+  boot.blacklistedKernelModules = [ "xe" ];
 
-  # Load the real KMS driver in initrd so Plymouth comes up on `xe` directly
-  # instead of starting on `simpledrm` (efifb) and flipping mid-boot. This
-  # eliminates the resolution-change flicker between Plymouth and GDM.
-  boot.initrd.kernelModules = [ "xe" ];
+  # Load the real KMS driver in initrd so Plymouth comes up on the KMS driver
+  # directly instead of starting on `simpledrm` (efifb) and flipping mid-boot.
+  # This eliminates the resolution-change flicker between Plymouth and GDM.
+  # xe rollback: [ "xe" ]
+  boot.initrd.kernelModules = [ "i915" ];
   # systemd-in-initrd gives Plymouth a cleaner handoff to the display manager.
   boot.initrd.systemd.enable = true;
 
