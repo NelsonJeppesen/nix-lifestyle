@@ -92,7 +92,7 @@
       disable-down-arrow = true;
       display-mode = 1; # Compact display mode
       history-size = 200; # Total items to keep in history
-      move-item-first = false; # Move selected item to top of history
+      move-item-first = true; # Move selected item to top of history
       next-entry = [ ]; # Unbound: <Shift><Control> chords belong to herdr (herdr.nix)
       notify-on-copy = false;
       open-at-cursor = true;

@@ -130,6 +130,8 @@
       pkgs.mindustry
       pkgs.vitetris # Terminal tetris clone
 
+      pkgs.ralphex
+
       # ── Fonts ───────────────────────────────────────────────────────
       # Nerd Font symbols only (used by kitty symbol_map for icon rendering)
       pkgs.nerd-fonts.symbols-only

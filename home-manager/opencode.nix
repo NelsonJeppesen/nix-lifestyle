@@ -153,6 +153,24 @@ in
             SLACK_MCP_XOXD_TOKEN = "{env:SLACK_MCP_XOXD_TOKEN}";
           };
         };
+
+        # Read/write Slack: same server as `slack` above, but with the
+        # workspace-mutating tools added to the allowlist. Listing a write tool
+        # in SLACK_MCP_ENABLED_TOOLS registers it without channel restrictions,
+        # so conversations_add_message, reactions_add/remove, and
+        # conversations_mark are all live here. Disabled by default; enable
+        # deliberately when a task needs to post/react/mark. Stealth mode uses
+        # the browser session token and cookie from the environment.
+        slack-write = {
+          type = "local";
+          enabled = false;
+          command = [ (lib.getExe slackMcpServer) ];
+          environment = {
+            SLACK_MCP_ENABLED_TOOLS = "conversations_history,conversations_replies,conversations_search_messages,conversations_unreads,channels_list,channels_me,usergroups_list,users_search,conversations_add_message,reactions_add,reactions_remove,conversations_mark";
+            SLACK_MCP_XOXC_TOKEN = "{env:SLACK_MCP_XOXC_TOKEN}";
+            SLACK_MCP_XOXD_TOKEN = "{env:SLACK_MCP_XOXD_TOKEN}";
+          };
+        };
       };
 
       plugin = [
