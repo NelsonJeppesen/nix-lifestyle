@@ -138,19 +138,8 @@
 
       pkgs.lsof # List open files (debugging network ports, etc.)
 
-      # Fonts to try -- uncomment to test different coding fonts
-      #pkgs.atkinson-hyperlegible
-      #pkgs.maple-mono
       pkgs.python313 # Python 3.13 interpreter
       pkgs.atkinson-monolegible # High-legibility monospace font
-      #pkgs.b612
-      #pkgs.fira-code
-      pkgs.inconsolata # Classic monospace font
-      #pkgs.meslo-lg
-      #pkgs.oxygenfonts
-      #pkgs.redhat-official-fonts
-      #pkgs.roboto-mono
-      #pkgs.source-code-pro
       pkgs.circumflex
 
       # ── GUI applications ────────────────────────────────────────────

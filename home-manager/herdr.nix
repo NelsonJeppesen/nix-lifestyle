@@ -60,7 +60,11 @@ in
 {
   # herdr binary (0.7.1 in the pinned nixpkgs). Installed via home.packages so
   # updates flow through the flake, not herdr's own curl|sh installer.
-  home.packages = [ pkgs.herdr ];
+  home.packages = [
+    pkgs.cloudflared # Public HTTPS/WSS tunnel for the mobile relay
+    pkgs.herdr
+    pkgs.uv # Isolated Python runtime used by the mobile relay
+  ];
 
   # Shell aliases for quick access. Kept in this module (not zsh.nix) per the
   # repo rule: extend by adding a new <feature>.nix. The opencode aliases
@@ -84,10 +88,17 @@ in
       onboarding = false
 
       [theme]
-      # herdr uses gruvbox regardless of the desktop light/dark preference
-      # (kitty keeps its own rose-pine pair in kitty.nix). A single fixed theme,
-      # so auto_switch is left off (its default) and no light/dark pair is set.
-      name = "gruvbox"
+      # Follow kitty's reported light/dark appearance. kitty follows GNOME and
+      # carries the matching Gruvbox dark/light pair in kitty.nix. name is left
+      # unset because auto_switch drives the pair.
+      auto_switch = true
+      dark_name = "gruvbox"
+      light_name = "gruvbox-light"
+
+      [theme.custom]
+      # Inherit Kitty's active background so herdr remains visually seamless
+      # when Kitty switches between the managed dark/light theme files.
+      panel_bg = "reset"
 
       [update]
       # Nix owns herdr's version; silence the background update nag. `herdr
@@ -154,6 +165,7 @@ in
       [ui]
       # Skip the name prompt and create tabs immediately with generated names.
       prompt_new_tab_name = false
+      pane_borders = false
       pane_gaps = false
 
       [experimental]
@@ -182,6 +194,28 @@ in
   home.activation.herdrOpencodeIntegration = lib.hm.dag.entryAfter [ "linkGeneration" ] ''
     if [ -d "${config.home.homeDirectory}/.config/opencode" ]; then
       $DRY_RUN_CMD ${lib.getExe pkgs.herdr} integration install opencode || true
+    fi
+  '';
+
+  # Bootstrap the marketplace plugin independently on every laptop. Its token,
+  # Cloudflare tunnel, hostname, and service state remain machine-local under
+  # ~/.config/herdr; only the plugin installation is shared by Home Manager.
+  home.activation.herdrMobileRelay = lib.hm.dag.entryAfter [ "linkGeneration" ] ''
+    plugin_config="${config.home.homeDirectory}/.config/herdr/plugins/config/herdr-mobile-relay.events"
+    if [ ! -d "$plugin_config" ]; then
+      HERDR_MOBILE_RELAY_NO_AUTO_SETUP=1 \
+        $DRY_RUN_CMD ${lib.getExe pkgs.herdr} plugin install 0cv/herdr-mobile-relay --yes || true
+    fi
+
+    # Upstream uses /bin/bash, which intentionally does not exist on NixOS.
+    plugin_root="$(${lib.getExe pkgs.herdr} plugin list \
+      --plugin herdr-mobile-relay.events --json \
+      | ${lib.getExe pkgs.jq} -r '.result.plugins[0].plugin_root // empty')"
+    if [ -d "$plugin_root/relay" ]; then
+      for script in "$plugin_root"/relay/*.sh; do
+        $DRY_RUN_CMD ${lib.getExe pkgs.gnused} -i \
+          '1s|^#!/bin/bash$|#!${lib.getExe pkgs.bash}|' "$script"
+      done
     fi
   '';
 }

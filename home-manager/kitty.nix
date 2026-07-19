@@ -6,16 +6,214 @@
 # whole ctrl+shift chord space passes through to herdr, and hides its tab bar.
 #
 # Configures the Kitty GPU-accelerated terminal with:
-# - Adwaita Mono font (matching GNOME system font) with Nerd Font symbol mapping
+# - Lilex programming font with Nerd Font symbol mapping
 # - Wayland-native display with IME disabled (reduces latency)
 # - Minimal keybindings: copy/paste, font-size, and buffer-to-nvim piping (F1)
-# - Rose Pine (Moon for light / no-preference) auto-switching via kitty's themes
+# - Gruvbox dark/light auto-switching via kitty's themes
 # - Tab bar hidden (herdr draws its own); 30K scrollback, copy-on-select,
 #   and stripped trailing whitespace
 # - Shell integration sourced into zsh by home-manager
 # - Remote control socket enabled (for `kitty @ set-colors`, etc.)
 { pkgs, ... }:
+let
+  kitty-theme-test = pkgs.writeShellApplication {
+    name = "kitty-theme-test";
+    runtimeInputs = [
+      pkgs.fzf
+      pkgs.kitty
+    ];
+    text = ''
+      themes=${pkgs.kitty-themes}/share/kitty-themes/themes
+      socket="''${KITTY_LISTEN_ON#unix:}"
+      if [[ -z "''${KITTY_LISTEN_ON:-}" ]] || ! kitty @ --to "unix:$socket" ls >/dev/null 2>&1; then
+        socket=""
+        shopt -s nullglob
+        for candidate in /tmp/kitty-*; do
+          if [[ -S "$candidate" && -O "$candidate" ]] \
+            && kitty @ --to "unix:$candidate" ls >/dev/null 2>&1 \
+            && [[ -z "$socket" || "$candidate" -nt "$socket" ]]; then
+            socket="$candidate"
+          fi
+        done
+        if [[ -z "$socket" ]]; then
+          printf 'No live Kitty remote-control socket found\n' >&2
+          exit 1
+        fi
+      fi
+      kitty_remote=(kitty @ --to "unix:$socket")
+
+      selection="$({
+        for theme in "$themes"/*.conf; do
+          printf '%s\n' "$theme"
+        done
+      } | fzf \
+        --delimiter=/ \
+        --with-nth=-1 \
+        --prompt='Kitty theme: ' \
+        --preview-window=hidden \
+        --preview="kitty @ --to 'unix:$socket' set-colors --all {}")" || {
+          "''${kitty_remote[@]}" set-colors --reset
+          exit
+        }
+
+      "''${kitty_remote[@]}" set-colors --all "$selection"
+      printf 'Using %s until Kitty restarts or reloads its config\n' "''${selection##*/}"
+    '';
+  };
+
+  kitty-font-test = pkgs.writeShellApplication {
+    name = "kitty-font-test";
+    runtimeInputs = [ pkgs.kitty ];
+    text = ''
+      fonts=(
+        "Adwaita Mono"
+        "Cascadia Mono"
+        "CommitMono"
+        "Fira Code"
+        "Hack"
+        "IBM Plex Mono"
+        "Intel One Mono"
+        "Inconsolata"
+        "Iosevka"
+        "JetBrains Mono"
+        "Maple Mono"
+        "Monaspace Neon"
+        "Rec Mono Linear"
+        "Source Code Pro"
+        "Victor Mono"
+        "Anonymous Pro"
+        "Atkinson Monolegible"
+        "B612 Mono"
+        "Comic Mono"
+        "Departure Mono"
+        "Fantasque Sans Mono"
+        "Geist Mono"
+        "Hermit"
+        "iA Writer Mono V"
+        "JuliaMono"
+        "Lilex"
+        "Meslo LG M"
+        "Monoid"
+        "Office Code Pro"
+        "Roboto Mono"
+      )
+
+      state_dir="''${XDG_STATE_HOME:-$HOME/.local/state}"
+      state_file="$state_dir/kitty-font-test"
+
+      socket="''${KITTY_LISTEN_ON#unix:}"
+      if [[ -z "''${KITTY_LISTEN_ON:-}" || ! -S "$socket" ]]; then
+        socket=""
+        shopt -s nullglob
+        for candidate in /tmp/kitty-*; do
+          if [[ -S "$candidate" && -O "$candidate" && ( -z "$socket" || "$candidate" -nt "$socket" ) ]]; then
+            socket="$candidate"
+          fi
+        done
+        if [[ -z "$socket" ]]; then
+          printf 'No live Kitty remote-control socket found\n' >&2
+          exit 1
+        fi
+      fi
+      kitty_remote=(kitty @ --to "unix:$socket")
+
+      list_fonts() {
+        for i in "''${!fonts[@]}"; do
+          printf '%2d  %s\n' "$((i + 1))" "''${fonts[$i]}"
+        done
+      }
+
+      case "''${1:-next}" in
+        list|-l|--list)
+          list_fonts
+          exit
+          ;;
+        reset)
+          "''${kitty_remote[@]}" load-config --ignore-overrides
+          rm -f "$state_file"
+          printf 'Restored font from kitty.conf\n'
+          exit
+          ;;
+        next|prev)
+          index=0
+          if [[ -r "$state_file" ]]; then
+            read -r index < "$state_file"
+          fi
+          if [[ "''${1:-next}" == next ]]; then
+            index=$((index % ''${#fonts[@]} + 1))
+          else
+            index=$(((index + ''${#fonts[@]} - 2) % ''${#fonts[@]} + 1))
+          fi
+          ;;
+        *)
+          if [[ "$1" =~ ^[0-9]+$ ]] && ((1 <= $1 && $1 <= ''${#fonts[@]})); then
+            index=$1
+          else
+            index=0
+            for i in "''${!fonts[@]}"; do
+              if [[ "''${fonts[$i],,}" == *"''${1,,}"* ]]; then
+                index=$((i + 1))
+                break
+              fi
+            done
+            if ((index == 0)); then
+              printf 'Unknown font: %s\n\n' "$1" >&2
+              list_fonts >&2
+              exit 1
+            fi
+          fi
+          ;;
+      esac
+
+      family="''${fonts[$((index - 1))]}"
+      "''${kitty_remote[@]}" load-config \
+        --override "font_family=family='$family'" \
+        --override "bold_font=family='$family' style=Regular" \
+        --override italic_font=auto \
+        --override "bold_italic_font=family='$family' style=Italic"
+      mkdir -p "$state_dir"
+      printf '%s\n' "$index" > "$state_file"
+      printf '%d/%d  %s\n' "$index" "''${#fonts[@]}" "$family"
+    '';
+  };
+in
 {
+  home.packages = [
+    kitty-theme-test # Interactively preview Kitty themes without changing managed config
+    kitty-font-test # Cycle through programming fonts using Kitty remote control
+
+    pkgs.adwaita-fonts
+    pkgs.cascadia-code
+    pkgs.commit-mono
+    pkgs.fira-code
+    pkgs.hack-font
+    pkgs.ibm-plex.mono
+    pkgs.intel-one-mono
+    pkgs.inconsolata
+    pkgs.iosevka
+    pkgs.jetbrains-mono
+    pkgs.maple-mono.truetype
+    pkgs.monaspace
+    pkgs.recursive
+    pkgs.source-code-pro
+    pkgs.victor-mono
+    pkgs.anonymousPro
+    pkgs.atkinson-monolegible
+    pkgs.b612
+    pkgs.comic-mono
+    pkgs.departure-mono
+    pkgs.fantasque-sans-mono
+    pkgs.geist-font
+    pkgs.hermit
+    pkgs.ia-writer-mono
+    pkgs.julia-mono
+    pkgs.lilex
+    pkgs.meslo-lg
+    pkgs.monoid
+    pkgs.office-code-pro
+    pkgs.roboto-mono
+  ];
+
   home = {
     file = {
       # Startup session: open a single blank tab on launch
@@ -26,17 +224,17 @@
 
       # Auto-theme files: kitty switches between these based on the desktop's
       # color-scheme preference (org.freedesktop.appearance via xdg-desktop-portal).
-      # Pair: Rose Pine (dark) / Rose Pine Moon (light and no-preference).
+      # Pair: Gruvbox dark / Gruvbox light (light and no-preference).
       ".config/kitty/dark-theme.auto.conf".source =
-        pkgs.kitty-themes + "/share/kitty-themes/themes/rose-pine.conf";
+        pkgs.kitty-themes + "/share/kitty-themes/themes/gruvbox-dark.conf";
 
       # On the GNOME desktop, the desktop reports the color preference as no-preference when
       # the “Dark style” is not enabled. So use no-preference-theme.auto.conf to select colors
       # for light mode on GNOME
       ".config/kitty/no-preference-theme.auto.conf".source =
-        pkgs.kitty-themes + "/share/kitty-themes/themes/rose-pine-moon.conf";
+        pkgs.kitty-themes + "/share/kitty-themes/themes/gruvbox-light.conf";
       ".config/kitty/light-theme.auto.conf".source =
-        pkgs.kitty-themes + "/share/kitty-themes/themes/rose-pine-moon.conf";
+        pkgs.kitty-themes + "/share/kitty-themes/themes/gruvbox-light.conf";
     };
   };
 
@@ -91,19 +289,15 @@
         # the whole ctrl+shift chord space for herdr (herdr.nix).
         clear_all_shortcuts = "yes";
 
-        # Font configuration: use GNOME's default monospace font.
+        # Font configuration: use Lilex by default.
         # Commented alternatives preserved for easy font experimentation.
         #bold_font = "Inconsolata Medium";
         #bold_italic_font = "Fira Code, Regular Italic";
         #italic_font = "Fira Code, Regular Italic";
         #font_family = "Inconsolata Medium";
 
-        # Use Adwaita Mono to match GNOME system font
-        font_family = "family='Adwaita Mono'";
-        bold_font = "auto";
-        italic_font = "auto";
-        bold_italic_font = "auto";
-        font_size = 17.5;
+        font_family = "family='Lilex'";
+        font_size = 14.5;
 
         # Window border colors (active = blue, inactive = gray)
         active_border_color = "#74B3CE";
