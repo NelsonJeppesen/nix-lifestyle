@@ -1,17 +1,13 @@
 # kitty.nix - Kitty terminal emulator configuration
 #
-# kitty is intentionally a "dumb" single-window terminal here: herdr (herdr.nix)
-# owns all multiplexing — tabs, splits, panes, sessions. kitty therefore clears
-# its own shortcuts down to a tiny allowlist (copy/paste, font-size, F1) so the
-# whole ctrl+shift chord space passes through to herdr, and hides its tab bar.
+# Kitty is a single-window frontend; herdr owns tabs, panes, and sessions.
 #
 # Configures the Kitty GPU-accelerated terminal with:
 # - Lilex programming font with Nerd Font symbol mapping
-# - Wayland-native display with IME disabled (reduces latency)
-# - Minimal keybindings: copy/paste, font-size, and buffer-to-nvim piping (F1)
+# - Wayland-native display
+# - Minimal keybindings for clipboard and font size
 # - Gruvbox dark/light auto-switching via kitty's themes
-# - Tab bar hidden (herdr draws its own); 30K scrollback, copy-on-select,
-#   and stripped trailing whitespace
+# - Hidden tab bar, 30K scrollback, and copy-on-select
 # - Shell integration sourced into zsh by home-manager
 # - Remote control socket enabled (for `kitty @ set-colors`, etc.)
 { pkgs, ... }:
@@ -102,11 +98,13 @@ let
       state_file="$state_dir/kitty-font-test"
 
       socket="''${KITTY_LISTEN_ON#unix:}"
-      if [[ -z "''${KITTY_LISTEN_ON:-}" || ! -S "$socket" ]]; then
+      if [[ -z "''${KITTY_LISTEN_ON:-}" ]] || ! kitty @ --to "unix:$socket" ls >/dev/null 2>&1; then
         socket=""
         shopt -s nullglob
         for candidate in /tmp/kitty-*; do
-          if [[ -S "$candidate" && -O "$candidate" && ( -z "$socket" || "$candidate" -nt "$socket" ) ]]; then
+          if [[ -S "$candidate" && -O "$candidate" ]] \
+            && kitty @ --to "unix:$candidate" ls >/dev/null 2>&1 \
+            && [[ -z "$socket" || "$candidate" -nt "$socket" ]]; then
             socket="$candidate"
           fi
         done
@@ -168,9 +166,9 @@ let
       family="''${fonts[$((index - 1))]}"
       "''${kitty_remote[@]}" load-config \
         --override "font_family=family='$family'" \
-        --override "bold_font=family='$family' style=Regular" \
+        --override bold_font=auto \
         --override italic_font=auto \
-        --override "bold_italic_font=family='$family' style=Italic"
+        --override bold_italic_font=auto
       mkdir -p "$state_dir"
       printf '%s\n' "$index" > "$state_file"
       printf '%d/%d  %s\n' "$index" "''${#fonts[@]}" "$family"
@@ -216,12 +214,6 @@ in
 
   home = {
     file = {
-      # Startup session: open a single blank tab on launch
-      ".config/kitty/kitty.startup.session".text = ''
-        new_tab
-        launch
-      '';
-
       # Auto-theme files: kitty switches between these based on the desktop's
       # color-scheme preference (org.freedesktop.appearance via xdg-desktop-portal).
       # Pair: Gruvbox dark / Gruvbox light (light and no-preference).
@@ -274,10 +266,6 @@ in
         "kitty_mod+plus" = "change_font_size all +2.0";
         "kitty_mod+minus" = "change_font_size all -2.0";
 
-        # F1: pipe entire scrollback buffer into nvim in a split
-        # Useful for searching/copying terminal output with vim motions
-        "f1" =
-          "launch --stdin-source=@screen_scrollback --location=hsplit --cwd=current nvim -c 'set buftype=nofile' -";
       };
 
       # ── Terminal settings ───────────────────────────────────────
@@ -299,11 +287,6 @@ in
         font_family = "family='Lilex'";
         font_size = 14.5;
 
-        # Window border colors (active = blue, inactive = gray)
-        active_border_color = "#74B3CE";
-        bell_border_color = "#ff5a00";
-        inactive_border_color = "#aaaaaa";
-        window_border_width = "1px";
         window_margin_width = 0;
 
         # Nerd Font symbol mapping: instead of using a patched font, map only
@@ -320,11 +303,6 @@ in
         enable_audio_bell = false; # Silence terminal bell
         hide_window_decorations = true; # Remove title bar (GNOME handles window chrome)
 
-        # Disable Input Method Extensions (IME) on Wayland
-        # Reduces input latency and avoids bugs with certain IME frameworks
-        wayland_enable_ime = false;
-
-        inactive_text_alpha = 0.5; # Dim inactive window text (50% opacity)
         linux_display_server = "wayland"; # Force Wayland (no XWayland fallback)
 
         # ── Input/render latency tuning (snappiness) ────────────────
@@ -341,7 +319,7 @@ in
         sync_to_monitor = "yes";
 
         scrollback_lines = 30000; # 30K lines of scrollback buffer
-        strip_trailing_spaces = "always"; # Remove trailing whitespace on copy
+        strip_trailing_spaces = "smart";
         # herdr draws its own tab/pane chrome, so hide kitty's tab bar entirely.
         tab_bar_style = "hidden";
 

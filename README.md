@@ -64,7 +64,7 @@ Then bring up the user layer (see `home-manager/README.md`).
 ## Daily use
 
 ```bash
-# Switch system then user via nh (sequential, fast path, no input refresh).
+# Switch NixOS with nixos-rebuild, then Home Manager with nh.
 # Passwordless sudo for nixos-rebuild/nix is configured in profiles/shared.nix.
 update                     # -u refresh inputs first, -h help
 firmware-update            # separate, interactive sudo
@@ -110,7 +110,7 @@ Examples currently wired up:
 - **TLP**: tuned for quiet thermals + battery (Turbo capped, powersave governors)
 - **Firefox/Chrome**: aggressive background throttling for idle savings
 - **GNOME**: CapsLock → Super (via keyd), heavy dconf/keybinding remap, run-or-raise shortcuts
-- **Kitty**: Nerd Font symbol_map (no patched base font), AI-chat function keys (F1, F2)
+- **Kitty + herdr**: Kitty renders one window; herdr owns tabs, panes, and sessions
 - **Neovim**: arrow keys disabled; structural motion via Treesitter textobjects; LSP pickers via Snacks
 - **Shell**: Atuin (self-hostable history sync), fuzzy AWS profile/region pickers, terraform state helpers, kubectx in starship right prompt
 - **Git**: SSH-signed commits required, Hunk for review-first diffs, gitalias as a flake input
@@ -121,8 +121,8 @@ Examples currently wired up:
 | Action                       | Command / Keys             |
 |------------------------------|----------------------------|
 | Update everything            | `update`                   |
-| AI chat (fast model)         | Kitty `F1`                 |
-| AI chat (slow model)         | Kitty `F2`                 |
+| Edit terminal scrollback     | herdr `F1`                 |
+| Open OpenCode in a new tab   | `Ctrl+Shift+O`             |
 | Global grep (nvim)           | `<leader>/` (Snacks)       |
 | File explorer (nvim)         | `<leader>e` (Oil)          |
 | Copy buffer to clipboard     | `<leader>uc`               |

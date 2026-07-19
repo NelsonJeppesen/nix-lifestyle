@@ -139,9 +139,6 @@
       # Each plugin entry can specify type ("lua" or "viml") and inline config.
       plugins = with pkgs.vimPlugins; [
 
-        # Fun: cellular automaton animation (:CellularAutomaton make_it_rain)
-        # cellular-automaton-nvim
-
         # mini.basics: sensible defaults for options, mappings, and autocommands
         # Part of the mini.nvim library by echasnovski
         #   https://github.com/echasnovski/mini.basics
@@ -163,38 +160,6 @@
           '';
         }
 
-        # mini.surround: add/delete/replace surrounding delimiters (quotes, brackets)
-        # sa = add, sd = delete, sr = replace (followed by delimiter char)
-        # https://github.com/echasnovski/mini.surround
-        # {
-        #   plugin = mini-surround;
-        #   type = "lua";
-        #   config = ''require("mini.surround").setup()'';
-        # }
-
-        # mini.ai: extended a/i text objects (arguments, function calls, etc.)
-        # Adds: a/i a (argument), a/i f (function call), a/i o (block/cond/loop),
-        # a/i q (quote), a/i b (bracket), a/i ? (user prompt), and more.
-        # https://github.com/echasnovski/mini.ai
-        # {
-        #   plugin = mini-ai;
-        #   type = "lua";
-        #   config = ''
-        #     local ai = require("mini.ai")
-        #     ai.setup({
-        #       n_lines = 500,
-        #       custom_textobjects = {
-        #         o = ai.gen_spec.treesitter({
-        #           a = { "@block.outer", "@conditional.outer", "@loop.outer" },
-        #           i = { "@block.inner", "@conditional.inner", "@loop.inner" },
-        #         }),
-        #         f = ai.gen_spec.treesitter({ a = "@function.outer", i = "@function.inner" }),
-        #         c = ai.gen_spec.treesitter({ a = "@class.outer",    i = "@class.inner" }),
-        #       },
-        #     })
-        #   '';
-        # }
-
         # nvim-various-textobjs: extra text objects (indent, value, key, url, etc.)
         # Notable: ii/ai indent, iv/av value (after =/:), ik/ak key, iS/aS subword,
         # gc inside comment, gG entire buffer, !/!! diagnostic, im/am chain member.
@@ -208,8 +173,6 @@
             })
           '';
         }
-
-        # flash.nvim removed: was unused (s key bound to mini.surround).
 
         # treewalker.nvim: move around code in a syntax-tree-aware manner
         # Ctrl+hjkl navigates between AST nodes, Ctrl+Shift+jk swaps nodes
@@ -478,7 +441,7 @@
               ["ac"] = "@class.outer",    ["ic"] = "@class.inner",
               ["ab"] = "@block.outer",    ["ib"] = "@block.inner",
               ["aa"] = "@parameter.outer",["ia"] = "@parameter.inner",
-              ["ai"] = "@conditional.outer",["ii"] = "@conditional.inner",
+              ["aI"] = "@conditional.outer",["iI"] = "@conditional.inner",
               ["al"] = "@loop.outer",     ["il"] = "@loop.inner",
             }) do vim.keymap.set({ "x", "o" }, lhs, sel(q)) end
 
@@ -895,11 +858,7 @@
         }
       ];
 
-      # Vimscript configuration (runs after plugins). Arrow-key disabling has
-      # been moved to initLua (vim.keymap.set form) — this block is reserved
-      # for the few options that don't have first-class Lua equivalents.
       extraConfig = ''
-        set background=dark
         set relativenumber
       '';
     };

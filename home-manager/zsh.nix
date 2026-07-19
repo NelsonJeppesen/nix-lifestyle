@@ -16,8 +16,7 @@
 #     curl-all-ips -- curl every A/AAAA record behind a DNS name (per-IP)
 #     nsr, rgreplace -- packaged via writeShellApplication
 #     (gets shellcheck + PATH wrapping). See ./bin/.
-# - Extensive shell aliases for terraform, kubectl, git, clipboard, and notes
-# - Kitty terminal tab title integration (shows PWD and running command)
+# - Aliases for Terraform, Kubernetes, Git, clipboard, and notes
 { pkgs, ... }:
 let
   # Build small CLIs from ./bin/* using writeShellApplication so each script
@@ -36,7 +35,7 @@ let
     runtimeInputs = [
       pkgs.ripgrep
       pkgs.findutils
-      pkgs.gnused
+      pkgs.sd
     ];
   };
 in
@@ -77,6 +76,8 @@ in
         secrets_filter = true; # Automatically filter out commands containing secrets
         show_preview = true; # Show command preview in search results
         sync_address = "http://192.168.5.0:8888"; # Self-hosted Atuin sync server on LAN
+        update_check = false;
+        workspaces = true;
       };
     };
 
@@ -92,7 +93,7 @@ in
         python.disabled = true;
         terraform.disabled = true;
 
-        # Catppuccin Mocha palette (matches kitty's Catppuccin theme pair)
+        # Catppuccin Mocha prompt palette
         palette = "catppuccin_mocha";
         palettes.catppuccin_mocha = {
           rosewater = "#f5e0dc";
@@ -199,7 +200,7 @@ in
       # Environment variables set for every zsh session
       sessionVariables = {
         DIRENV_LOG_FORMAT = ""; # Silence direnv "loading .envrc" messages
-        MANPAGER = "vim +Man!"; # Use vim as the man page viewer
+        MANPAGER = "nvim +Man!";
         NIXPKGS_ALLOW_UNFREE = "1"; # Allow unfree packages in nix-shell
         TFENV_CONFIG_DIR = "$HOME/.cache/tfenv"; # dont write to readonly nix store
       };
@@ -236,16 +237,13 @@ in
         f = "fend";
         fc = "clear;fend";
 
-        # Terraform aliases (short commands for daily IaC work)
+        # Terraform
         t = "terraform";
         ta = "terraform apply";
         ti = "terraform init";
         tp = "terraform plan";
         tpv = "terraform plan -no-color | nvim -"; # Plan output in nvim for review
         tpwb = "terraform plan -no-color | grep 'will be'"; # Quick summary of what will change
-        tsd = "echo $(terraform state list|fzf --multi)|xargs -n1 terraform state rm"; # Fuzzy state remove
-        tss = "terraform state show $(terraform state list|fzf)"; # Fuzzy state show
-        tt = "echo $(terraform state list|fzf --multi)|xargs -n1 terraform taint"; # Fuzzy taint
 
         # Kubernetes aliases
         k = "kubectl";
@@ -260,18 +258,9 @@ in
         # (programs.kitty.shellIntegration.enableZshIntegration in kitty.nix);
         # avoid duplicate OSC1/OSC2 escapes here.
 
-        # ── Auto-cd to source directory on new terminal ─────────────
-        # If opening a new terminal (not over SSH), cd to ~/source and clear
-        if [[ "$TERM" != "linux" && "$(pwd)" = "$HOME" && -z "$SSH_CLIENT" ]]; then
-          cd ~/source
-          clear
-        fi
-
         # ── Custom shell functions ──────────────────────────────────
         # These mutate the *current* shell (cd, source, unset env) so they
-        # cannot be packaged as standalone binaries; the heavier scripts
-        # (nsr, wt, rgreplace) live in ./bin/* and are built via
-        # pkgs.writeShellApplication for shellcheck coverage.
+        # cannot be packaged as standalone binaries.
 
         # ap: AWS Profile switcher
         # Usage: ap [query] -- fuzzy-select an AWS profile and export it
@@ -304,15 +293,13 @@ in
         # ── herdr: run a command in a fresh tab ──────────────────────
         # herdr has no `tab spawn`/`--command`; the flow is: create a tab,
         # read its root pane id from the JSON, then `pane run` in it. These
-         # wrap that so you can do `hrf vim` / `hrn vim` (all args are joined
-         # into one command line run in the new tab's zsh). Named hrn (not hr)
-         # to avoid colliding with the `hr` = `herdr --remote` alias (herdr.nix).
+        # wrap that so `hrf vim file` preserves each argument.
 
         # _herdr_new_tab: create a tab and run "$@" in it.
         # $1 = "focus" | "no-focus"; remaining args = command to run.
         _herdr_new_tab() {
           local focus_flag="$1"; shift
-          if [[ -z "$*" ]]; then
+          if (( $# == 0 )); then
             echo "usage: ''${funcstack[2]} COMMAND [ARGS...]" >&2
             return 1
           fi
@@ -323,7 +310,8 @@ in
             echo "herdr: could not determine new pane id" >&2
             return 1
           fi
-          herdr pane run "$pane_id" "$*"
+          local command="''${(j: :)''${(q)@}}"
+          herdr pane run "$pane_id" "$command"
         }
 
         # hrf: launch a command in a new tab and focus it.
@@ -331,6 +319,34 @@ in
 
         # hrn: launch a command in a new tab without focusing it.
         hrn() { _herdr_new_tab no-focus "$@"; }
+
+        # Terraform state helpers preserve selected resource addresses.
+        tss() {
+          local address
+          address="$(terraform state list | ${pkgs.fzf}/bin/fzf)" || return
+          terraform state show "$address"
+        }
+
+        tsd() {
+          local -a addresses
+          addresses=(''${(f)"$(terraform state list | ${pkgs.fzf}/bin/fzf --multi)"}) || return
+          (( ''${#addresses} )) || return
+          printf 'Remove %d object(s) from state? [y/N] ' "''${#addresses}"
+          read -r reply
+          [[ "$reply" == [yY] ]] || return
+          terraform state rm "''${addresses[@]}"
+        }
+
+        tt() {
+          local -a addresses replace_args
+          addresses=(''${(f)"$(terraform state list | ${pkgs.fzf}/bin/fzf --multi)"}) || return
+          (( ''${#addresses} )) || return
+          local address
+          for address in "''${addresses[@]}"; do
+            replace_args+=("-replace=$address")
+          done
+          terraform apply "''${replace_args[@]}"
+        }
 
         # ── lazyworktree: TUI git worktree manager ───────────────────
         # Source built-in shell functions (worktree_jump, worktree_go_last)

@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# nsr: Nix Shell Run -- run a command from a transient nix-shell.
+# nsr: run a command from a transient Nix shell.
 # Usage: nsr <package> [command...]
 # If [command] is omitted the package name is reused as the command.
 # Examples:
@@ -32,9 +32,11 @@ if [ "$#" -lt 1 ]; then
   exit 64
 fi
 
-pkg="$1"
+pkg=$1
 shift
-run_cmd="${*:-$pkg}"
+if [ "$#" -eq 0 ]; then
+  set -- "$pkg"
+fi
 
 set -x
-exec nix-shell --packages "$pkg" --run "$run_cmd"
+exec nix shell "nixpkgs#$pkg" --command "$@"

@@ -1,6 +1,6 @@
 # home-manager
 
-User layer (flake). See top-level `README.md` for layout and daily use; this file is bootstrap-only.
+User flake. See the root README for daily use.
 
 ## First install (after the system is up)
 
@@ -26,4 +26,6 @@ home-manager switch --flake ~/.config/home-manager#nelson
 
 Eval is pure (no `--impure`); `age.secrets.<name>.file` entries are quoted strings so the encrypted files at `/etc/secrets/encrypted/` are referenced at runtime, not copied into the store at eval time.
 
-The `update` script (symlinked to `~/.local/bin/update` from `dotfiles/update`) switches both layers sequentially via `nh` (system first, then user — sequential keeps nh's TUI legible). Default = switch from current `flake.lock`. Pass `-u` to refresh flake inputs (both layers in parallel) first, `-h` for help. Passwordless sudo for `nixos-rebuild`/`nix` is configured in `nixos/profiles/shared.nix`. Firmware updates moved out: run `firmware-update` (also in `dotfiles/`) manually when needed — it uses interactive sudo.
+`update` switches NixOS with `nixos-rebuild`, then Home Manager with `nh`.
+Use `update -u` to refresh both lock files first. Run `firmware-update`
+separately because it needs interactive sudo.

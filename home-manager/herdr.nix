@@ -7,16 +7,9 @@
 # you launch opencode (and any other agent) inside of. opencode.nix is left
 # untouched; this module only adds the wrapper around it.
 #
-# Keybindings: herdr binds ONE key per action. Rather than lean on the tmux
-# ctrl+b prefix, the common actions are remapped to direct ctrl+shift chords
-# that mirror the kitty.nix muscle memory (new tab = ctrl+shift+t, and so on).
-# kitty.nix clears its own shortcuts down to a small allowlist (copy/paste,
-# font-size, F1), so the whole ctrl+shift space passes through kitty to herdr;
-# GNOME leaves plain ctrl+shift+arrows unbound (its workspace chords all add
-# Alt or Super), so nothing has to be freed there either. Actions left unlisted
-# keep their prefix defaults (prefix = ctrl+b): workspace picker prefix+w,
-# detach prefix+q, resize prefix+r, copy-mode prefix+[, help prefix+?, and so
-# on — run `herdr --default-config` to see them all.
+# Common actions use direct ctrl+shift chords. Kitty keeps only clipboard and
+# font-size shortcuts, so the rest reach herdr. Unlisted actions keep their
+# ctrl+b prefix defaults; `prefix+?` shows the live keymap.
 #
 # Config lives at ~/.config/herdr/config.toml. herdr has no home-manager
 # module, so the TOML is rendered directly via home.file. `herdr
@@ -28,12 +21,7 @@
   ...
 }:
 let
-  # Helper bound to ctrl+shift+o (see [[keys.command]] below): open opencode in a
-  # fresh herdr tab that inherits the focused pane's working directory, so
-  # opencode loads the project's .opencode/ config and any direnv-provided
-  # creds. herdr has no native "new tab running X" command, so this drives the
-  # CLI: it creates a focused tab, reads the new root pane id from the JSON
-  # reply, and starts opencode there. herdr runs it detached (type = "shell").
+  # Open OpenCode in a new tab at the active pane's directory.
   ocNewTab = pkgs.writeShellApplication {
     name = "herdr-oc-new-tab";
     runtimeInputs = [
@@ -41,13 +29,7 @@ let
       pkgs.jq
     ];
     text = ''
-      # HERDR_PANE_ID is set by herdr to the pane that triggered the chord;
-      # follow its foreground cwd so the new tab opens in the same directory.
-      cwd=""
-      if [ -n "''${HERDR_PANE_ID:-}" ]; then
-        cwd="$(herdr pane get "$HERDR_PANE_ID" \
-          | jq -r '.result.pane.foreground_cwd // .result.pane.cwd // empty')"
-      fi
+      cwd="''${HERDR_ACTIVE_PANE_CWD:-}"
       if [ -n "$cwd" ]; then
         pane="$(herdr tab create --focus --cwd "$cwd" | jq -r '.result.root_pane.pane_id')"
       else
@@ -58,8 +40,7 @@ let
   };
 in
 {
-  # herdr binary (0.7.1 in the pinned nixpkgs). Installed via home.packages so
-  # updates flow through the flake, not herdr's own curl|sh installer.
+  # Nix owns the herdr version.
   home.packages = [
     pkgs.cloudflared # Public HTTPS/WSS tunnel for the mobile relay
     pkgs.herdr
@@ -111,12 +92,7 @@ in
       new_cwd = "follow"
 
       [keys]
-      # herdr binds ONE key per action, so each entry REPLACES that action's
-      # prefix default with a single direct ctrl+shift chord. kitty.nix clears
-      # its own shortcuts (keeping only copy/paste, font-size and F1), so these
-      # ctrl+shift chords pass straight through kitty to herdr. Actions not
-      # listed here keep their prefix defaults — run `herdr --default-config`
-      # to see the full set.
+      # Each entry replaces that action's prefix binding.
 
       # Tabs — new tab reuses kitty's own ctrl+shift+t muscle memory; [ / ]
       # step through the tab strip.
@@ -140,6 +116,9 @@ in
 
       # Enter resize mode (default prefix+r) as a direct chord.
       resize_mode = "ctrl+shift+r"
+
+      # Edit scrollback in the configured editor.
+      edit_scrollback = "f1"
 
       # Pane focus — h/j/k/l vim motions.
       focus_pane_left = "ctrl+shift+h"

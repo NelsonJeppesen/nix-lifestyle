@@ -21,7 +21,6 @@ use `hjkl`. Bare `nvim` opens a markdown scratch buffer at
 - [treesitter & textobjects](#treesitter--textobjects)
 - [mini.\* family](#mini-family)
 - [nvim-various-textobjs](#nvim-various-textobjs)
-- [Surround (mini.surround)](#surround-minisurround)
 - [treewalker.nvim (AST navigation)](#treewalkernvim-ast-navigation)
 - [hardtime.nvim](#hardtimenvim)
 - [toggleterm.nvim](#toggletermnvim)
@@ -364,7 +363,7 @@ All grammars bundled via `withAllGrammars`. Folding is intentionally
 | `ac` / `ic` | Class outer / inner |
 | `ab` / `ib` | Block outer / inner |
 | `aa` / `ia` | Parameter / argument |
-| `ai` / `ii` | Conditional |
+| `aI` / `iI` | Conditional |
 | `al` / `il` | Loop |
 
 ### Movement
@@ -393,24 +392,6 @@ Bindings it provides:
 | `go` / `gO` | Add empty line below / above |
 | `<C-s>` | Save buffer (n/i/x) |
 
-### mini.ai — extended text objects
-Config: `home-manager/neovim.nix:180`. Adds treesitter-backed `o`/`f`/`c`
-on top of standard targets:
-
-| Pair | Object |
-|---|---|
-| `ao` / `io` | Block/conditional/loop (whichever wraps cursor) |
-| `af` / `if` | Function (treesitter) |
-| `ac` / `ic` | Class (treesitter) |
-| `aq` / `iq` | Quote (any of `"'``) |
-| `ab` / `ib` | Bracket (any of `()[]{}`) |
-| `a?` / `i?` | User-prompt (asks for left/right delimiter) |
-
-`n_lines = 500` so it scans up to 500 lines for matches.
-
-### mini.surround
-See dedicated section below.
-
 ### mini.animate
 Config: `home-manager/neovim.nix:853`. Smooth scroll + window resize
 animations (cursor animation disabled — smear-cursor removed; open/close
@@ -437,27 +418,6 @@ Most-used:
 | `am` / `im` | Chain member (`.foo()`) |
 | `aR` / `iR` | REST request (HTTP block) |
 | `iU` / `aU` | URL |
-
----
-
-## Surround (mini.surround)
-
-Plugin: <https://github.com/echasnovski/mini.surround>
-Config: `home-manager/neovim.nix:170`. `s` is the prefix (overrides
-default vim `s` — substitute char).
-
-| Key | Action |
-|---|---|
-| `sa{motion}{char}` | Add surround |
-| `sd{char}` | Delete surround |
-| `sr{old}{new}` | Replace surround |
-| `sf{char}` | Find right (next surround) |
-| `sF{char}` | Find left (prev surround) |
-| `sh{char}` | Highlight surround |
-| `sn` | Update `n_lines` for this session |
-
-Examples: `saiw"` quote a word · `sd"` strip surrounding quotes ·
-`sr({` swap parens for braces.
 
 ---
 
@@ -523,9 +483,8 @@ same source kitty uses) and switches the colorscheme on change:
 - dark  → `tokyonight-night` (`background=dark`)
 - light → `tokyonight-day` (`background=light`)
 
-Switch your GNOME theme — Neovim follows within a few seconds (no
-refocus needed; polled every 3s). On a tty/SSH session where the portal
-is unavailable it falls back to dark. Devicon colors re-tint via
+Switch your GNOME theme and Neovim follows through portal events. On a
+TTY or SSH session it falls back to dark. Devicon colors re-tint via
 `tiny-devicons-auto-colors-nvim` on the `ColorScheme` autocmd, so icons
 stay readable across the switch.
 
@@ -545,7 +504,6 @@ in `neovim.nix`.
 | `mini-animate` | Smooth scroll (120ms linear) + window resize (100ms). |
 | `numb-nvim` | Peek line target while typing `:42` (before pressing Enter). |
 | `vim-illuminate` | Highlights other occurrences of the word under cursor. |
-| `cellular-automaton-nvim` | `<leader>fml` → "make it rain" your buffer. Pure dopamine. |
 
 ---
 
@@ -585,11 +543,8 @@ Corner char `\|`, header fill `-` (markdown-friendly).
 
 - **Arrow keys do nothing** in insert/visual; in normal mode they echo
   a complaint. Use `hjkl` (or `hardtime` will yell anyway).
-- **`vim.lsp.log` is errors-only** — if you need protocol traces, bump
-  `vim.lsp.log.set_level("DEBUG")` at runtime.
+- **LSP logging is off.** Enable it temporarily for protocol traces.
 - **Save before opencode.** It reads from disk, not from the buffer.
-- **`s` is mini.surround**, not vim's `s` (substitute char). Use `cl`
-  for the old behavior.
 - **`<leader>op…` is opencode operator**, not "previous". Treesitter
   prev-* lives on `[`.
 - **Folding is off everywhere.** The treesitter setup intentionally

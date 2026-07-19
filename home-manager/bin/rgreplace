@@ -1,13 +1,8 @@
 #!/usr/bin/env bash
-# rgreplace: bulk regex search-and-replace across files using ripgrep + sed.
+# rgreplace: bulk regex replacement using ripgrep and sd.
 # Usage: rgreplace <search> <replace> [path]
 #
-# <search> is a regex (passed to both `rg` and `sed`); the script escapes
-# sed BRE metacharacters in it before splicing into `s|…|…|g`. <replace>
-# is a sed replacement string with `&`, `\`, and `|` escaped.
-#
-# Files are discovered with `rg -l -0` (null-delimited so spaces/newlines
-# in paths are safe) and edited in place.
+# Both tools use Rust regex syntax. Capture replacements use `$1`, `$2`, etc.
 set -euo pipefail
 
 usage() {
@@ -16,8 +11,8 @@ rgreplace -- bulk regex search-and-replace across files
 
 Usage: rgreplace <search> <replace> [path]
 
-  <search>   Regex pattern (used by both ripgrep and sed BRE).
-  <replace>  sed replacement string. Backreferences \1..\9 work.
+  <search>   Rust regex pattern.
+  <replace>  Replacement string. Captures use $1, $2, etc.
   [path]     Directory or file to recurse into. Defaults to '.'.
 
 Options:
@@ -45,11 +40,5 @@ search=$1
 replace=$2
 target=${3:-.}
 
-# Escape regex metacharacters in the search pattern for sed BRE compatibility.
-# Escape `&` and `\` in the replacement, plus the chosen delimiter `|`.
-esc_search=$(printf '%s' "$search" | sed -e 's/[]\/$*.^[|]/\\&/g')
-esc_replace=$(printf '%s' "$replace" | sed -e 's/[\/&|]/\\&/g')
-
-# rg -0 / xargs -0 is null-delimited so filenames with spaces/newlines work.
 rg -l -0 -- "$search" "$target" |
-  xargs -0 -r -n1 sed -i "s|${esc_search}|${esc_replace}|g"
+  xargs -0 -r -n1 sd "$search" "$replace"

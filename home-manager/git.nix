@@ -123,12 +123,6 @@
           autoSetupRemote = true;
         };
 
-        # Plaintext credential fallback at ~/.git-credentials for any remote
-        # not covered by the SSH insteadOf rules above. SSH-forced hosts never
-        # touch this file.
-        credential = {
-          helper = "store";
-        };
       };
     };
 

@@ -11,7 +11,7 @@ Personal NixOS + Home Manager monorepo. Both layers are flakes (separate, not un
 See `nixos/AGENTS.md` and `home-manager/AGENTS.md` for layer-specific rules.
 
 ## BUILD
-- System: `sudo nixos-rebuild switch --flake /etc/nixos` (`/etc/nixos` symlinks to `nixos/`; hostname inferred from `$HOSTNAME` if `#name` omitted); dry: append `--dry-run`
+- System: `sudo nixos-rebuild switch --flake /etc/nixos`; dry: `nixos-rebuild dry-build --flake /etc/nixos`
 - Home:   `home-manager switch --flake ~/.config/home-manager#nelson`
 - `age.secrets.<x>.file` MUST be a string (`"/etc/secrets/encrypted/<x>.age"`), never an unquoted path literal — string form keeps eval pure (no copy into store), so `--impure` is not required
 - Convenience wrapper: `~/.local/bin/update` (symlinked from `home-manager/dotfiles/update`) switches both layers sequentially: system via `sudo nixos-rebuild switch --flake /etc/nixos` (passwordless sudo for `nixos-rebuild`/`nix` is configured in `nixos/profiles/shared.nix`), user via `nh home switch`. nh is deliberately NOT used for the system layer — it wraps activation in `sudo env … switch-to-configuration`, which can't be safely scoped in sudoers. Default = switch from current `flake.lock`. Flags: `-u` refresh flake inputs (both layers in parallel) before switching; `-h` help. Firmware updates are NOT part of `update` — run `~/.local/bin/firmware-update` (interactive sudo) manually when needed.
@@ -27,7 +27,7 @@ See `nixos/AGENTS.md` and `home-manager/AGENTS.md` for layer-specific rules.
 
 ## FORMAT BEFORE COMMIT
 - Nix: `nixfmt` (RFC style) on touched `*.nix` only — never bulk-reformat
-- Shell: `shfmt -i 2 -s` on touched scripts; keep POSIX-safe; quote vars
+- Shell: `shfmt -i 2 -s` on touched scripts; use Bash features only with a Bash shebang
 - Skip if file unchanged. Do not auto-upgrade style across repo without explicit functional change approval.
 
 ## ANTI-PATTERNS (this repo)

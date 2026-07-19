@@ -15,8 +15,6 @@ wk.add({
   -- Quick access bindings
   { '<c-\\>', desc = "Toggle Terminal", function() require("toggleterm").toggle() end, mode = { "n", "i", "t" } },
 
-  { "<leader>fml", desc = "FML" ,"<cmd>CellularAutomaton make_it_rain<cr>"},
-
   -- Top-level leader shortcuts
   { "<leader><space>", desc = "Smart Find Files", function() Snacks.picker.smart() end },
   { "<leader>,", desc = "Buffers", function() Snacks.picker.buffers() end },
@@ -161,18 +159,8 @@ wk.add({
   { "]p", desc = "Next Parameter Inner" },
   { "]s", desc = "Next Scope Outer" },
 
-  -- Surround (mini.surround)
-  { "s",  group = "Surround" },
-  { "sa", desc = "Add Surrounding", mode = { "n", "v" } },
-  { "sd", desc = "Delete Surrounding" },
-  { "sf", desc = "Find Right" },
-  { "sF", desc = "Find Left" },
-  { "sh", desc = "Highlight Surrounding" },
-  { "sn", desc = "Update n_lines" },
-  { "sr", desc = "Replace Surrounding" },
-
   -- Text objects (operator-pending: use after d/c/v/y)
-  -- mini.ai + nvim-various-textobjs + treesitter-textobjects
+  -- nvim-various-textobjs + treesitter-textobjects
   { "i", group = "Inner Text Object", mode = "o" },
   { "a", group = "Around Text Object", mode = "o" },
   { "if", desc = "Inner Function", mode = { "o", "x" } },
@@ -183,10 +171,8 @@ wk.add({
   { "ab", desc = "Around Block", mode = { "o", "x" } },
   { "ia", desc = "Inner Argument", mode = { "o", "x" } },
   { "aa", desc = "Around Argument", mode = { "o", "x" } },
-  { "io", desc = "Inner Block/Cond/Loop (mini.ai)", mode = { "o", "x" } },
-  { "ao", desc = "Around Block/Cond/Loop (mini.ai)", mode = { "o", "x" } },
-  { "iq", desc = "Inner Quote (mini.ai)", mode = { "o", "x" } },
-  { "aq", desc = "Around Quote (mini.ai)", mode = { "o", "x" } },
+  { "iI", desc = "Inner Conditional", mode = { "o", "x" } },
+  { "aI", desc = "Around Conditional", mode = { "o", "x" } },
   { "ii", desc = "Inner Indent (various-textobjs)", mode = { "o", "x" } },
   { "ai", desc = "Around Indent (various-textobjs)", mode = { "o", "x" } },
   { "iv", desc = "Inner Value (various-textobjs)", mode = { "o", "x" } },

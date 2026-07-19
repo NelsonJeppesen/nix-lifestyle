@@ -40,6 +40,6 @@ No `overlays/` directory exists. Inline overrides live in the profile that uses 
 ```
 sudo nixos-rebuild switch --flake /etc/nixos          # host inferred from $HOSTNAME
 sudo nixos-rebuild switch --flake /etc/nixos#<host>   # explicit
-sudo nixos-rebuild build  --flake /etc/nixos --dry-run
+sudo nixos-rebuild dry-build --flake /etc/nixos
 ```
 `age.secrets.<x>.file` must be a quoted string (`"/etc/secrets/encrypted/<x>.age"`); using an unquoted path literal forces `--impure`.

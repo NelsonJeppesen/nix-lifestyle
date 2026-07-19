@@ -50,6 +50,7 @@
 
   # Let home-manager manage itself (enables the `home-manager` CLI)
   programs.home-manager.enable = true;
+  programs.nix-index.enable = true;
 
   # Enable fontconfig so user-installed fonts are discoverable
   fonts.fontconfig.enable = true;
@@ -110,7 +111,10 @@
     file.".config/fend/config.toml".source = ./dotfiles/fend.toml; # fend calculator config
     file.".digrc".source = ./dotfiles/digrc; # dig defaults (+noall +answer)
     file.".local/bin/update".source = ./dotfiles/update; # System update script
-    file.".local/bin/firmware-update".source = ./dotfiles/firmware-update; # Firmware updates (interactive sudo)
+    file.".local/bin/firmware-update" = {
+      source = ./dotfiles/firmware-update;
+      executable = true;
+    };
     file.".local/bin/n".source = ./dotfiles/n; # Quick notes launcher (fzf + nb)
     file.".terraform.d/plugin-cache/.empty".source = ./dotfiles/empty; # Ensure terraform plugin cache dir exists
     file.".config/opencode/open-plan-annotator.json".source = ./dotfiles/open-plan-annotator.json; # open-plan-annotator: hand off approved plan to `sisyphus`
@@ -139,7 +143,6 @@
       pkgs.lsof # List open files (debugging network ports, etc.)
 
       pkgs.python313 # Python 3.13 interpreter
-      pkgs.atkinson-monolegible # High-legibility monospace font
       pkgs.circumflex
 
       # ── GUI applications ────────────────────────────────────────────
@@ -170,7 +173,6 @@
       #pkgs.google-chrome
       pkgs.zoom-us # Video conferencing
       #pinnedZoom
-      pkgs.kitty # Terminal emulator (configured in kitty.nix)
       # pkgs.slack -> wrapped with Wayland/GPU flags in slack.nix
 
       # ── Cloud and infrastructure tools ──────────────────────────────
@@ -235,7 +237,8 @@
       pkgs.gh # GitHub CLI
       pkgs.hurl # HTTP testing tool
       pkgs.ipcalc # IP subnet calculator
-      # pkgs.nb # Note-taking and knowledge base CLI
+      pkgs.lazyworktree # Git worktree picker used by `wt`
+      pkgs.nb # Notes used by `n`, `nw`, and `np`
       pkgs.p7zip # 7-Zip archiver
       pkgs.ripgrep # Fast grep alternative
       # pkgs.sd # sed alternative for find-and-replace

@@ -57,7 +57,13 @@ if [ "$UPDATE_INPUTS" = 1 ]; then
   SYS_UPD_PID=$!
   nix flake update "${GH_TOKEN_ARGS[@]}" --flake "$HOME/.config/home-manager" &
   HM_UPD_PID=$!
-  wait "$SYS_UPD_PID" "$HM_UPD_PID"
+  status=0
+  wait "$SYS_UPD_PID" || status=1
+  wait "$HM_UPD_PID" || status=1
+  if [ "$status" -ne 0 ]; then
+    echo "update: one or more flake updates failed" >&2
+    exit 1
+  fi
 fi
 
 red "Switching system layer (nixos-rebuild)..."

@@ -1,13 +1,13 @@
 # AGENTS.md – home-manager/ (user layer)
 
-Flake-based. Single output: `homeConfigurations."nelson"` for `x86_64-linux`. Inputs: `nixpkgs` (unstable), `home-manager`, `agenix`, `gitalias` (non-flake), `gnome-github-notifications-redux`. Inputs are plumbed to modules via `extraSpecialArgs`.
+Flake-based. Single output: `homeConfigurations."nelson"` for `x86_64-linux`.
 
 ## STRUCTURE
 - `flake.nix` / `flake.lock` – inputs + single user output
 - `home.nix` – top-level module: imports all feature modules, defines `age.secrets`, `home.packages`, dotfile symlinks
-- `<feature>.nix` – one concern per file (`neovim`, `zsh`, `kitty`, `firefox`, `chrome`, `chrome-apps`, `git`, `gnome`, `gnome-extensions`, `mcp`, `opencode`, `editorconfig`)
+- `<feature>.nix` – one concern per file; imports live in `home.nix`
 - `dotfiles/` – static files symlinked into `$HOME` via `home.file."<path>".source = ./dotfiles/<file>`
-- `bin/` – user scripts (`nsr`, `rgreplace`); package via `home.packages` or symlink, not via `home.file`
+- `bin/` – scripts packaged with `writeShellApplication`
 
 ## BUILD
 ```
@@ -38,4 +38,4 @@ The `update` script (in `dotfiles/`, symlinked to `~/.local/bin/update`) switche
 - Writing `age.secrets.<name>.file = /etc/secrets/...;` as a bare path literal — pure-eval will reject it; always use a quoted string
 - Adding a top-level `flake.nix` to the repo root or merging this flake with `nixos/flake.nix` — they are intentionally separate
 - Bumping `home.stateVersion` casually — only with explicit migration intent
-- Putting executables in `dotfiles/` and using `home.file` instead of `home.packages` for installable binaries
+- Adding executable dotfiles without `executable = true`
