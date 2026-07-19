@@ -17,7 +17,7 @@
     ./editorconfig.nix # Global editorconfig settings
     ./firefox.nix # Firefox browser with custom search engines
     ./flameshot.nix # Flameshot daemon + Print-key tray-trigger script
-    ./git.nix # Git config, signing, aliases, difftastic
+    ./git.nix # Git config, signing, aliases, and AI-assisted diff review
     ./gnome-extensions.nix # GNOME Shell extensions and their settings
     ./gnome.nix # GNOME desktop dconf settings and keybindings
     ./herdr.nix # herdr agent multiplexer (wraps opencode/coding agents)

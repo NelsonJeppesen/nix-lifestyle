@@ -113,7 +113,7 @@ Examples currently wired up:
 - **Kitty**: Nerd Font symbol_map (no patched base font), AI-chat function keys (F1, F2)
 - **Neovim**: arrow keys disabled; structural motion via Treesitter textobjects; LSP pickers via Snacks
 - **Shell**: Atuin (self-hostable history sync), fuzzy AWS profile/region pickers, terraform state helpers, kubectx in starship right prompt
-- **Git**: SSH-signed commits required, difftastic for semantic diffs, gitalias as a flake input
+- **Git**: SSH-signed commits required, Hunk for review-first diffs, gitalias as a flake input
 
 ---
 ## Cheatsheet

@@ -1,16 +1,19 @@
 # git.nix - Git version control configuration
-#
-# Configures git with:
-# - User identity using GitHub noreply email for privacy
-# - SSH commit signing (ed25519 key)
-# - Difftastic for structural/syntax-aware diffs
-# - GitAlias community aliases (imported from gitalias flake input)
-# - SSH-forced URLs for GitHub and Bitbucket (no HTTPS prompts)
-# - Fast-forward-only pulls to prevent accidental merge commits
-# - Auto-setup remote on push for new branches
-# - lazyworktree TUI for multi-branch workflows
-{ config, gitalias, ... }:
 {
+  config,
+  lib,
+  pkgs,
+  gitalias,
+  ...
+}:
+{
+  home.packages = [ pkgs.hunk ]; # Review-first diff viewer with live AI annotations
+
+  # Hunk ships the skill matching its session API, so it stays in sync with
+  # the nixpkgs package version used by the Git pager.
+  home.file.".config/opencode/skills/hunk-review/SKILL.md".source =
+    "${pkgs.hunk}/skills/hunk-review/SKILL.md";
+
   # Generate the SSH allowed_signers file from the user's ed25519 public key.
   # This file is required for git to verify SSH-signed commits.
   # Runs after writeBoundary so home.file entries are already in place.
@@ -27,21 +30,6 @@
   '';
 
   programs = {
-
-    lazyworktree = {
-      enable = true;
-      settings = {
-        worktree_dir = "~/source/.worktrees";
-      };
-    };
-
-    # difftastic: structural diff tool that understands syntax
-    # Provides much better diffs for code than line-based diff
-    difftastic = {
-      enable = true;
-      git.enable = true; # Register as git's default diff tool
-    };
-
     git = {
       enable = true;
 
@@ -69,16 +57,19 @@
         alias = {
           pu = "push";
           puf = "!git push --force-with-lease --force-if-includes"; # Safe force push
-          br = "!git co $(git branch --list --sort=-committerdate|fzf --height 15)"; # Interactive branch switch via fzf
-          wt = "!lazyworktree"; # TUI worktree manager
+          br = ''
+            !f() { \
+              branch=$(git branch --format='%(refname:short)' --sort=-committerdate | fzf --height 15) || return; \
+              git switch "$branch"; \
+            }; f
+          '';
           # git alias app: interactive add -p that includes untracked files
           # Uses fzf to select which untracked files to intent-to-add before patching
           app = ''
             !f() { \
-              untracked=$(git ls-files --others --exclude-standard); \
-              if [ -n "$untracked" ]; then \
-                echo "$untracked" | fzf --multi --preview 'cat {}' --header 'Select untracked files to include in patch review' | xargs -r git add -N; \
-              fi; \
+              git ls-files --others --exclude-standard -z \
+                | fzf --read0 --print0 --multi --preview 'cat -- {}' --header 'Select untracked files to include in patch review' \
+                | xargs -0 -r git add -N; \
               git add -p; \
             }; f
           '';
@@ -107,8 +98,9 @@
         gpg.format = "ssh";
         gpg.ssh.allowedSignersFile = "~/.ssh/allowed_signers";
 
-        # Use zdiff3 conflict markers (shows base version in addition to ours/theirs)
-        merge.conflictstyle = "zdiff3";
+        merge.conflictStyle = "zdiff3"; # Include the base version in conflict markers
+
+        core.pager = "${lib.getExe pkgs.hunk} pager";
 
         # Force SSH for GitHub, GitLab, and Bitbucket (avoids HTTPS credential prompts)
         url."git@github.com:".insteadOf = "https://github.com/";
@@ -138,6 +130,22 @@
           helper = "store";
         };
       };
+    };
+
+    opencode.commands = {
+      diff-review = ''
+        Review the current working tree for bugs, regressions, security issues,
+        and missing tests. Load the hunk-review skill and use the live Hunk
+        session for this repository when one exists. Put actionable findings
+        inline in Hunk and summarize them in severity order. Do not edit files.
+      '';
+      pr-review = ''
+        Review GitHub pull request $ARGUMENTS. Use the GitHub tools to inspect
+        its metadata, complete diff, commits, checks, and existing review
+        threads. Focus on bugs, regressions, security issues, and missing tests;
+        report findings first with file and line references. Do not edit files,
+        submit a GitHub review, or post comments unless explicitly asked.
+      '';
     };
   };
 }
