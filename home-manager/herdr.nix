@@ -134,6 +134,13 @@ in
       previous_agent = "ctrl+shift+["
       next_agent = "ctrl+shift+]"
 
+      # Show/hide the agent sidebar (default prefix+b) as a direct chord,
+      # matching the ctrl+shift muscle memory of the actions above.
+      toggle_sidebar = "ctrl+shift+b"
+
+      # Enter resize mode (default prefix+r) as a direct chord.
+      resize_mode = "ctrl+shift+r"
+
       # Pane focus — h/j/k/l vim motions.
       focus_pane_left = "ctrl+shift+h"
       focus_pane_down = "ctrl+shift+j"
