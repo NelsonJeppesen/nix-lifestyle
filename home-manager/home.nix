@@ -94,6 +94,21 @@
     #   file = "/etc/secrets/encrypted/opencode.secret1.age";
     #   path = "${config.home.homeDirectory}/.config/opencode/commands/secret1.md";
     # };
+
+    # Cloudflare Tunnel connector tokens for the opencode web UI, one per laptop.
+    # Terraform (~/source/personal/terraform/core/cloudflare_tunnels.tf) owns the
+    # tunnels, DNS, and Access apps; each token is produced by
+    #   terraform output -json opencode_web_tunnel_tokens | jq -r '.["lg-gram-14"]'
+    # and encrypted per-host. Both decrypt only on their own host; opencode.nix's
+    # cloudflared service selects the one matching the current hostname.
+    "opencode-web.tunnel-token.lg-gram-14" = {
+      file = "/etc/secrets/encrypted/opencode-web.tunnel-token.lg-gram-14.age";
+      path = "${config.home.homeDirectory}/.config/opencode-web/cloudflared/token.lg-gram-14";
+    };
+    "opencode-web.tunnel-token.lg-gram-17" = {
+      file = "/etc/secrets/encrypted/opencode-web.tunnel-token.lg-gram-17.age";
+      path = "${config.home.homeDirectory}/.config/opencode-web/cloudflared/token.lg-gram-17";
+    };
   };
 
   home = {

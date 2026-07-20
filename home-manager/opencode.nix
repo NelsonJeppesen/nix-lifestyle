@@ -41,6 +41,18 @@ let
     ];
     meta.mainProgram = "slack-mcp-server";
   };
+
+  # Real NixOS hostname → short label used by Terraform for the tunnel token
+  # filename + public hostname (<label>-oc.jeppesen.io). The label does NOT equal
+  # the hostname — the "17" box is lg-gram-pro-17-2025. A host absent here runs
+  # no tunnel.
+  ocwebHostLabels = {
+    "lg-gram-14-2022" = "lg-gram-14";
+    "lg-gram-pro-17-2025" = "lg-gram-17";
+  };
+  ocwebLabelPairs = lib.concatStringsSep " " (
+    lib.mapAttrsToList (host: label: "[${host}]=${label}") ocwebHostLabels
+  );
 in
 {
   # Shell aliases for quick OpenCode invocation
@@ -70,7 +82,23 @@ in
   programs.opencode = {
     enable = true;
     enableMcpIntegration = true; # Merge programs.mcp.servers (currently none) into settings.mcp
-    web.enable = true; # Enable browser-based web UI
+
+    # Browser-based web UI, run as a systemd user service (opencode-web).
+    # Pin hostname to loopback and a fixed port so the Cloudflare Tunnel
+    # (terraform/core/cloudflare_tunnels.tf) has a stable upstream. The tunnel
+    # + Zero Trust Access (email OTP) are the auth gate; the web UI's live
+    # updates use SSE, which rides the Access cookie (no WebSocket/Access
+    # conflict for the core UI). Port 4097 avoids the default 4096 used by an
+    # interactive `opencode`/TUI server.
+    web = {
+      enable = true;
+      extraArgs = [
+        "--hostname"
+        "127.0.0.1"
+        "--port"
+        "4097"
+      ];
+    };
 
     settings = {
       # Use Claude Opus 4.8 via GitHub Copilot as the default model
@@ -337,4 +365,59 @@ in
     pkgs.terraform-mcp-server
     slackMcpServer
   ];
+
+  # Cloudflare Tunnel connector for the opencode web UI. Terraform owns the
+  # tunnel, its DNS (<label>-oc.jeppesen.io), and the Zero Trust Access app
+  # (email OTP). This unit runs cloudflared with the per-host connector token,
+  # forwarding the public hostname to the local opencode-web service (port 4097,
+  # set in programs.opencode.web above). The web UI uses SSE, which rides the
+  # Access cookie — no WebSocket/Access conflict for the core UI.
+  #
+  # Token files decrypt only on their own host (see home.nix age.secrets, named
+  # by short label). ExecStart maps the real hostname to its label; a host with
+  # no tunnel exits cleanly.
+  systemd.user.services.opencode-web-tunnel = {
+    Unit = {
+      Description = "Cloudflare Tunnel for the opencode web UI";
+      After = [
+        "network-online.target"
+        "opencode-web.service"
+      ];
+      Wants = [
+        "network-online.target"
+        "opencode-web.service"
+      ];
+    };
+
+    Service =
+      let
+        tokenDir = "${config.home.homeDirectory}/.config/opencode-web/cloudflared";
+        run = pkgs.writeShellApplication {
+          name = "opencode-web-tunnel-run";
+          runtimeInputs = [ pkgs.cloudflared ];
+          text = ''
+            declare -A labels=(${ocwebLabelPairs})
+            host="$(hostname)"
+            label="''${labels[$host]:-}"
+            if [ -z "$label" ]; then
+              echo "opencode-web-tunnel: host '$host' runs no tunnel; nothing to do." >&2
+              exit 0
+            fi
+            token_file="${tokenDir}/token.$label"
+            if [ ! -r "$token_file" ]; then
+              echo "opencode-web-tunnel: token for '$label' missing at $token_file." >&2
+              exit 1
+            fi
+            exec cloudflared tunnel --no-autoupdate run --token "$(cat "$token_file")"
+          '';
+        };
+      in
+      {
+        ExecStart = lib.getExe run;
+        Restart = "on-failure";
+        RestartSec = 5;
+      };
+
+    Install.WantedBy = [ "default.target" ];
+  };
 }
