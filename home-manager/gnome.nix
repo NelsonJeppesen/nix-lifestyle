@@ -11,8 +11,22 @@
 {
   config,
   lib,
+  pkgs,
   ...
 }:
+let
+  flameshotScreenshot = pkgs.writeShellApplication {
+    name = "flameshot-screenshot";
+    runtimeInputs = [ pkgs.procps ];
+    text = ''
+      pkill -f '/bin/[f]lameshot( |$)' || true
+      while pgrep -f '/bin/[f]lameshot( |$)' >/dev/null; do
+        sleep 0.05
+      done
+      exec ${config.services.flameshot.package}/bin/flameshot gui
+    '';
+  };
+in
 {
 
   # Nautilus sidebar bookmarks for quick navigation
@@ -181,13 +195,14 @@
       ];
     };
 
-    # Custom keybinding: Print key launches flameshot. Uses the patched
+    # Custom keybinding: Print kills any hidden/stale instance before launching
+    # a fresh capture. Uses the patched
     # flameshot from services.flameshot.package (see flameshot.nix) so the
     # CLI path and the daemon are the same binary with the GNOME Wayland
     # parent_window portal fix applied.
     "org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom0" = {
       binding = "Print";
-      command = "${config.services.flameshot.package}/bin/flameshot gui";
+      command = "${flameshotScreenshot}/bin/flameshot-screenshot";
       name = "flameshot screenshot";
     };
 

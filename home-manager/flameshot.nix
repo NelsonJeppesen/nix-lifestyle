@@ -1,8 +1,8 @@
 # flameshot.nix - Flameshot screenshot tool
 #
 # Enables the user systemd service so the daemon is running and bound to
-# graphical-session.target. The Print-key binding (see gnome.nix) invokes
-# `flameshot gui` directly.
+# graphical-session.target. The Print-key launcher (see gnome.nix) replaces
+# any existing instance before invoking `flameshot gui`.
 #
 # Package source: upstream flameshot flake pinned to master commit 410cfae
 # (PR #4664) — the fix for the empty parent_window xdg-desktop-portal bug
