@@ -1,10 +1,9 @@
 # opencode.nix - `opencode serve` exposed over the tailnet via tailscale serve
 #
-# Mirrors profiles/openclaw.nix: a headless `opencode serve` bound to
-# loopback, fronted by `tailscale serve` for HTTPS on the tailnet using
+# Runs a headless `opencode serve` bound to loopback, fronted by
+# `tailscale serve` for HTTPS on the tailnet using
 # Tailscale's per-tailnet cert. Tailnet ACLs are the only auth gate —
-# opencode itself ships no built-in auth, same posture as the openclaw
-# gateway.
+# opencode itself ships no built-in auth.
 #
 # Why loopback + `tailscale serve` (instead of binding the tailnet IP)?
 # - Direct tailnet bind works but exposes the API in plaintext on

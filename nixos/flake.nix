@@ -35,8 +35,7 @@
     };
 
     # comin: GitOps for NixOS — pulls this flake from a Git remote and
-    # switches the system on every push. Currently only enabled on
-    # `openclaw` (see profiles/comin.nix).
+    # switches selected headless systems on every push.
     comin = {
       url = "github:nlewo/comin";
       inputs.nixpkgs.follows = "nixpkgs";

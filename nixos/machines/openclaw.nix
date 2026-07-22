@@ -1,29 +1,33 @@
-# openclaw — stationary LG Gram running the openclaw gateway service.
-# Managed remotely via comin (see profiles/comin.nix); manual rebuilds are
-# only needed for the initial bootstrap.
-#
-#
-# `laptop_power.nix` is intentionally NOT imported: this host is always on
-# AC, and TLP's powersave defaults trade gateway responsiveness for ~1W of
-# savings we don't care about here.
-{ ... }:
+# Stationary LG Gram repurposed as a headless deployment server.
+# Managed remotely via comin; SSH and services are reachable over Tailscale.
+{ lib, ... }:
 {
   system.stateVersion = "26.05";
 
   imports = [
     ../profiles/comin.nix
-    ../profiles/desktop.nix
-    ../profiles/gnome.nix
+    ../profiles/console.nix
+    ../profiles/headless-server.nix
     ../profiles/intel.nix
     ../profiles/lg_gram_common.nix
     ../profiles/networking.nix
-    ../profiles/openclaw.nix
     ../profiles/tailscale.nix
-    # ../profiles/wifi.nix
-    ../profiles/console.nix
     ../profiles/x86_64.nix
-    ../profiles/zsh.nix
   ];
+
+  networking.networkmanager.enable = true;
+
+  # Trust all traffic from private IPv4 networks. Tailnet traffic is allowed
+  # separately by the trusted tailscale0 interface.
+  networking.firewall = {
+    allowedTCPPorts = [ 22 ];
+    allowedTCPPortRanges = lib.mkForce [ ];
+    allowedUDPPortRanges = lib.mkForce [ ];
+    extraInputRules = ''
+      ip saddr { 10.0.0.0/8, 172.16.0.0/12, 192.168.0.0/16 } accept
+    '';
+  };
+  networking.nftables.enable = true;
 
   # Stationary always-on gateway sitting in the overlap zone of two APs on the
   # same SSID. With NetworkManager's default wpa_supplicant backend the host

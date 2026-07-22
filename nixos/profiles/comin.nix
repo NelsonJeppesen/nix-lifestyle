@@ -2,8 +2,7 @@
 #
 # Polls this repo's `main` branch every 60s and runs
 # `nixos-rebuild switch` against `nixosConfigurations.<hostname>` whenever
-# a new commit appears. Lets us reconfigure remote/headless hosts (currently
-# just openclaw) without ssh.
+# a new commit appears. Lets us reconfigure remote/headless hosts without SSH.
 #
 # `comin` is a flake input forwarded via specialArgs (see ../flake.nix).
 # Repo is public, so no auth_token_path is needed. Repo SSH-signature policy
