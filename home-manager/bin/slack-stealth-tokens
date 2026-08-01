@@ -52,7 +52,14 @@ SALT = b"saltysalt"
 IV = b" " * 16
 ITERATIONS = 1
 KEYLENGTH = 16
-DPAPI_PREFIX = b"v10"
+# Both prefixes are AES-128-CBC on Linux; only the key source nominally
+# differs (v10 = the hardcoded "peanuts" password, v11 = the OS-keyring
+# password). Slack/Electron writes v11 once a Secret Service keyring is
+# present, so a v11-only check silently returned the raw ciphertext.
+ENC_PREFIXES = (b"v10", b"v11")
+# Chromium Cookies DB v24+ prepends a 32-byte SHA-256 host-binding hash to
+# the plaintext before the actual cookie value.
+BINDING_HASH_LEN = 32
 
 
 def die(msg):
@@ -63,14 +70,23 @@ def die(msg):
 def keyring_password():
     """Return the Slack Safe Storage password from the OS keyring.
 
-    Falls back to the Chromium Linux default 'peanuts' when secret-tool
-    is unavailable or the entry is missing.
+    Slack stores its per-app cookie key under the freedesktop Secret Service
+    with the attribute application=Slack (or com.slack.Slack for the Flatpak
+    build). Match those exact entries only: a bare `application Slack` lookup
+    can otherwise return an unrelated Slack secret whose PBKDF2 key decrypts
+    to padding-valid garbage. Falls back to the Chromium Linux default
+    'peanuts' when secret-tool is unavailable or no entry matches.
     """
     if shutil.which("secret-tool"):
-        for app in ("Slack", "Chromium", "Chrome"):
+        for attrs in (
+            ("application", "com.slack.Slack"),
+            ("application", "Slack"),
+            ("application", "slack"),
+            ("service", "Slack Safe Storage"),
+        ):
             try:
                 out = subprocess.run(
-                    ["secret-tool", "lookup", "application", app],
+                    ["secret-tool", "lookup", *attrs],
                     capture_output=True,
                     check=False,
                 )
@@ -82,7 +98,7 @@ def keyring_password():
 
 
 def decrypt_cookie(encrypted, password):
-    """Decrypt a Chromium v10 AES-128-CBC cookie value."""
+    """Decrypt a Chromium v10/v11 AES-128-CBC cookie value."""
     try:
         from cryptography.hazmat.primitives.ciphers import (
             Cipher,
@@ -95,23 +111,39 @@ def decrypt_cookie(encrypted, password):
             "(add pkgs.python3.pkgs.cryptography to runtimeInputs)"
         )
 
-    if encrypted[:3] != DPAPI_PREFIX:
-        # Unencrypted (older Slack) — value is stored as-is after no prefix.
+    if encrypted[:3] not in ENC_PREFIXES:
+        # Unencrypted (older Slack) — value stored verbatim, no prefix.
         return encrypted.decode("utf-8", "replace")
+
+    ciphertext = encrypted[3:]
+    if len(ciphertext) == 0 or len(ciphertext) % 16 != 0:
+        die(
+            "encrypted cookie is not a whole number of AES blocks "
+            f"({len(ciphertext)} bytes) — cookie store may be corrupt"
+        )
 
     key = hashlib.pbkdf2_hmac("sha1", password, SALT, ITERATIONS, KEYLENGTH)
     decryptor = Cipher(algorithms.AES(key), modes.CBC(IV)).decryptor()
-    data = decryptor.update(encrypted[3:]) + decryptor.finalize()
+    data = decryptor.update(ciphertext) + decryptor.finalize()
 
-    # Strip PKCS7 padding.
+    # Strip and validate PKCS7 padding. Invalid padding means the wrong key
+    # (wrong keyring entry / not really encrypted with this password), not a
+    # value we should hand back as-is.
     pad = data[-1]
-    if 1 <= pad <= 16:
-        data = data[:-pad]
+    if not (1 <= pad <= 16) or data[-pad:] != bytes([pad]) * pad:
+        die(
+            "cookie failed to decrypt (bad PKCS7 padding) — the Slack Safe "
+            "Storage key from the keyring did not match; is the login "
+            "keyring unlocked and Slack signed in?"
+        )
+    data = data[:-pad]
 
-    # Newer Chromium prepends a 32-byte SHA256 domain hash to the plaintext.
+    # Chromium Cookies DB v24+ prepends a 32-byte host-binding hash. Strip it
+    # only when the plaintext isn't already the token, so pre-v24 stores
+    # (value first) keep working.
     text = data.decode("utf-8", "replace")
-    if not text.startswith("xoxd-") and len(data) > 32:
-        text = data[32:].decode("utf-8", "replace")
+    if not text.startswith("xoxd-") and len(data) > BINDING_HASH_LEN:
+        text = data[BINDING_HASH_LEN:].decode("utf-8", "replace")
     return text
 
 
