@@ -1,6 +1,6 @@
 # flake.nix - Home Manager flake entrypoint
 #
-# Defines all inputs (nixpkgs, home-manager, agenix, gitalias) and a single
+# Defines the pinned package/tool inputs and a single
 # homeConfiguration output for user "nelson" on x86_64-linux.
 #
 {
@@ -13,6 +13,13 @@
     # Home Manager for declarative user environment management
     home-manager = {
       url = "github:nix-community/home-manager";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+
+    # Weekly prebuilt nix-index database. This avoids generating an index
+    # locally; comma uses the smaller binaries-only database.
+    nix-index-database = {
+      url = "github:nix-community/nix-index-database";
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
@@ -37,11 +44,30 @@
       flake = false;
     };
 
+    # Serena: semantic retrieval and symbol-level editing tools for OpenCode.
+    serena = {
+      url = "github:oraios/serena";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+
+    # MCP adapter for Pi. Built declaratively in pi.nix; no `pi install` or
+    # activation-time npm download is needed.
+    pi-mcp-adapter = {
+      url = "github:nicobailon/pi-mcp-adapter/v2.11.0";
+      flake = false;
+    };
+
     # Slack MCP server source. Built in opencode.nix so the MCP binary is
     # pinned and does not depend on an imperative npx download.
     slack-mcp-server = {
       url = "github:korotovsky/slack-mcp-server/v1.3.0";
       flake = false;
+    };
+
+    # tuicr: terminal code review UI plus its OpenCode integration skill.
+    tuicr = {
+      url = "github:agavra/tuicr";
+      inputs.nixpkgs.follows = "nixpkgs";
     };
 
     # GitHub Notifications Redux: GNOME Shell extension for GitHub notifications
@@ -68,10 +94,14 @@
       home-manager,
       agenix,
       gitalias,
+      nix-index-database,
       gnome-github-notifications-redux,
       flameshot,
       open-ralph-wiggum,
+      serena,
+      pi-mcp-adapter,
       slack-mcp-server,
+      tuicr,
       ...
     }:
     let
@@ -86,6 +116,7 @@
         modules = [
           ./home.nix # Main home-manager module (imports all others)
           agenix.homeManagerModules.default # Enable age-encrypted secrets
+          nix-index-database.homeModules.nix-index # Prebuilt nix-index database + comma
         ];
 
         # Pass extra arguments to all modules so they can access agenix and gitalias
@@ -93,10 +124,14 @@
           inherit
             agenix
             gitalias
+            nix-index-database
             gnome-github-notifications-redux
             flameshot
             open-ralph-wiggum
+            serena
+            pi-mcp-adapter
             slack-mcp-server
+            tuicr
             ;
         };
       };
