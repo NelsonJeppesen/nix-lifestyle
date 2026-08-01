@@ -8,6 +8,7 @@ Start and session
 -----------------
   h                       start or attach
   hr <host>               attach remotely
+  pr-review [PR]          Hunk + OpenCode GitHub PR review layout
   prefix+q                detach; processes keep running
 
 Direct keys
@@ -28,6 +29,7 @@ Direct keys
   ctrl+shift+,/.           previous/next pane
 
   ctrl+shift+o             OpenCode in a new tab at the active directory
+  ctrl+shift+p             Pi in a new tab at the active directory
   F1                       edit scrollback
 
 Prefix keys

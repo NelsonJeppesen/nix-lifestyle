@@ -7,6 +7,7 @@
 # - Starship cross-shell prompt with Kubernetes context and AWS profile display
 # - fzf-tab plugin for tab completion with fuzzy matching
 # - Custom functions:
+#     zmv -- Zsh-native batch rename with pattern matching
 #     ap  -- AWS profile switcher (mutates current shell)
 #     ar  -- AWS region switcher (mutates current shell)
 #     rst -- reset env (mutates current shell)
@@ -14,6 +15,7 @@
 #     hrf -- run a command in a new herdr tab, focusing it
 #     hrn -- run a command in a new herdr tab without focusing it
 #     curl-all-ips -- curl every A/AAAA record behind a DNS name (per-IP)
+#     vu/vm -- open unstaged files or all files changed from main in Neovim
 #     nsr, rgreplace -- packaged via writeShellApplication
 #     (gets shellcheck + PATH wrapping). See ./bin/.
 # - Aliases for Terraform, Kubernetes, Git, clipboard, and notes
@@ -38,11 +40,63 @@ let
       pkgs.sd
     ];
   };
+
+  openGitFiles = pkgs.writeShellApplication {
+    name = "open-git-files";
+    runtimeInputs = [
+      pkgs.git
+      pkgs.neovim
+    ];
+    text = ''
+      mode="''${1:-}"
+      root="$(git rev-parse --show-toplevel)" || exit
+      cd "$root"
+
+      declare -a files=()
+      declare -A seen=()
+      add_files() {
+        local path
+        while IFS= read -r -d "" path; do
+          if [[ -f "$path" && -z "''${seen[$path]:-}" ]]; then
+            files+=("$path")
+            seen["$path"]=1
+          fi
+        done
+      }
+
+      case "$mode" in
+        unstaged)
+          add_files < <(git diff --name-only -z --diff-filter=ACMRTUXB --)
+          ;;
+        main)
+          git rev-parse --verify --quiet main >/dev/null || {
+            printf 'open-git-files: branch main does not exist\n' >&2
+            exit 1
+          }
+          add_files < <(git diff --name-only -z --diff-filter=ACMRTUXB main --)
+          ;;
+        *)
+          printf 'usage: open-git-files unstaged|main\n' >&2
+          exit 2
+          ;;
+      esac
+
+      # Untracked files are unstaged and are absent from `git diff`.
+      add_files < <(git ls-files --others --exclude-standard -z)
+
+      if (( ''${#files[@]} == 0 )); then
+        printf 'No matching files.\n'
+        exit
+      fi
+      exec nvim -- "''${files[@]}"
+    '';
+  };
 in
 {
   # Make the built scripts available on PATH for interactive use.
   home.packages = [
     nsr
+    openGitFiles
     rgreplace
   ];
 
@@ -208,7 +262,7 @@ in
       # ── Shell aliases ─────────────────────────────────────────────
       shellAliases = {
 
-        okta-awscli = "uvx okta-awscli";
+        okta-awscli = "UV_NO_SYNC=1 uvx okta-awscli";
         nless = "uvx --from nothing-less  nless";
 
         # System
@@ -224,6 +278,14 @@ in
         # Git
         g = "${pkgs.git}/bin/git";
         cdr = "cd \"$(${pkgs.git}/bin/git rev-parse --show-toplevel)\""; # cd to git repo root
+        vu = "open-git-files unstaged"; # Open unstaged and untracked files in Neovim
+        vm = "open-git-files main"; # Open files changed relative to local main
+
+        # herdr — new workspace defaulting to ~/source (herdr's single
+        # new_cwd policy stays "follow" for tabs/panes, so workspaces get
+        # their ~/source default here). Extra args pass through, e.g.
+        # `ws --cwd ~/other --label foo` overrides the default.
+        ws = "herdr workspace create --cwd ~/source";
 
         # direnv
         da = "direnv allow"; # Quick allow for .envrc changes
@@ -257,6 +319,13 @@ in
         # Tab/title management is handled by kitty's shell integration
         # (programs.kitty.shellIntegration.enableZshIntegration in kitty.nix);
         # avoid duplicate OSC1/OSC2 escapes here.
+
+        # Zsh-native batch rename. `noglob` leaves patterns untouched for zmv
+        # to interpret instead of expanding them in the calling shell.
+        autoload -Uz zmv
+        alias zmv='noglob zmv'
+
+        source ~/.config/zsh/named-dirs.zsh
 
         # ── Custom shell functions ──────────────────────────────────
         # These mutate the *current* shell (cd, source, unset env) so they

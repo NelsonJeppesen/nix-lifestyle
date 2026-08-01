@@ -38,6 +38,24 @@ let
       exec herdr pane run "$pane" opencode
     '';
   };
+
+  # Open Pi in a new tab at the active pane's directory.
+  piNewTab = pkgs.writeShellApplication {
+    name = "herdr-pi-new-tab";
+    runtimeInputs = [
+      pkgs.herdr
+      pkgs.jq
+    ];
+    text = ''
+      cwd="''${HERDR_ACTIVE_PANE_CWD:-}"
+      if [ -n "$cwd" ]; then
+        pane="$(herdr tab create --focus --cwd "$cwd" | jq -r '.result.root_pane.pane_id')"
+      else
+        pane="$(herdr tab create --focus | jq -r '.result.root_pane.pane_id')"
+      fi
+      exec herdr pane run "$pane" pi
+    '';
+  };
 in
 {
   # Nix owns the herdr version.
@@ -81,6 +99,19 @@ in
       # when Kitty switches between the managed dark/light theme files.
       panel_bg = "reset"
 
+      # Focus visibility. Per herdr's sidebar renderer (src/ui/sidebar.rs
+      # render_agent_detail), the ONLY difference between the focused agent row
+      # and the others is: focused draws a full-row background band in
+      # `surface_dim` and its name in `text`, while unfocused rows have no band
+      # and use `subtext0` (state text also DIM). In stock Gruvbox-dark
+      # `surface_dim` is almost identical to the #282828 panel, so the focus
+      # band is invisible. Override surface_dim to a clearly-lighter Gruvbox
+      # shade (bg2 #504945) so the focused row gets a visible band, and widen
+      # the name contrast by pinning `text` bright and `subtext0` dimmer.
+      surface_dim = "#504945"
+      text = "#fbf1c7"
+      subtext0 = "#928374"
+
       [update]
       # Nix owns herdr's version; silence the background update nag. `herdr
       # update` is a no-op for a Nix-managed install anyway.
@@ -88,7 +119,9 @@ in
 
       [terminal]
       # New panes/tabs/workspaces inherit the source pane's cwd, matching the
-      # `--cwd=current` habit from kitty.nix.
+      # `--cwd=current` habit from kitty.nix. herdr has only this single
+      # policy, so new workspaces default to ~/source via the `ws` shell
+      # alias (shellAliases in zsh.nix) rather than this key.
       new_cwd = "follow"
 
       [keys]
@@ -148,11 +181,30 @@ in
       command = "${lib.getExe ocNewTab}"
       description = "open opencode in a new tab"
 
+      # Early Pi testing alongside OpenCode. This only adds another launcher;
+      # the existing OpenCode shortcut and integration remain unchanged.
+      [[keys.command]]
+      key = "ctrl+shift+p"
+      type = "shell"
+      command = "${lib.getExe piNewTab}"
+      description = "open pi in a new tab"
+
       [ui]
       # Skip the name prompt and create tabs immediately with generated names.
       prompt_new_tab_name = false
       pane_borders = false
       pane_gaps = false
+
+      # accent colours highlights, borders and navigation UI (NOT the focused
+      # agent row — that is driven by surface_dim/text/subtext0 in
+      # [theme.custom] above). Gruvbox-dark bright orange.
+      accent = "#fe8019"
+
+      [ui.sidebar.agents]
+      row_gap = 1
+
+      [ui.sidebar.spaces]
+      row_gap = 1
 
       [experimental]
       # Render inline images via the Kitty graphics protocol. kitty is the outer
@@ -194,9 +246,13 @@ in
     fi
 
     # Upstream uses /bin/bash, which intentionally does not exist on NixOS.
+    # Tolerate failures here (e.g. a stale herdr server whose protocol no
+    # longer matches the freshly-installed binary): a mismatch must never
+    # abort the whole activation. `|| true` keeps errexit from killing the
+    # switch; an empty plugin_root then simply skips the shebang rewrite.
     plugin_root="$(${lib.getExe pkgs.herdr} plugin list \
-      --plugin herdr-mobile-relay.events --json \
-      | ${lib.getExe pkgs.jq} -r '.result.plugins[0].plugin_root // empty')"
+      --plugin herdr-mobile-relay.events --json 2>/dev/null \
+      | ${lib.getExe pkgs.jq} -r '.result.plugins[0].plugin_root // empty' || true)"
     if [ -d "$plugin_root/relay" ]; then
       for script in "$plugin_root"/relay/*.sh; do
         $DRY_RUN_CMD ${lib.getExe pkgs.gnused} -i \
