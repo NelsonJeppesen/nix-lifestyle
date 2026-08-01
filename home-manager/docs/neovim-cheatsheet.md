@@ -22,7 +22,6 @@ use `hjkl`. Bare `nvim` opens a markdown scratch buffer at
 - [mini.\* family](#mini-family)
 - [nvim-various-textobjs](#nvim-various-textobjs)
 - [treewalker.nvim (AST navigation)](#treewalkernvim-ast-navigation)
-- [hardtime.nvim](#hardtimenvim)
 - [toggleterm.nvim](#toggletermnvim)
 - [bufferline / lualine / navic / fidget / noice](#bufferline--lualine--navic--fidget--noice)
 - [Theme (tokyonight + GNOME sync)](#theme-tokyonight--gnome-sync)
@@ -239,7 +238,13 @@ rendered by tiny-inline-diagnostic.nvim — built-in `virtual_text` /
 | `lR` | Rename (`vim.lsp.buf.rename`) |
 | `la` | Code action (n + v) |
 | `lf` | Format (conform.nvim, LSP fallback; nixfmt for `.nix`, shfmt for `sh/bash`) |
+| `ll` | Run the configured nvim-lint linter for this buffer |
 | `ln` / `lp` | Next / prev diagnostic (with float) |
+
+Ansible playbooks and roles use `ansible-language-server`; `ansible-lint`
+runs after writes. ShellCheck, actionlint, hadolint, TFLint, yamllint, and
+markdownlint also publish save-time findings through the same diagnostics and
+Trouble UI.
 
 ### Built-in `gr*` (Neovim 0.11+ defaults)
 
@@ -435,16 +440,6 @@ Use this to skip past blocks of similar code without counting lines.
 
 ---
 
-## hardtime.nvim
-
-Config: `home-manager/neovim.nix:252` (hardtime)
-
-**hardtime** punishes repeated `hjkl` / `wb` spam — forces `f`/`t`/`/`/
-relative line jumps. If a key feels blocked, look at the corner notification
-for a hint. Disable for a buffer with `:Hardtime disable`.
-
----
-
 ## toggleterm.nvim
 
 Plugin: <https://github.com/akinsho/toggleterm.nvim>
@@ -542,7 +537,7 @@ Corner char `\|`, header fill `-` (markdown-friendly).
 ## Quirks & gotchas
 
 - **Arrow keys do nothing** in insert/visual; in normal mode they echo
-  a complaint. Use `hjkl` (or `hardtime` will yell anyway).
+  a complaint. Use `hjkl`.
 - **LSP logging is off.** Enable it temporarily for protocol traces.
 - **Save before opencode.** It reads from disk, not from the buffer.
 - **`<leader>op…` is opencode operator**, not "previous". Treesitter

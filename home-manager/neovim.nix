@@ -1,12 +1,12 @@
 # neovim.nix - Neovim editor configuration
 #
 # Full-featured Neovim setup with:
-# - LSP servers for bash, nix, PHP, Python, Ruby, Terraform, YAML, and typos
+# - LSP servers for Ansible, bash, Jinja, JSON, Nix, Ruby, Terraform, YAML, and typos
 # - 30+ plugins including completion (blink.cmp + Copilot), fuzzy finding (snacks),
 #   syntax highlighting (treesitter), file management (oil.nvim), and AI integration
 # - TokyoNight colorscheme with auto dark/light detection from GNOME settings
 # - Which-key for discoverable keybindings organized by leader key groups
-# - Arrow keys disabled to encourage proper vim motions (hardtime.nvim)
+# - Arrow keys disabled to encourage proper vim motions
 # - OpenCode AI assistant integration via opencode.nvim
 { pkgs, ... }:
 {
@@ -21,6 +21,12 @@
       # LSP servers, linters, and formatters installed alongside neovim
       # These are added to neovim's PATH so nvim-lspconfig can find them
       extraPackages = [
+        # Ansible
+        pkgs.ansible
+        pkgs.ansible-language-server
+        pkgs.ansible-lint
+        pkgs.jinja-lsp
+
         # Bash
         pkgs.bash-language-server # LSP for shell scripts
         pkgs.shfmt # Shell formatter (also used by bash-language-server)
@@ -212,15 +218,6 @@
           '';
         }
 
-        # hardtime.nvim: break bad habits by limiting repetitive key presses
-        # Encourages using proper vim motions instead of hjkl spam
-        #   https://github.com/m4xshen/hardtime.nvim
-        {
-          plugin = hardtime-nvim;
-          type = "lua";
-          config = ''require("hardtime").setup()'';
-        }
-
         # ── Common plugin dependencies ────────────────────────────────
         # mini.icons: icon provider. setup() + mock_nvim_web_devicons() makes
         # it answer `require("nvim-web-devicons")` too, so plugins that hard-
@@ -290,9 +287,44 @@
             -- display.
             vim.diagnostic.config({ virtual_text = false, virtual_lines = false })
 
+            -- Ansible's language server owns validation and completion while
+            -- nvim-lint runs ansible-lint on save to avoid duplicate results.
+            vim.lsp.config('ansiblels', {
+              cmd = { '${pkgs.ansible-language-server}/bin/ansible-language-server', '--stdio' },
+              settings = {
+                ansible = {
+                  python = { interpreterPath = '${pkgs.python3}/bin/python3' },
+                  ansible = { path = '${pkgs.ansible}/bin/ansible' },
+                  executionEnvironment = { enabled = false },
+                  validation = {
+                    enabled = true,
+                    lint = { enabled = false },
+                  },
+                },
+              },
+            })
+
+            vim.filetype.add({
+              extension = {
+                j2 = 'jinja',
+                jinja = 'jinja',
+                jinja2 = 'jinja',
+              },
+              pattern = {
+                ['.*/%.github/workflows/.*%.yml'] = 'yaml.ghaction',
+                ['.*/%.github/workflows/.*%.yaml'] = 'yaml.ghaction',
+              },
+            })
+            vim.lsp.config('jinja_lsp', {
+              cmd = { '${pkgs.jinja-lsp}/bin/jinja-lsp' },
+              filetypes = { 'jinja', 'jinja2' },
+            })
+
             -- Enable all configured language servers
             -- https://github.com/neovim/nvim-lspconfig/tree/master/lsp
+            vim.lsp.enable('ansiblels')
             vim.lsp.enable('bashls')
+            vim.lsp.enable('jinja_lsp')
             vim.lsp.enable('jsonls')
             vim.lsp.enable('nixd')
             -- vim.lsp.enable('phpactor')
@@ -302,7 +334,47 @@
             vim.lsp.enable('typos_lsp')
             vim.lsp.enable('yamlls')
 
-            -- NOTE: tflint is a linter, not an LSP; run via nvim-lint or CLI.
+          '';
+        }
+
+        # ansible-vim supplies reliable yaml.ansible filetype detection for
+        # playbooks, roles, handlers, defaults, vars, and inventories.
+        {
+          plugin = ansible-vim;
+          type = "lua";
+          config = "require('ansible').setup()";
+        }
+
+        # nvim-lint: run focused standalone linters on save and publish their
+        # output through vim.diagnostic, where Trouble can display it.
+        {
+          plugin = nvim-lint;
+          type = "lua";
+          config = ''
+            local lint = require('lint')
+            lint.linters_by_ft = {
+              ['yaml.ansible'] = { 'ansible_lint' },
+              ['yaml.ghaction'] = { 'actionlint' },
+              dockerfile = { 'hadolint' },
+              markdown = { 'markdownlint' },
+              sh = { 'shellcheck' },
+              terraform = { 'tflint' },
+              yaml = { 'yamllint' },
+            }
+
+            lint.linters.ansible_lint.cmd = '${pkgs.ansible-lint}/bin/ansible-lint'
+            lint.linters.actionlint.cmd = '${pkgs.actionlint}/bin/actionlint'
+            lint.linters.hadolint.cmd = '${pkgs.hadolint}/bin/hadolint'
+            lint.linters.markdownlint.cmd = '${pkgs.markdownlint-cli}/bin/markdownlint'
+            lint.linters.shellcheck.cmd = '${pkgs.shellcheck}/bin/shellcheck'
+            lint.linters.tflint.cmd = '${pkgs.tflint}/bin/tflint'
+            lint.linters.yamllint.cmd = '${pkgs.yamllint}/bin/yamllint'
+
+            vim.api.nvim_create_autocmd('BufWritePost', {
+              callback = function() lint.try_lint() end,
+            })
+            vim.keymap.set('n', '<leader>ll', function() lint.try_lint() end,
+              { desc = 'Lint buffer' })
           '';
         }
 

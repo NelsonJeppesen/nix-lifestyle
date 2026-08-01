@@ -50,6 +50,7 @@ wk.add({
   -- LSP group: language server interactions
   { "<leader>l", group = "LSP" },
   { "<leader>li", desc = "LSP Info", "<cmd>LspInfo<cr>" },
+  { "<leader>ll", desc = "Lint Buffer" },
   { "<leader>lD", desc = "Goto Declaration", function() Snacks.picker.lsp_declarations() end },
   { "<leader>lI", desc = "Goto Implementation", function() Snacks.picker.lsp_implementations() end },
   { "<leader>ld", desc = "Goto Definition", function() Snacks.picker.lsp_definitions() end },
