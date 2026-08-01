@@ -19,21 +19,20 @@
     ../profiles/zsh.nix
   ];
 
-  # GPU: use the stable `i915` driver.
+  # GPU: use the newer `xe` driver.
   # NOTE: PCI ID 7d51 is Meteor Lake-P (Arc Graphics). On Arrow Lake the IDs
   # differ (7d67/7d45/64a0); verify with `lspci -nn | grep VGA` if upgrading.
   #
-  # Switched off `xe` on 2026-07-10: the experimental `xe` driver was hanging
-  # the iGPU (`*ERROR* TLB invalidation fence timeout` + GuC job timeouts /
-  # device coredumps) and hard-freezing the desktop. i915 drives MTL (7d51)
-  # natively on kernel >= 6.8, so no force_probe is needed.
-  # To roll back to `xe`, uncomment the three `xe` lines below (kernelParams,
-  # blacklistedKernelModules, initrd.kernelModules) and re-comment the i915
-  # counterparts.
+  # History: `xe` was disabled on 2026-07-10 after it hung the iGPU
+  # (`*ERROR* TLB invalidation fence timeout` + GuC job timeouts / device
+  # coredumps) and hard-froze the desktop, and the machine ran on `i915`.
+  # Re-enabled `xe` per request; force_probe steers 7d51 to `xe` and away
+  # from `i915`. To roll back to `i915`, re-comment the three `xe` lines below
+  # (kernelParams, blacklistedKernelModules, initrd.kernelModules), blacklist
+  # `xe`, and load `i915` in initrd instead.
   boot.kernelParams = [
-    # xe rollback:
-    # "xe.force_probe=7d51"
-    # "i915.force_probe=!7d51"
+    "xe.force_probe=7d51"
+    "i915.force_probe=!7d51"
     # "acpi.ec_no_wakeup=1"
     # GPE storm fix carried from 12th-gen LG Gram. Verify the offending GPE
     # is still 0x6e on this machine via:
@@ -55,14 +54,14 @@
     "i8042.kbdreset"
   ];
 
-  # xe rollback: [ "i915" ]
-  boot.blacklistedKernelModules = [ "xe" ];
+  # i915 rollback: [ "xe" ]
+  boot.blacklistedKernelModules = [ "i915" ];
 
   # Load the real KMS driver in initrd so Plymouth comes up on the KMS driver
   # directly instead of starting on `simpledrm` (efifb) and flipping mid-boot.
   # This eliminates the resolution-change flicker between Plymouth and GDM.
-  # xe rollback: [ "xe" ]
-  boot.initrd.kernelModules = [ "i915" ];
+  # i915 rollback: [ "i915" ]
+  boot.initrd.kernelModules = [ "xe" ];
   # systemd-in-initrd gives Plymouth a cleaner handoff to the display manager.
   boot.initrd.systemd.enable = true;
 
