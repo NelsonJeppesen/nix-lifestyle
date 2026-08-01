@@ -77,6 +77,13 @@ in
       # iio-sensor-proxy isn't running), so ALS auto-brightness can never
       # work — leaving it enabled only risks surprise dimming.
       ambient-enabled = false;
+      # On AC, hold off auto-suspend for 3 h so long-running background work
+      # (e.g. opencode tasks) survives the screen blanking + lock at
+      # idle-delay (15 min above). The idle timer keeps running while locked,
+      # so this is effectively "stay awake ~3 h after the last activity, then
+      # suspend". On battery, keep GNOME's default suspend behaviour untouched.
+      sleep-inactive-ac-type = "suspend";
+      sleep-inactive-ac-timeout = 7200;
     };
 
     # Magnifier defaults (effectively disabled but configured just in case)
