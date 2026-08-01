@@ -13,22 +13,30 @@
 
   # Import all per-application/concern modules
   imports = [
+    ./ansible.nix # Ansible CLI, linting, testing, and language tooling
+    ./bat.nix # Syntax-aware file viewer
     ./chrome.nix # Google Chrome browser (extensions via NixOS managed policies)
+    ./development-tools.nix # Structural search and cross-language developer tools
     ./editorconfig.nix # Global editorconfig settings
     ./firefox.nix # Firefox browser with custom search engines
     ./flameshot.nix # Flameshot daemon + Print-key tray-trigger script
     ./git.nix # Git config, signing, aliases, and AI-assisted diff review
+    ./gh-dash.nix # GitHub dashboard with tuicr PR review action
     ./gnome-extensions.nix # GNOME Shell extensions and their settings
     ./gnome.nix # GNOME desktop dconf settings and keybindings
     ./herdr.nix # herdr agent multiplexer (wraps opencode/coding agents)
     ./kitty.nix # Kitty terminal emulator
     ./neovim.nix # Neovim editor with LSP, plugins, and keymaps
+    ./nix-index.nix # Prebuilt package-file index and ad-hoc command runner
     ./opencode.nix # OpenCode AI coding assistant
-    ./opencode-standup.nix # Standup note generation wrapper + /standup command
+    ./pi.nix # Pi coding agent (early testing, integrated with herdr)
     ./ralph.nix # Open Ralph Wiggum: iterative AI coding loop CLI (defaults to opencode)
+    ./serena.nix # Semantic retrieval and symbol-level editing for OpenCode
     ./slack.nix # Slack wrapped with native-Wayland + GPU/VAAPI flags
     ./slack-mcp.nix # slack-stealth-tokens: capture xoxc/xoxd for the Slack MCP server
     ./tailscale-systray.nix # Tailscale's official system tray app (autostart via systemd --user)
+    ./tuicr.nix # Terminal code review UI integrated with OpenCode
+    ./zoxide.nix # Frecency-based directory navigation via `z`
     ./zsh.nix # Zsh shell, prompt, aliases, and functions
   ];
 
@@ -50,8 +58,6 @@
 
   # Let home-manager manage itself (enables the `home-manager` CLI)
   programs.home-manager.enable = true;
-  programs.nix-index.enable = true;
-
   # Enable fontconfig so user-installed fonts are discoverable
   fonts.fontconfig.enable = true;
 
@@ -124,6 +130,7 @@
     file.".config/curlrc".source = ./dotfiles/curlrc; # curl defaults (--no-progress-meter)
     file.".terraform-version".source = ./dotfiles/terraform-version; # default to latest
     file.".config/fend/config.toml".source = ./dotfiles/fend.toml; # fend calculator config
+    file.".config/zsh/named-dirs.zsh".source = ./dotfiles/zsh-named-dirs.zsh; # Project ~name aliases
     file.".digrc".source = ./dotfiles/digrc; # dig defaults (+noall +answer)
     file.".local/bin/update".source = ./dotfiles/update; # System update script
     file.".local/bin/firmware-update" = {
@@ -146,10 +153,10 @@
       pkgs.nixfmt # Canonical RFC-style Nix formatter (per repo AGENTS.md)
 
       # ── Games ───────────────────────────────────────────────────────
-      pkgs.mindustry
-      pkgs.vitetris # Terminal tetris clone
+      # pkgs.mindustry
+      # pkgs.vitetris # Terminal tetris clone
 
-      pkgs.ralphex
+      # pkgs.ralphex
 
       # ── Fonts ───────────────────────────────────────────────────────
       # Nerd Font symbols only (used by kitty symbol_map for icon rendering)
@@ -165,18 +172,10 @@
       # chrome-apps.nix uses pkgs.google-chrome directly for PWA wrappers.
       pkgs._1password-gui # Password manager
 
-      # ── Notes ───────────────────────────────────────────────────────
-      # pkgs.qownnotes # Plain-text/markdown notes app with tray icon
-      # Required by qownnotes (Qt6) to find GTK file-chooser GSettings
-      # schema; without these it aborts with
-      # "Settings schema 'org.gtk.Settings.FileChooser' is not installed".
-      pkgs.gsettings-desktop-schemas
-      pkgs.gtk3
-
       #pkgs.ecapture # eBPF-based TLS capture tool
 
       #pkgs.libreoffice
-      pkgs.onlyoffice-desktopeditors # Office suite (Microsoft-compatible)
+      # pkgs.onlyoffice-desktopeditors # Office suite (Microsoft-compatible)
 
       # ── Music and media ─────────────────────────────────────────────
       #pkgs.fx
@@ -252,7 +251,7 @@
       pkgs.gh # GitHub CLI
       pkgs.hurl # HTTP testing tool
       pkgs.ipcalc # IP subnet calculator
-      pkgs.lazyworktree # Git worktree picker used by `wt`
+      # pkgs.lazyworktree # Git worktree picker used by `wt`
       pkgs.nb # Notes used by `n`, `nw`, and `np`
       pkgs.p7zip # 7-Zip archiver
       pkgs.ripgrep # Fast grep alternative
