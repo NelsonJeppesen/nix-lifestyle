@@ -107,6 +107,18 @@ in
       # Disable automatic update checks / version popup at startup
       autoupdate = false;
 
+      # ── Filesystem access ───────────────────────────────────────
+      # Pre-whitelist trusted directories outside the working dir so
+      # opencode doesn't prompt on every external read/edit/glob/grep.
+      # external_directory defaults to "ask"; these become "allow" and
+      # inherit the workspace defaults (reads already allowed).
+      permission = {
+        external_directory = {
+          "~/source/**" = "allow";
+          "~/tmp/**" = "allow";
+        };
+      };
+
       # ── MCP servers ─────────────────────────────────────────────
       # Declared here (rather than in programs.mcp) so each server is
       # scoped to opencode and easy to flip with `enabled`. ALL default
@@ -312,7 +324,8 @@ in
 
       ## How
       - Create a named tab with `herdr tab create --workspace <id> --label
-        "oc: <short desc>" --no-focus`, then parse the tab's root pane id from
+        "oc: <short desc>" --no-focus`, then parse the tab id from `result.tab`
+        (needed later to close it) and the tab's root pane id from
         `result.root_pane`. Run the command in that pane with `herdr pane run
         <root_pane> "<command>"`. Get the current workspace id from `herdr
         workspace list` (or read your own pane's ids from `herdr pane list`).
@@ -330,6 +343,42 @@ in
       - For non-interactive, short-lived commands (ls, grep, nixfmt, git
         status, etc.) keep using the `bash` tool — a herdr tab is overhead.
       - If unsure whether a command will prompt, prefer a herdr tab.
+      - Clean up when done: once the command has finished and you have read
+        everything you need from the tab, close it with `herdr tab close
+        <tab_id>` (parse `tab_id` from the `tab create` response). Do NOT close
+        a tab while its command is still running, while it is blocked on
+        secrets/auth the user must complete, or if it is a long-lived server /
+        log stream the user still needs — leave those open and just tell the
+        user. When in doubt, ask before closing.
+
+      # Modern CLI toolbox
+
+      Prefer the dedicated OpenCode file tools for ordinary reads, searches,
+      and edits. When shell execution or a pipeline is the better fit, favor
+      these installed tools over their older equivalents:
+
+      - `rg` instead of `grep` for content search and match counting.
+      - `ast-grep` for syntax-aware search and rewriting when a text match
+        would also catch comments, strings, or unrelated syntax.
+      - `fd` instead of `find` for filesystem discovery.
+      - `bat --plain --paging=never` instead of `cat` for readable terminal
+        output; do not invoke an interactive pager from the `bash` tool.
+      - `fzf` for interactive selection, only in a user-facing herdr tab.
+      - `jq`/`jqp` for JSON; `yq`, `yj`, and `dasel` for structured data;
+        `fastgron` when flattening JSON makes text search clearer.
+      - `choose` instead of complex `cut` invocations.
+      - `z` (Zoxide) for interactive directory jumps in a persistent shell;
+        use explicit paths in scripts and tool calls.
+      - `gh` for GitHub operations, `hunk` for interactive diff review, `nh`
+        for Nix/Home Manager workflows, and `herdr` for terminal orchestration.
+      - `hurl` for repeatable HTTP request tests; keep `curl` for ad hoc HTTP.
+
+      Also available where relevant: `kubectl`, `k9s`, `kubectx`, `helm`,
+      `helmfile`, `stern`, `kubeconform`, `aws`, `vault`, `sops`, `shellcheck`,
+      `shfmt`, `actionlint`, `hadolint`, `yamllint`, and `markdownlint`.
+
+      Use modern tools when they make a command clearer or safer, not merely
+      to replace a simple dedicated OpenCode tool call.
     '';
 
   };

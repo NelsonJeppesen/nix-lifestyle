@@ -1,0 +1,118 @@
+#!/usr/bin/env bash
+# pr-review: open a GitHub pull request in Hunk beside OpenCode.
+set -euo pipefail
+
+usage() {
+  cat <<'EOF'
+pr-review -- review a GitHub pull request in herdr
+
+Usage: pr-review [NUMBER|URL|BRANCH]
+
+Creates a herdr tab with Hunk on the left and OpenCode on the right. If no
+pull request is given, select from the repository's open pull requests.
+
+Options:
+  -h, --help    Show this help message.
+EOF
+}
+
+case "${1-}" in
+-h | --help)
+  usage
+  exit 0
+  ;;
+esac
+
+if (($# > 1)); then
+  usage >&2
+  exit 64
+fi
+
+if [[ ${HERDR_ENV:-} != 1 || -z ${HERDR_WORKSPACE_ID:-} ]]; then
+  echo "pr-review: run this command inside herdr" >&2
+  exit 1
+fi
+
+repo_root=$(git rev-parse --show-toplevel 2>/dev/null) || {
+  echo "pr-review: not inside a Git repository" >&2
+  exit 1
+}
+
+if (($# == 0)); then
+  prs=$(gh pr list --state open --limit 100 \
+    --json author,headRefName,number,title,url \
+    --jq '.[] | [.url, ("#" + (.number | tostring)), .title, .author.login, .headRefName] | @tsv')
+  if [[ -z $prs ]]; then
+    echo "pr-review: no open pull requests" >&2
+    exit 1
+  fi
+
+  selected=$(fzf \
+    --delimiter=$'\t' \
+    --with-nth=2.. \
+    --header='PR    Title    Author    Branch' \
+    --prompt='Review PR> ' <<<"$prs") || exit 0
+  pr=${selected%%$'\t'*}
+else
+  pr=$1
+fi
+
+metadata=$(gh pr view "$pr" --json baseRefOid,headRefOid,number,url)
+number=$(jq -r '.number' <<<"$metadata")
+url=$(jq -r '.url' <<<"$metadata")
+base_oid=$(jq -r '.baseRefOid' <<<"$metadata")
+head_oid=$(jq -r '.headRefOid' <<<"$metadata")
+
+# Fetch the exact PR endpoints into Git's object database without changing the
+# current branch or working tree. Hunk can then expose a repo-addressable
+# session while OpenCode reviews the same immutable commit range.
+git fetch --quiet origin \
+  "+$base_oid:refs/pr-review/$number/base" \
+  "+$head_oid:refs/pr-review/$number/head"
+
+tab_json=$(herdr tab create \
+  --workspace "$HERDR_WORKSPACE_ID" \
+  --cwd "$repo_root" \
+  --label "PR #$number review" \
+  --no-focus)
+tab_id=$(jq -r '.result.tab.tab_id' <<<"$tab_json")
+hunk_pane=$(jq -r '.result.root_pane.pane_id' <<<"$tab_json")
+
+split_json=$(herdr pane split "$hunk_pane" \
+  --direction right \
+  --cwd "$repo_root" \
+  --no-focus) || {
+  herdr tab close "$tab_id" >/dev/null
+  exit 1
+}
+opencode_pane=$(jq -r '.result.pane.pane_id' <<<"$split_json")
+
+herdr pane run "$hunk_pane" \
+  "hunk diff refs/pr-review/$number/base...refs/pr-review/$number/head --agent-notes"
+
+range="refs/pr-review/$number/base...refs/pr-review/$number/head"
+session_id=
+for _ in {1..50}; do
+  session_id=$(hunk session list --json | jq -r \
+    --arg root "$repo_root" \
+    --arg range "$range" \
+    '.sessions[] | select(.repoRoot == $root and (.title | contains($range))) | .sessionId' | head -n 1)
+  if [[ -n $session_id ]]; then
+    break
+  fi
+  sleep 0.1
+done
+
+if [[ -z $session_id ]]; then
+  echo "pr-review: Hunk did not register the PR diff session" >&2
+  herdr tab close "$tab_id" >/dev/null
+  exit 1
+fi
+
+printf -v prompt_q '%q' "/pr-review $url Hunk session ID: $session_id"
+herdr pane run "$opencode_pane" "opencode --prompt $prompt_q" || {
+  herdr tab close "$tab_id" >/dev/null
+  exit 1
+}
+
+herdr tab focus "$tab_id" >/dev/null

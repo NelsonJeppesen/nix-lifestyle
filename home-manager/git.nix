@@ -6,8 +6,27 @@
   gitalias,
   ...
 }:
+let
+  prReview = pkgs.writeShellApplication {
+    name = "pr-review";
+    runtimeInputs = [
+      pkgs.coreutils
+      pkgs.gh
+      pkgs.git
+      pkgs.fzf
+      pkgs.herdr
+      pkgs.hunk
+      pkgs.jq
+      pkgs.opencode
+    ];
+    text = builtins.readFile ./bin/pr-review;
+  };
+in
 {
-  home.packages = [ pkgs.hunk ]; # Review-first diff viewer with live AI annotations
+  home.packages = [
+    pkgs.hunk # Review-first diff viewer with live AI annotations
+    prReview # GitHub PR review layout: Hunk left, OpenCode right
+  ];
 
   # Hunk ships the skill matching its session API, so it stays in sync with
   # the nixpkgs package version used by the Git pager.
@@ -102,6 +121,11 @@
 
         core.pager = "${lib.getExe pkgs.hunk} pager";
 
+        # Hunk is a review-first TUI; its startup makes `git log` feel slow.
+        # Use plain less for log/reflog, keeping Hunk for diff/show reviews.
+        pager.log = "${lib.getExe pkgs.less} -FRX";
+        pager.reflog = "${lib.getExe pkgs.less} -FRX";
+
         # Force SSH for GitHub, GitLab, and Bitbucket (avoids HTTPS credential prompts)
         url."git@github.com:".insteadOf = "https://github.com/";
         url."git@gitlab.com:".insteadOf = "https://gitlab.com/";
@@ -136,9 +160,12 @@
       pr-review = ''
         Review GitHub pull request $ARGUMENTS. Use the GitHub tools to inspect
         its metadata, complete diff, commits, checks, and existing review
-        threads. Focus on bugs, regressions, security issues, and missing tests;
-        report findings first with file and line references. Do not edit files,
-        submit a GitHub review, or post comments unless explicitly asked.
+        threads. Load the hunk-review skill and use the provided Hunk session ID,
+        or the live Hunk session for this repository when no ID is provided.
+        Focus on bugs, regressions, security issues, and missing tests; put
+        actionable findings inline in Hunk and summarize them in severity order
+        with file and line references. Do not edit files, submit a GitHub review,
+        or post GitHub comments unless explicitly asked.
       '';
     };
   };
