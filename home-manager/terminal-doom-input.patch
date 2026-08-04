@@ -1,0 +1,90 @@
+--- a/src/main.zig
++++ b/src/main.zig
+@@ -22,13 +22,23 @@
+     startup: i64,
+     loop: vaxis.Loop(Event),
+     exit_flag: std.atomic.Value(bool),
+-    mouse_enabled: bool = true,
++    mouse_enabled: bool = false,
+     last_mouse_x: f32 = std.math.floatMax(f32),
+     last_mouse_y: f32 = std.math.floatMax(f32),
+     mouse_dir: u21 = 0,
+     scale: bool = true,
++    // Remaining frames each Doom key stays "held" before we synthesize its
++    // key-release. Terminals under a multiplexer (herdr) do not forward the
++    // kitty keyboard protocol's release events, so without this every key
++    // would stick down forever. A fresh press refreshes the counter, so
++    // OS-level autorepeat keeps movement keys held for smooth walking.
++    hold: [256]u8 = [_]u8{0} ** 256,
+ };
+ 
++// Frames a key stays held after its last press before we release it.
++// DG_DrawFrame runs once per Doom tic (~35 Hz), so ~6 tics is a short step.
++const hold_frames: u8 = 6;
++
+ // We feed mouse events directly to Doom:
+ //
+ //    data1: Bitfield of buttons currently held down.
+@@ -66,6 +76,17 @@
+     }
+     translateDoomBufferToRGB();
+ 
++    // Expire held keys: once a key's hold counter runs out, synthesize the
++    // key-release the terminal never sent so Doom stops treating it as down.
++    for (&state.hold, 0..) |*frames, doom_key| {
++        if (frames.* == 0) continue;
++        frames.* -= 1;
++        if (frames.* == 0) {
++            state.key_queue[state.key_queue_write_idx] = @intCast(doom_key);
++            state.key_queue_write_idx +%= 1;
++        }
++    }
++
+     var pixels = zigimg.Image{
+         .width = 640,
+         .height = 400,
+@@ -125,12 +146,12 @@
+             .key_press, .key_release => |key| {
+                 if (key.matches('c', .{ .ctrl = true })) {
+                     state.exit_flag.store(true, .seq_cst);
+-                } else if (key.codepoint == 'm' and event == .key_release) {
++                } else if (key.codepoint == 'm' and event == .key_press) {
+                     state.mouse_enabled = !state.mouse_enabled;
+-                } else if (key.codepoint == 'u' and event == .key_release) {
++                } else if (key.codepoint == 'u' and event == .key_press) {
+                     state.scale = !state.scale;
+-                } else {
+-                    enqueueKey(event == .key_press, key);
++                } else if (event == .key_press) {
++                    enqueueKey(true, key);
+                 }
+             },
+             .mouse => |mouse| {
+@@ -263,7 +284,7 @@
+ 
+     try vx.enterAltScreen(tty.writer());
+     try vx.queryTerminal(tty.writer(), .fromSeconds(1));
+-    try vx.setMouseMode(tty.writer(), true);
++    try vx.setMouseMode(tty.writer(), false);
+ 
+     // Pass args to allow switching wad files, e.g. `terminal-doom -iwad PLUTONIA.WAD`
+     const args = init.minimal.args.vector;
+@@ -317,9 +338,15 @@
+         else => std.ascii.toLower(@intCast(key.codepoint)),
+     };
+ 
+-    const key_data: u16 = (@as(u16, @intCast(@intFromBool(pressed))) << 8) | doom_key;
+-    state.key_queue[state.key_queue_write_idx] = key_data;
+-    state.key_queue_write_idx +%= 1;
++    // Enqueue a key-down only on the leading edge (key not already held), then
++    // refresh the hold timer. DG_DrawFrame emits the matching key-up once the
++    // timer expires, so autorepeat presses keep the key down for smooth motion.
++    _ = pressed;
++    if (state.hold[doom_key] == 0) {
++        state.key_queue[state.key_queue_write_idx] = (@as(u16, 1) << 8) | doom_key;
++        state.key_queue_write_idx +%= 1;
++    }
++    state.hold[doom_key] = hold_frames;
+ }
+ 
+ // Doom key definitions

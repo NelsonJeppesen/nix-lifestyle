@@ -58,6 +58,14 @@ let
       pkgs.zig
     ];
 
+    # Input fixes for terminals/multiplexers: we run this under herdr, which
+    # does NOT forward the kitty keyboard protocol's key-release events, so
+    # upstream (which un-holds a key only on release) leaves every key stuck
+    # down after its first hit. The patch synthesizes releases on a short
+    # timer — keeping movement keys held long enough to walk while autorepeat
+    # sustains them — and disables the mouse. See the patch header for detail.
+    patches = [ ./terminal-doom-input.patch ];
+
     postPatch = ''
       mkdir -p vendor
       cp -r "$vaxis" vendor/vaxis
