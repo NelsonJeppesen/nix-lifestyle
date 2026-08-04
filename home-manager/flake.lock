@@ -270,11 +270,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1785046085,
-        "narHash": "sha256-UiK+mmZJuLWQVhJ5b2wDzogIYWAesyRm6LA3h3Ulh3Y=",
+        "lastModified": 1785650611,
+        "narHash": "sha256-q4kR7g+pCcz6NASvoVPYu+CWWUurX03wogtBqGmR4h0=",
         "owner": "nix-community",
         "repo": "nix-index-database",
-        "rev": "11665045df8b9938ef811a3bfdc65cffb02b4b70",
+        "rev": "dbc756c9d7287de19b3e0e38c928c47510d42c3e",
         "type": "github"
       },
       "original": {
@@ -316,11 +316,11 @@
     },
     "nixpkgs_2": {
       "locked": {
-        "lastModified": 1785571196,
-        "narHash": "sha256-KoTsyMQqnXQZq8deCEnu4QkyldkwH/bpMMhUcfMdGIw=",
+        "lastModified": 1785692966,
+        "narHash": "sha256-vUfIeBEfpbAfZ5zjgIkYk7eHBeVfCYVjLbWnMkseYnk=",
         "owner": "nixos",
         "repo": "nixpkgs",
-        "rev": "148bab9c1c3c53136ecb44a6ea356a0ed5b39b06",
+        "rev": "643809054d65fdd466a63e3155b8c498cb483c04",
         "type": "github"
       },
       "original": {
@@ -457,11 +457,11 @@
         "uv2nix": "uv2nix"
       },
       "locked": {
-        "lastModified": 1785593678,
-        "narHash": "sha256-QveKIMNWwzw9uaBcW0sEOG+wslYbU22Cn5/bZlAEqI4=",
+        "lastModified": 1785788543,
+        "narHash": "sha256-ez5PsjaJeQXJgQrM1Bcq/FNdqjWyUV2vgBX/UUFIeFk=",
         "owner": "oraios",
         "repo": "serena",
-        "rev": "c7dbe3bd1198cf451bf7aa8fdeeab88571fa3a6e",
+        "rev": "cd04838be9a92fd5c4963e59ecbe88419482d741",
         "type": "github"
       },
       "original": {
@@ -589,15 +589,16 @@
         "utils": "utils"
       },
       "locked": {
-        "lastModified": 1785517032,
-        "narHash": "sha256-K8VpKTnpUKtqFWMbTIAUPw/TyV/xQE9i1ecp+o+xFQI=",
+        "lastModified": 1785683320,
+        "narHash": "sha256-ByeWD4mC1DiH6L971mC7Qv6zUVmaf2lneewK2ZWXxg8=",
         "owner": "agavra",
         "repo": "tuicr",
-        "rev": "246f839e83ac4149489c43357e5ee2230bd16676",
+        "rev": "8b14bb233ab72774446c21dd31ff8e5c3bc115ce",
         "type": "github"
       },
       "original": {
         "owner": "agavra",
+        "ref": "v0.20.0",
         "repo": "tuicr",
         "type": "github"
       }

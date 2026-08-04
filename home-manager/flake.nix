@@ -65,8 +65,10 @@
     };
 
     # tuicr: terminal code review UI plus its OpenCode integration skill.
+    # Pinned to a release tag so `flake update` doesn't rebuild it (and its
+    # ~130 Rust crate deps, all built from source) on unrelated input bumps.
     tuicr = {
-      url = "github:agavra/tuicr";
+      url = "github:agavra/tuicr/v0.20.0";
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
