@@ -21,6 +21,104 @@
   ...
 }:
 let
+  terminalDoom = pkgs.stdenv.mkDerivation {
+    pname = "terminal-doom";
+    version = "0.1.0-unstable-2026-04-26";
+
+    src = pkgs.fetchFromGitHub {
+      owner = "cryptocode";
+      repo = "terminal-doom";
+      rev = "35ab605e37e92616417bc901b2762599fc979a72";
+      hash = "sha256-3gw2Dd1vut1A/nfIjSM47WDYmmUxazHQ8zt4FrUTIsk=";
+    };
+
+    vaxis = pkgs.fetchFromGitHub {
+      owner = "rockorager";
+      repo = "libvaxis";
+      rev = "4e5a065940825f147fa5ce0df54d1ef0d50ecee7";
+      hash = "sha256-2o1TTKSH/Zm0AztlMoPn04LxadWLdPJuqZTrE6BuFjM=";
+    };
+
+    zigimg = pkgs.fetchFromGitHub {
+      owner = "zigimg";
+      repo = "zigimg";
+      rev = "d695acd97c02e57bb151e8f659d1280f5cd6ca70";
+      hash = "sha256-0IYATQldT6eJxRR2T/2CsIYZuzomqjvmdVyjmsjguyE=";
+    };
+
+    uucode = pkgs.fetchFromGitHub {
+      owner = "jacobsandlund";
+      repo = "uucode";
+      rev = "2826a37a4562284fdacd8fa029d49509cc9bffcd";
+      hash = "sha256-R5RXW5tWIaDq5JOF2+oWd5YOYOyns6WH7f687WE+b20=";
+    };
+
+    nativeBuildInputs = [
+      pkgs.makeWrapper
+      pkgs.zig
+    ];
+
+    postPatch = ''
+      mkdir -p vendor
+      cp -r "$vaxis" vendor/vaxis
+      cp -r "$zigimg" vendor/zigimg
+      cp -r "$uucode" vendor/uucode
+      chmod -R u+w vendor
+
+      substituteInPlace build.zig.zon \
+        --replace-fail '.url = "git+https://github.com/rockorager/libvaxis.git#4e5a065940825f147fa5ce0df54d1ef0d50ecee7",' '.path = "vendor/vaxis",' \
+        --replace-fail '.hash = "vaxis-0.6.0-BWNV_N3QCQA7Xn50MsCk3MSgvbM8kbCIstA4FMck1k5v",' '''
+      substituteInPlace vendor/vaxis/build.zig.zon \
+        --replace-fail '.url = "git+https://github.com/zigimg/zigimg#d695acd97c02e57bb151e8f659d1280f5cd6ca70",' '.path = "../zigimg",' \
+        --replace-fail '.hash = "zigimg-0.1.0-8_eo2oyaFwBZwJpmqPkCfVXWBrHcqbYwmrp1I6bTD3lI",' ''' \
+        --replace-fail '.url = "git+https://github.com/jacobsandlund/uucode#2826a37a4562284fdacd8fa029d49509cc9bffcd",' '.path = "../uucode",' \
+        --replace-fail '.hash = "uucode-0.2.0-ZZjBPlK5VADj7fdoq7G8LIHzD5o6FSkcBXXrRWr4jnrA",' '''
+    '';
+
+    buildPhase = ''
+      runHook preBuild
+      zig build -Doptimize=ReleaseFast
+      runHook postBuild
+    '';
+
+    installPhase = ''
+      runHook preInstall
+      install -Dm755 zig-out/bin/terminal-doom "$out/bin/.terminal-doom-unwrapped"
+      install -Dm644 doom1.wad "$out/share/terminal-doom/doom1.wad"
+      makeWrapper "$out/bin/.terminal-doom-unwrapped" "$out/bin/terminal-doom" \
+        --add-flags "-iwad $out/share/terminal-doom/doom1.wad" \
+        --prefix LD_LIBRARY_PATH : "${pkgs.lib.makeLibraryPath [ pkgs.alsa-lib ]}"
+      runHook postInstall
+    '';
+
+    meta = {
+      description = "DOOM rendered with graphics and sound in modern terminals";
+      homepage = "https://github.com/cryptocode/terminal-doom";
+      license = pkgs.lib.licenses.gpl2Only;
+      mainProgram = "terminal-doom";
+      platforms = pkgs.lib.platforms.linux;
+    };
+  };
+
+  # Launch Terminal Doom in a dedicated herdr workspace.
+  doomWorkspace = pkgs.writeShellApplication {
+    name = "herdr-doom-workspace";
+    runtimeInputs = [
+      pkgs.herdr
+      pkgs.jq
+      terminalDoom
+    ];
+    text = ''
+      pane="$(herdr workspace create --focus --label DOOM \
+        | jq -r '.result.root_pane.pane_id')"
+      if [[ -z "$pane" || "$pane" == "null" ]]; then
+        printf 'herdr-doom-workspace: could not determine workspace pane id\n' >&2
+        exit 1
+      fi
+      exec herdr pane run "$pane" terminal-doom "$@"
+    '';
+  };
+
   # Open OpenCode in a new tab at the active pane's directory.
   ocNewTab = pkgs.writeShellApplication {
     name = "herdr-oc-new-tab";
@@ -63,12 +161,14 @@ in
     pkgs.cloudflared # Public HTTPS/WSS tunnel for the mobile relay
     pkgs.herdr
     pkgs.uv # Isolated Python runtime used by the mobile relay
+    terminalDoom # DOOM rendered in modern graphics-capable terminals
   ];
 
   # Shell aliases for quick access. Kept in this module (not zsh.nix) per the
   # repo rule: extend by adding a new <feature>.nix. The opencode aliases
   # (o/oc/ou/…) stay in opencode.nix; you run those inside an `h` session.
   programs.zsh.shellAliases = {
+    doom = lib.getExe doomWorkspace; # launch Terminal Doom in a focused workspace
     h = "herdr"; # start or attach the multiplexer server
     hr = "herdr --remote"; # attach to a remote herdr over ssh
     ho = "herdr integration install opencode"; # (re)install the opencode agent-state plugin
