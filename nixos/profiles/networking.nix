@@ -53,7 +53,6 @@
     52.60.223.159    app.alchemer-ca.com reporting.alchemer-ca.com api.alchemer-ca.com
 
     # nslookup prodca-haproxy30-webs-public-2056957719.ca-central-1.elb.amazonaws.com
-    16.52.65.105    survey.alchemer-ca.com
-    16.52.65.105    s.alchemer-ca.com
+    16.54.208.25    survey.alchemer-ca.com    s.alchemer-ca.com
   '';
 }
