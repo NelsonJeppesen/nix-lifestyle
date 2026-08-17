@@ -7,7 +7,7 @@
 #
 # Verify after rebuild via chrome://policy
 # Policy reference: https://chromeenterprise.google/policies/
-{ ... }:
+{ config, ... }:
 let
   policies = {
     # ── Telemetry / privacy hardening ─────────────────────────────────
@@ -21,6 +21,7 @@ let
     # minor prefetch-telemetry tradeoff in exchange for faster page loads.
     NetworkPredictionOptions = 0;
     BackgroundModeEnabled = false;
+    HighEfficiencyModeEnabled = config.networking.hostName == "lg-gram-14-2022";
     PromotionalTabsEnabled = false;
     BrowserAddPersonEnabled = false;
     BrowserGuestModeEnabled = false;
@@ -31,8 +32,8 @@ let
     # ── Force-installed extensions ────────────────────────────────────
     # Format: "<extension-id>;<update-url>"
     ExtensionInstallForcelist = [
-      "dbepggeogbaibhgnhhndojpepiihcmeb;https://clients2.google.com/service/update2/crx" # Vimium
-      "hlepfoohegkhhmjieoechaddaejaokhf;https://clients2.google.com/service/update2/crx" # Refined GitHub
+      # "dbepggeogbaibhgnhhndojpepiihcmeb;https://clients2.google.com/service/update2/crx" # Vimium
+      # "hlepfoohegkhhmjieoechaddaejaokhf;https://clients2.google.com/service/update2/crx" # Refined GitHub
       "nngceckbapebfimnlniiiahkandclblb;https://clients2.google.com/service/update2/crx" # Bitwarden
 
       # "aeblfdkhhhdcdjpifhhbdiojplfjncoa;https://clients2.google.com/service/update2/crx" # 1Password

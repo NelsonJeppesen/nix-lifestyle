@@ -198,7 +198,7 @@
       # pkgs.packer # Machine image builder
       pkgs.ssm-session-manager-plugin # AWS Systems Manager session plugin
       # pkgs.terraform # Infrastructure as code
-      # pkgs.tfenv
+      pkgs.tfenv # Terraform version manager
 
       # pkgs.codex
       # pkgs.telegram-desktop
