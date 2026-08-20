@@ -235,6 +235,15 @@ in
     fi
   '';
 
+  # Keep OpenCode's agent instructions matched to the installed Herdr CLI.
+  home.activation.herdrOpencodeSkill = lib.hm.dag.entryAfter [ "linkGeneration" ] ''
+    skill_dir="${config.home.homeDirectory}/.config/opencode/skills/herdr"
+    $DRY_RUN_CMD mkdir -p "$skill_dir"
+    if [[ -z "''${DRY_RUN_CMD:-}" ]]; then
+      ${lib.getExe pkgs.herdr} --skill > "$skill_dir/SKILL.md"
+    fi
+  '';
+
   # Bootstrap the marketplace plugin independently on every laptop. Its token,
   # Cloudflare tunnel, hostname, and service state remain machine-local under
   # ~/.config/herdr; only the plugin installation is shared by Home Manager.

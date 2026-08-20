@@ -31,6 +31,7 @@
     ./opencode.nix # OpenCode AI coding assistant
     ./pi.nix # Pi coding agent (early testing, integrated with herdr)
     ./ralph.nix # Open Ralph Wiggum: iterative AI coding loop CLI (defaults to opencode)
+    ./ruby.nix # Ruby runtime, Bundler, and RSpec test tooling
     ./serena.nix # Semantic retrieval and symbol-level editing for OpenCode
     ./slack.nix # Slack wrapped with native-Wayland + GPU/VAAPI flags
     ./slack-mcp.nix # slack-stealth-tokens: capture xoxc/xoxd for the Slack MCP server

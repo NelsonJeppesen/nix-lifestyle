@@ -383,19 +383,6 @@ in
 
   };
 
-  # herdr agent skill: teaches opencode to DRIVE herdr over its local socket
-  # (split panes, spawn sibling agents, read output, wait on state) when it is
-  # running inside a herdr-managed pane. opencode auto-loads any
-  # skills/<name>/SKILL.md from its global config dir; the frontmatter
-  # `description` gates activation. Vendored verbatim from
-  # github.com/ogulcancelik/herdr//SKILL.md so it is Nix-managed and pinned,
-  # rather than fetched imperatively via `npx skills add`.
-  #
-  # Safe on the headless `opencode serve` machine too: the skill's own first
-  # rule is to stop unless HERDR_ENV=1, which that server never sets, so it
-  # simply stays dormant there.
-  home.file.".config/opencode/skills/herdr/SKILL.md".source = ./dotfiles/herdr-skill.md;
-
   # Ensure the memory file's parent directory exists before the memory
   # MCP server is invoked; mcp-server-memory will create the JSON file
   # itself. Cheap to keep even when the server is disabled.
