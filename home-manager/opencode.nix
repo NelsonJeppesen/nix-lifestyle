@@ -101,8 +101,8 @@ in
     };
 
     settings = {
-      # Use Claude Opus 4.8 via GitHub Copilot as the default model
-      model = "github-copilot/claude-opus-4.8";
+      # Use GPT-5.6 Sol via GitHub Copilot as the default model
+      model = "github-copilot/gpt-5.6-sol";
 
       # Disable automatic update checks / version popup at startup
       autoupdate = false;
@@ -121,9 +121,7 @@ in
 
       # ── MCP servers ─────────────────────────────────────────────
       # Declared here (rather than in programs.mcp) so each server is
-      # scoped to opencode and easy to flip with `enabled`. ALL default
-      # to `enabled = false`; turn one on by editing this file (or
-      # overlay via OPENCODE_CONFIG) and rebuilding home-manager.
+      # scoped to opencode and easy to flip with `enabled`.
       mcp = {
         # Atlassian remote MCP (Jira / Confluence Cloud). OAuth flow is
         # handled by opencode on first use — no token needs to live in
@@ -183,7 +181,7 @@ in
         # messages. Keep an explicit read-only tool allowlist because upstream
         # enables some workspace-mutating user-group tools by default. Stealth
         # mode uses the browser session token and cookie from the environment.
-        slack = {
+        slack-read = {
           type = "local";
           enabled = false;
           command = [ (lib.getExe slackMcpServer) ];
@@ -194,7 +192,7 @@ in
           };
         };
 
-        # Read/write Slack: same server as `slack` above, but with the
+        # Read/write Slack: same server as `slack-read` above, but with the
         # workspace-mutating tools added to the allowlist. Listing a write tool
         # in SLACK_MCP_ENABLED_TOOLS registers it without channel restrictions,
         # so conversations_add_message, reactions_add/remove, and
@@ -223,13 +221,13 @@ in
         # agent that runs parallel sub-agents (Harper/Benjamin/Lucas),
         # moderated by a Captain with early stopping on consensus.
         # Docs: https://github.com/martinzokov/open-conclave
-        "open-conclave@latest"
+        # "open-conclave@latest"
 
         # opencode-handoff: /handoff command that distills the current
         # conversation into a focused continuation prompt and opens it in a
         # fresh session; adds a read_session tool for prior transcripts.
         # Docs: https://github.com/joshuadavidthomas/opencode-handoff
-        "opencode-handoff@latest"
+        # "opencode-handoff@latest"
 
         # opencode-autotitle: AI-powered automatic session naming. Sets an
         # instant keyword title on the first message, then refines it with a
@@ -369,8 +367,8 @@ in
       - `choose` instead of complex `cut` invocations.
       - `z` (Zoxide) for interactive directory jumps in a persistent shell;
         use explicit paths in scripts and tool calls.
-      - `gh` for GitHub operations, `hunk` for interactive diff review, `nh`
-        for Nix/Home Manager workflows, and `herdr` for terminal orchestration.
+      - `gh` for GitHub operations, `nh` for Nix/Home Manager workflows, and
+        `herdr` for terminal orchestration.
       - `hurl` for repeatable HTTP request tests; keep `curl` for ad hoc HTTP.
 
       Also available where relevant: `kubectl`, `k9s`, `kubectx`, `helm`,

@@ -15,8 +15,8 @@
 
   hardware.logitech.wireless = {
     enable = true;
-    enableGraphical = true;
   };
+  programs.solaar.enable = true;
 
   hardware.bluetooth.enable = true;
   services.pulseaudio.enable = false;

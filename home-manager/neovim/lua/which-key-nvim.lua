@@ -80,7 +80,7 @@ wk.add({
   { "<leader>gL", desc = "Git Log Line", function() Snacks.picker.git_log_line() end },
   { "<leader>gs", desc = "Git Status", function() Snacks.picker.git_status() end },
   { "<leader>gS", desc = "Git Stash", function() Snacks.picker.git_stash() end },
-  { "<leader>gd", desc = "Git Diff (Hunks)", function() Snacks.picker.git_diff() end },
+  { "<leader>gd", desc = "Git Diff", function() Snacks.picker.git_diff() end },
   { "<leader>gf", desc = "Git Log File", function() Snacks.picker.git_log_file() end },
 
   -- Merge conflicts (headhunter.nvim)

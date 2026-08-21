@@ -32,7 +32,7 @@
   programs.gnome-shell = {
     enable = true;
     extensions = [
-      # { package = pkgs.gnomeExtensions.bitcoin-markets; } # BTC price in top bar
+      { package = pkgs.gnomeExtensions.bitcoin-markets; } # BTC/ETH prices in top bar
       { package = pkgs.gnomeExtensions.appindicator; } # System tray icons
       { package = pkgs.gnomeExtensions.blur-my-shell; }
       { package = pkgs.gnomeExtensions.caffeine; } # Inhibit screen blanking
@@ -112,57 +112,47 @@
       topbar-preview-size = 9; # Characters shown in top bar preview
     };
 
-    # Quick Lofi: internet radio player configuration
-    # Pre-configured with all SomaFM channels for one-click streaming
+    # Quick Lofi: selected SomaFM genres for one-click streaming
     "org/gnome/shell/extensions/quick-lofi" = {
       volume = 75;
       set-popup-max-height = false;
+      enable-mini-player = false;
+      enable-mpris = false;
 
-      # SomaFM radio stations (all channels as of 2025-09-21)
-      # SomaFM is a listener-supported internet radio service
+      indicator-actions = [
+        "showPopupMenu"
+        "playPause"
+        "stopPlayer"
+      ];
+
       radios = [
-        "SomaFM Beat Blender - https://api.somafm.com/beatblender130.pls"
-        "SomaFM Black Rock FM - https://api.somafm.com/brfm130.pls"
-        "SomaFM Boot Liquor - https://api.somafm.com/bootliquor130.pls"
-        "SomaFM Bossa Beyond - https://api.somafm.com/bossa130.pls"
-        "SomaFM Chillits Radio - https://api.somafm.com/chillits130.pls"
-        "SomaFM cliqhop idm - https://api.somafm.com/cliqhop130.pls"
-        "SomaFM Covers - https://api.somafm.com/covers130.pls"
-        "SomaFM Deep Space One - https://api.somafm.com/deepspaceone130.pls"
-        "SomaFM DEF CON Radio - https://api.somafm.com/defcon130.pls"
-        "SomaFM Digitalis - https://api.somafm.com/digitalis130.pls"
-        "SomaFM Doomed - https://api.somafm.com/doomed130.pls"
-        "SomaFM Drone Zone - https://api.somafm.com/dronezone130.pls"
-        "SomaFM Dub Step Beyond - https://api.somafm.com/dubstep130.pls"
-        "SomaFM Fluid - https://api.somafm.com/fluid130.pls"
-        "SomaFM Folk Forward - https://api.somafm.com/folkfwd130.pls"
-        "SomaFM Groove Salad - https://api.somafm.com/groovesalad130.pls"
-        "SomaFM Groove Salad Classic - https://api.somafm.com/gsclassic130.pls"
-        "SomaFM Heavyweight Reggae - https://api.somafm.com/reggae130.pls"
-        "SomaFM Illinois Street Lounge - https://api.somafm.com/illstreet130.pls"
-        "SomaFM Indie Pop Rocks! - https://api.somafm.com/indiepop130.pls"
-        "SomaFM Left Coast 70s - https://api.somafm.com/seventies130.pls"
-        "SomaFM Live - https://api.somafm.com/live130.pls"
-        "SomaFM Lush - https://api.somafm.com/lush130.pls"
-        "SomaFM Metal Detector - https://api.somafm.com/metal130.pls"
-        "SomaFM Mission Control - https://api.somafm.com/missioncontrol130.pls"
-        "SomaFM n5MD Radio - https://api.somafm.com/n5md130.pls"
-        "SomaFM PopTron - https://api.somafm.com/poptron130.pls"
-        "SomaFM Secret Agent - https://api.somafm.com/secretagent130.pls"
-        "SomaFM Seven Inch Soul - https://api.somafm.com/7soul130.pls"
-        "SomaFM SF 10-33 - https://api.somafm.com/sf1033130.pls"
-        "SomaFM SF in SF - https://api.somafm.com/sfinsf130.pls"
-        "SomaFM SF Police Scanner - https://api.somafm.com/scanner130.pls"
-        "SomaFM Sonic Universe - https://api.somafm.com/sonicuniverse130.pls"
-        "SomaFM Space Station Soma - https://api.somafm.com/spacestation130.pls"
-        "SomaFM Specials - https://api.somafm.com/specials130.pls"
-        "SomaFM Suburbs of Goa - https://api.somafm.com/suburbsofgoa130.pls"
-        "SomaFM Synphaera Radio - https://api.somafm.com/synphaera130.pls"
-        "SomaFM The Dark Zone - https://api.somafm.com/darkzone130.pls"
-        "SomaFM The In-Sound - https://api.somafm.com/insound130.pls"
-        "SomaFM Tiki Time - https://api.somafm.com/tikitime130.pls"
-        "SomaFM Vaporwaves - https://api.somafm.com/vaporwaves130.pls"
-        "Fogpoint Radio - https://streaming.live365.com/a25002"
+        "SomaFM Ambient Dark Zone - https://api.somafm.com/darkzone130.pls"
+        "SomaFM Ambient Deep Space One - https://api.somafm.com/deepspaceone130.pls"
+        "SomaFM Ambient Doomed - https://api.somafm.com/doomed130.pls"
+        "SomaFM Ambient Drone Zone - https://api.somafm.com/dronezone130.pls"
+        "SomaFM Ambient Drone Zone 2 - https://api.somafm.com/dz2130.pls"
+        "SomaFM Ambient Groove Salad - https://api.somafm.com/groovesalad130.pls"
+        "SomaFM Ambient Groove Salad 2 - https://api.somafm.com/groovesalad2130.pls"
+        "SomaFM Ambient Groove Salad Classic - https://api.somafm.com/gsclassic130.pls"
+        "SomaFM Ambient Mission Control - https://api.somafm.com/missioncontrol130.pls"
+        "SomaFM Ambient SF 10-33 - https://api.somafm.com/sf1033130.pls"
+        "SomaFM Ambient Synphaera Radio - https://api.somafm.com/synphaera130.pls"
+
+        "SomaFM Americana Boot Liquor - https://api.somafm.com/bootliquor130.pls"
+
+        "SomaFM Electronic Beat Blender - https://api.somafm.com/beatblender130.pls"
+        "SomaFM Electronic cliqhop idm - https://api.somafm.com/cliqhop130.pls"
+        "SomaFM Electronic DEF CON Radio - https://api.somafm.com/defcon130.pls"
+        "SomaFM Electronic Digitalis - https://api.somafm.com/digitalis130.pls"
+        "SomaFM Electronic Dub Step Beyond - https://api.somafm.com/dubstep130.pls"
+        "SomaFM Electronic Fluid - https://api.somafm.com/fluid130.pls"
+        "SomaFM Electronic Lush - https://api.somafm.com/lush130.pls"
+        "SomaFM Electronic Space Station Soma - https://api.somafm.com/spacestation130.pls"
+        "SomaFM Electronic The Trip - https://api.somafm.com/thetrip130.pls"
+        "SomaFM Electronic Underground 80s - https://api.somafm.com/u80s130.pls"
+        "SomaFM Electronic Vaporwaves - https://api.somafm.com/vaporwaves130.pls"
+
+        "SomaFM Spoken SF in SF - https://api.somafm.com/sfinsf130.pls"
       ];
     };
 

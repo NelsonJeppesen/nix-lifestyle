@@ -1,38 +1,10 @@
 # git.nix - Git version control configuration
 {
   config,
-  lib,
-  pkgs,
   gitalias,
   ...
 }:
-let
-  prReview = pkgs.writeShellApplication {
-    name = "pr-review";
-    runtimeInputs = [
-      pkgs.coreutils
-      pkgs.gh
-      pkgs.git
-      pkgs.fzf
-      pkgs.herdr
-      pkgs.hunk
-      pkgs.jq
-      pkgs.opencode
-    ];
-    text = builtins.readFile ./bin/pr-review;
-  };
-in
 {
-  home.packages = [
-    pkgs.hunk # Review-first diff viewer with live AI annotations
-    prReview # GitHub PR review layout: Hunk left, OpenCode right
-  ];
-
-  # Hunk ships the skill matching its session API, so it stays in sync with
-  # the nixpkgs package version used by the Git pager.
-  home.file.".config/opencode/skills/hunk-review/SKILL.md".source =
-    "${pkgs.hunk}/skills/hunk-review/SKILL.md";
-
   # Generate the SSH allowed_signers file from the user's ed25519 public key.
   # This file is required for git to verify SSH-signed commits.
   # Runs after writeBoundary so home.file entries are already in place.
@@ -119,13 +91,6 @@ in
 
         merge.conflictStyle = "zdiff3"; # Include the base version in conflict markers
 
-        core.pager = "${lib.getExe pkgs.hunk} pager";
-
-        # Hunk is a review-first TUI; its startup makes `git log` feel slow.
-        # Use plain less for log/reflog, keeping Hunk for diff/show reviews.
-        pager.log = "${lib.getExe pkgs.less} -FRX";
-        pager.reflog = "${lib.getExe pkgs.less} -FRX";
-
         # Force SSH for GitHub, GitLab, and Bitbucket (avoids HTTPS credential prompts)
         url."git@github.com:".insteadOf = "https://github.com/";
         url."git@gitlab.com:".insteadOf = "https://gitlab.com/";
@@ -150,23 +115,5 @@ in
       };
     };
 
-    opencode.commands = {
-      diff-review = ''
-        Review the current working tree for bugs, regressions, security issues,
-        and missing tests. Load the hunk-review skill and use the live Hunk
-        session for this repository when one exists. Put actionable findings
-        inline in Hunk and summarize them in severity order. Do not edit files.
-      '';
-      pr-review = ''
-        Review GitHub pull request $ARGUMENTS. Use the GitHub tools to inspect
-        its metadata, complete diff, commits, checks, and existing review
-        threads. Load the hunk-review skill and use the provided Hunk session ID,
-        or the live Hunk session for this repository when no ID is provided.
-        Focus on bugs, regressions, security issues, and missing tests; put
-        actionable findings inline in Hunk and summarize them in severity order
-        with file and line references. Do not edit files, submit a GitHub review,
-        or post GitHub comments unless explicitly asked.
-      '';
-    };
   };
 }

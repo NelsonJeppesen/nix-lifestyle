@@ -18,9 +18,7 @@ the tools exist and what they replaced. More focused references remain in:
 
 | Goal | Use |
 | --- | --- |
-| Review local changes yourself | `hunk diff` |
-| Ask OpenCode to review local changes | Start `hunk diff`, then run `/diff-review` in OpenCode |
-| Review a GitHub PR with Hunk and OpenCode | `pr-review [PR]` inside Herdr |
+| Review local changes yourself | `tuicr -w` |
 | Perform a human PR review that can be submitted | `tuicr pr NUMBER` |
 | Browse your PRs and review requests | `gh-dash`; press `T` to open the PR in tuicr |
 | Open unstaged and untracked files in Neovim | `vu` |
@@ -42,13 +40,6 @@ the tools exist and what they replaced. More focused references remain in:
 
 ### Local changes: human review
 
-```bash
-hunk diff
-```
-
-`hunk diff` is preferable to plain `git diff` when untracked files matter.
-Hunk includes them itself; Git does not emit untracked-file patches to a pager.
-
 For selective staging, including new files:
 
 ```bash
@@ -57,60 +48,6 @@ git app
 
 This lets you select untracked files with fzf, marks them intent-to-add, then
 runs `git add -p`.
-
-### Local changes: AI-assisted review
-
-1. Start Hunk in the repository:
-
-   ```bash
-   hunk diff
-   ```
-
-2. Start or switch to OpenCode.
-3. Run:
-
-   ```text
-   /diff-review
-   ```
-
-OpenCode is instructed to find the live Hunk session, review for bugs,
-regressions, security issues, and missing tests, and place actionable findings
-inline. It must not edit files during this command.
-
-### GitHub PR: Hunk and OpenCode
-
-Run this from a Git checkout inside Herdr:
-
-```bash
-pr-review
-pr-review 123
-pr-review https://github.com/OWNER/REPO/pull/123
-pr-review BRANCH
-```
-
-With no argument, `pr-review` opens an fzf list of open PRs. It then:
-
-1. Resolves the exact base and head commit IDs with `gh`.
-2. Fetches them into `refs/pr-review/NUMBER/base` and `head` without changing
-   the current branch or working tree.
-3. Creates a dedicated Herdr tab.
-4. Opens Hunk on the left and OpenCode on the right.
-5. Reviews the stable three-dot range with Hunk agent notes enabled.
-6. Starts OpenCode with `/pr-review`, the PR URL, and the Hunk session ID.
-
-The OpenCode command inspects PR metadata, the complete diff, commits, checks,
-and existing review threads. It annotates Hunk but does **not** submit a GitHub
-review or post GitHub comments unless explicitly asked.
-
-Requirements and caveats:
-
-- Must run inside Herdr: `HERDR_ENV=1` and `HERDR_WORKSPACE_ID` are required.
-- Must run inside a Git repository with an appropriate `origin` remote.
-- Requires working `gh` authentication and network access.
-- The fetched `refs/pr-review/*` refs are retained locally.
-- The exact base/head endpoints make the review stable even if the PR moves.
-- The side-by-side split is an intentional special-purpose layout. Agents
-  should otherwise create named tabs rather than split panes.
 
 ### GitHub PR: human review and submission
 
@@ -132,22 +69,20 @@ Important tuicr keys:
 | `j` / `k` | Move down/up |
 | `Ctrl-d` / `Ctrl-u` | Half-page down/up |
 | `{` / `}` | Previous/next file |
-| `[` / `]` | Previous/next hunk |
+| `[` / `]` | Previous/next change |
 | `m` / `M` | Next/previous comment |
 | `/` | Search |
 | `c` | Add line comment |
 | `C` | Add file comment |
 | `v` / `V` | Select a range for a comment |
 | `r` | Toggle file reviewed |
-| `R` | Toggle hunk reviewed |
+| `R` | Toggle change reviewed |
 | `e` or `:edit` | Open the focused file in `$EDITOR` |
 | `y` or `:clip` | Copy structured review Markdown |
 | `:submit` | Submit the review to GitHub or GitLab |
 | `?` | Show complete help |
 
-Submission supports comment, approve, request changes, or draft. This is the
-main distinction from the Hunk workflow: Hunk annotations are local review
-notes, while tuicr has an explicit human-controlled forge submission path.
+Submission supports comment, approve, request changes, or draft.
 
 ### GitHub dashboard
 
@@ -164,35 +99,7 @@ The dashboard includes:
 
 The repository must already have a local checkout for `{{.RepoPath}}`.
 
-## Git and Hunk
-
-### Pager behavior
-
-Hunk is Git's default pager for diff-oriented output:
-
-```bash
-git diff
-git show
-```
-
-`git log` and `git reflog` use `less -FRX` because starting Hunk makes ordinary
-log browsing slower.
-
-Useful direct commands:
-
-```bash
-hunk diff
-hunk diff --watch
-hunk diff --staged
-hunk show
-hunk show HEAD~1
-hunk diff BASE...HEAD
-```
-
-Remember the untracked-file distinction:
-
-- `hunk diff` includes untracked files.
-- `git diff` through `hunk pager` only contains patches emitted by Git.
+## Git
 
 ### Git aliases
 
@@ -218,40 +125,6 @@ Current defaults relevant to daily work:
 
 `git open` only supports a GitHub `origin`; its optional path is not URL
 escaped, and detached HEAD behavior is limited.
-
-### Hunk session interface for agents
-
-The matching Hunk skill is installed at
-`~/.config/opencode/skills/hunk-review/SKILL.md`. It tracks the installed Hunk
-version. Agents should control an existing Hunk TUI rather than start an
-interactive TUI in a non-TTY shell.
-
-Useful inspection commands:
-
-```bash
-hunk session list --json
-hunk session get --repo .
-hunk session review --repo . --json
-hunk session review --repo . --include-patch --json
-hunk session context --repo .
-```
-
-Navigation and comments:
-
-```bash
-hunk session navigate --repo . --file src/App.tsx --hunk 2
-hunk session navigate --repo . --file src/App.tsx --new-line 372
-hunk session navigate --repo . --next-comment
-
-hunk session comment add --repo . \
-  --file README.md --new-line 103 \
-  --summary "Tighten this wording"
-```
-
-Use a session ID when more than one Hunk session matches the repository.
-`--hunk`, `--old-line`, and `--new-line` are alternative targets, not
-combinable selectors. Raw patches are omitted from JSON by default to reduce
-agent context usage.
 
 ## tuicr and Agent Feedback
 
@@ -304,9 +177,8 @@ for the user. It should not split a pane.
 | `os` | fzf-pick one of the 16 most recently updated sessions |
 | `ou` | Remove cached OpenCode plugin npm packages |
 | `Ctrl-Shift-o` | Open OpenCode in a new Herdr tab at the active directory |
-| `/handoff` | Distill the current work into a focused new session |
 
-The Home Manager default model is `github-copilot/claude-opus-4.8`. A
+The Home Manager default model is `github-copilot/gpt-5.6-sol`. A
 repository-local `opencode.json` can override it; this repository currently
 uses `openai/gpt-5.6-sol`.
 
@@ -314,15 +186,8 @@ OpenCode pre-allows external file access under `~/source/**` and `~/tmp/**`.
 This removes repetitive directory prompts; it is not permission to expose
 credentials, escalate privileges, or perform arbitrary destructive actions.
 
-### Plugins
-
-- `open-conclave`: multi-agent debate using parallel specialist agents and a
-  moderator with consensus-based stopping.
-- `opencode-handoff`: supplies `/handoff` and the ability to read a prior
-  session transcript.
-
-There are no custom agent definitions in `opencode.nix`. Conclave's agents are
-plugin-provided. Pi is a separate coding agent, and Serena is an MCP server.
+There are no custom agent definitions in `opencode.nix`. Pi is a separate
+coding agent, and Serena is an MCP server.
 
 The former `oc-standup` workflow was removed.
 
@@ -338,7 +203,7 @@ The former `oc-standup` workflow was removed.
 | Memory | Enabled | Persistent graph at `~/.local/share/mcp-memory/memory.json` |
 | Serena | Enabled | Symbol-aware code tools; current-directory project selection |
 | Kubernetes | Disabled | Enable deliberately when cluster access is needed |
-| Slack | Disabled | Explicit read-only tool allowlist |
+| Slack read | Disabled | OpenCode server `slack-read`; explicit read-only tool allowlist |
 | Slack write | Disabled | Mutating tools; enable deliberately and temporarily |
 
 <!-- markdownlint-enable MD013 -->
@@ -441,7 +306,6 @@ bindings to Herdr.
 | `ws` | Create a workspace rooted at `~/source` |
 | `hrf COMMAND...` | Run a command in a new focused tab |
 | `hrn COMMAND...` | Run a command in a new background tab |
-| `pr-review [PR]` | Create the Hunk/OpenCode PR review layout |
 
 ### Direct keys
 
@@ -709,14 +573,6 @@ without adding it permanently to Home Manager.
 
 ## Troubleshooting
 
-### `pr-review` refuses to start
-
-- Confirm you are inside Herdr: `printf '%s\n' "$HERDR_ENV"`.
-- Confirm you are in a Git checkout.
-- Check `gh auth status` in a user-visible Herdr tab if authentication may
-  prompt.
-- Confirm `origin` points to the intended GitHub repository.
-
 ### OpenCode cannot use GitHub tools
 
 - Confirm `GITHUB_TOKEN` is exported in the OpenCode process environment.
@@ -746,11 +602,6 @@ Create or fetch a local `main` ref, or use `vu` when the intended scope is only
 unstaged and untracked work. `vm` intentionally does not infer a remote default
 branch.
 
-### Hunk misses a new file
-
-Use `hunk diff`, not `git diff`, or run `git app` to mark the selected file
-intent-to-add before reviewing the Git-generated patch.
-
 ### Long-running OpenCode work stops after locking the laptop
 
 On AC power, GNOME is configured to lock/blank after 15 minutes but delay
@@ -767,16 +618,15 @@ Baseline for this guide: the last commit before the window was
 
 | Date | Commit | Effect |
 | --- | --- | --- |
-| 2026-07-19 | `e1baf39` | Added Hunk as Git's review pager, Hunk's OpenCode skill, `/diff-review`, and `/pr-review`; removed Difftastic and Git-level lazyworktree integration. |
 | 2026-07-19 | `8f93ea7` | Tuned Herdr/Kitty and added mobile relay prerequisites. |
 | 2026-07-19 | `4a01c31` | Added direct Herdr sidebar and resize keybindings. |
 | 2026-07-19 | `4c9ee77` | Hardened shell/Herdr commands, removed plaintext Git credential storage, moved F1 scrollback handling to Herdr, and cleaned stale Neovim configuration. |
 | 2026-07-19 | `4c8cd02` | Added the loopback OpenCode web service and per-laptop Cloudflare Tunnel connector. |
 | 2026-08-01 | `8e694a7` | Updated flake pins and added Serena, nix-index-database, Pi MCP adapter, and tuicr inputs. |
 | 2026-08-01 | `26f6d42` | Added the Ansible suite, ast-grep, and prebuilt nix-index integration. |
-| 2026-08-01 | `8fb22c9` | Added Serena, Pi, tuicr, gh-dash integration, the purpose-built `pr-review` layout, modern agent tool guidance, and removed `oc-standup`. |
+| 2026-08-01 | `8fb22c9` | Added Serena, Pi, tuicr, gh-dash integration, modern agent tool guidance, and removed `oc-standup`. |
 | 2026-08-01 | `4b79708` | Added Ansible/Jinja LSP support and save-time nvim-lint; removed hardtime.nvim. |
-| 2026-08-01 | `4d3e9ea` | Added zoxide, bat, named directories, `vu`/`vm`, the Pi Herdr launcher, and PR-review usage notes. |
+| 2026-08-01 | `4d3e9ea` | Added zoxide, bat, named directories, `vu`/`vm`, and the Pi Herdr launcher. |
 | 2026-08-01 | `07050ad` | Imported the new feature modules and pruned unused packages. |
 | 2026-08-01 | `17093fe` | Added Chromium v11 cookie decryption and padding validation to `slack-stealth-tokens`. |
 | 2026-08-01 | `e3ea3e2` | Delayed AC suspend so long-running OpenCode work survives idle lock. |
@@ -785,12 +635,10 @@ Baseline for this guide: the last commit before the window was
 
 ### Superseded tools and workflows
 
-- Difftastic is no longer Git's diff integration; Hunk is optimized for
-  whole-changeset review and live annotations rather than structural diffs.
 - The Git-level `git wt` lazyworktree alias was removed. A shell `wt` function
   may still be available from the separately sourced lazyworktree package.
 - `oc-standup` and its redaction/collector files were removed. GitHub work now
-  centers on `gh-dash`, tuicr, Hunk, and `pr-review`.
+  centers on `gh-dash` and tuicr.
 - `hardtime.nvim` was removed.
 
 ## Configuration Map
@@ -799,7 +647,7 @@ Baseline for this guide: the last commit before the window was
 
 | Area | Main files |
 | --- | --- |
-| Git, Hunk, review commands | `git.nix`, `bin/pr-review` |
+| Git | `git.nix` |
 | tuicr and GitHub dashboard | `tuicr.nix`, `dotfiles/tuicr-skill.md`, `gh-dash.nix` |
 | OpenCode and MCP servers | `opencode.nix` |
 | Pi and its MCP adapter | `pi.nix` |

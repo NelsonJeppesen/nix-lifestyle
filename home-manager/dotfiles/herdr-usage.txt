@@ -8,7 +8,6 @@ Start and session
 -----------------
   h                       start or attach
   hr <host>               attach remotely
-  pr-review [PR]          Hunk + OpenCode GitHub PR review layout
   prefix+q                detach; processes keep running
 
 Direct keys

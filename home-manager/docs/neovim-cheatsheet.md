@@ -128,8 +128,8 @@ When opencode wants to edit a file, the plugin opens a diff tab:
 |---|---|
 | `da` | Accept the entire edit request |
 | `dr` | Reject the entire edit request |
-| `dp` | Accept only the hunk under the cursor (rejects rest) |
-| `do` | Reject only the hunk under the cursor (rejects rest) |
+| `dp` | Accept only the change under the cursor (rejects rest) |
+| `do` | Reject only the change under the cursor (rejects rest) |
 | `]c` / `[c` | Next / prev change |
 | `q` | Close the diff |
 
@@ -333,13 +333,13 @@ Config: `home-manager/neovim.nix:749` (gitsigns), `:757` (headhunter)
 |---|---|
 | `gb` / `gl` / `gL` | Branches / Log / Log for current line |
 | `gs` / `gS` | Status / Stash |
-| `gd` | Diff (hunks) |
+| `gd` | Diff |
 | `gf` | Log for current file |
 
 ### gitsigns (sign column)
 
 `\g` toggle current-line blame · `\G` full blame buffer.
-Hunk navigation/staging via `:Gitsigns` (no leader bindings — use the
+Change navigation/staging via `:Gitsigns` (no leader bindings — use the
 command for one-offs).
 
 ### headhunter (merge conflicts)
