@@ -1,8 +1,5 @@
-# gh-dash.nix - GitHub dashboard with tuicr PR review integration
-{ pkgs, tuicr, ... }:
-let
-  tuicrPackage = tuicr.packages.${pkgs.stdenv.hostPlatform.system}.default;
-in
+# gh-dash.nix - GitHub dashboard for pull requests and review requests
+{ ... }:
 {
   programs.gh-dash = {
     enable = true;
@@ -16,14 +13,6 @@ in
         {
           title = "Review Requested";
           filters = "is:open review-requested:@me sort:updated-desc";
-        }
-      ];
-
-      keybindings.prs = [
-        {
-          key = "T";
-          name = "review in tuicr";
-          command = "cd {{.RepoPath}} && ${tuicrPackage}/bin/tuicr pr {{.PrNumber}}";
         }
       ];
     };

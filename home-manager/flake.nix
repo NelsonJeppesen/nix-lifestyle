@@ -64,14 +64,6 @@
       flake = false;
     };
 
-    # tuicr: terminal code review UI plus its OpenCode integration skill.
-    # Pinned to a release tag so `flake update` doesn't rebuild it (and its
-    # ~130 Rust crate deps, all built from source) on unrelated input bumps.
-    tuicr = {
-      url = "github:agavra/tuicr/v0.20.0";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
-
     # GitHub Notifications Redux: GNOME Shell extension for GitHub notifications
     gnome-github-notifications-redux = {
       url = "github:NelsonJeppesen/gnome-github-notifications-redux/review-01";
@@ -103,7 +95,6 @@
       serena,
       pi-mcp-adapter,
       slack-mcp-server,
-      tuicr,
       ...
     }:
     let
@@ -133,7 +124,6 @@
             serena
             pi-mcp-adapter
             slack-mcp-server
-            tuicr
             ;
         };
       };

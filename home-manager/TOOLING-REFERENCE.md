@@ -18,9 +18,8 @@ the tools exist and what they replaced. More focused references remain in:
 
 | Goal | Use |
 | --- | --- |
-| Review local changes yourself | `tuicr -w` |
-| Perform a human PR review that can be submitted | `tuicr pr NUMBER` |
-| Browse your PRs and review requests | `gh-dash`; press `T` to open the PR in tuicr |
+| Review local changes yourself | `git diff` or `vu` |
+| Browse your PRs and review requests | `gh-dash` |
 | Open unstaged and untracked files in Neovim | `vu` |
 | Open files changed from local `main` in Neovim | `vm` |
 | Resume the last OpenCode conversation | `oc` |
@@ -49,55 +48,14 @@ git app
 This lets you select untracked files with fzf, marks them intent-to-add, then
 runs `git add -p`.
 
-### GitHub PR: human review and submission
-
-Use tuicr when the human should own the review and its submission:
-
-```bash
-tuicr                 # choose a target
-tuicr -w              # uncommitted working tree
-tuicr -r main..HEAD   # explicit range
-tuicr pr 123          # PR in the current repository
-tuicr pr OWNER/REPO#123
-tuicr pr URL
-```
-
-Important tuicr keys:
-
-| Key | Action |
-| --- | --- |
-| `j` / `k` | Move down/up |
-| `Ctrl-d` / `Ctrl-u` | Half-page down/up |
-| `{` / `}` | Previous/next file |
-| `[` / `]` | Previous/next change |
-| `m` / `M` | Next/previous comment |
-| `/` | Search |
-| `c` | Add line comment |
-| `C` | Add file comment |
-| `v` / `V` | Select a range for a comment |
-| `r` | Toggle file reviewed |
-| `R` | Toggle change reviewed |
-| `e` or `:edit` | Open the focused file in `$EDITOR` |
-| `y` or `:clip` | Copy structured review Markdown |
-| `:submit` | Submit the review to GitHub or GitLab |
-| `?` | Show complete help |
-
-Submission supports comment, approve, request changes, or draft.
-
 ### GitHub dashboard
 
 ```bash
 gh-dash
 ```
 
-The dashboard includes:
-
-- Open PRs authored by you.
-- Open PRs requesting your review.
-- `T` on a selected PR: change to its local checkout and run
-  `tuicr pr PR_NUMBER`.
-
-The repository must already have a local checkout for `{{.RepoPath}}`.
+The dashboard includes open PRs authored by you and open PRs requesting your
+review.
 
 ## Git
 
@@ -125,46 +83,6 @@ Current defaults relevant to daily work:
 
 `git open` only supports a GitHub `origin`; its optional path is not URL
 escaped, and detached HEAD behavior is limited.
-
-## tuicr and Agent Feedback
-
-The human operates the TUI. OpenCode uses tuicr's persisted review sessions:
-
-```bash
-tuicr review list --repo /path/to/repo
-tuicr review comments --repo /path/to/repo --session SLUG
-```
-
-Comment meanings:
-
-| Type | Meaning |
-| --- | --- |
-| `issue` | Blocking problem |
-| `suggestion` | Optional improvement |
-| `note` | Question or context |
-| `praise` | No action required |
-
-An agent can add an explicitly attributed finding when asked to review:
-
-```bash
-tuicr review add \
-  --repo /path/to/repo \
-  --session SLUG \
-  --target-file src/main.rs \
-  --line 42 \
-  --side new \
-  --type issue \
-  --username OpenCode \
-  "Handle the empty case here."
-```
-
-Use `--end-line` for a range, `--side old` for a removed line, omit `--line`
-for a file comment, and omit `--target-file` for a review-level comment.
-Prefer line comments, then file comments, then review-level comments.
-
-When no suitable active session exists, an agent running inside Herdr should
-create a tab named `oc: tuicr`, run the appropriate TUI there, and leave it open
-for the user. It should not split a pane.
 
 ## OpenCode
 
@@ -400,8 +318,8 @@ The NixOS `opencode` host is a separate deployment. It serves loopback port
 authentication gate.
 
 It imports `home-manager/opencode.nix`, but not the separate `serena.nix`,
-`pi.nix`, `tuicr.nix`, `herdr.nix`, or `git.nix` modules. Therefore it does not
-automatically receive Serena, Pi, or the review skills even though its core
+`pi.nix`, `herdr.nix`, or `git.nix` modules. Therefore it does not
+automatically receive Serena or Pi even though its core
 OpenCode settings and inline MCP configuration match.
 
 ## Neovim
@@ -622,9 +540,9 @@ Baseline for this guide: the last commit before the window was
 | 2026-07-19 | `4a01c31` | Added direct Herdr sidebar and resize keybindings. |
 | 2026-07-19 | `4c9ee77` | Hardened shell/Herdr commands, removed plaintext Git credential storage, moved F1 scrollback handling to Herdr, and cleaned stale Neovim configuration. |
 | 2026-07-19 | `4c8cd02` | Added the loopback OpenCode web service and per-laptop Cloudflare Tunnel connector. |
-| 2026-08-01 | `8e694a7` | Updated flake pins and added Serena, nix-index-database, Pi MCP adapter, and tuicr inputs. |
+| 2026-08-01 | `8e694a7` | Updated flake pins and added Serena, nix-index-database, Pi MCP adapter, and a terminal review input. |
 | 2026-08-01 | `26f6d42` | Added the Ansible suite, ast-grep, and prebuilt nix-index integration. |
-| 2026-08-01 | `8fb22c9` | Added Serena, Pi, tuicr, gh-dash integration, modern agent tool guidance, and removed `oc-standup`. |
+| 2026-08-01 | `8fb22c9` | Added Serena, Pi, gh-dash integration, modern agent tool guidance, and removed `oc-standup`. |
 | 2026-08-01 | `4b79708` | Added Ansible/Jinja LSP support and save-time nvim-lint; removed hardtime.nvim. |
 | 2026-08-01 | `4d3e9ea` | Added zoxide, bat, named directories, `vu`/`vm`, and the Pi Herdr launcher. |
 | 2026-08-01 | `07050ad` | Imported the new feature modules and pruned unused packages. |
@@ -638,7 +556,7 @@ Baseline for this guide: the last commit before the window was
 - The Git-level `git wt` lazyworktree alias was removed. A shell `wt` function
   may still be available from the separately sourced lazyworktree package.
 - `oc-standup` and its redaction/collector files were removed. GitHub work now
-  centers on `gh-dash` and tuicr.
+  centers on `gh-dash`.
 - `hardtime.nvim` was removed.
 
 ## Configuration Map
@@ -648,7 +566,7 @@ Baseline for this guide: the last commit before the window was
 | Area | Main files |
 | --- | --- |
 | Git | `git.nix` |
-| tuicr and GitHub dashboard | `tuicr.nix`, `dotfiles/tuicr-skill.md`, `gh-dash.nix` |
+| GitHub dashboard | `gh-dash.nix` |
 | OpenCode and MCP servers | `opencode.nix` |
 | Pi and its MCP adapter | `pi.nix` |
 | Serena | `serena.nix`, `docs/serena-ansible.md` |

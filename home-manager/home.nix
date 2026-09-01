@@ -21,7 +21,7 @@
     ./firefox.nix # Firefox browser with custom search engines
     ./flameshot.nix # Flameshot daemon + Print-key tray-trigger script
     ./git.nix # Git config, signing, aliases, and AI-assisted diff review
-    ./gh-dash.nix # GitHub dashboard with tuicr PR review action
+    ./gh-dash.nix # GitHub dashboard for pull requests and review requests
     ./gnome-extensions.nix # GNOME Shell extensions and their settings
     ./gnome.nix # GNOME desktop dconf settings and keybindings
     ./herdr.nix # herdr agent multiplexer (wraps opencode/coding agents)
@@ -36,7 +36,6 @@
     ./slack.nix # Slack wrapped with native-Wayland + GPU/VAAPI flags
     ./slack-mcp.nix # slack-stealth-tokens: capture xoxc/xoxd for the Slack MCP server
     ./tailscale-systray.nix # Tailscale's official system tray app (autostart via systemd --user)
-    ./tuicr.nix # Terminal code review UI integrated with OpenCode
     ./zoxide.nix # Frecency-based directory navigation via `cd`
     ./zsh.nix # Zsh shell, prompt, aliases, and functions
   ];
