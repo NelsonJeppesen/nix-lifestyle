@@ -44,8 +44,8 @@
     pkgs.networkmanager-fortisslvpn
   ];
 
-  # HaProxy 3.0 CA Prod - hosts file test entries
+  # HAProxy 3.0 ProdUS test entry
   networking.extraHosts = ''
-    # 1.2.3.4  somedomain.com
+    34.226.1.22 survey.mattdeveloperorg.com
   '';
 }
