@@ -1,0 +1,138 @@
+# Packaged with writeShellApplication; optional argument: absolute Bash executable.
+# v0.20.8 (Herdr >= 0.7.5). This pins the checkout, not the downloaded release bundle.
+set -euo pipefail
+
+ref=4eb61d54d455199d58a3f7257b9464920121cefb
+plugin=herdr-mobile-relay.events
+
+warn() {
+  printf 'warning: herdr-mobile-relay-ensure: %s\n' "$*" >&2
+  printf 'Inspect with: herdr plugin list --plugin %s --json\n' "$plugin" >&2
+  printf 'After reviewing/backing up existing state, manual install: env -u GH_TOKEN -u GITHUB_TOKEN HERDR_MOBILE_RELAY_NO_AUTO_SETUP=1 herdr plugin install 0cv/herdr-mobile-relay --ref %s --yes\n' "$ref" >&2
+  printf '%s\n' \
+    'Install reinstalls/enables the plugin and may migrate state or restart its service, even with NO_AUTO_SETUP=1.' \
+    'NixOS caveat: the downloaded service wrapper uses /bin/bash. Arrange a Nix-compatible service invocation; do not patch the sealed release bundle. Checkout shebang fixes do not fix that wrapper.' \
+    'The checkout pin is not full reproducibility: upstream downloads and verifies a separate release bundle.' >&2
+}
+
+query() {
+  local response
+  if ! response=$(herdr plugin list --plugin "$plugin" --json); then
+    warn 'Registration query failed; skipping. Check the Herdr CLI/server versions and retry.'
+    return 1
+  fi
+  # An empty plugins array means absent registration; missing/malformed data does not.
+  if ! registration=$(jq -ers --arg plugin "$plugin" '
+    if length == 1 and (.[0].result | type == "object") then .[0].result
+    else error("expected one plugin_list response") end
+    | if .type == "plugin_list" and (.plugins | type == "array") then .plugins
+      else error("expected plugin_list with a plugins array") end
+    | if length <= 1 and all(.[];
+        type == "object" and .plugin_id == $plugin
+        and (.enabled | type == "boolean")
+        and (.plugin_root | type == "string" and startswith("/"))
+        and (.source | type == "object")
+        and ((has("warnings") | not) or
+          (.warnings | type == "array" and all(.[]; type == "string"))))
+      then (.[0] // null) | tojson
+      else error("unexpected plugin registration fields or count") end
+  ' <<<"$response"); then
+    warn 'Malformed registration response; skipping. Check the Herdr CLI/server versions and retry.'
+    return 1
+  fi
+}
+
+if [[ -z ${HOME:-} || $HOME != /* ]]; then
+  warn 'HOME must be an absolute path; skipping.'
+  exit 0
+fi
+# Herdr v0.8.2 src/config/io.rs honors even empty XDG values; refuse ambiguous roots.
+config_home=${XDG_CONFIG_HOME-$HOME/.config}
+state_home=${XDG_STATE_HOME-$HOME/.local/state}
+if [[ $config_home != /* || $state_home != /* ]]; then
+  warn 'XDG_CONFIG_HOME and XDG_STATE_HOME must be absolute when set; skipping.'
+  exit 0
+fi
+plugins_dir="$config_home/herdr/plugins"
+if [[ $# -gt 1 || ${1:-${BASH}} != /* ]] ||
+  ! bash_path=$(readlink -e -- "${1:-${BASH}}") || [[ ! -x $bash_path ]]; then
+  warn 'Pass an existing absolute Bash executable as the sole optional argument; skipping.'
+  exit 0
+fi
+
+query || exit 0
+if [[ $registration == null ]]; then
+  # v0.8.2 src/plugin_paths.rs imports plugins/<id> or <id>-<12-char hash>.
+  # Conservatively guard all matching legacy siblings, plus standalone/service state.
+  for state in \
+    "$plugins_dir/config/$plugin" \
+    "$plugins_dir/$plugin" "$plugins_dir/$plugin"-* \
+    "$state_home/herdr/plugins/$plugin" \
+    "$config_home/herdr-mobile-relay" \
+    "${HERDR_PLUGIN_CONFIG_DIR:-$plugins_dir/config/$plugin}" \
+    "${HERDR_RELAY_ENV:-$plugins_dir/config/$plugin/relay.env}" \
+    "${HERDR_RELEASE_ROOT:-${XDG_DATA_HOME:-$HOME/.local/share}/herdr-mobile-relay}" \
+    "${XDG_CACHE_HOME:-$HOME/.cache}/herdr-mobile-relay" \
+    "$HOME/.cache/herdr-mobile-relay" \
+    "$HOME/.config/systemd/user/herdr-mobile-relay.service" \
+    "$HOME/Library/LaunchAgents/com.herdr-mobile-relay.service.plist"; do
+    if [[ -e $state || -L $state ]]; then
+      warn "Registration is absent but existing state was found at $state; refusing automatic migration."
+      exit 0
+    fi
+  done
+  # Upstream can persist ambient GitHub credentials into the relay config.
+  if ! env -u GH_TOKEN -u GITHUB_TOKEN HERDR_MOBILE_RELAY_NO_AUTO_SETUP=1 herdr plugin install \
+    0cv/herdr-mobile-relay --ref "$ref" --yes </dev/null; then
+    warn 'Fresh pinned install failed; leaving any partial installation in place for inspection.'
+    exit 0
+  fi
+  query || exit 0
+fi
+
+if [[ $registration == null ]]; then
+  warn 'Install reported success but registration is still absent; skipping shebang edits.'
+  exit 0
+fi
+if ! jq -e --arg ref "$ref" '
+  .enabled == true and ((.warnings // []) | length == 0)
+  and .source.kind == "github" and .source.owner == "0cv"
+  and .source.repo == "herdr-mobile-relay"
+  and .source.resolved_commit == $ref
+' <<<"$registration" >/dev/null; then
+  warn "Disabled, warning-bearing, unexpected-source or revision-mismatched registration; leaving it untouched. Registration: $registration"
+  exit 0
+fi
+
+if ! plugin_root=$(jq -er '.plugin_root' <<<"$registration") ||
+  ! plugin_root=$(realpath -e -- "$plugin_root") ||
+  ! managed_root=$(realpath -e -- "$plugins_dir/github") ||
+  [[ $plugin_root != "$managed_root/"* ]] ||
+  [[ ! -d $plugin_root/relay || -L $plugin_root/relay ]]; then
+  warn 'Registered checkout is missing or outside the managed GitHub checkout directory; skipping shebang edits.'
+  exit 0
+fi
+
+# Only regular checkout scripts, never symlinks into the separately sealed bundle.
+bash_replacement=${bash_path//\\/\\\\}
+bash_replacement=${bash_replacement//&/\\&}
+bash_replacement=${bash_replacement//|/\\|}
+for script in "$plugin_root"/relay/*.sh; do
+  [[ -f $script && ! -L $script ]] || continue
+  if ! IFS= read -r first_line <"$script"; then
+    warn "Cannot read the shebang in $script; skipping remaining edits."
+    exit 0
+  fi
+  if [[ $first_line == '#!/bin/bash' || $first_line =~ ^\#!/nix/store/[^/]+/bin/bash$ ]]; then
+    [[ $first_line != "#!$bash_path" ]] || continue
+    if ! sed -i -E "1s|^#!(/nix/store/[^/]+)?/bin/bash$|#!$bash_replacement|" "$script"; then
+      warn "Could not update the checkout shebang in $script; skipping remaining edits."
+      exit 0
+    fi
+  fi
+done
+if [[ ! -x /bin/bash ]]; then
+  printf '%s\n' \
+    'warning: herdr-mobile-relay-ensure: checkout verified, but the separate sealed release service wrapper uses /bin/bash, unavailable here. Arrange a Nix-compatible service invocation before setup; do not modify the sealed bundle.' >&2
+fi
+exit 0
