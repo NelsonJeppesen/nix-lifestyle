@@ -8,8 +8,8 @@
 #
 # `slack-stealth-tokens` extracts and decrypts both straight from
 # ~/.config/Slack so they never have to be copied by hand out of DevTools.
-# It only prints to stdout — piping the result into an encrypted store (an
-# age .envrc, etc.) is left to the user.
+# Interactive Zsh sessions load them automatically when Slack is signed in;
+# extraction failures stay quiet so opening a shell never fails.
 #
 # Typical use:
 #   eval "$(slack-stealth-tokens)"       # load into the current shell
@@ -45,4 +45,10 @@ let
 in
 {
   home.packages = [ slack-stealth-tokens ];
+
+  programs.zsh.initContent = ''
+    if [[ -z ''${SLACK_MCP_XOXC_TOKEN:-} || -z ''${SLACK_MCP_XOXD_TOKEN:-} ]]; then
+      eval "$(slack-stealth-tokens 2>/dev/null)" || true
+    fi
+  '';
 }

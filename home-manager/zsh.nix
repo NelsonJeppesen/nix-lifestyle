@@ -11,7 +11,6 @@
 #     ap  -- AWS profile switcher (mutates current shell)
 #     ar  -- AWS region switcher (mutates current shell)
 #     rst -- reset env (mutates current shell)
-#     wt  -- jump to a git worktree (inline; uses lazyworktree functions)
 #     hrf -- run a command in a new herdr tab, focusing it
 #     hrn -- run a command in a new herdr tab without focusing it
 #     curl-all-ips -- curl every A/AAAA record behind a DNS name (per-IP)
@@ -19,12 +18,12 @@
 #     nsr, rgreplace -- packaged via writeShellApplication
 #     (gets shellcheck + PATH wrapping). See ./bin/.
 # - Aliases for Terraform, Kubernetes, Git, clipboard, and notes
-{ pkgs, ... }:
+{ config, pkgs, ... }:
 let
   # Build small CLIs from ./bin/* using writeShellApplication so each script
   # is shellcheck-validated at build time and has its runtime deps on PATH.
   # Functions that need to mutate the *current* shell (cd, source, unset
-  # AWS_PROFILE, jump to a worktree) stay inline in initContent below.
+  # AWS_PROFILE) stay inline in initContent below.
   nsr = pkgs.writeShellApplication {
     name = "nsr";
     text = builtins.readFile ./bin/nsr;
@@ -45,7 +44,7 @@ let
     name = "open-git-files";
     runtimeInputs = [
       pkgs.git
-      pkgs.neovim
+      config.programs.neovim.finalPackage
     ];
     text = ''
       mode="''${1:-}"
@@ -316,9 +315,9 @@ in
 
       # ── Shell init (large blob; kept last per AGENTS.md "module structure") ──
       initContent = ''
-        # Tab/title management is handled by kitty's shell integration
+        # Kitty's shell integration emits shell titles
         # (programs.kitty.shellIntegration.enableZshIntegration in kitty.nix);
-        # avoid duplicate OSC1/OSC2 escapes here.
+        # Herdr owns the outer window title. Avoid duplicate OSC1/OSC2 escapes here.
 
         # Zsh-native batch rename. `noglob` leaves patterns untouched for zmv
         # to interpret instead of expanding them in the calling shell.
@@ -372,13 +371,24 @@ in
             echo "usage: ''${funcstack[2]} COMMAND [ARGS...]" >&2
             return 1
           fi
-          local pane_id
-          pane_id="$(herdr tab create --"$focus_flag" \
-            | ${pkgs.jq}/bin/jq -r '.result.root_pane.pane_id')" || return
-          if [[ -z "$pane_id" || "$pane_id" == "null" ]]; then
-            echo "herdr: could not determine new pane id" >&2
+          if [[ "''${HERDR_ENV:-}" != 1 ]]; then
+            echo "herdr: requires HERDR_ENV=1" >&2
             return 1
           fi
+          local response workspace_id pane_id
+          # A moved pane keeps its launch-time environment; resolve live context.
+          response="$(herdr pane current --current)" || return
+          workspace_id="$(${pkgs.jq}/bin/jq -er \
+            '.result.pane.workspace_id | select(type == "string" and length > 0)' \
+            <<< "$response")" || return
+          response="$(herdr tab create --workspace "$workspace_id" \
+            --cwd "$PWD" --"$focus_flag")" || return
+          pane_id="$(${pkgs.jq}/bin/jq -er \
+            '.result.root_pane.pane_id | select(type == "string" and length > 0)' \
+            <<< "$response")" || {
+            echo "herdr: could not determine new pane id" >&2
+            return 1
+          }
           local command="''${(j: :)''${(q)@}}"
           herdr pane run "$pane_id" "$command"
         }
@@ -415,20 +425,6 @@ in
             replace_args+=("-replace=$address")
           done
           terraform apply "''${replace_args[@]}"
-        }
-
-        # ── lazyworktree: TUI git worktree manager ───────────────────
-        # Source built-in shell functions (worktree_jump, worktree_go_last)
-        source ${pkgs.lazyworktree}/share/lazyworktree/functions.zsh
-
-        # wt: jump to a worktree in the current repo via lazyworktree TUI
-        wt() {
-          local toplevel
-          toplevel="$(git rev-parse --show-toplevel 2>/dev/null)" || {
-            echo "wt: not inside a git repo" >&2
-            return 1
-          }
-          worktree_jump "$toplevel" "$@"
         }
 
         # rst: reset shell environment -- clear AWS/kube context, return to ~/source.

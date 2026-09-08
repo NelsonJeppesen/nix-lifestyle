@@ -553,8 +553,8 @@ Baseline for this guide: the last commit before the window was
 
 ### Superseded tools and workflows
 
-- The Git-level `git wt` lazyworktree alias was removed. A shell `wt` function
-  may still be available from the separately sourced lazyworktree package.
+- The `git wt` alias, shell `wt` function, and lazyworktree integration were
+  removed. Herdr provides worktree creation via `prefix+shift+g`.
 - `oc-standup` and its redaction/collector files were removed. GitHub work now
   centers on `gh-dash`.
 - `hardtime.nvim` was removed.
@@ -570,7 +570,7 @@ Baseline for this guide: the last commit before the window was
 | OpenCode and MCP servers | `opencode.nix` |
 | Pi and its MCP adapter | `pi.nix` |
 | Serena | `serena.nix`, `docs/serena-ansible.md` |
-| Herdr | `herdr.nix`, `dotfiles/herdr-usage.txt`, `dotfiles/herdr-skill.md` |
+| Herdr | `herdr.nix`, `dotfiles/herdr-usage.txt`, `dotfiles/herdr-policy.md`, bundled package skill |
 | Neovim | `neovim.nix`, `neovim/lua/which-key-nvim.lua`, `docs/neovim-cheatsheet.md` |
 | Ansible CLI | `ansible.nix` |
 | zoxide and shell helpers | `zoxide.nix`, `zsh.nix`, `dotfiles/zsh-named-dirs.zsh` |

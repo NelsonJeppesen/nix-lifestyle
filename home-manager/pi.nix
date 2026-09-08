@@ -63,8 +63,9 @@ in
   };
 
   home.file = {
-    # Share the same Agent Skills-compatible herdr instructions as OpenCode.
-    ".pi/agent/skills/herdr/SKILL.md".source = ./dotfiles/herdr-skill.md;
+    # Version-matched CLI reference plus the shared tab/authentication policy.
+    ".pi/agent/skills/herdr/SKILL.md".source = "${pkgs.herdr}/share/herdr/skills/herdr/SKILL.md";
+    ".pi/agent/AGENTS.md".source = ./dotfiles/herdr-policy.md;
 
     # Pi discovers one directory deep under extensions. Keeping the complete
     # npm package together lets its TypeScript entrypoint resolve the Nix-built
@@ -119,6 +120,8 @@ in
   # Keep the generated herdr extension matched to the installed herdr version.
   # It reports Pi's blocked / working / done state to herdr's sidebar.
   home.activation.herdrPiIntegration = lib.hm.dag.entryAfter [ "linkGeneration" ] ''
-    $DRY_RUN_CMD ${lib.getExe pkgs.herdr} integration install pi || true
+    if ! $DRY_RUN_CMD ${lib.getExe pkgs.herdr} integration install pi; then
+      warnEcho "Herdr Pi integration failed; retry 'herdr integration install pi' and restart Pi."
+    fi
   '';
 }

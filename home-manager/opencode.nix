@@ -4,9 +4,8 @@
 # This module configures:
 # - Default model: Claude Opus 4.8 via GitHub Copilot
 # - MCP servers declared inline. The low-risk / interactive-auth ones
-#   (atlassian, github, memory) default to `enabled = true`; the rest
-#   (terraform, k8s) default to `enabled = false` so they're discoverable
-#   in this config but don't launch unless explicitly flipped on.
+#   (atlassian, github, memory) and Slack read/write default to
+#   `enabled = true`; k8s remains discoverable but disabled.
 # - Web UI for browser-based interaction
 # - Shell aliases for quick access (o, oc, ou) plus the `os` session picker.
 #   No custom slash commands or agents are defined here — see
@@ -196,12 +195,11 @@ in
         # workspace-mutating tools added to the allowlist. Listing a write tool
         # in SLACK_MCP_ENABLED_TOOLS registers it without channel restrictions,
         # so conversations_add_message, reactions_add/remove, and
-        # conversations_mark are all live here. Disabled by default; enable
-        # deliberately when a task needs to post/react/mark. Stealth mode uses
-        # the browser session token and cookie from the environment.
+        # conversations_mark are all live here. Enabled by default; stealth
+        # mode uses the browser session token and cookie from the environment.
         slack-write = {
           type = "local";
-          enabled = false;
+          enabled = true;
           command = [ (lib.getExe slackMcpServer) ];
           environment = {
             SLACK_MCP_ENABLED_TOOLS = "conversations_history,conversations_replies,conversations_search_messages,conversations_unreads,channels_list,channels_me,usergroups_list,users_search,conversations_add_message,reactions_add,reactions_remove,conversations_mark";
@@ -282,72 +280,7 @@ in
         them with `delete_observations` and add the corrected one.
       - Keep entity names stable and unique (e.g. repo slugs, hostnames).
 
-      # Interactive & long-running commands (herdr tabs)
-
-      The `bash` tool has no TTY: any command that prompts for input, waits on
-      a TTY, or runs as a long-lived foreground process will silently block or
-      fail there. Instead, run such commands in a dedicated herdr tab. herdr
-      is the terminal multiplexer this session runs inside; the `herdr` CLI
-      talks to it over a local socket. Full command reference: the `herdr`
-      skill (auto-loaded when `HERDR_ENV=1`), or `herdr <group> --help`.
-
-      Do NOT split panes to run things. Always create a new named tab instead,
-      with its label prefixed by `oc: ` (e.g. `oc: terraform apply`,
-      `oc: dev server`) so the tab is clearly attributable to this session.
-      If you do split a pane, always split horizontally (top to bottom,
-      `--direction down`), never vertically (side by side).
-
-      Precondition: only usable when `HERDR_ENV=1` (i.e. running inside herdr).
-      If it is not set, say so and ask the user to run the command themselves —
-      do NOT fall back to the `bash` tool for anything interactive.
-
-      ## Run in a herdr tab (NOT the bash tool)
-      - `sudo` (password prompt) and anything that may escalate
-      - `terraform init` / `plan` / `apply` / `destroy` (provider auth,
-        approval prompts, workspace selection, `-var` prompts)
-      - `aws sso login`, `aws configure sso`, `gcloud auth login`,
-        `az login`, `vault login`, `op signin` — any browser/device-code
-        or interactive auth flow
-      - `direnv allow` when it triggers a nested auth/login
-      - `ssh` to a host that may prompt for a passphrase, host-key
-        confirmation, or 2FA
-      - `git push` / `pull` against a remote that may prompt for a
-        passphrase or credential helper
-      - `nh os switch` / `nh home switch` / `nixos-rebuild switch`
-        (sudo + long-running TUI diff output)
-      - `npm login`, `gh auth login`, `docker login`, `helm registry login`
-      - long-lived servers, log watchers, and test runners you want to read
-        from later, and REPLs (`psql`, `redis-cli`, `nix repl`, `tf console`,
-        `kubectl exec -it`)
-
-      ## How
-      - Create a named tab with `herdr tab create --workspace <id> --label
-        "oc: <short desc>" --no-focus`, then parse the tab id from `result.tab`
-        (needed later to close it) and the tab's root pane id from
-        `result.root_pane`. Run the command in that pane with `herdr pane run
-        <root_pane> "<command>"`. Get the current workspace id from `herdr
-        workspace list` (or read your own pane's ids from `herdr pane list`).
-      - Read progress with `herdr pane read <root_pane> --source
-        recent-unwrapped`; block on completion with `herdr wait output
-        <root_pane> --match "<sentinel>"` (append `&& echo __DONE__` to the
-        command and match that). `wait output` returns the transcript in its
-        own payload — read from that, or settle briefly before a separate
-        `pane read`.
-      - For SECRETS / AUTH (passwords, 2FA, SSO device codes): do NOT type them
-        yourself and do NOT `pane send-text` credentials. Surface the auth
-        URL / device code / prompt to the user verbatim, focus the tab
-        (`herdr tab focus <tab_id>` / tell them which tab), and wait for them
-        to complete it. The human owns credential entry.
-      - For non-interactive, short-lived commands (ls, grep, nixfmt, git
-        status, etc.) keep using the `bash` tool — a herdr tab is overhead.
-      - If unsure whether a command will prompt, prefer a herdr tab.
-      - Clean up when done: once the command has finished and you have read
-        everything you need from the tab, close it with `herdr tab close
-        <tab_id>` (parse `tab_id` from the `tab create` response). Do NOT close
-        a tab while its command is still running, while it is blocked on
-        secrets/auth the user must complete, or if it is a long-lived server /
-        log stream the user still needs — leave those open and just tell the
-        user. When in doubt, ask before closing.
+      ${builtins.readFile ./dotfiles/herdr-policy.md}
 
       # Modern CLI toolbox
 

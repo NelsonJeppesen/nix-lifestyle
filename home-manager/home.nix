@@ -16,6 +16,8 @@
     ./ansible.nix # Ansible CLI, linting, testing, and language tooling
     ./bat.nix # Syntax-aware file viewer
     ./chrome.nix # Google Chrome browser (extensions via NixOS managed policies)
+    ./claude-code.nix # Claude Code AI coding assistant and c/cc aliases
+    ./codex.nix # OpenAI Codex coding assistant (no MCP servers)
     ./development-tools.nix # Structural search and cross-language developer tools
     ./editorconfig.nix # Global editorconfig settings
     ./firefox.nix # Firefox browser with custom search engines
@@ -26,6 +28,7 @@
     ./gnome.nix # GNOME desktop dconf settings and keybindings
     ./herdr.nix # herdr agent multiplexer (wraps opencode/coding agents)
     ./kitty.nix # Kitty terminal emulator
+    ./mise.nix # Runtime and development-tool version manager
     ./neovim.nix # Neovim editor with LSP, plugins, and keymaps
     ./nix-index.nix # Prebuilt package-file index and ad-hoc command runner
     ./opencode.nix # OpenCode AI coding assistant
@@ -36,7 +39,7 @@
     ./slack.nix # Slack wrapped with native-Wayland + GPU/VAAPI flags
     ./slack-mcp.nix # slack-stealth-tokens: capture xoxc/xoxd for the Slack MCP server
     ./tailscale-systray.nix # Tailscale's official system tray app (autostart via systemd --user)
-    ./zoxide.nix # Frecency-based directory navigation via `cd`
+    ./zoxide.nix # Frecency-based directory navigation via `z`
     ./zsh.nix # Zsh shell, prompt, aliases, and functions
   ];
 
@@ -251,7 +254,6 @@
       pkgs.gh # GitHub CLI
       pkgs.hurl # HTTP testing tool
       pkgs.ipcalc # IP subnet calculator
-      # pkgs.lazyworktree # Git worktree picker used by `wt`
       pkgs.nb # Notes used by `n`, `nw`, and `np`
       pkgs.p7zip # 7-Zip archiver
       pkgs.ripgrep # Fast grep alternative

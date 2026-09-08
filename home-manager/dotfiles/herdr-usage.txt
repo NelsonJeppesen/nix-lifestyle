@@ -35,7 +35,7 @@ Prefix keys
 -----------
   prefix+w                 workspace picker
   prefix+g                 goto picker
-  prefix+e                 edit scrollback
+  prefix+[                 keyboard copy mode
   prefix+shift+p           rename pane
   prefix+shift+t           rename tab
   prefix+1..9              jump to tab
@@ -46,6 +46,37 @@ Prefix keys
   prefix+s                 settings
   prefix+shift+r           reload config
   prefix+?                 show keymap
+
+Scrollback and search
+--------------------
+  F1                       edit pane scrollback (replaces prefix+e)
+  prefix+[                 enter copy mode
+  / or ?                   search forward/backward in copy mode
+  n / N                    next/previous search match
+  prefix+?                 searchable live keybinding help
+
+Herdr retains 10 MB of scrollback per pane by default. Tune
+advanced.scrollback_limit_bytes in herdr.nix if needed; Kitty's 30,000-line
+scrollback setting does not control Herdr pane history. Alternate-screen TUIs
+do not necessarily retain output that has scrolled off their screen.
+
+Shell and agents
+----------------
+  hrf COMMAND [ARGS...]    run in a new tab and focus it
+  hrn COMMAND [ARGS...]    run in a new background tab
+Both preserve the caller's workspace and directory, not the UI-focused tab.
+Agent shortcuts use Herdr's readiness-aware agent start API. Delegated tasks
+use agent prompt --wait --timeout, not shell prompt scraping. OpenCode and Pi
+share version-matched skills and a local named-tab/authentication policy.
+
+Updates
+-------
+Stay on stable Herdr through the Home Manager nixpkgs pin; do not use
+herdr channel set preview or herdr update to bypass Nix. Config reload does
+not upgrade the running server. Nix installs do not support update --handoff.
+Detach preserves processes; restarting the server does not preserve arbitrary
+running commands. Plan any restart after work finishes; native agent resume is
+separate from process survival. Never stop the server just to apply UI settings.
 
 Notes
 -----

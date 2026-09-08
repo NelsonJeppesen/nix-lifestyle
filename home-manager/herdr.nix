@@ -29,13 +29,12 @@ let
       pkgs.jq
     ];
     text = ''
-      cwd="''${HERDR_ACTIVE_PANE_CWD:-}"
-      if [ -n "$cwd" ]; then
-        pane="$(herdr tab create --focus --cwd "$cwd" | jq -r '.result.root_pane.pane_id')"
-      else
-        pane="$(herdr tab create --focus | jq -r '.result.root_pane.pane_id')"
-      fi
-      exec herdr pane run "$pane" opencode
+      workspace="''${HERDR_ACTIVE_WORKSPACE_ID:?Herdr did not supply the active workspace}"
+      cwd="''${HERDR_ACTIVE_PANE_CWD:?Herdr did not supply the active directory}"
+      pane="$(herdr tab create --workspace "$workspace" --focus --cwd "$cwd" \
+        | jq -er '.result.root_pane.pane_id | strings | select(length > 0)')"
+      name="oc-''${pane//:/-}"
+      exec herdr agent start "''${name,,}" --kind opencode --pane "$pane"
     '';
   };
 
@@ -47,14 +46,25 @@ let
       pkgs.jq
     ];
     text = ''
-      cwd="''${HERDR_ACTIVE_PANE_CWD:-}"
-      if [ -n "$cwd" ]; then
-        pane="$(herdr tab create --focus --cwd "$cwd" | jq -r '.result.root_pane.pane_id')"
-      else
-        pane="$(herdr tab create --focus | jq -r '.result.root_pane.pane_id')"
-      fi
-      exec herdr pane run "$pane" pi
+      workspace="''${HERDR_ACTIVE_WORKSPACE_ID:?Herdr did not supply the active workspace}"
+      cwd="''${HERDR_ACTIVE_PANE_CWD:?Herdr did not supply the active directory}"
+      pane="$(herdr tab create --workspace "$workspace" --focus --cwd "$cwd" \
+        | jq -er '.result.root_pane.pane_id | strings | select(length > 0)')"
+      name="pi-''${pane//:/-}"
+      exec herdr agent start "''${name,,}" --kind pi --pane "$pane"
     '';
+  };
+
+  mobileRelayEnsure = pkgs.writeShellApplication {
+    name = "herdr-mobile-relay-ensure";
+    runtimeInputs = with pkgs; [
+      herdr
+      jq
+      bash
+      gnused
+      coreutils
+    ];
+    text = builtins.readFile ./bin/herdr-mobile-relay-ensure;
   };
 in
 {
@@ -99,22 +109,13 @@ in
       # when Kitty switches between the managed dark/light theme files.
       panel_bg = "reset"
 
-      # Focus visibility. Per herdr's sidebar renderer (src/ui/sidebar.rs
-      # render_agent_detail), the ONLY difference between the focused agent row
-      # and the others is: focused draws a full-row background band in
-      # `surface_dim` and its name in `text`, while unfocused rows have no band
-      # and use `subtext0` (state text also DIM). In stock Gruvbox-dark
-      # `surface_dim` is almost identical to the #282828 panel, so the focus
-      # band is invisible. Override surface_dim to a clearly-lighter Gruvbox
-      # shade (bg2 #504945) so the focused row gets a visible band, and widen
-      # the name contrast by pinning `text` bright and `subtext0` dimmer.
-      surface_dim = "#504945"
-      text = "#fbf1c7"
-      subtext0 = "#928374"
+      # Use each built-in theme's active_row_bg/selection_bg and foregrounds.
+      # Shared dark-only overrides would also apply in light mode.
 
       [update]
       # Nix owns herdr's version; silence the background update nag. `herdr
       # update` is a no-op for a Nix-managed install anyway.
+      channel = "stable"
       version_check = false
 
       [terminal]
@@ -192,16 +193,17 @@ in
       [ui]
       # Skip the name prompt and create tabs immediately with generated names.
       prompt_new_tab_name = false
-      pane_borders = false
+      pane_borders = true
+      pane_outer_borders = false
       pane_gaps = false
+      status_indicators = "symbols"
 
-      # accent colours highlights, borders and navigation UI (NOT the focused
-      # agent row — that is driven by surface_dim/text/subtext0 in
-      # [theme.custom] above). Gruvbox-dark bright orange.
+      # Navigation accent; focused rows use the built-in theme's active_row_bg.
       accent = "#fe8019"
 
       [ui.sidebar.agents]
       row_gap = 1
+      rows = [["state_icon", "workspace"], ["terminal_title","pane"]]
 
       [ui.sidebar.spaces]
       row_gap = 1
@@ -216,6 +218,12 @@ in
     # config dir so it sits next to config.toml. Source of truth is the repo
     # dotfile (matches the curlrc / digrc pattern in home.nix).
     ".config/herdr/usage.txt".source = ./dotfiles/herdr-usage.txt;
+
+    ".config/opencode/skills/herdr/SKILL.md" = {
+      source = "${pkgs.herdr}/share/herdr/skills/herdr/SKILL.md";
+      # Replace the unmanaged file written by the previous activation hook.
+      force = true;
+    };
   };
 
   # Install (and keep updated) the herdr↔opencode integration plugin. herdr
@@ -231,42 +239,19 @@ in
   # installer refuses to run if ~/.config/opencode is missing).
   home.activation.herdrOpencodeIntegration = lib.hm.dag.entryAfter [ "linkGeneration" ] ''
     if [ -d "${config.home.homeDirectory}/.config/opencode" ]; then
-      $DRY_RUN_CMD ${lib.getExe pkgs.herdr} integration install opencode || true
+      if ! $DRY_RUN_CMD ${lib.getExe pkgs.herdr} integration install opencode; then
+        warnEcho "Herdr OpenCode integration failed; retry 'herdr integration install opencode' and restart OpenCode."
+      fi
+    else
+      warnEcho "Herdr OpenCode integration skipped: ~/.config/opencode is missing."
     fi
   '';
 
-  # Keep OpenCode's agent instructions matched to the installed Herdr CLI.
-  home.activation.herdrOpencodeSkill = lib.hm.dag.entryAfter [ "linkGeneration" ] ''
-    skill_dir="${config.home.homeDirectory}/.config/opencode/skills/herdr"
-    $DRY_RUN_CMD mkdir -p "$skill_dir"
-    if [[ -z "''${DRY_RUN_CMD:-}" ]]; then
-      ${lib.getExe pkgs.herdr} --skill > "$skill_dir/SKILL.md"
-    fi
-  '';
-
-  # Bootstrap the marketplace plugin independently on every laptop. Its token,
-  # Cloudflare tunnel, hostname, and service state remain machine-local under
-  # ~/.config/herdr; only the plugin installation is shared by Home Manager.
+  # Pin fresh plugin installs, verify registration, and warn rather than migrate
+  # existing relay state. The upstream release bundle is not Nix-managed.
   home.activation.herdrMobileRelay = lib.hm.dag.entryAfter [ "linkGeneration" ] ''
-    plugin_config="${config.home.homeDirectory}/.config/herdr/plugins/config/herdr-mobile-relay.events"
-    if [ ! -d "$plugin_config" ]; then
-      HERDR_MOBILE_RELAY_NO_AUTO_SETUP=1 \
-        $DRY_RUN_CMD ${lib.getExe pkgs.herdr} plugin install 0cv/herdr-mobile-relay --yes || true
-    fi
-
-    # Upstream uses /bin/bash, which intentionally does not exist on NixOS.
-    # Tolerate failures here (e.g. a stale herdr server whose protocol no
-    # longer matches the freshly-installed binary): a mismatch must never
-    # abort the whole activation. `|| true` keeps errexit from killing the
-    # switch; an empty plugin_root then simply skips the shebang rewrite.
-    plugin_root="$(${lib.getExe pkgs.herdr} plugin list \
-      --plugin herdr-mobile-relay.events --json 2>/dev/null \
-      | ${lib.getExe pkgs.jq} -r '.result.plugins[0].plugin_root // empty' || true)"
-    if [ -d "$plugin_root/relay" ]; then
-      for script in "$plugin_root"/relay/*.sh; do
-        $DRY_RUN_CMD ${lib.getExe pkgs.gnused} -i \
-          '1s|^#!/bin/bash$|#!${lib.getExe pkgs.bash}|' "$script"
-      done
+    if ! $DRY_RUN_CMD ${lib.getExe mobileRelayEnsure} ${lib.getExe pkgs.bash}; then
+      warnEcho "Herdr mobile relay verification failed unexpectedly; inspect the activation output."
     fi
   '';
 }
