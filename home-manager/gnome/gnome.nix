@@ -1,22 +1,8 @@
 {
   config,
   lib,
-  pkgs,
   ...
 }:
-let
-  flameshotScreenshot = pkgs.writeShellApplication {
-    name = "flameshot-screenshot";
-    runtimeInputs = [ pkgs.procps ];
-    text = ''
-      pkill -f '/bin/[f]lameshot( |$)' || true
-      while pgrep -f '/bin/[f]lameshot( |$)' >/dev/null; do
-        sleep 0.05
-      done
-      exec ${config.services.flameshot.package}/bin/flameshot gui
-    '';
-  };
-in
 {
   programs.gnome-shell.enable = true;
 
@@ -145,7 +131,6 @@ in
 
     # Shell keybindings: free up keys for custom use
     "org/gnome/shell/keybindings" = {
-      show-screenshot-ui = [ ]; # Free up Print key for flameshot
       toggle-application-view = [ ]; # Free up Super+A
       toggle-message-tray = [ "<Super>v" ];
       toggle-quick-settings = [ ]; # Free up Super+S
@@ -161,24 +146,10 @@ in
       # Super+Space opens GNOME search (acts as app launcher)
       search = [ "<Super>space" ];
 
-      # Free up the default screenshot key so flameshot can use it
-      screenshot = [ ];
-
       # Volume controls (Shift+Super + brace keys)
       volume-down = [ "<Shift><Super>braceleft" ];
       volume-up = [ "<Shift><Super>braceright" ];
 
-      # Register custom keybinding slots
-      custom-keybindings = [
-        "/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom0/"
-      ];
-    };
-
-    # Custom keybinding: Print kills any hidden/stale instance before launching a fresh capture.
-    "org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom0" = {
-      binding = "Print";
-      command = "${flameshotScreenshot}/bin/flameshot-screenshot";
-      name = "flameshot screenshot";
     };
 
     # Allow extensions regardless of GNOME Shell version mismatches

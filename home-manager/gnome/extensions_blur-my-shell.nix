@@ -117,8 +117,6 @@
 
     "org/gnome/shell/extensions/blur-my-shell/dash-to-dock".blur = false;
 
-    "org/gnome/shell/extensions/blur-my-shell/screenshot".blur = false;
-
     "org/gnome/shell/extensions/blur-my-shell/window-list".blur = false;
 
     "org/gnome/shell/extensions/blur-my-shell/coverflow-alt-tab".blur = false;
