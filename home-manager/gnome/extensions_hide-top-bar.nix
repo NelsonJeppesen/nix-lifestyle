@@ -1,10 +1,4 @@
 { pkgs, ... }: {
-  programs.gnome-shell.extensions = [
-    {
-      package = pkgs.gnomeExtensions.hide-top-bar;
-    }
-  ];
-
   dconf.settings = {
     "org/gnome/shell/extensions/hidetopbar" = {
       enable-intellihide = true; # Only hide when a window needs the space
@@ -12,4 +6,10 @@
       show-in-overview = true; # Keep the panel visible in the Activities overview
     };
   };
+
+  programs.gnome-shell.extensions = [
+    {
+      package = pkgs.gnomeExtensions.hide-top-bar;
+    }
+  ];
 }

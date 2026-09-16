@@ -1,16 +1,4 @@
 { pkgs, ... }: {
-  programs.gnome-shell.extensions = [
-    {
-      package = pkgs.gnomeExtensions.quick-lofi;
-    }
-  ];
-
-  home.packages = [
-    pkgs.socat # mpv IPC
-    (pkgs.mpv.override { youtubeSupport = false; }) # Radio playback
-    # pkgs.cava # Audio visualizer
-  ];
-
   dconf.settings = {
     "org/gnome/shell/extensions/quick-lofi" = {
       volume = 75;
@@ -55,4 +43,16 @@
       ];
     };
   };
+
+  programs.gnome-shell.extensions = [
+    {
+      package = pkgs.gnomeExtensions.quick-lofi;
+    }
+  ];
+
+  home.packages = [
+    pkgs.socat # mpv IPC
+    (pkgs.mpv.override { youtubeSupport = false; }) # Radio playback
+    # pkgs.cava # Audio visualizer
+  ];
 }

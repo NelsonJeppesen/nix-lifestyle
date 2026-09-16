@@ -1,10 +1,4 @@
 { pkgs, ... }: {
-  programs.gnome-shell.extensions = [
-    {
-      package = pkgs.gnomeExtensions.just-perfection;
-    }
-  ];
-
   dconf.settings = {
     "org/gnome/shell/extensions/just-perfection" = {
       accessibility-menu = false; # Hide accessibility menu from top bar
@@ -17,4 +11,10 @@
       window-maximized-on-create = true; # Auto-maximize new windows
     };
   };
+
+  programs.gnome-shell.extensions = [
+    {
+      package = pkgs.gnomeExtensions.just-perfection;
+    }
+  ];
 }

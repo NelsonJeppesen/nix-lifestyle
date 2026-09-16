@@ -1,10 +1,4 @@
 { pkgs, ... }: {
-  programs.gnome-shell.extensions = [
-    {
-      package = pkgs.gnomeExtensions.random-wallpaper;
-    }
-  ];
-
   dconf.settings = {
     "org/gnome/shell/extensions/space-iflow-randomwallpaper" = {
       auto-fetch = true;
@@ -35,4 +29,10 @@
       minimal-resolution = "2560x1600";
     };
   };
+
+  programs.gnome-shell.extensions = [
+    {
+      package = pkgs.gnomeExtensions.random-wallpaper;
+    }
+  ];
 }

@@ -1,10 +1,4 @@
 { pkgs, ... }: {
-  programs.gnome-shell.extensions = [
-    {
-      package = pkgs.gnomeExtensions.caffeine;
-    }
-  ];
-
   dconf.settings = {
     "org/gnome/shell/extensions/caffeine" = {
       indicator-position = 17;
@@ -15,4 +9,10 @@
       toggle-shortcut = [ "<Super>o" ]; # Super+O to toggle
     };
   };
+
+  programs.gnome-shell.extensions = [
+    {
+      package = pkgs.gnomeExtensions.caffeine;
+    }
+  ];
 }

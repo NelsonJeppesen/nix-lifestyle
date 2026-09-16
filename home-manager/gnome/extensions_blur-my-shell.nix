@@ -1,10 +1,4 @@
 { pkgs, lib, ... }: {
-  programs.gnome-shell.extensions = [
-    {
-      package = pkgs.gnomeExtensions.blur-my-shell;
-    }
-  ];
-
   dconf.settings = {
     "org/gnome/shell/extensions/blur-my-shell" =
       let
@@ -129,4 +123,10 @@
 
     "org/gnome/shell/extensions/blur-my-shell/coverflow-alt-tab".blur = false;
   };
+
+  programs.gnome-shell.extensions = [
+    {
+      package = pkgs.gnomeExtensions.blur-my-shell;
+    }
+  ];
 }

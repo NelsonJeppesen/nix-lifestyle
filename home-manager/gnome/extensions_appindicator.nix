@@ -1,10 +1,4 @@
 { pkgs, ... }: {
-  programs.gnome-shell.extensions = [
-    {
-      package = pkgs.gnomeExtensions.appindicator;
-    }
-  ];
-
   dconf.settings = {
     "org/gnome/shell/extensions/appindicator" = {
       icon-brightness = -0.1; # Slightly dimmed icons
@@ -14,4 +8,10 @@
       tray-pos = "right"; # Position tray on the right side of top bar
     };
   };
+
+  programs.gnome-shell.extensions = [
+    {
+      package = pkgs.gnomeExtensions.appindicator;
+    }
+  ];
 }

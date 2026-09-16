@@ -1,10 +1,4 @@
 { pkgs, ... }: {
-  programs.gnome-shell.extensions = [
-    {
-      package = pkgs.gnomeExtensions.clipboard-indicator;
-    }
-  ];
-
   dconf.settings = {
     "org/gnome/shell/extensions/clipboard-indicator" = {
       blink-icon-on-copy = true;
@@ -33,4 +27,10 @@
       topbar-preview-size = 9; # Characters shown in top bar preview
     };
   };
+
+  programs.gnome-shell.extensions = [
+    {
+      package = pkgs.gnomeExtensions.clipboard-indicator;
+    }
+  ];
 }
