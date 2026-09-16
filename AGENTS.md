@@ -8,7 +8,7 @@ Personal NixOS + Home Manager monorepo. Both layers are flakes (separate, not un
 - No top-level `flake.nix`; the two flakes are intentionally independent (each pins its own `nixpkgs`)
 - No `nixos/overlays/` directory; package overrides live inline in profiles via `overrideAttrs`
 
-See `nixos/AGENTS.md` and `home-manager/AGENTS.md` for layer-specific rules.
+See `nixos/AGENTS.md` and `home-manager/doc/AGENTS.md` for layer-specific rules.
 
 ## BUILD
 - System: `sudo nixos-rebuild switch --flake /etc/nixos`; dry: `nixos-rebuild dry-build --flake /etc/nixos`

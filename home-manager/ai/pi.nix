@@ -57,7 +57,7 @@ in
   home.file = {
     # Version-matched CLI reference plus the shared tab/authentication policy.
     ".pi/agent/skills/herdr/SKILL.md".source = "${pkgs.herdr}/share/herdr/skills/herdr/SKILL.md";
-    ".pi/agent/AGENTS.md".source = ./dotfiles/herdr-policy.md;
+    ".pi/agent/AGENTS.md".source = ../doc/herdr-policy.md;
 
     # Pi discovers one directory deep under extensions.
     ".pi/agent/extensions/mcp-adapter".source = piMcpAdapter;

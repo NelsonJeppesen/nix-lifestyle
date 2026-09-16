@@ -7,10 +7,10 @@ between 2026-07-19 and 2026-08-01.
 The current configuration is authoritative. The history section explains why
 the tools exist and what they replaced. More focused references remain in:
 
-- `docs/neovim-cheatsheet.md`
-- `docs/serena-ansible.md`
+- `doc/neovim-cheatsheet.md`
+- `doc/serena-ansible.md`
 - `ai/dotfiles/herdr-usage.txt`
-- `AGENTS.md`
+- `doc/AGENTS.md`
 
 ## Quick Choice
 
@@ -336,7 +336,7 @@ installing a CLI language server does not enable it in the editor.
 Avante is enabled. Copilot and opencode.nvim are not enabled; use OpenCode
 from Herdr. Serena has its own Ansible tooling configuration.
 
-See `docs/neovim-cheatsheet.md` for shortcuts and enabled languages.
+See `doc/neovim-cheatsheet.md` for shortcuts and enabled languages.
 
 ## Ansible Toolchain
 
@@ -507,15 +507,15 @@ Baseline for this guide: the last commit before the window was
 | GitHub dashboard | `cli/gh-dash.nix` |
 | OpenCode and MCP servers | `ai/opencode.nix` |
 | Pi and its MCP adapter | `ai/pi.nix` |
-| Serena | `ai/serena.nix`, `docs/serena-ansible.md` |
-| Herdr | `ai/herdr.nix`, `ai/dotfiles/herdr-usage.txt`, `ai/dotfiles/herdr-policy.md`, bundled package skill |
-| Neovim | `neovim/nvf.nix`, `docs/neovim-cheatsheet.md` |
+| Serena | `ai/serena.nix`, `doc/serena-ansible.md` |
+| Herdr | `ai/herdr.nix`, `ai/dotfiles/herdr-usage.txt`, `doc/herdr-policy.md`, bundled package skill |
+| Neovim | `neovim/nvf.nix`, `doc/neovim-cheatsheet.md` |
 | Ansible CLI | `cli/ansible.nix` |
 | zoxide and shell helpers | `cli/zoxide.nix`, `cli/zsh.nix`, `cli/dotfiles/zsh-named-dirs.zsh` |
 | bat | `cli/bat.nix` |
 | ast-grep | `cli/development-tools.nix` |
 | nix-index and comma | `cli/nix-index.nix` |
-| Feature imports and packages | `home.nix`, `<category>/default.nix`, `other.nix` |
+| Feature imports and packages | `home.nix`, `<category>/default.nix`, `<category>/packages.nix`, `other.nix` |
 | Input pins and special arguments | `flake.nix`, `flake.lock` |
 
 <!-- markdownlint-enable MD013 -->

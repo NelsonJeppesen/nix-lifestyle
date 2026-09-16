@@ -120,7 +120,7 @@ in
         them with `delete_observations` and add the corrected one.
       - Keep entity names stable and unique (e.g. repo slugs, hostnames).
 
-      ${builtins.readFile ./dotfiles/herdr-policy.md}
+      ${builtins.readFile ../doc/herdr-policy.md}
 
       # Modern CLI toolbox
 

@@ -18,6 +18,7 @@ let
   };
 in
 {
+  programs.gnome-shell.enable = true;
 
   # Nautilus sidebar bookmarks for quick navigation
   home.file.".config/gtk-3.0/bookmarks".text = ''
