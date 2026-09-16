@@ -1,0 +1,9 @@
+{
+  "//": "open-plan-annotator config (https://github.com/ndom91/open-plan-annotator).",
+  "//1": "Hand approved plans off to the `build` agent (upstream default).",
+  "//2": "Managed by ~/.config/home-manager/ai/opencode.nix.",
+  "implementationHandoff": {
+    "enabled": true,
+    "agent": "build"
+  }
+}

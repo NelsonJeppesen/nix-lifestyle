@@ -9,7 +9,7 @@ the tools exist and what they replaced. More focused references remain in:
 
 - `docs/neovim-cheatsheet.md`
 - `docs/serena-ansible.md`
-- `dotfiles/herdr-usage.txt`
+- `ai/dotfiles/herdr-usage.txt`
 - `AGENTS.md`
 
 ## Quick Choice
@@ -104,7 +104,7 @@ OpenCode pre-allows external file access under `~/source/**` and `~/tmp/**`.
 This removes repetitive directory prompts; it is not permission to expose
 credentials, escalate privileges, or perform arbitrary destructive actions.
 
-There are no custom agent definitions in `opencode.nix`. Pi is a separate
+There are no custom agent definitions in `ai/opencode.nix`. Pi is a separate
 coding agent, and Serena is an MCP server.
 
 The former `oc-standup` workflow was removed.
@@ -317,88 +317,26 @@ The NixOS `opencode` host is a separate deployment. It serves loopback port
 4096 and publishes it through `tailscale serve`; tailnet ACLs are its
 authentication gate.
 
-It imports `home-manager/opencode.nix`, but not the separate `serena.nix`,
-`pi.nix`, `herdr.nix`, or `git.nix` modules. Therefore it does not
+It imports `home-manager/ai/opencode.nix` and `home-manager/ai/mcp.nix`,
+but not the separate `ai/serena.nix`,
+`ai/pi.nix`, `ai/herdr.nix`, or `cli/git.nix` modules. Therefore it does not
 automatically receive Serena or Pi even though its core
-OpenCode settings and inline MCP configuration match.
+OpenCode settings and shared MCP catalogue match.
 
 ## Neovim
 
-`vim` invokes Neovim. `MANPAGER` also uses `nvim +Man!`.
+`nvim`, `vim`, and `vi` use the nvf configuration in `neovim/nvf.nix`.
+It sets `$EDITOR` and `$VISUAL` to Neovim.
 
-### LSP and linting
+Telescope provides search, Neo-tree provides the file tree, and Trouble
+shows diagnostics. Formatting and extra diagnostics are enabled through
+nvf's language modules. Language settings are explicit in `neovim/nvf.nix`;
+installing a CLI language server does not enable it in the editor.
 
-The main LSP servers include:
+Avante is enabled. Copilot and opencode.nvim are not enabled; use OpenCode
+from Herdr. Serena has its own Ansible tooling configuration.
 
-- `ansiblels`
-- `bashls`
-- `jinja_lsp`
-- `jsonls`
-- `nixd`
-- `ruby_lsp`
-- `terraformls`
-- `typos_lsp`
-- `yamlls`
-
-The enabled-server line in `docs/neovim-cheatsheet.md` currently omits
-`ansiblels` and `jinja_lsp`; the configuration in `neovim.nix` is
-authoritative.
-
-Save-time `nvim-lint` mappings:
-
-| Filetype | Linter |
-| --- | --- |
-| `yaml.ansible` | `ansible-lint` |
-| `yaml.ghaction` | `actionlint` |
-| `dockerfile` | `hadolint` |
-| `markdown` | `markdownlint` |
-| `sh` | `shellcheck` |
-| `terraform` | `tflint` |
-| `yaml` | `yamllint` |
-
-Lint runs after a successful write. It does not explicitly run when a file is
-opened; save the file or press `<leader>ll`. Findings flow into ordinary
-Neovim diagnostics and Trouble alongside LSP diagnostics.
-
-Useful keys:
-
-| Key | Action |
-| --- | --- |
-| `<leader>ll` | Lint current buffer |
-| `<leader>lf` | Format through conform.nvim with LSP fallback |
-| `<leader>xx` | Workspace diagnostics |
-| `<leader>xX` | Current-buffer diagnostics |
-| `<leader>ln` / `<leader>lp` | Next/previous diagnostic |
-| `<leader>li` | LSP information |
-| `<leader>la` | Code action |
-| `<leader>lR` | Rename symbol |
-
-Ansible language-server linting is disabled in Neovim because `nvim-lint`
-already runs `ansible-lint`; this avoids duplicate diagnostics. Serena has its
-own Ansible lint integration for semantic tooling.
-
-### Relevant behavior changes
-
-- `hardtime.nvim` was removed; repeated motions are no longer throttled.
-- Arrow keys remain independently disabled.
-- Conditional text objects are `aI` / `iI`, leaving lowercase `ai` / `ii` for
-  indentation text objects.
-- LSP file logging is off.
-- F1 scrollback editing belongs to Herdr, not Kitty.
-
-### OpenCode integration
-
-The OpenCode Neovim plugin includes these useful mappings:
-
-| Key | Action |
-| --- | --- |
-| `<leader>oa` | Ask OpenCode |
-| `<leader>ox` | Select an OpenCode action |
-| `<leader>op{motion}` | Add a range to the prompt/context |
-| `<leader>og` | Add a diagnostic/context item |
-
-See `neovim.nix` and `docs/neovim-cheatsheet.md` for the full current mapping
-set.
+See `docs/neovim-cheatsheet.md` for shortcuts and enabled languages.
 
 ## Ansible Toolchain
 
@@ -524,7 +462,7 @@ branch.
 
 On AC power, GNOME is configured to lock/blank after 15 minutes but delay
 automatic suspend for two hours. Battery suspend behavior is unchanged. The
-comment in `gnome.nix` currently says three hours, but `7200` seconds and the
+comment in `gnome/gnome.nix` currently says three hours, but `7200` seconds and the
 commit subject both indicate two hours.
 
 ## What Changed and Why
@@ -565,19 +503,19 @@ Baseline for this guide: the last commit before the window was
 
 | Area | Main files |
 | --- | --- |
-| Git | `git.nix` |
-| GitHub dashboard | `gh-dash.nix` |
-| OpenCode and MCP servers | `opencode.nix` |
-| Pi and its MCP adapter | `pi.nix` |
-| Serena | `serena.nix`, `docs/serena-ansible.md` |
-| Herdr | `herdr.nix`, `dotfiles/herdr-usage.txt`, `dotfiles/herdr-policy.md`, bundled package skill |
-| Neovim | `neovim.nix`, `neovim/lua/which-key-nvim.lua`, `docs/neovim-cheatsheet.md` |
-| Ansible CLI | `ansible.nix` |
-| zoxide and shell helpers | `zoxide.nix`, `zsh.nix`, `dotfiles/zsh-named-dirs.zsh` |
-| bat | `bat.nix` |
-| ast-grep | `development-tools.nix` |
-| nix-index and comma | `nix-index.nix` |
-| Feature imports and packages | `home.nix` |
+| Git | `cli/git.nix` |
+| GitHub dashboard | `cli/gh-dash.nix` |
+| OpenCode and MCP servers | `ai/opencode.nix` |
+| Pi and its MCP adapter | `ai/pi.nix` |
+| Serena | `ai/serena.nix`, `docs/serena-ansible.md` |
+| Herdr | `ai/herdr.nix`, `ai/dotfiles/herdr-usage.txt`, `ai/dotfiles/herdr-policy.md`, bundled package skill |
+| Neovim | `neovim/nvf.nix`, `docs/neovim-cheatsheet.md` |
+| Ansible CLI | `cli/ansible.nix` |
+| zoxide and shell helpers | `cli/zoxide.nix`, `cli/zsh.nix`, `cli/dotfiles/zsh-named-dirs.zsh` |
+| bat | `cli/bat.nix` |
+| ast-grep | `cli/development-tools.nix` |
+| nix-index and comma | `cli/nix-index.nix` |
+| Feature imports and packages | `home.nix`, `<category>/default.nix`, `other.nix` |
 | Input pins and special arguments | `flake.nix`, `flake.lock` |
 
 <!-- markdownlint-enable MD013 -->

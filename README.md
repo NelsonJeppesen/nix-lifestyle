@@ -111,7 +111,9 @@ Examples currently wired up:
 - **Firefox/Chrome**: aggressive background throttling for idle savings
 - **GNOME**: CapsLock → Super (via keyd), heavy dconf/keybinding remap, run-or-raise shortcuts
 - **Kitty + herdr**: Kitty renders one window; herdr owns tabs, panes, and sessions
-- **Neovim**: arrow keys disabled; structural motion via Treesitter textobjects; LSP pickers via Snacks
+- **Neovim**: nvf (`home-manager/neovim/nvf.nix`) — derived from nvf's `maximal` configuration and
+  then written out in full, so every plugin and language server is an explicit
+  Nix option. No Lua config directory, nothing installs at runtime
 - **Shell**: Atuin (self-hostable history sync), fuzzy AWS profile/region pickers, terraform state helpers, kubectx in starship right prompt
 - **Git**: SSH-signed commits required, gitalias as a flake input
 
@@ -123,9 +125,9 @@ Examples currently wired up:
 | Update everything            | `update`                   |
 | Edit terminal scrollback     | herdr `F1`                 |
 | Open OpenCode in a new tab   | `Ctrl+Shift+O`             |
-| Global grep (nvim)           | `<leader>/` (Snacks)       |
-| File explorer (nvim)         | `<leader>e` (Oil)          |
-| Copy buffer to clipboard     | `<leader>uc`               |
+| Global grep (nvim)           | `<leader>fg` (Telescope)   |
+| File explorer (nvim)         | `:Neotree`                |
+| Copy buffer to clipboard     | `:%y+`                     |
 | Terraform plan               | `tp`                       |
 | AWS profile / region picker  | `ap` / `ar`                |
 | Reset env baseline           | `rst`                      |

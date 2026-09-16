@@ -20,8 +20,9 @@
 #   hosts, and routing the agent's git/gh/ssh access through nelson keeps
 #   credentials and config in one place. HOME=/home/nelson lets opencode
 #   pick up nelson's git config, ssh keys, and gh auth automatically.
-# - opencode itself is configured via the home-manager module at
-#   ../../home-manager/opencode.nix, loaded into nelson's user
+# - opencode itself is configured via the home-manager modules at
+#   ../../home-manager/ai/opencode.nix and ../../home-manager/ai/mcp.nix (the
+#   shared MCP server catalogue), loaded into nelson's user
 #   environment by the home-manager NixOS module wired in below. That is
 #   the SAME module nelson uses on his laptop, so the headless server
 #   gets identical model selection, MCP servers, plugins, slash commands,
@@ -61,7 +62,13 @@ in
     backupFileExtension = "hm-backup";
     extraSpecialArgs = { inherit slack-mcp-server; };
     users.nelson = {
-      imports = [ ../../home-manager/opencode.nix ];
+      imports = [
+        ../../home-manager/ai/opencode.nix
+        # Shared MCP server catalogue (programs.mcp). opencode.nix no longer
+        # declares servers itself, so this must come along for the headless
+        # server to keep them.
+        ../../home-manager/ai/mcp.nix
+      ];
 
       # Minimal home-manager identity for nelson. stateVersion is pinned
       # to 24.11 to match this host's system.stateVersion; bump only with
