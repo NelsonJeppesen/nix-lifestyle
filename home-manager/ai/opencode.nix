@@ -13,6 +13,14 @@ let
   ocwebLabelPairs = lib.concatStringsSep " " (
     lib.mapAttrsToList (host: label: "[${host}]=${label}") ocwebHostLabels
   );
+
+  # Removed 2026-09-18: opencode was built against a pinned bun 1.3.13 because
+  # nixpkgs' bun 1.4.2 (2026-09-12) miscompiled opencode's single-file bundle --
+  # a module landed as `undefined` in the service-layer graph, so every prompt
+  # died with "undefined is not an object (evaluating 'a.name')" before the
+  # first model call. nixpkgs is still on bun 1.4.2, so if that resurfaces,
+  # recover the override with:
+  #   git log -S bunPinned -- home-manager/ai/opencode.nix
 in
 {
   # Shell aliases for quick OpenCode invocation
@@ -38,6 +46,7 @@ in
 
   programs.opencode = {
     enable = true;
+    package = pkgs.opencode;
     enableMcpIntegration = true; # Pull the shared programs.mcp.servers catalogue (mcp.nix) into settings.mcp
 
     # Loopback web UI behind Cloudflare Access.

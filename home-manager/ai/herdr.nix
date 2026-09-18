@@ -180,7 +180,7 @@ in
     ".config/herdr/usage.txt".source = ./dotfiles/herdr-usage.txt;
 
     ".config/opencode/skills/herdr/SKILL.md" = {
-      source = "${pkgs.herdr}/share/herdr/skills/herdr/SKILL.md";
+      source = "${pkgs.herdr}/share/skills/herdr/herdr/SKILL.md";
       # Replace the unmanaged file written by the previous activation hook.
       force = true;
     };
