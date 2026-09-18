@@ -94,37 +94,40 @@ let
     name = "kitty-font-test";
     runtimeInputs = [ pkgs.kitty ];
     text = ''
+      # Kept in sync with the font package list at the bottom of this file.
+      # Commented-out entries are not installed; uncomment both halves to
+      # put a font back in the rotation.
       fonts=(
-        "Adwaita Mono"
-        "Cascadia Mono"
-        "CommitMono"
-        "Fira Code"
-        "Hack"
-        "IBM Plex Mono"
-        "Intel One Mono"
-        "Inconsolata"
-        "Iosevka"
-        "JetBrains Mono"
-        "Maple Mono"
-        "Monaspace Neon"
-        "Rec Mono Linear"
-        "Source Code Pro"
-        "Victor Mono"
-        "Anonymous Pro"
-        "Atkinson Monolegible"
-        "B612 Mono"
-        "Comic Mono"
-        "Departure Mono"
-        "Fantasque Sans Mono"
-        "Geist Mono"
-        "Hermit"
-        "iA Writer Mono V"
-        "JuliaMono"
+        # "Adwaita Mono"
+        # "Cascadia Mono"
+        # "CommitMono"
+        # "Fira Code"
+        # "Hack"
+        # "IBM Plex Mono"
+        # "Intel One Mono"
+        # "Inconsolata"
+        # "Iosevka"
+        # "JetBrains Mono"
+        # "Maple Mono"
+        # "Monaspace Neon"
+        # "Rec Mono Linear"
+        # "Source Code Pro"
+        # "Victor Mono"
+        # "Anonymous Pro"
+        # "Atkinson Monolegible"
+        # "B612 Mono"
+        # "Comic Mono"
+        # "Departure Mono"
+        # "Fantasque Sans Mono"
+        # "Geist Mono"
+        # "Hermit"
+        # "iA Writer Mono V"
+        # "JuliaMono"
         "Lilex"
-        "Meslo LG M"
-        "Monoid"
-        "Office Code Pro"
-        "Roboto Mono"
+        # "Meslo LG M"
+        # "Monoid"
+        # "Office Code Pro"
+        # "Roboto Mono"
       )
 
       state_dir="''${XDG_STATE_HOME:-$HOME/.local/state}"
@@ -214,36 +217,41 @@ in
     kitty-theme-test # Interactively preview Kitty themes without changing managed config
     kitty-font-test # Cycle through programming fonts using Kitty remote control
 
-    pkgs.adwaita-fonts
-    pkgs.cascadia-code
-    pkgs.commit-mono
-    pkgs.fira-code
-    pkgs.hack-font
-    pkgs.ibm-plex.mono
-    pkgs.intel-one-mono
-    pkgs.inconsolata
-    pkgs.iosevka
-    pkgs.jetbrains-mono
-    pkgs.maple-mono.truetype
-    pkgs.monaspace
-    pkgs.recursive
-    pkgs.source-code-pro
-    pkgs.victor-mono
-    pkgs.anonymousPro
-    pkgs.atkinson-monolegible
-    pkgs.b612
-    pkgs.comic-mono
-    pkgs.departure-mono
-    pkgs.fantasque-sans-mono
-    pkgs.geist-font
-    pkgs.hermit
-    pkgs.ia-writer-mono
-    pkgs.julia-mono
+    # Font-test catalogue, commented out 2026-09-18 to cut build and disk
+    # cost: several build from source (pkgs.iosevka drives a whole nodejs
+    # toolchain build whenever nixpkgs runs ahead of Hydra). Only Lilex,
+    # kitty's actual font_family, stays installed. Symbols Nerd Font Mono
+    # comes from pkgs.nerd-fonts.symbols-only in packages.nix.
+    # pkgs.adwaita-fonts
+    # pkgs.cascadia-code
+    # pkgs.commit-mono
+    # pkgs.fira-code
+    # pkgs.hack-font
+    # pkgs.ibm-plex.mono
+    # pkgs.intel-one-mono
+    # pkgs.inconsolata
+    # pkgs.iosevka
+    # pkgs.jetbrains-mono
+    # pkgs.maple-mono.truetype
+    # pkgs.monaspace
+    # pkgs.recursive
+    # pkgs.source-code-pro
+    # pkgs.victor-mono
+    # pkgs.anonymousPro
+    # pkgs.atkinson-monolegible
+    # pkgs.b612
+    # pkgs.comic-mono
+    # pkgs.departure-mono
+    # pkgs.fantasque-sans-mono
+    # pkgs.geist-font
+    # pkgs.hermit
+    # pkgs.ia-writer-mono
+    # pkgs.julia-mono
     pkgs.lilex
-    pkgs.meslo-lg
-    pkgs.monoid
-    pkgs.office-code-pro
-    pkgs.roboto-mono
+    # pkgs.meslo-lg
+    # pkgs.monoid
+    # pkgs.office-code-pro
+    # pkgs.roboto-mono
   ];
 
   home = {
