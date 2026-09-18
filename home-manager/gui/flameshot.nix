@@ -38,7 +38,7 @@ in
     };
     "org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/flameshot-full" = {
       binding = "<Shift>Print";
-      command = ''${flameshotScreenshot}/bin/flameshot-screenshot full --clipboard --path "${config.xdg.userDirs.pictures}"'';
+      command = ''${flameshotScreenshot}/bin/flameshot-screenshot gui --region all --clipboard --path "${config.xdg.userDirs.pictures}"'';
       name = "flameshot full-screen screenshot";
     };
     "org/gnome/shell/extensions/blur-my-shell/screenshot".blur = false;
