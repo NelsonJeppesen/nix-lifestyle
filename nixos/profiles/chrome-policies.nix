@@ -9,6 +9,11 @@
 # Policy reference: https://chromeenterprise.google/policies/
 { config, ... }:
 let
+  # The 2022 gram is the RAM-constrained machine. Everywhere else has memory
+  # and cores to burn, so the performance block below deliberately spends both
+  # to keep the browser responsive.
+  lowSpec = config.networking.hostName == "lg-gram-14-2022";
+
   policies = {
     # ── Telemetry / privacy hardening ─────────────────────────────────
     MetricsReportingEnabled = false;
@@ -21,13 +26,33 @@ let
     # minor prefetch-telemetry tradeoff in exchange for faster page loads.
     NetworkPredictionOptions = 0;
     BackgroundModeEnabled = false;
-    HighEfficiencyModeEnabled = config.networking.hostName == "lg-gram-14-2022";
     PromotionalTabsEnabled = false;
     BrowserAddPersonEnabled = false;
     BrowserGuestModeEnabled = false;
     PasswordManagerEnabled = false; # using 1Password
     AutofillCreditCardEnabled = false;
     DefaultBrowserSettingEnabled = false;
+
+    # ── Performance: spend RAM/CPU to stay fast ───────────────────────
+    # Memory Saver discards idle background tabs, so coming back to one costs a
+    # full reload. Off on machines with RAM to spare; still on for lowSpec.
+    HighEfficiencyModeEnabled = lowSpec;
+    # Only consulted when Memory Saver is on (i.e. lowSpec). 0 = moderate:
+    # the longest idle period before a tab is discarded.
+    MemorySaverModeSavings = 0;
+
+    # 0 = Battery Saver disabled. It throttles the frame rate (and on ChromeOS
+    # the CPU) once the battery runs low; keep full speed on battery instead.
+    BatterySaverModeAvailability = 0;
+
+    # Don't coalesce background-tab JS timers down to once a minute. Costs CPU,
+    # but background chat/dashboard tabs stay live and don't stall on focus.
+    IntensiveWakeUpThrottlingEnabled = false;
+
+    # ~2 GB of HTTP cache instead of Chrome's few-hundred-MB default. Chrome
+    # policy integers are int32, so this is close to the usable ceiling; the
+    # value is a hint and real on-disk usage lands in the same order.
+    DiskCacheSize = 2000000000;
 
     # ── Force-installed extensions ────────────────────────────────────
     # Format: "<extension-id>;<update-url>"

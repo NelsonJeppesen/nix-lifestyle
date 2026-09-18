@@ -20,9 +20,13 @@
       "--enable-gpu-rasterization"
       "--enable-zero-copy"
 
-      # Battery (less aggressive than the per-PWA wrappers; full browser still
-      # needs background networking for normal tabs)
+      # Keep background work at full speed rather than saving power. Pairs with
+      # the IntensiveWakeUpThrottlingEnabled=false policy in chrome-policies.nix:
+      # background tabs keep normal renderer priority and un-throttled timers,
+      # so switching back to one is instant instead of janky.
       "--disable-backgrounding-occluded-windows"
+      "--disable-renderer-backgrounding"
+      "--disable-background-timer-throttling"
     ];
 
     # GNOME desktop, not Plasma
