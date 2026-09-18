@@ -8,6 +8,7 @@
     ../profiles/desktop.nix
     ../profiles/gnome.nix
     ../profiles/intel.nix
+    ../profiles/keychron.nix
     ../profiles/laptop_power.nix
     ../profiles/lg_gram_common.nix
     ../profiles/networking.nix
