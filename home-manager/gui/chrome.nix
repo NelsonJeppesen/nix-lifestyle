@@ -1,4 +1,34 @@
-{ pkgs, ... }:
+{ pkgs, lib, ... }:
+let
+  # Chromium feature flags. Chrome stores --enable-features in a switch map, so
+  # a second copy of the switch would silently replace the first -- everything
+  # has to go in this one list.
+  chromeFeatures = lib.concatStringsSep "," [
+    "VaapiVideoEncoder"
+    "VaapiVideoDecoder"
+    "WaylandWindowDecorations"
+
+    # Back/forward cache: keep 10 whole pages alive instead of 6, and keep them
+    # for 30 min instead of 10. A cached entry is a frozen renderer with its
+    # heap intact, so Back is a restore rather than a refetch + reparse + relayout.
+    # This is the single biggest RAM-for-latency trade in the browser.
+    "BackForwardCacheSize:cache_size/10"
+    "BackForwardCacheTimeToLiveControl:time_to_live_seconds/1800"
+
+    # Background prefetch, widened. NetworkPredictionOptions=0 in
+    # chrome-policies.nix already allows preloading on any connection; these
+    # turn on the optional predictors that spend that budget:
+    #   LoadingPredictorPrefetch  - prefetch subresources the predictor expects
+    #                               from the navigation history of a site
+    #   SearchPrefetchServicePrefetching - prefetch the omnibox's top search
+    #                               suggestion before Enter is pressed
+    #   PreconnectToSearch        - hold a warm socket open to the default
+    #                               search engine
+    "LoadingPredictorPrefetch"
+    "SearchPrefetchServicePrefetching"
+    "PreconnectToSearch"
+  ];
+in
 {
   programs.google-chrome = {
     enable = true;
@@ -14,7 +44,7 @@
       "--ozone-platform=wayland"
       "--use-angle=gl"
       "--ignore-gpu-blocklist"
-      "--enable-features=VaapiVideoEncoder,VaapiVideoDecoder,WaylandWindowDecorations"
+      "--enable-features=${chromeFeatures}"
 
       # Enable GPU rasterization and zero-copy.
       "--enable-gpu-rasterization"

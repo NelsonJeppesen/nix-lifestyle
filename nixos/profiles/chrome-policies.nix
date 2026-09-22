@@ -21,11 +21,14 @@ let
     UrlKeyedAnonymizedDataCollectionEnabled = false;
     SpellCheckServiceEnabled = false;
     AlternateErrorPagesEnabled = false;
-    # 0 = default (preload likely next pages on Wi-Fi/Ethernet) for snappier
-    # navigation. Was 2 (never preload); relaxed deliberately, accepting the
-    # minor prefetch-telemetry tradeoff in exchange for faster page loads.
+    # 0 = preload likely next pages on *any* connection, the most eager of the
+    # three settings, for snappier navigation. Was 2 (never preload); relaxed
+    # deliberately, accepting the minor prefetch-telemetry tradeoff in exchange
+    # for faster page loads. The predictors that spend this budget
+    # (LoadingPredictorPrefetch, SearchPrefetchServicePrefetching,
+    # PreconnectToSearch) have no policy equivalent and ride on the
+    # --enable-features list in home-manager/gui/chrome.nix.
     NetworkPredictionOptions = 0;
-    BackgroundModeEnabled = false;
     PromotionalTabsEnabled = false;
     BrowserAddPersonEnabled = false;
     BrowserGuestModeEnabled = false;
@@ -49,10 +52,16 @@ let
     # but background chat/dashboard tabs stay live and don't stall on focus.
     IntensiveWakeUpThrottlingEnabled = false;
 
-    # ~2 GB of HTTP cache instead of Chrome's few-hundred-MB default. Chrome
-    # policy integers are int32, so this is close to the usable ceiling; the
-    # value is a hint and real on-disk usage lands in the same order.
-    DiskCacheSize = 2000000000;
+    # HTTP cache at the ceiling instead of Chrome's few-hundred-MB default.
+    # Chrome policy integers are int32, so 2147483647 is the literal maximum;
+    # the value is a hint and real on-disk usage lands in the same order.
+    DiskCacheSize = 2147483647;
+
+    # Keep Chrome's browser process resident after the last window closes, so
+    # background extensions keep running and the next launch is a window open
+    # rather than a cold start. Costs a few hundred MB at idle, so the
+    # RAM-constrained gram still exits on last-window-close.
+    BackgroundModeEnabled = !lowSpec;
 
     # ── Force-installed extensions ────────────────────────────────────
     # Format: "<extension-id>;<update-url>"

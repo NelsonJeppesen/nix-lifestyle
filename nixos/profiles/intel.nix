@@ -2,14 +2,9 @@
 #
 # Battery-tuned bits (TLP, thermald, iwd, etc.) live in laptop_power.nix
 # so this profile is safe to import on Intel desktops/NUCs as well.
-{
-  pkgs,
-  ...
-}:
-
-{
+{pkgs, ...}: {
   # Use modern Intel iGPU with all the bells
-  services.xserver.videoDrivers = [ "modesetting" ];
+  services.xserver.videoDrivers = ["modesetting"];
   hardware.graphics.enable = true;
   hardware.graphics.extraPackages = with pkgs; [
     intel-compute-runtime # OpenCL for compute workloads
@@ -24,17 +19,12 @@
     MOZ_ENABLE_WAYLAND = "1"; # Firefox on Wayland behaves better/less wakeups
     OZONE_PLATFORM = "wayland";
   };
-  # Enable Firefox hardware video decode
-  environment.sessionVariables = {
-    MOZ_X11_EGL = "1"; # Enable EGL for X11 sessions
-  };
-
   # Update microcode when available
   hardware.cpu.intel.updateMicrocode = true;
 
   # Load the Intel `xe` GPU driver early so KMS comes up in initrd
   # (needed for a clean Plymouth handoff on Meteor/Arrow Lake).
-  boot.initrd.kernelModules = [ "xe" ];
+  boot.initrd.kernelModules = ["xe"];
 
   boot.initrd.availableKernelModules = [
     "aesni_intel"
