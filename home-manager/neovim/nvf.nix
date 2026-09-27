@@ -1,4 +1,4 @@
-{ ... }: {
+{ lib, ... }: {
   programs.nvf = {
     enable = true;
     defaultEditor = true; # $EDITOR
@@ -53,7 +53,7 @@
         #  Visuals
         visuals = {
           # blink-indent.enable = true; # indent guides
-          cinnamon-nvim.enable = true; # smooth scrolling
+          # cinnamon-nvim stays off; smooth scrolling is mini.animate below.
           fidget-nvim.enable = true; # LSP progress
           highlight-undo.enable = true; # flash undone text
           indent-blankline.enable = true; # indent guides
@@ -65,7 +65,7 @@
         statusline.lualine = {
           enable = true;
           integrations.breadcrumbs = {
-            nvim-navic.enable = true; # winbar breadcrumbs
+            nvim-navic.enable = true; # breadcrumbs, in the statusline
             navbuddy.enable = true; # symbol tree navigator
           };
         };
@@ -81,7 +81,7 @@
         autocomplete.blink-cmp.enable = true; # nvim-cmp stays off
         snippets.luasnip.enable = true;
         comments.comment-nvim.enable = true;
-        treesitter.context.enable = true; # sticky scope header
+        # treesitter.context stays off: the sticky scope header steals a top line.
 
         #  Navigation and UI
         filetree.neo-tree.enable = true;
@@ -146,7 +146,8 @@
           motion = {
             hop.enable = true;
             leap.enable = true;
-            precognition.enable = true; # shows available motions
+            # precognition stays off: its virtual-line motion hints redraw on
+            # every cursor move, which stutters mini.animate's scrolling.
           };
         };
 
@@ -162,6 +163,28 @@
           basics.enable = true;
           # Richer `a`/`i` text objects: arguments, brackets, quotes, tags.
           ai.enable = true;
+          # Smooth scrolling, carried over from the pre-nvf config.
+          animate = {
+            enable = true;
+            setupOpts = {
+              # Cursor animation stutters in herdr; open/close fight noice.
+              cursor.enable = false;
+              open.enable = false;
+              close.enable = false;
+              scroll = {
+                enable = true;
+                timing = lib.generators.mkLuaInline ''
+                  require("mini.animate").gen_timing.linear({ duration = 120, unit = "total" })
+                '';
+              };
+              resize = {
+                enable = true;
+                timing = lib.generators.mkLuaInline ''
+                  require("mini.animate").gen_timing.linear({ duration = 100, unit = "total" })
+                '';
+              };
+            };
+          };
         };
       };
     };
