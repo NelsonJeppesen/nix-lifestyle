@@ -54,6 +54,11 @@
       flake = false;
     };
 
+    agent-deck = {
+      url = "github:asheshgoplani/agent-deck/v1.16.18";
+      flake = false;
+    };
+
     gnome-github-notifications-redux = {
       url = "github:NelsonJeppesen/gnome-github-notifications-redux/review-01";
       inputs.nixpkgs.follows = "nixpkgs";
@@ -80,6 +85,7 @@
       pi-mcp-adapter,
       workiq,
       slack-mcp-server,
+      agent-deck,
       ...
     }:
     let
@@ -111,6 +117,7 @@
             pi-mcp-adapter
             workiq
             slack-mcp-server
+            agent-deck
             ;
         };
       };

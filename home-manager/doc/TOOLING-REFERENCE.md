@@ -26,6 +26,7 @@ the tools exist and what they replaced. More focused references remain in:
 | Pick a recent OpenCode conversation | `os` |
 | Start Pi or continue it | `p` / `pc` |
 | Open an agent in a new Herdr tab | `Ctrl-Shift-o` for OpenCode, `Ctrl-Shift-p` for Pi |
+| Watch every agent session from one dashboard | `Super-a` (Agent Deck window) or `ad` |
 | Navigate to a known project | `z NAME` or `cd ~NAME` |
 | Search source structurally | `ast-grep` |
 | Find which Nix package supplies a command | `nix-locate bin/COMMAND` |
@@ -285,6 +286,53 @@ pane.
 - Close temporary tabs after collecting their output, but leave active servers,
   auth prompts, and user-facing TUIs open.
 
+## Agent Deck
+
+Agent Deck is the alternative to Herdr for agent work: one dashboard of agent
+sessions, each running in its own tmux session. It gets its own Kitty window
+with class `agent-deck`, so run-or-raise keeps `Super-e` (Herdr) and `Super-a`
+(Agent Deck) apart.
+
+### Commands
+
+| Command | Action |
+| --- | --- |
+| `Super-a` | Raise or launch the Agent Deck Kitty window |
+| `kitty-agent-deck` | Launch that window from a shell |
+| `ad` | Run the dashboard in the current terminal |
+| `ad add . -c opencode` | Add the current directory as an OpenCode session |
+| `ad pi-hooks install` | Install the Pi status extension (one time, manual) |
+
+### Dashboard keys
+
+| Key | Action |
+| --- | --- |
+| `n` | New session (`Enter` advances fields; `Ctrl-s` creates) |
+| `Enter` | Attach to the selected session |
+| `Ctrl-q` | Detach back to the dashboard |
+| `f` / `F` | Fork (quick / dialog) |
+| `/` | Fuzzy-search sessions |
+| `r` / `R` | Rename / restart |
+| `d` | Delete |
+| `?` | Full help |
+
+Inside a session the tmux prefix is `Ctrl-b`; `Ctrl-b 1..6` jumps to a
+session waiting for input.
+
+### Managed behavior
+
+- Nix owns the version. Update checks, auto-install, and self-restart are off;
+  bump the `agent-deck` flake input and `vendorHash` instead of running
+  `agent-deck update`.
+- `config.toml` is a read-only Home Manager file, so the TUI settings panel
+  (`S`) cannot save. Edit `ai/agent-deck.nix`.
+- Agents start through an interactive zsh (`launch_shell`), so they see the
+  same session variables and MCP tokens as a Herdr pane.
+- Telemetry is disabled and its consent prompt never appears.
+- The first TUI start asks before adding status hooks to
+  `~/.claude/settings.json`. The hook runs the bare `agent-deck hook-handler`
+  through `PATH`, so it survives Nix store path changes.
+
 ## OpenCode Web Access
 
 ### Laptop service through Cloudflare
@@ -509,6 +557,7 @@ Baseline for this guide: the last commit before the window was
 | Pi and its MCP adapter | `ai/pi.nix` |
 | Serena | `ai/serena.nix`, `doc/serena-ansible.md` |
 | Herdr | `ai/herdr.nix`, `ai/dotfiles/herdr-usage.txt`, `doc/herdr-policy.md`, bundled package skill |
+| Agent Deck | `ai/agent-deck.nix`, `gnome/dotfiles/shortcuts.conf` |
 | Neovim | `neovim/nvf.nix`, `doc/neovim-cheatsheet.md` |
 | Ansible CLI | `cli/ansible.nix` |
 | zoxide and shell helpers | `cli/zoxide.nix`, `cli/zsh.nix`, `cli/dotfiles/zsh-named-dirs.zsh` |

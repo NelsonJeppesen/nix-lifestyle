@@ -1,5 +1,6 @@
 { ... }: {
   imports = [
+    ./agent-deck.nix
     ./claude-code.nix
     ./codex.nix
     ./herdr.nix

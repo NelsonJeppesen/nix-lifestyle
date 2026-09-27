@@ -111,6 +111,7 @@ Examples currently wired up:
 - **Firefox/Chrome**: aggressive background throttling for idle savings
 - **GNOME**: CapsLock → Super (via keyd), heavy dconf/keybinding remap, run-or-raise shortcuts
 - **Kitty + herdr**: Kitty renders one window; herdr owns tabs, panes, and sessions
+- **Kitty + agent-deck**: a second Kitty window (`Super+A`) runs agent-deck, a tmux-backed dashboard of agent sessions
 - **Neovim**: nvf (`home-manager/neovim/nvf.nix`) — derived from nvf's `maximal` configuration and
   then written out in full, so every plugin and language server is an explicit
   Nix option. No Lua config directory, nothing installs at runtime
@@ -125,6 +126,7 @@ Examples currently wired up:
 | Update everything            | `update`                   |
 | Edit terminal scrollback     | herdr `F1`                 |
 | Open OpenCode in a new tab   | `Ctrl+Shift+O`             |
+| Open agent-deck dashboard    | `Super+A`                  |
 | Global grep (nvim)           | `<leader>fg` (Telescope)   |
 | File explorer (nvim)         | `:Neotree`                |
 | Copy buffer to clipboard     | `:%y+`                     |
