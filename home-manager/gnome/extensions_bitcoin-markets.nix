@@ -27,7 +27,7 @@
           (mkIndicator {
             base = "ETH";
             quote = "BTC";
-            format = "{v3}"; # Sub-1 pair, needs decimals to be readable
+            format = "{v4}"; # Sub-1 pair, needs decimals to be readable
           })
           (mkIndicator {
             base = "ETH";
