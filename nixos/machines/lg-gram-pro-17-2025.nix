@@ -58,7 +58,9 @@
   boot.initrd.systemd.enable = true;
 
   # 2880x1800 panel: Plymouth's auto-detect picks 1x and renders the splash
-  # postage-stamp sized. Force 2x for a HiDPI splash matching the panel.
+  # postage-stamp sized. 2x makes the logical canvas 1440x900, the splash
+  # frames' exact size, so it fills the screen with no script-side resize;
+  # see profiles/plymouth.nix for the geometry it must match.
   boot.plymouth.extraConfig = ''
     DeviceScale=2
   '';

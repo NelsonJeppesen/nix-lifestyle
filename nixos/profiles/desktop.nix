@@ -1,7 +1,7 @@
 # desktop.nix - Workstation/laptop baseline (audio, BT, boot, splash)
 #
 # Imports chrome-policies for declarative Chrome management, and
-# plymouth.nix for the per-generation randomized splash theme. Sets up:
+# plymouth.nix for the three-frame boot splash. Sets up:
 # - Logitech wireless (Solaar), Bluetooth, PipeWire (replaces PulseAudio)
 # - systemd-boot loader with high console mode
 # - Quiet boot kernel params so the splash owns the screen end-to-end
