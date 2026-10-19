@@ -34,13 +34,18 @@
       flake = false;
     };
 
-    serena = {
-      url = "github:oraios/serena";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
-
     pi-mcp-adapter = {
       url = "github:nicobailon/pi-mcp-adapter/v2.11.0";
+      flake = false;
+    };
+
+    openrig = {
+      url = "https://registry.npmjs.org/@openrig/cli/-/cli-0.6.4.tgz";
+      flake = false;
+    };
+
+    paperclip = {
+      url = "https://registry.npmjs.org/paperclipai/-/paperclipai-2026.1001.0.tgz";
       flake = false;
     };
 
@@ -56,6 +61,21 @@
 
     agent-deck = {
       url = "github:asheshgoplani/agent-deck/v1.16.18";
+      flake = false;
+    };
+
+    herdr-remote = {
+      url = "github:dcolinmorgan/herdr-remote/v0.8.0";
+      flake = false;
+    };
+
+    herdr-projects = {
+      url = "github:eliasstravik/herdr-projects/v0.2.33";
+      flake = false;
+    };
+
+    herdr-plus = {
+      url = "github:cloudmanic/herdr-plus/v0.1.24";
       flake = false;
     };
 
@@ -81,16 +101,34 @@
       gnome-github-notifications-redux,
       flameshot,
       open-ralph-wiggum,
-      serena,
       pi-mcp-adapter,
+      openrig,
+      paperclip,
       workiq,
       slack-mcp-server,
       agent-deck,
+      herdr-remote,
+      herdr-projects,
+      herdr-plus,
       ...
     }:
     let
       system = "x86_64-linux";
-      pkgs = import nixpkgs { inherit system; };
+      pkgs = import nixpkgs {
+        inherit system;
+        overlays = [
+          # binutils 2.46's ld.bfd rejects libghostty-vt's Zig-emitted
+          # .eh_frame ("overlapping FDEs"); link with lld instead.
+          (final: prev: {
+            herdr = prev.herdr.overrideAttrs (o: {
+              nativeBuildInputs = o.nativeBuildInputs ++ [ final.lld ];
+              env = (o.env or { }) // {
+                RUSTFLAGS = "-C link-arg=-fuse-ld=lld";
+              };
+            });
+          })
+        ];
+      };
     in
     {
       # Single user configuration for "nelson"
@@ -107,17 +145,22 @@
         # Module inputs.
         extraSpecialArgs = {
           inherit
+            nvf
             agenix
             gitalias
             nix-index-database
             gnome-github-notifications-redux
             flameshot
             open-ralph-wiggum
-            serena
             pi-mcp-adapter
+            openrig
+            paperclip
             workiq
             slack-mcp-server
             agent-deck
+            herdr-remote
+            herdr-projects
+            herdr-plus
             ;
         };
       };

@@ -1,6 +1,5 @@
 { ... }: {
   imports = [
-    ./ansible.nix
     ./bat.nix
     ./development-tools.nix
     ./git.nix

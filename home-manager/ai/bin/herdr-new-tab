@@ -1,0 +1,34 @@
+#!/usr/bin/env bash
+# Open a new tab at the active pane's directory running KIND: claude, opencode,
+# codex, pi, or shell. Herdr keybindings supply HERDR_ACTIVE_*; herdr-plus
+# quick actions supply HERDR_PLUS_*, which win because they describe the pane
+# the picker was launched from rather than the picker itself.
+set -euo pipefail
+
+kind="${1:?usage: herdr-new-tab claude|opencode|codex|pi|shell}"
+workspace="${HERDR_PLUS_WORKSPACE_ID:-${HERDR_ACTIVE_WORKSPACE_ID:-}}"
+cwd="${HERDR_PLUS_WORKDIR:-${HERDR_ACTIVE_PANE_CWD:-}}"
+if [ -z "$workspace" ] || [ -z "$cwd" ]; then
+  echo "Herdr did not supply the active workspace and directory." >&2
+  exit 1
+fi
+
+# Agent-name prefix; the pane id keeps names unique within the session.
+case $kind in
+claude) prefix=cc ;;
+opencode) prefix=oc ;;
+codex) prefix=cx ;;
+pi) prefix=pi ;;
+shell) prefix="" ;;
+*)
+  echo "Unknown kind '$kind'." >&2
+  exit 2
+  ;;
+esac
+
+pane="$(herdr tab create --workspace "$workspace" --focus --cwd "$cwd" |
+  jq -er '.result.root_pane.pane_id | strings | select(length > 0)')"
+if [ -n "$prefix" ]; then
+  name="$prefix-${pane//:/-}"
+  exec herdr agent start "${name,,}" --kind "$kind" --pane "$pane"
+fi

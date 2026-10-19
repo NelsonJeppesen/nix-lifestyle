@@ -1,14 +1,13 @@
 # Home Manager Tooling Reference
 
 This is the practical reference for the Git, pull-request, OpenCode, Pi,
-Herdr, Neovim, Serena, Ansible, and supporting shell tooling added or changed
+Herdr, Neovim, and supporting shell tooling added or changed
 between 2026-07-19 and 2026-08-01.
 
 The current configuration is authoritative. The history section explains why
 the tools exist and what they replaced. More focused references remain in:
 
 - `doc/neovim-cheatsheet.md`
-- `doc/serena-ansible.md`
 - `ai/dotfiles/herdr-usage.txt`
 - `doc/AGENTS.md`
 
@@ -25,13 +24,15 @@ the tools exist and what they replaced. More focused references remain in:
 | Resume the last OpenCode conversation | `oc` |
 | Pick a recent OpenCode conversation | `os` |
 | Start Pi or continue it | `p` / `pc` |
-| Open an agent in a new Herdr tab | `Ctrl-Shift-o` for OpenCode, `Ctrl-Shift-p` for Pi |
+| Open an agent or shell in a new Herdr tab | `Ctrl-Shift-y` Claude Code, `-o` OpenCode, `-x` Codex, `-p` Pi, `-s` shell |
+| Start DevOps work on an ARC ticket in its own worktree | `Ctrl-Shift-e`, then DevOps: New ARC ticket / Worktree for existing ARC / Open ARC branch |
 | Watch every agent session from one dashboard | `Super-a` (Agent Deck window) or `ad` |
+| Split work across parallel agent threads | `Ctrl-Shift-a` in Herdr (Herdr Projects) |
+| Open a whole templated workspace, or run a quick action | `Ctrl-Shift-g` / `Ctrl-Shift-e` in Herdr (herdr-plus) |
 | Navigate to a known project | `z NAME` or `cd ~NAME` |
 | Search source structurally | `ast-grep` |
 | Find which Nix package supplies a command | `nix-locate bin/COMMAND` |
 | Temporarily run an uninstalled command | `, COMMAND` |
-| Inspect symbol relationships across a repository | Ask OpenCode to use Serena |
 | Lint the current Neovim buffer | `<leader>ll` |
 
 <!-- markdownlint-enable MD013 -->
@@ -106,7 +107,7 @@ This removes repetitive directory prompts; it is not permission to expose
 credentials, escalate privileges, or perform arbitrary destructive actions.
 
 There are no custom agent definitions in `ai/opencode.nix`. Pi is a separate
-coding agent, and Serena is an MCP server.
+coding agent.
 
 The former `oc-standup` workflow was removed.
 
@@ -120,7 +121,6 @@ The former `oc-standup` workflow was removed.
 | GitHub | Enabled | Uses `GITHUB_TOKEN`; PR, issue, repository, and Actions tools |
 | Terraform | Enabled | Registry/provider/module documentation tools |
 | Memory | Enabled | Persistent graph at `~/.local/share/mcp-memory/memory.json` |
-| Serena | Enabled | Symbol-aware code tools; current-directory project selection |
 | Kubernetes | Disabled | Enable deliberately when cluster access is needed |
 | Slack read | Disabled | OpenCode server `slack-read`; explicit read-only tool allowlist |
 | Slack write | Disabled | Mutating tools; enable deliberately and temporarily |
@@ -163,51 +163,9 @@ Pi has a pinned, Nix-built MCP adapter and shares the Herdr skill with
 OpenCode. Its MCP servers start lazily and include Atlassian, GitHub,
 Terraform, persistent memory, and read-only Slack.
 
-Pi does not currently receive Serena, Kubernetes, or Slack-write. Pi and
-OpenCode share the same persistent memory JSON file. Herdr reports Pi's
+Pi does not currently receive Kubernetes or Slack-write. Pi and OpenCode share
+the same persistent memory JSON file. Herdr reports Pi's
 blocked, working, and done states in the sidebar.
-
-## Serena
-
-Serena provides semantic symbol lookup, declaration/reference traversal, and
-symbol-aware edits. Use normal file reads and searches for small one-file work;
-use Serena when relationships across files or modules matter.
-
-For an Ansible repository:
-
-```bash
-cd /path/to/repository
-serena project create --language ansible .
-serena project index       # optional for a large repository
-```
-
-Example prompts:
-
-```text
-Use Serena to get a symbol overview of roles/web/tasks/main.yml, then trace the
-handler and variable references involved in restarting nginx. Do not edit yet.
-```
-
-```text
-Use Serena's symbol and reference tools to find every role affected by renaming
-web_service_port. Make the smallest safe edit, then run ansible-lint.
-```
-
-OpenCode launches Serena with:
-
-- Project selection from OpenCode's current working directory.
-- IDE and editing modes.
-- Serena memories disabled because the shared memory MCP is authoritative.
-- No web dashboard.
-- Trusted projects restricted to `~/source/**`.
-- A 240-second tool timeout.
-- Nix-managed Ansible language server, Ansible, Python, and ansible-lint.
-
-Serena deliberately excludes duplicate generic file, directory, text search,
-replacement, and shell tools. Use OpenCode's native tools for those operations.
-
-Project-local `.serena/` state may be untracked. Review it before deciding
-whether it is repository policy or machine-local indexing configuration.
 
 ## Herdr
 
@@ -230,7 +188,6 @@ bindings to Herdr.
 
 | Key | Action |
 | --- | --- |
-| `Ctrl-Shift-t` | New tab |
 | `Ctrl-Shift-Left/Right` | Previous/next tab |
 | `Ctrl-Shift-Up/Down` | Previous/next workspace |
 | `Ctrl-Shift-n` | New workspace |
@@ -243,8 +200,14 @@ bindings to Herdr.
 | `Ctrl-Shift-Backspace` | Close pane |
 | `Ctrl-Shift-z` | Zoom pane |
 | `Ctrl-Shift-,/.` | Previous/next pane |
+| `Ctrl-Shift-y` | Claude Code tab at active directory |
 | `Ctrl-Shift-o` | OpenCode tab at active directory |
+| `Ctrl-Shift-x` | Codex tab at active directory |
 | `Ctrl-Shift-p` | Pi tab at active directory |
+| `Ctrl-Shift-s` | Shell tab at active directory (replaces `Ctrl-Shift-t`) |
+| `Ctrl-Shift-a` | Herdr Projects popup |
+| `Ctrl-Shift-g` | herdr-plus workspace templates |
+| `Ctrl-Shift-e` | herdr-plus quick actions |
 | `F1` | Edit scrollback |
 
 ### Prefix keys
@@ -285,6 +248,123 @@ pane.
 - Re-read current tab and pane IDs; Herdr IDs can compact after closure.
 - Close temporary tabs after collecting their output, but leave active servers,
   auth prompts, and user-facing TUIs open.
+
+### Herdr Projects
+
+The `herdr-projects` plugin puts one coordinator conversation in front of
+parallel worker threads. Each thread runs in its own pane on its own git
+worktree or folder, and every thread gets the project's shared instructions
+and memory. The sidebar groups threads by what needs you. A project is a folder
+under `~/.herdr-projects/<name>/`.
+
+| Command | Action |
+| --- | --- |
+| `Ctrl-Shift-a` | Projects popup: open, create, or review projects |
+| `herdr-projects new "NAME" --repo PATH` | Create a project for a repository |
+| `herdr-projects open SLUG` | Open a project and start its coordinator |
+| `herdr-projects doctor` | Check the setup |
+
+Nix builds the plugin from the pinned `herdr-projects` flake input.
+Activation links it with `herdr plugin link` and runs
+`herdr-projects configure --hooks-only`. That adds the progress hooks to
+`~/.claude/settings.json` and `~/.codex/hooks.json` and links the
+`autoproject` skill. The rest of what `configure` normally writes (sidebar rows,
+tab-bar count, popup key) is declared in `ai/herdr.nix`, so:
+
+- Do not run `herdr-projects configure` without `--hooks-only`, or `update`. The
+  first refuses Home Manager's read-only `config.toml`, and the second cannot
+  rebuild a store path. To upgrade, bump the flake input.
+- `doctor` reports the sidebar as "not configured" because the plugin's journal
+  has no entry for that file. The rows are there; ignore that one line.
+- `herdr-projects unconfigure` removes the hooks and skill links. The next
+  switch adds them back.
+
+### herdr-plus
+
+`herdr-plus` adds two pickers. Projects builds a whole workspace, every tab,
+pane, and startup command, from a template. Quick Actions runs a one-off
+command in the directory you launched it from. Both are declared in
+`ai/herdr-plus.nix`, which writes them to
+`~/.config/herdr/plugins/config/cloudmanic.herdr-plus/`. Add a template or
+action there, not by hand in that directory.
+
+| Picker | Entries |
+| --- | --- |
+| Projects (`Ctrl-Shift-g`) | DevOps, DevOps: Terraform, nix-lifestyle |
+| Quick actions (`Ctrl-Shift-e`) | New tab (any launcher), new ARC ticket + worktree, worktree for an existing ARC, open an ARC branch, open ARC ticket, validate changes, `mise run test:agents`/`test:harness`, open a harness `HANDOFF.md`, read-only k9s, AWS SSO login, open PR, git status |
+
+- **DevOps: New ARC ticket + worktree** asks for a title. A headless Claude
+  Code (Haiku, Atlassian MCP only, claude.ai login) files an ARC Task assigned
+  to you. Its key and the slugged title become the branch, e.g.
+  `ARC-4100-rotate-eks-node-amis`. The git fetch runs while the ticket is
+  being filed.
+- **DevOps: Worktree for existing ARC** takes `1234 short topic`. If that
+  branch already exists, it opens instead of failing.
+- **DevOps: Open ARC branch** lists ARC branches: open Spaces first, then
+  worktrees, local branches, and origin-only branches, newest first. Picking
+  one focuses its Space, reopens its worktree, or checks it out.
+- All Herdr worktrees, ARC or not, live in `~/source/worktrees/<repo>/`
+  (`worktrees.directory` in `ai/herdr.nix`, instead of `~/.herdr/worktrees`).
+  devops' `.envrc` runs `source_up`, and the API keys, GitHub token, and sticky
+  AWS profile come from `~/source/.envrc`, which only a checkout under
+  `~/source` inherits. direnv whitelists that root, so no `direnv allow` is
+  needed. Each new ARC checkout also gets `mise trust`, the `terraform` submodule (using the main
+  checkout's objects), and copies of `.envrc.local` and
+  `.claude/settings.local.json`. New Spaces start OpenCode; set
+  `HERDR_ARC_AGENT` in the Herdr server's environment to start something else.
+- Quick actions that need devops' environment (`bin/`, `KUBECONFIG`,
+  `AWS_CONFIG_FILE`) run through `direnv exec`, because the plugin inherits the
+  Herdr server's environment rather than the pane's.
+- The plugin's worktree auto-layouts are deliberately unused. They fire on
+  every `herdr worktree create`, including the ones Herdr Projects makes for its
+  threads, and would add tabs to those Spaces.
+- To upgrade, bump the `herdr-plus` flake input (and `vendorHash` if Go
+  dependencies changed). Activation relinks the plugin with `herdr plugin link`.
+
+## OpenRig
+
+OpenRig provides the `rig` CLI and terminal dashboard for teams of Claude Code
+and Codex agents. Run `rig` to open its interactive dashboard. The pinned npm
+release and SQLite native addon are built with Node 24 through Nix, and the
+commands include tmux in their runtime path.
+
+| Command | Purpose |
+| --- | --- |
+| `rig` | Open the terminal dashboard |
+| `rig doctor` | Check the local runtime and agent prerequisites |
+| `rig setup --dry-run` | Preview setup changes |
+| `rig daemon start --no-kernel` | Start the local daemon without booting kernel agents |
+| `rig daemon status` | Check daemon health |
+| `rig up <spec-or-library-name> --plan` | Preview a team launch |
+
+The daemon starts on demand; Paperclip has the continuously running service.
+OpenRig stores local state in `~/.openrig/`. Use the dashboard to configure and
+launch teams. Review the setup preview before applying `rig setup`, which can
+change agent trust settings. Update the `openrig` flake input, dependency lock,
+and package hash to upgrade through Home Manager.
+
+## Paperclip
+
+Paperclip runs continuously as the `paperclipai` systemd user service. Open
+<http://127.0.0.1:3100> to create a company, add agents, and assign work.
+The dashboard listens on loopback. User lingering keeps it running after
+logout and starts it at boot; it resumes after the laptop wakes from sleep.
+
+| Command | Purpose |
+| --- | --- |
+| `systemctl --user status paperclipai` | Check the service |
+| `journalctl --user -u paperclipai -f` | Follow server logs |
+| `systemctl --user restart paperclipai` | Restart the server |
+| `paperclipai doctor` | Check the instance configuration and database |
+
+The pinned release, Node 24, and PostgreSQL 18 come from Nix. Update the
+`paperclip` flake input, dependency lock, and package hash to upgrade. Home
+Manager owns the service and CLI; use `systemctl` to manage this service.
+Instance configuration, database, uploads, secrets, and automatic backups
+live under `~/.paperclip/instances/default/`. First startup generates the
+local configuration and secrets there. Agent CLI logins remain in their
+normal home directories; add the agents and their working directories in
+the dashboard.
 
 ## Agent Deck
 
@@ -365,11 +445,10 @@ The NixOS `opencode` host is a separate deployment. It serves loopback port
 4096 and publishes it through `tailscale serve`; tailnet ACLs are its
 authentication gate.
 
-It imports `home-manager/ai/opencode.nix` and `home-manager/ai/mcp.nix`,
-but not the separate `ai/serena.nix`,
-`ai/pi.nix`, `ai/herdr.nix`, or `cli/git.nix` modules. Therefore it does not
-automatically receive Serena or Pi even though its core
-OpenCode settings and shared MCP catalogue match.
+It imports `home-manager/ai/opencode.nix` and `home-manager/ai/mcp.nix`, but not
+the separate `ai/pi.nix`, `ai/herdr.nix`, or `cli/git.nix` modules. Therefore it
+does not automatically receive Pi even though its core OpenCode settings and
+shared MCP catalogue match.
 
 ## Neovim
 
@@ -382,35 +461,9 @@ nvf's language modules. Language settings are explicit in `neovim/nvf.nix`;
 installing a CLI language server does not enable it in the editor.
 
 Avante is enabled. Copilot and opencode.nvim are not enabled; use OpenCode
-from Herdr. Serena has its own Ansible tooling configuration.
+from Herdr.
 
 See `doc/neovim-cheatsheet.md` for shortcuts and enabled languages.
-
-## Ansible Toolchain
-
-Installed commands include:
-
-- `ansible`
-- `ansible-builder`
-- `ansible-lint`
-- `ansible-navigator`
-- `molecule`
-- `ansible-language-server`
-
-Common checks and workflows:
-
-```bash
-ansible-playbook --syntax-check playbook.yml
-ansible-lint
-molecule test
-ansible-navigator run playbook.yml
-ansible-builder build
-```
-
-Use `ansible-navigator` for the interactive execution UI and
-`ansible-builder` when a project defines an execution environment. Serena and
-Neovim improve navigation and feedback but do not replace syntax checks,
-ansible-lint, or Molecule.
 
 ## Shell and Supporting CLI Tools
 
@@ -483,16 +536,6 @@ without adding it permanently to Home Manager.
 - Restart OpenCode after changing Home Manager MCP configuration.
 - Use `gh auth status` to diagnose the underlying authentication.
 
-### Serena has no project or wrong language
-
-```bash
-serena project create --language LANGUAGE .
-```
-
-Review `.serena/project.yml`, then fully restart OpenCode if the MCP server was
-newly added or its global settings changed. Use `serena project index` only
-when pre-caching a large repository is useful.
-
 ### Neovim does not show lint diagnostics
 
 - Verify the filetype with `:set filetype?`.
@@ -526,9 +569,9 @@ Baseline for this guide: the last commit before the window was
 | 2026-07-19 | `4a01c31` | Added direct Herdr sidebar and resize keybindings. |
 | 2026-07-19 | `4c9ee77` | Hardened shell/Herdr commands, removed plaintext Git credential storage, moved F1 scrollback handling to Herdr, and cleaned stale Neovim configuration. |
 | 2026-07-19 | `4c8cd02` | Added the loopback OpenCode web service and per-laptop Cloudflare Tunnel connector. |
-| 2026-08-01 | `8e694a7` | Updated flake pins and added Serena, nix-index-database, Pi MCP adapter, and a terminal review input. |
+| 2026-08-01 | `8e694a7` | Updated flake pins and added nix-index-database, Pi MCP adapter, and a terminal review input. |
 | 2026-08-01 | `26f6d42` | Added the Ansible suite, ast-grep, and prebuilt nix-index integration. |
-| 2026-08-01 | `8fb22c9` | Added Serena, Pi, gh-dash integration, modern agent tool guidance, and removed `oc-standup`. |
+| 2026-08-01 | `8fb22c9` | Added Pi, gh-dash integration, modern agent tool guidance, and removed `oc-standup`. |
 | 2026-08-01 | `4b79708` | Added Ansible/Jinja LSP support and save-time nvim-lint; removed hardtime.nvim. |
 | 2026-08-01 | `4d3e9ea` | Added zoxide, bat, named directories, `vu`/`vm`, and the Pi Herdr launcher. |
 | 2026-08-01 | `07050ad` | Imported the new feature modules and pruned unused packages. |
@@ -555,11 +598,13 @@ Baseline for this guide: the last commit before the window was
 | GitHub dashboard | `cli/gh-dash.nix` |
 | OpenCode and MCP servers | `ai/opencode.nix` |
 | Pi and its MCP adapter | `ai/pi.nix` |
-| Serena | `ai/serena.nix`, `doc/serena-ansible.md` |
 | Herdr | `ai/herdr.nix`, `ai/dotfiles/herdr-usage.txt`, `doc/herdr-policy.md`, bundled package skill |
+| Herdr Projects | `ai/herdr-projects.nix`, plugin rows and key in `ai/herdr.nix` |
+| herdr-plus | `ai/herdr-plus.nix`, `ai/bin/herdr-arc`, keys in `ai/herdr.nix` |
 | Agent Deck | `ai/agent-deck.nix`, `gnome/dotfiles/shortcuts.conf` |
+| Paperclip | `ai/paperclip.nix`, `ai/paperclip/package.nix`, `ai/paperclip/package-lock.json` |
+| OpenRig | `ai/openrig.nix`, `ai/openrig/package.nix`, `ai/openrig/package-lock.json` |
 | Neovim | `neovim/nvf.nix`, `doc/neovim-cheatsheet.md` |
-| Ansible CLI | `cli/ansible.nix` |
 | zoxide and shell helpers | `cli/zoxide.nix`, `cli/zsh.nix`, `cli/dotfiles/zsh-named-dirs.zsh` |
 | bat | `cli/bat.nix` |
 | ast-grep | `cli/development-tools.nix` |

@@ -1,4 +1,10 @@
-{ lib, ... }: {
+{
+  lib,
+  pkgs,
+  nvf,
+  ...
+}:
+{
   programs.nvf = {
     enable = true;
     defaultEditor = true; # $EDITOR
@@ -156,6 +162,16 @@
           # Copilot itself is off; this only takes effect once it is enabled.
           copilot.cmp.enable = true;
         };
+        # avante's commands require mega.cmdparse, which nvf's avante build does not ship.
+        luaPackages = [ "mega-cmdparse" ];
+        # avante now loads its native libraries from lua/, but nvf still links them into build/.
+        pluginOverrides.avante-nvim =
+          nvf.packages.${pkgs.stdenv.hostPlatform.system}.avante-nvim.overrideAttrs
+            (old: {
+              postInstall = old.postInstall + ''
+                cp -P $out/build/* $out/lua/
+              '';
+            });
 
         # Mini modules
         mini = {

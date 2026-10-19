@@ -5,39 +5,13 @@
   ...
 }:
 let
-  # Open OpenCode in a new tab at the active pane's directory.
-  ocNewTab = pkgs.writeShellApplication {
-    name = "herdr-oc-new-tab";
-    runtimeInputs = [
-      pkgs.herdr
-      pkgs.jq
-    ];
-    text = ''
-      workspace="''${HERDR_ACTIVE_WORKSPACE_ID:?Herdr did not supply the active workspace}"
-      cwd="''${HERDR_ACTIVE_PANE_CWD:?Herdr did not supply the active directory}"
-      pane="$(herdr tab create --workspace "$workspace" --focus --cwd "$cwd" \
-        | jq -er '.result.root_pane.pane_id | strings | select(length > 0)')"
-      name="oc-''${pane//:/-}"
-      exec herdr agent start "''${name,,}" --kind opencode --pane "$pane"
-    '';
-  };
+  # herdr-projects' key, tab-bar count and sidebar rows follow whether
+  # herdr-projects.nix is imported (it owns this link).
+  herdrProjects = config.home.file ? ".local/bin/herdr-projects";
 
-  # Open Pi in a new tab at the active pane's directory.
-  piNewTab = pkgs.writeShellApplication {
-    name = "herdr-pi-new-tab";
-    runtimeInputs = [
-      pkgs.herdr
-      pkgs.jq
-    ];
-    text = ''
-      workspace="''${HERDR_ACTIVE_WORKSPACE_ID:?Herdr did not supply the active workspace}"
-      cwd="''${HERDR_ACTIVE_PANE_CWD:?Herdr did not supply the active directory}"
-      pane="$(herdr tab create --workspace "$workspace" --focus --cwd "$cwd" \
-        | jq -er '.result.root_pane.pane_id | strings | select(length > 0)')"
-      name="pi-''${pane//:/-}"
-      exec herdr agent start "''${name,,}" --kind pi --pane "$pane"
-    '';
-  };
+  # Agent or shell tab at the active pane's directory; herdr-plus.nix offers
+  # the same launchers as quick actions.
+  newTab = pkgs.callPackage ./bin/herdr-new-tab.nix { };
 
   mobileRelayEnsure = pkgs.writeShellApplication {
     name = "herdr-mobile-relay-ensure";
@@ -69,111 +43,176 @@ in
   home.file = {
     # Declarative herdr config.
     ".config/herdr/config.toml".text = ''
-      # Managed by home-manager (herdr.nix).
-      # Skip the first-run onboarding/notification-setup screen.
-      onboarding = false
+            # Managed by home-manager (herdr.nix).
+            # Skip the first-run onboarding/notification-setup screen.
+            onboarding = false
 
-      [theme]
-      # Follow kitty's reported light/dark appearance.
-      auto_switch = true
-      dark_name = "gruvbox"
-      light_name = "gruvbox-light"
+            [theme]
+            # Follow kitty's reported light/dark appearance.
+            auto_switch = true
+            dark_name = "gruvbox"
+            light_name = "gruvbox-light"
 
-      [theme.custom]
-      # Follow Kitty’s background.
-      panel_bg = "reset"
+            [theme.custom]
+            # Follow Kitty’s background.
+            panel_bg = "reset"
 
-      # Use each built-in theme's active_row_bg/selection_bg and foregrounds.
-      [update]
-      # Nix owns herdr's version; silence the background update nag. `herdr
-      # update` is a no-op for a Nix-managed install anyway.
-      channel = "stable"
-      version_check = false
+            # Use each built-in theme's active_row_bg/selection_bg and foregrounds.
+            [update]
+            # Nix owns herdr's version; silence the background update nag. `herdr
+            # update` is a no-op for a Nix-managed install anyway.
+            channel = "stable"
+            version_check = false
 
-      [terminal]
-      # Inherit the active pane’s directory.
-      new_cwd = "follow"
+            [terminal]
+            # Inherit the active pane’s directory.
+            new_cwd = "follow"
 
-      [keys]
-      # Each entry replaces that action's prefix binding.
-      # Tabs — new tab reuses kitty's own ctrl+shift+t muscle memory; [ / ]
-      # step through the tab strip.
-      new_tab = "ctrl+shift+t"
-      previous_tab = "ctrl+shift+left"
-      next_tab = "ctrl+shift+right"
+            [worktrees]
+            # Under ~/source so a checkout's .envrc `source_up` reaches
+            # ~/source/.envrc (API keys, GitHub token, sticky AWS profile).
+            # direnv whitelists this root (cli/zsh.nix); herdr-arc uses it too.
+            directory = "~/source/worktrees"
 
-      previous_workspace = "ctrl+shift+up"
-      next_workspace = "ctrl+shift+down"
+            [keys]
+            # Each entry replaces that action's prefix binding.
+            # Tabs. No direct new_tab key (its prefix default remains): the launchers below
+            # open a tab already running what it is for.
+            previous_tab = "ctrl+shift+left"
+            next_tab = "ctrl+shift+right"
 
-      # New space (herdr "workspace"): mirrors new_tab's ctrl+shift+t by adding shift-n beneath it.
-      new_workspace = "ctrl+shift+n"
+            previous_workspace = "ctrl+shift+up"
+            next_workspace = "ctrl+shift+down"
 
-      previous_agent = "ctrl+shift+["
-      next_agent = "ctrl+shift+]"
+            # New space (herdr "workspace").
+            new_workspace = "ctrl+shift+n"
 
-      # Toggle the agent sidebar.
-      toggle_sidebar = "ctrl+shift+b"
+            previous_agent = "ctrl+shift+["
+            next_agent = "ctrl+shift+]"
 
-      # Enter resize mode (default prefix+r) as a direct chord.
-      resize_mode = "ctrl+shift+r"
+            # Toggle the agent sidebar.
+            toggle_sidebar = "ctrl+shift+b"
 
-      # Edit scrollback in the configured editor.
-      edit_scrollback = "f1"
+            # Enter resize mode (default prefix+r) as a direct chord.
+            resize_mode = "ctrl+shift+r"
 
-      # Pane focus — h/j/k/l vim motions.
-      focus_pane_left = "ctrl+shift+h"
-      focus_pane_down = "ctrl+shift+j"
-      focus_pane_up = "ctrl+shift+k"
-      focus_pane_right = "ctrl+shift+l"
+            # Edit scrollback in the configured editor.
+            edit_scrollback = "f1"
 
-      # Splits — vertical reuses kitty's ctrl+shift+enter "new window" muscle
-      # memory; horizontal is the natural ctrl+shift+d beneath it.
-      split_vertical = "ctrl+shift+enter"
-      split_horizontal = "ctrl+shift+d"
+            # Pane focus — h/j/k/l vim motions.
+            focus_pane_left = "ctrl+shift+h"
+            focus_pane_down = "ctrl+shift+j"
+            focus_pane_up = "ctrl+shift+k"
+            focus_pane_right = "ctrl+shift+l"
 
-      # Pane lifecycle.
-      close_pane = "ctrl+shift+backspace"
-      zoom = "ctrl+shift+z"
-      # Cycle pane focus through the layout, either direction.
-      cycle_pane_next = "ctrl+shift+period"
-      cycle_pane_previous = "ctrl+shift+comma"
+            # Splits — vertical reuses kitty's ctrl+shift+enter "new window" muscle
+            # memory; horizontal is the natural ctrl+shift+d beneath it.
+            split_vertical = "ctrl+shift+enter"
+            split_horizontal = "ctrl+shift+d"
 
-      # Launch OpenCode in a new tab.
-      [[keys.command]]
-      key = "ctrl+shift+o"
-      type = "shell"
-      command = "${lib.getExe ocNewTab}"
-      description = "open opencode in a new tab"
+            # Pane lifecycle.
+            close_pane = "ctrl+shift+backspace"
+            zoom = "ctrl+shift+z"
+            # Cycle pane focus through the layout, either direction.
+            cycle_pane_next = "ctrl+shift+period"
+            cycle_pane_previous = "ctrl+shift+comma"
 
-      # Early Pi testing alongside OpenCode. This only adds another launcher;
-      # the existing OpenCode shortcut and integration remain unchanged.
-      [[keys.command]]
-      key = "ctrl+shift+p"
-      type = "shell"
-      command = "${lib.getExe piNewTab}"
-      description = "open pi in a new tab"
+            # Launchers: each opens a new tab at the active pane's directory.
+            # Claude Code: y sits beside t, and kitty keeps ctrl+shift+c for copy.
+            [[keys.command]]
+            key = "ctrl+shift+y"
+            type = "shell"
+            command = "${lib.getExe newTab} claude"
+            description = "open Claude Code in a new tab"
 
-      [ui]
-      # Skip the name prompt and create tabs immediately with generated names.
-      prompt_new_tab_name = false
-      pane_borders = true
-      pane_outer_borders = false
-      pane_gaps = false
-      status_indicators = "symbols"
+            [[keys.command]]
+            key = "ctrl+shift+o"
+            type = "shell"
+            command = "${lib.getExe newTab} opencode"
+            description = "open OpenCode in a new tab"
 
-      # Navigation accent; focused rows use the built-in theme's active_row_bg.
-      accent = "#fe8019"
+            [[keys.command]]
+            key = "ctrl+shift+x"
+            type = "shell"
+            command = "${lib.getExe newTab} codex"
+            description = "open Codex in a new tab"
 
-      [ui.sidebar.agents]
-      row_gap = 1
-      rows = [["state_icon", "workspace"], ["terminal_title","pane"]]
+            [[keys.command]]
+            key = "ctrl+shift+p"
+            type = "shell"
+            command = "${lib.getExe newTab} pi"
+            description = "open Pi in a new tab"
 
-      [ui.sidebar.spaces]
-      row_gap = 1
+            # A plain shell, where the old ctrl+shift+t new_tab went.
+            [[keys.command]]
+            key = "ctrl+shift+s"
+            type = "shell"
+            command = "${lib.getExe newTab} shell"
+            description = "open a shell in a new tab"
 
-      [experimental]
-      # Render inline images via the Kitty graphics protocol.
-      kitty_graphics = true
+      ${lib.optionalString herdrProjects ''
+        # herdr-projects popup (herdr-projects.nix); upstream's default is
+        # prefix+a, made a direct chord like the rest.
+        [[keys.command]]
+        key = "ctrl+shift+a"
+        type = "plugin_action"
+        command = "herdr-projects.open-popup"
+        description = "Projects"
+      ''}
+            # herdr-plus (herdr-plus.nix): workspace templates and quick actions.
+            [[keys.command]]
+            key = "ctrl+shift+g"
+            type = "plugin_action"
+            command = "cloudmanic.herdr-plus.projects"
+            description = "herdr-plus: projects"
+
+            [[keys.command]]
+            key = "ctrl+shift+e"
+            type = "plugin_action"
+            command = "cloudmanic.herdr-plus.quick-actions"
+            description = "herdr-plus: quick actions"
+
+            [ui]
+            # Skip the name prompt and create tabs immediately with generated names.
+            prompt_new_tab_name = false
+            pane_borders = true
+            pane_outer_borders = false
+            pane_gaps = false
+            status_indicators = "symbols"
+
+            # Navigation accent; focused rows use the built-in theme's active_row_bg.
+            accent = "#fe8019"
+
+      ${lib.optionalString herdrProjects ''
+        # "projects: N need you" from herdr-projects, through the stable link
+        # herdr-projects.nix owns. Entries match what `herdr-projects configure`
+        # writes; it cannot edit this read-only file itself.
+        tab_bar_right = [
+          { type = "command", command = "${config.home.homeDirectory}/.local/bin/herdr-projects --root ${config.home.homeDirectory}/.herdr-projects needs-you --line", interval_seconds = 15, timeout_seconds = 5 },
+        ]
+      ''}
+            [ui.sidebar.agents]
+            row_gap = 1
+            rows = [
+              ["state_icon", "workspace"],
+              ["terminal_title","pane"],
+            ${lib.optionalString herdrProjects ''
+              # herdr-projects: a thread's state and last activity.
+              [{ token = "$hp_sub", dim = true }],
+            ''}]
+
+            [ui.sidebar.spaces]
+            row_gap = 1
+      ${lib.optionalString herdrProjects ''
+        # herdr-projects' Space card: a project's home Space (label ending in
+        # U+2800) is bold, the head of its group.
+        rows = [
+          ["state_icon", { token = "workspace", rules = [{ contains = "\u2800", bold = true }] }, { token = "branch", dim = true }, "git_status"],
+        ]
+      ''}
+            [experimental]
+            # Render inline images via the Kitty graphics protocol.
+            kitty_graphics = true
     '';
 
     # Keybinding reference.

@@ -12,7 +12,6 @@ Start and session
 
 Direct keys
 -----------
-  ctrl+shift+t             new tab
   ctrl+shift+left/right    previous/next tab
   ctrl+shift+up/down       previous/next workspace
   ctrl+shift+n             new workspace
@@ -27,8 +26,14 @@ Direct keys
   ctrl+shift+z             zoom pane
   ctrl+shift+,/.           previous/next pane
 
+  ctrl+shift+y             Claude Code in a new tab at the active directory
   ctrl+shift+o             OpenCode in a new tab at the active directory
+  ctrl+shift+x             Codex in a new tab at the active directory
   ctrl+shift+p             Pi in a new tab at the active directory
+  ctrl+shift+s             shell in a new tab at the active directory
+  ctrl+shift+a             herdr-projects popup (projects and threads)
+  ctrl+shift+g             herdr-plus projects (workspace templates)
+  ctrl+shift+e             herdr-plus quick actions (DevOps, git)
   F1                       edit scrollback
 
 Prefix keys

@@ -1,0 +1,296 @@
+#!/usr/bin/env bash
+# ARC worktrees for a repo, each in its own herdr Space running an agent.
+# Run from herdr-plus quick actions (herdr-plus.nix); see `usage` below.
+#
+# Checkouts live under ~/source/worktrees/<repo>/<branch>, herdr's configured
+# worktrees.directory (herdr.nix): devops' .envrc runs `source_up`, and the API
+# keys, GitHub token, and sticky AWS profile come from ~/source/.envrc, which
+# only a checkout under ~/source inherits. direnv whitelists that root.
+#
+# Deliberately not a herdr-plus worktree layout: those fire on every
+# `herdr worktree create`, including the ones herdr-projects makes for its
+# threads, and would stack extra tabs onto those Spaces.
+set -euo pipefail
+
+usage() {
+  cat >&2 <<'EOF'
+usage: herdr-arc new     REPO TITLE...       file an ARC ticket via Claude Code, then branch it
+       herdr-arc tickets REPO                my open ARC tickets, for a select picker
+       herdr-arc key     REPO KEY [TOPIC...] branch an existing ticket (1234 short topic)
+       herdr-arc list    REPO [worktrees]    ARC branches (or only checkouts), for a picker
+       herdr-arc open    REPO BRANCH         focus, reopen, or check out an existing branch
+       herdr-arc close   REPO BRANCH         remove the checkout, then mark the ticket Done
+EOF
+  exit 2
+}
+
+# Agent started in a new Space; override with HERDR_ARC_AGENT.
+agent="${HERDR_ARC_AGENT:-claude}"
+site=alchemer.atlassian.net
+worktree_root="$HOME/source/worktrees"
+
+# Git-ignored files a fresh checkout lacks but the main one carries: local
+# direnv overrides and Claude Code's per-project permission grants.
+local_files=(.envrc.local .claude/settings.local.json)
+
+# The quick-action pane closes when this exits; on failure, hold it open so the
+# error is readable instead of flashing by. `list` feeds a picker, never a pane.
+hold_on_failure() {
+  local status=$?
+  if [ "$status" -ne 0 ]; then
+    printf '\nFailed (exit %s) · Enter closes\n' "$status" >&2
+    read -r _ </dev/tty || true
+  fi
+}
+
+# Lowercase hyphenated words, at most 40 characters, no dangling hyphen.
+slugify() {
+  local slug
+  slug="$(tr '[:upper:]' '[:lower:]' <<<"$*" | tr -cs 'a-z0-9' '-')"
+  slug="${slug#-}"
+  slug="${slug:0:40}"
+  printf '%s' "${slug%-}"
+}
+
+has_ref() {
+  git -C "$repo" show-ref --quiet "$1"
+}
+
+# Run one Jira task through Claude Code's Atlassian MCP, allowing only TOOLS
+# (comma-separated, without the mcp__atlassian__ prefix); prints its reply.
+# Only the Atlassian server, under a name of its own: a claude.ai Atlassian
+# connector would otherwise shadow the Home Manager one, and nothing else
+# needs to start. Unset ANTHROPIC_API_KEY so the claude.ai login is used.
+# An empty cwd keeps repo context out of a few-tool-call session.
+claude_jira() {
+  local tools=$1 prompt=$2 mcp scratch output status=0
+  mcp="$(jq -cn --arg url "${ATLASSIAN_MCP_URL:?}" '{mcpServers: {atlassian: {type: "http", url: $url}}}')"
+  scratch="$(mktemp -d)"
+  output="$(cd "$scratch" && env -u ANTHROPIC_API_KEY claude -p --model haiku \
+    --strict-mcp-config --mcp-config "$mcp" \
+    --allowedTools="mcp__atlassian__${tools//,/,mcp__atlassian__}" \
+    "On Jira cloudId $site: $prompt" </dev/null)" || status=$?
+  rmdir "$scratch"
+  printf '%s\n' "$output"
+  return "$status"
+}
+
+# Fetch in the background so it overlaps the ticket call or the picker.
+fetch_main() {
+  git -C "$repo" fetch --quiet origin main &
+  fetch_pid=$!
+}
+
+# One JSON object per live worktree herdr knows for the repo.
+worktrees() {
+  herdr worktree list --cwd "$repo" |
+    jq -c '.result.worktrees[] | select(.is_prunable | not)'
+}
+
+# Make a checkout behave like the main one: copy ignored local files, populate
+# submodules from the main checkout's objects instead of re-cloning, and trust
+# its mise.toml. Idempotent, so reopened checkouts heal too.
+prepare() {
+  local path=$1 file
+  [ "$path" = "$repo" ] && return
+  for file in "${local_files[@]}"; do
+    if [ -f "$repo/$file" ] && [ ! -e "$path/$file" ]; then
+      mkdir -p "$(dirname "$path/$file")"
+      cp "$repo/$file" "$path/$file"
+    fi
+  done
+  local sub reference
+  while read -r _ sub; do
+    reference="$(git -C "$repo/$sub" rev-parse --absolute-git-dir 2>/dev/null)" || reference=""
+    if [ -n "$reference" ] && git -C "$path" submodule status -- "$sub" | grep -q '^-'; then
+      echo "Populating submodule $sub"
+      git -C "$path" submodule update --init --reference "$reference" -- "$sub" ||
+        echo "submodule $sub failed; run 'git submodule update --init $sub' there" >&2
+    fi
+  done < <(git -C "$path" config -f .gitmodules --get-regexp '\.path$' 2>/dev/null || true)
+  if [ -f "$path/mise.toml" ]; then
+    mise trust --quiet "$path/mise.toml" || echo "mise trust failed for $path" >&2
+  fi
+}
+
+# Open PATH as a Space labelled BRANCH; an already-open Space just gets focus,
+# a new one gets an agent.
+open_space() {
+  local path=$1 branch=$2 result pane name suffix
+  result="$(herdr worktree open --cwd "$repo" --path "$path" --label "$branch" --focus)"
+  if jq -e '.result.already_open' <<<"$result" >/dev/null; then
+    return
+  fi
+  pane="$(jq -er '.result.root_pane.pane_id | strings | select(length > 0)' <<<"$result")"
+  # Herdr names allow only lowercase letters, digits, '-' and '_' (32 max).
+  # Keep the ticket prefix readable and reserve a suffix for pane uniqueness.
+  name="${branch,,}"
+  name="${name//[^a-z0-9_-]/-}"
+  suffix="$(printf '%s' "$pane" | sha256sum | cut -c1-12)"
+  name="${name:0:19}-$suffix"
+  herdr agent start "$name" --kind "$agent" --pane "$pane"
+}
+
+# New branch from a freshly fetched origin/main, prepared and opened.
+create_from_main() {
+  local branch=$1 path
+  path="$worktree_root/$(basename "$repo")/$branch"
+  wait "$fetch_pid" ||
+    echo "fetch failed; branching from the local origin/main" >&2
+  git -C "$repo" worktree add --quiet --no-track -b "$branch" "$path" origin/main
+  prepare "$path"
+  open_space "$path" "$branch"
+}
+
+cmd_new() {
+  local title="$*"
+  [ -n "$title" ] || usage
+  fetch_main
+  echo "Filing an ARC ticket with Claude Code: $title"
+  local output key
+  output="$(claude_jira atlassianUserInfo,createJiraIssue \
+    "Create one Jira issue in project ARC: issue type Task, summary exactly \"$title\", no description, assigned to the current user (look up their account id with atlassianUserInfo). Do nothing else. Reply with only the final line KEY=<issue key>.")"
+  key="$(grep -oE '^KEY=ARC-[0-9]+' <<<"$output" | tail -n1 | cut -d= -f2)" || true
+  if [ -z "$key" ]; then
+    printf 'Claude Code did not return an ARC key:\n%s\n' "$output" >&2
+    exit 1
+  fi
+  echo "Filed $key · https://$site/browse/$key"
+  create_from_main "$key-$(slugify "$title")"
+}
+
+# My unresolved ARC tickets as "ARC-N summary<TAB>status", newest first. The
+# whole label is the value, so `key` gets the summary for the branch topic.
+# Claude Code takes a while, so answers are reused for a few minutes.
+cmd_tickets() {
+  local cache="${XDG_CACHE_HOME:-$HOME/.cache}/herdr-arc/tickets.tsv" output
+  if [ -s "$cache" ] && [ -n "$(find "$cache" -mmin -5)" ]; then
+    cat "$cache"
+    return
+  fi
+  output="$(claude_jira searchJiraIssuesUsingJql \
+    "Search with JQL exactly 'project = ARC AND assignee = currentUser() AND statusCategory != Done ORDER BY updated DESC', fields summary and status, up to 100 results. Do nothing else. Reply with one line per issue, exactly ISSUE|<key>|<status name>|<summary>, and nothing else.")"
+  output="$(grep -E '^ISSUE\|ARC-[0-9]+\|' <<<"$output" |
+    awk -F'|' '{ s = $4; for (i = 5; i <= NF; i++) s = s "|" $i; printf "%s %s\t%s\n", $2, s, $3 }')" || true
+  if [ -z "$output" ]; then
+    printf 'No open ARC tickets found (or Claude Code failed)\tuse "Worktree for ARC number" instead\n'
+    return
+  fi
+  mkdir -p "$(dirname "$cache")"
+  printf '%s\n' "$output" | tee "$cache"
+}
+
+cmd_key() {
+  # "ARC-1234 Some summary", "1234 short topic", or "arc-1234": the first word
+  # is the key (a bare number becomes ARC-N), the rest is slugged as the topic.
+  local words key topic branch
+  read -r -a words <<<"$*"
+  [ "${#words[@]}" -gt 0 ] || usage
+  key="${words[0]^^}"
+  [[ $key =~ ^[0-9]+$ ]] && key="ARC-$key"
+  if ! [[ $key =~ ^ARC-[0-9]+$ ]]; then
+    echo "Got '${words[0]}'; start with a real ARC key, e.g. ARC-1234 short topic." >&2
+    exit 2
+  fi
+  # Any branch already carrying the key opens instead of growing a sibling.
+  branch="$(cmd_list | cut -f1 | grep -iE "^$key(-|$)" | head -n1)" || true
+  if [ -n "$branch" ]; then
+    echo "Opening existing $branch"
+    cmd_open "$branch"
+    return
+  fi
+  topic="$(slugify "${words[@]:1}")"
+  branch="$key${topic:+-$topic}"
+  fetch_main
+  create_from_main "$branch"
+}
+
+# Branch<TAB>where it is: open Spaces, then worktrees, then local branches and
+# branches only on origin, newest first. Case-insensitive, since older branches
+# use arc-N.
+cmd_list() {
+  local only=${1:-} seen="" branch state ref
+  while IFS=$'\t' read -r branch state; do
+    printf '%s\t%s\n' "$branch" "$state"
+    seen+="|$branch|"
+  done < <(worktrees | jq -r 'select(.branch // "" | test("^arc-"; "i"))
+    | [.branch, (if .open_workspace_id then "open Space" else "worktree" end)] | @tsv' |
+    sort -t$'\t' -k2,2)
+  [ "$only" = worktrees ] && return
+  for ref in refs/heads refs/remotes/origin; do
+    while read -r branch; do
+      [[ $seen == *"|$branch|"* ]] && continue
+      seen+="|$branch|"
+      if [ "$ref" = refs/heads ]; then state=branch; else state="origin only"; fi
+      printf '%s\t%s\n' "$branch" "$state"
+    done < <(git -C "$repo" for-each-ref --sort=-committerdate --format='%(refname:lstrip=-1)' \
+      "$ref/[Aa][Rr][Cc]-*")
+  done
+}
+
+cmd_open() {
+  local branch=${1:?usage: herdr-arc open REPO BRANCH} path
+  path="$(worktrees | jq -r --arg b "$branch" 'select(.branch == $b) | .path' | head -n1)"
+  if [ -z "$path" ]; then
+    path="$worktree_root/$(basename "$repo")/$branch"
+    # A checkout whose directory vanished (old /tmp ones) still claims the branch.
+    git -C "$repo" worktree prune
+    if has_ref "refs/heads/$branch"; then
+      git -C "$repo" worktree add --quiet "$path" "$branch"
+    else
+      git -C "$repo" fetch --quiet origin "$branch"
+      git -C "$repo" worktree add --quiet --track -b "$branch" "$path" "origin/$branch"
+    fi
+  fi
+  prepare "$path"
+  open_space "$path" "$branch"
+}
+
+# Close BRANCH's Space, remove its checkout (refusing local changes), drop the
+# branch if merged, and transition its ticket to Done.
+cmd_close() {
+  local branch=${1:?usage: herdr-arc close REPO BRANCH} entry path space key answer
+  entry="$(worktrees | jq -c --arg b "$branch" 'select(.branch == $b)' | head -n1)"
+  path="$(jq -r '.path // empty' <<<"$entry")"
+  space="$(jq -r '.open_workspace_id // empty' <<<"$entry")"
+  if [ -z "$path" ] || [ "$path" = "$repo" ]; then
+    echo "$branch has no linked checkout to remove." >&2
+    exit 1
+  fi
+  key="$(grep -oiE '^arc-[0-9]+' <<<"$branch")" || true
+  key="${key^^}"
+  printf 'Close %s: remove %s%s? [y/N] ' "$branch" "$path" "${key:+ and mark $key Done}"
+  read -r answer </dev/tty
+  [[ $answer =~ ^[Yy] ]] || exit 0
+  if [ -n "$(git -C "$path" status --porcelain)" ]; then
+    echo "$path has uncommitted changes; commit or discard them first." >&2
+    git -C "$path" status --short >&2
+    exit 1
+  fi
+  git -C "$repo" worktree remove "$path"
+  git -C "$repo" branch -d "$branch" 2>/dev/null ||
+    echo "Kept branch $branch (not merged into HEAD)"
+  if [ -n "$key" ]; then
+    echo "Marking $key Done with Claude Code"
+    claude_jira getTransitionsForJiraIssue,transitionJiraIssue \
+      "Transition issue $key to the Done status (find the transition with getTransitionsForJiraIssue; pick the one leading to Done). Do nothing else. Reply with only one final line: the issue's new status."
+    rm -f "${XDG_CACHE_HOME:-$HOME/.cache}/herdr-arc/tickets.tsv"
+  fi
+  # Last: launched from inside that Space, this pane closes with it.
+  [ -z "$space" ] || herdr workspace close "$space"
+}
+
+[ $# -ge 2 ] || usage
+command=$1
+repo=$2
+shift 2
+case $command in list | tickets) ;; *) trap hold_on_failure EXIT ;; esac
+case $command in
+new) cmd_new "$@" ;;
+tickets) cmd_tickets ;;
+key) cmd_key "$@" ;;
+list) cmd_list "$@" ;;
+open) cmd_open "$@" ;;
+close) cmd_close "$@" ;;
+*) usage ;;
+esac

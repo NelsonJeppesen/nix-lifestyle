@@ -67,10 +67,18 @@ let
       exec nvim -- "''${files[@]}"
     '';
   };
+
+  # Real executables instead of aliases so they work from non-interactive
+  # callers like `watch k get pods`. `k` resolves kubectl via PATH so
+  # direnv-provided kubectl versions still win.
+  g = pkgs.writeShellScriptBin "g" ''exec ${pkgs.git}/bin/git "$@"'';
+  k = pkgs.writeShellScriptBin "k" ''exec kubectl "$@"'';
 in
 {
   # Make the built scripts available on PATH for interactive use.
   home.packages = [
+    g
+    k
     nsr
     openGitFiles
     rgreplace
@@ -78,7 +86,12 @@ in
 
   programs = {
     # direnv: automatically load/unload .envrc environment variables per directory
-    direnv.enable = true;
+    direnv = {
+      enable = true;
+      # Herdr worktrees (herdr.nix worktrees.directory): trust their .envrc
+      # without a per-checkout `direnv allow`.
+      config.whitelist.prefix = [ "${config.home.homeDirectory}/source/worktrees" ];
+    };
 
     # fzf: fuzzy finder used throughout the shell (history, file picker, etc.)
     fzf = {
@@ -96,7 +109,7 @@ in
       flags = [ "--disable-up-arrow" ]; # Don't hijack up-arrow (use Ctrl+R instead)
 
       settings = {
-        filter_mode = "workspace"; # Filter history by current git repo/directory
+        filter_mode = "global"; # Search all history by default (Ctrl+R in the UI cycles modes)
         keymap_mode = "emacs"; # Use emacs-style keybindings in search UI
         search_mode = "fulltext"; # Full-text search across command history
         secrets_filter = true; # Automatically filter out commands containing secrets
@@ -244,7 +257,6 @@ in
         cbp = "${pkgs.wl-clipboard}/bin/wl-paste"; # Paste from clipboard
 
         # Git
-        g = "${pkgs.git}/bin/git";
         cdr = "cd \"$(${pkgs.git}/bin/git rev-parse --show-toplevel)\""; # cd to git repo root
         vu = "open-git-files unstaged"; # Open unstaged and untracked files in Neovim
         vm = "open-git-files main"; # Open files changed relative to local main
@@ -272,7 +284,6 @@ in
         tpwb = "terraform plan -no-color | grep 'will be'"; # Quick summary of what will change
 
         # Kubernetes aliases
-        k = "kubectl";
         kns = "kubens"; # Quick namespace switch
         uc = "kubectx"; # Quick context switch
         ucu = "kubectx --unset"; # Unset current context
@@ -286,6 +297,9 @@ in
         alias zmv='noglob zmv'
 
         source ~/.config/zsh/named-dirs.zsh
+
+        # Complete the g/k wrapper executables like the tools they wrap.
+        compdef g=git k=kubectl
 
 
         ap() {

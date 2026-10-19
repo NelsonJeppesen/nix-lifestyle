@@ -1,5 +1,6 @@
 { ... }: {
   imports = [
+    ./chatgpt.nix
     ./chrome.nix
     # ./firefox.nix
     ./flameshot.nix

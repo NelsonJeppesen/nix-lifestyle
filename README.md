@@ -125,8 +125,12 @@ Examples currently wired up:
 |------------------------------|----------------------------|
 | Update everything            | `update`                   |
 | Edit terminal scrollback     | herdr `F1`                 |
-| Open OpenCode in a new tab   | `Ctrl+Shift+O`             |
+| New Claude Code / OpenCode / Codex / shell tab | `Ctrl+Shift+Y` / `O` / `X` / `S` (in herdr) |
 | Open agent-deck dashboard    | `Super+A`                  |
+| Open herdr-projects popup    | `Ctrl+Shift+A` (in herdr)  |
+| herdr-plus workspace picker | `Ctrl+Shift+G` (in herdr)  |
+| herdr-plus quick actions     | `Ctrl+Shift+E` (in herdr)  |
+| New/existing ARC worktree    | `Ctrl+Shift+E` → DevOps: ARC actions |
 | Global grep (nvim)           | `<leader>fg` (Telescope)   |
 | File explorer (nvim)         | `:Neotree`                |
 | Copy buffer to clipboard     | `:%y+`                     |

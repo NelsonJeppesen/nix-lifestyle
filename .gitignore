@@ -2,6 +2,5 @@ nixos/falcon/
 nixos/.hostname
 result
 home-manager/.sisyphus/
-.serena/
 wkhtmltox-al2023/dist/
 wkhtmltox-al2023/*.tar.gz

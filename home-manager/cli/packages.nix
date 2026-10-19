@@ -7,11 +7,11 @@
     pkgs.nixfmt # Nix formatter
     # pkgs.vitetris # Terminal tetris clone
     pkgs.lsof # Open files
-    pkgs.python313 # Python 3.13 interpreter
+    (pkgs.python313.withPackages (ps: [ ps.pyserial ])) # Python 3.13 + pyserial (MediaTek preloader exploits)
+    pkgs.android-tools # adb/fastboot
     pkgs.circumflex # Hacker News reader
     #pkgs.fx
     #pkgs.somafm-cli # forked
-    #pkgs.ansible_2_16
     # pkgs.google-cloud-sdk
     pkgs.awscli2 # AWS CLI v2
     # pkgs.oci-cli # Oracle Cloud Infrastructure CLI
