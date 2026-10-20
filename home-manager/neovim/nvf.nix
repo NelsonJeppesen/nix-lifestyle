@@ -10,7 +10,7 @@
     defaultEditor = true; # $EDITOR
 
     settings = {
-      mnw.appName = null;
+      mnw.appName = "nvim";
 
       vim = {
         viAlias = true;
