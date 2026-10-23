@@ -34,6 +34,7 @@ Direct keys
   ctrl+shift+a             herdr-projects popup (projects and threads)
   ctrl+shift+g             herdr-plus projects (workspace templates)
   ctrl+shift+e             herdr-plus quick actions (DevOps, git)
+  ctrl+shift+w             ARC: close worktree + ticket (pick, confirm, done)
   F1                       edit scrollback
 
 Prefix keys

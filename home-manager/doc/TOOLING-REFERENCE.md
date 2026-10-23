@@ -26,6 +26,7 @@ the tools exist and what they replaced. More focused references remain in:
 | Start Pi or continue it | `p` / `pc` |
 | Open an agent or shell in a new Herdr tab | `Ctrl-Shift-y` Claude Code, `-o` OpenCode, `-x` Codex, `-p` Pi, `-s` shell |
 | Start DevOps work on an ARC ticket in its own worktree | `Ctrl-Shift-e`, then DevOps: New ARC ticket / Worktree for existing ARC / Open ARC branch |
+| Finish an ARC worktree: remove the checkout, mark the ticket Done | `Ctrl-Shift-w` in Herdr |
 | Watch every agent session from one dashboard | `Super-a` (Agent Deck window) or `ad` |
 | Split work across parallel agent threads | `Ctrl-Shift-a` in Herdr (Herdr Projects) |
 | Open a whole templated workspace, or run a quick action | `Ctrl-Shift-g` / `Ctrl-Shift-e` in Herdr (herdr-plus) |
@@ -208,6 +209,7 @@ bindings to Herdr.
 | `Ctrl-Shift-a` | Herdr Projects popup |
 | `Ctrl-Shift-g` | herdr-plus workspace templates |
 | `Ctrl-Shift-e` | herdr-plus quick actions |
+| `Ctrl-Shift-w` | ARC: close worktree + ticket |
 | `F1` | Edit scrollback |
 
 ### Prefix keys
@@ -303,6 +305,11 @@ action there, not by hand in that directory.
 - **DevOps: Open ARC branch** lists ARC branches: open Spaces first, then
   worktrees, local branches, and origin-only branches, newest first. Picking
   one focuses its Space, reopens its worktree, or checks it out.
+- **ARC: Close worktree + ticket** (also `Ctrl-Shift-w`, a Herdr popup that
+  runs the same action with fzf as the picker) lists ARC checkouts. After you
+  confirm, it removes the checkout, deletes the branch if it is merged, marks
+  the ticket Done through Claude Code, and closes the Space. It refuses a
+  checkout with uncommitted changes.
 - All Herdr worktrees, ARC or not, live in `~/source/worktrees/<repo>/`
   (`worktrees.directory` in `ai/herdr.nix`, instead of `~/.herdr/worktrees`).
   devops' `.envrc` runs `source_up`, and the API keys, GitHub token, and sticky
@@ -438,17 +445,6 @@ Configured hostnames:
 An unmapped host starts no connector. A mapped host with a missing token causes
 the tunnel unit to fail and retry. Tunnel/DNS/Access infrastructure is managed
 outside this repository in `~/source/personal/terraform/core/`.
-
-### Headless `opencode` machine through Tailscale
-
-The NixOS `opencode` host is a separate deployment. It serves loopback port
-4096 and publishes it through `tailscale serve`; tailnet ACLs are its
-authentication gate.
-
-It imports `home-manager/ai/opencode.nix` and `home-manager/ai/mcp.nix`, but not
-the separate `ai/pi.nix`, `ai/herdr.nix`, or `cli/git.nix` modules. Therefore it
-does not automatically receive Pi even though its core OpenCode settings and
-shared MCP catalogue match.
 
 ## Neovim
 

@@ -13,6 +13,28 @@ let
   # the same launchers as quick actions.
   newTab = pkgs.callPackage ./bin/herdr-new-tab.nix { };
 
+  # herdr-plus's "ARC: Close worktree + ticket" quick action on a direct key.
+  # herdr-plus can only bind its whole quick-actions menu, so this popup runs
+  # that action's own list and close commands, with fzf as the picker.
+  arcClose = pkgs.writeShellApplication {
+    name = "herdr-arc-close";
+    runtimeInputs = [
+      (pkgs.callPackage ./bin/herdr-arc.nix { hmConfig = config; })
+      pkgs.fzf
+    ];
+    text = ''
+      devops=${config.home.homeDirectory}/source/devops
+      worktrees="$(herdr-arc list "$devops" worktrees)"
+      if [ -z "$worktrees" ]; then
+        echo "No ARC worktrees to close · Enter closes"
+        read -r _ </dev/tty || true
+        exit 0
+      fi
+      choice="$(fzf --prompt 'Close ARC worktree: ' <<<"$worktrees")" || exit 0
+      exec herdr-arc close "$devops" "''${choice%%$'\t'*}"
+    '';
+  };
+
   mobileRelayEnsure = pkgs.writeShellApplication {
     name = "herdr-mobile-relay-ensure";
     runtimeInputs = with pkgs; [
@@ -171,6 +193,13 @@ in
             type = "plugin_action"
             command = "cloudmanic.herdr-plus.quick-actions"
             description = "herdr-plus: quick actions"
+
+            # The ARC close quick action on its own key (arcClose above).
+            [[keys.command]]
+            key = "ctrl+shift+w"
+            type = "popup"
+            command = "${lib.getExe arcClose}"
+            description = "ARC: close worktree + ticket"
 
             [ui]
             # Skip the name prompt and create tabs immediately with generated names.

@@ -63,20 +63,7 @@ let
 
   # ARC worktrees of the devops repo, each in its own Space running an agent;
   # Jira calls (file, list, close tickets) go through Claude Code's Atlassian MCP.
-  herdrArc = pkgs.writeShellApplication {
-    name = "herdr-arc";
-    runtimeInputs = [
-      config.programs.claude-code.finalPackage
-      config.programs.mise.package
-      pkgs.git
-      pkgs.herdr
-      pkgs.jq
-    ];
-    text = ''
-      ATLASSIAN_MCP_URL=${config.programs.mcp.servers.atlassian.url}
-    ''
-    + builtins.readFile ./bin/herdr-arc;
-  };
+  herdrArc = pkgs.callPackage ./bin/herdr-arc.nix { hmConfig = config; };
 
   toml = pkgs.formats.toml { };
 
