@@ -126,6 +126,13 @@
                 RUSTFLAGS = "-C link-arg=-fuse-ld=lld";
               };
             });
+            # diff-cover 10.5.1's HTML integration tests fail against the
+            # current nixpkgs toolchain; it's only a sqlfluff build dep.
+            pythonPackagesExtensions = prev.pythonPackagesExtensions ++ [
+              (pyFinal: pyPrev: {
+                diff-cover = pyPrev.diff-cover.overridePythonAttrs { doCheck = false; };
+              })
+            ];
           })
         ];
       };

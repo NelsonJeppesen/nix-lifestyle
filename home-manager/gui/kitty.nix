@@ -258,7 +258,7 @@ in
     file = {
       # Follow the desktop color scheme.
       ".config/kitty/dark-theme.auto.conf".source =
-        pkgs.kitty-themes + "/share/kitty-themes/themes/everforest_dark_hard.conf";
+        pkgs.kitty-themes + "/share/kitty-themes/themes/base2tone-sea-dark.conf";
 
       # Use soft Everforest outside dark mode.
       ".config/kitty/no-preference-theme.auto.conf".source =
