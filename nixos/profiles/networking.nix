@@ -1,11 +1,11 @@
-# networking.nix - Common network setup: systemd-networkd, firewall holes
-# for KDE Connect (1714-1764) and Spotify Connect (57621), and the
-# NetworkManager VPN plugins for OpenVPN/Fortinet SSL VPN.
+# networking.nix - Common network setup: NetworkManager does the work (GNOME
+# enables it); this adds firewall holes for KDE Connect (1714-1764) and
+# Spotify Connect (57621).
 {
-  pkgs,
   lib,
   ...
-}: {
+}:
+{
   networking = {
     modemmanager.enable = false;
 
@@ -35,13 +35,4 @@
       ];
     };
   };
-
-  systemd.network = {
-    enable = lib.mkDefault true;
-    wait-online.enable = lib.mkDefault false;
-  };
-
-  # HAProxy 3.0 ProdUS test entry
-  networking.extraHosts = ''
-  '';
 }

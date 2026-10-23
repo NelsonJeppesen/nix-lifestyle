@@ -26,6 +26,9 @@
       "rw"
       "allow_other"
       "url=https://s3.us-west-2.amazonaws.com"
+      # Region for SigV4 signing; without it s3fs assumes us-east-1 and
+      # falls back to legacy SigV2.
+      "endpoint=us-west-2"
       "use_path_request_style"
       "use_cache=/var/cache/s3fs"
       "passwd_file=${config.age.secrets.s3fs-creds.path}"

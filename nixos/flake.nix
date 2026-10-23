@@ -1,6 +1,6 @@
 # flake.nix - NixOS system layer flake entrypoint
 #
-# Defines inputs (nixpkgs, agenix, disko) and one nixosConfigurations
+# Defines inputs (nixpkgs, nixpkgs-factorio, agenix, disko) and one nixosConfigurations
 # output per machine in ./machines/. Hostname dispatch is now flake-native:
 # `nixos-rebuild switch --flake /etc/nixos#<hostname>` (inferred from
 # $HOSTNAME if omitted, since output names match real hostnames).
@@ -33,31 +33,6 @@
       url = "github:nix-community/disko";
       inputs.nixpkgs.follows = "nixpkgs";
     };
-
-    # comin: GitOps for NixOS — pulls this flake from a Git remote and
-    # switches selected headless systems on every push.
-    comin = {
-      url = "github:nlewo/comin";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
-
-    # home-manager: NixOS module form is used on the `opencode` host so
-    # nelson's home-manager opencode config (../home-manager/opencode.nix)
-    # configures the headless `opencode serve` instance running as nelson.
-    # The user-layer flake at home-manager/flake.nix pins its own copy for
-    # interactive laptops; this input is independent and only consumed by
-    # nixos/profiles/opencode.nix.
-    home-manager = {
-      url = "github:nix-community/home-manager";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
-
-    # Slack MCP server source used by nelson's shared OpenCode Home Manager
-    # module on the headless opencode host.
-    slack-mcp-server = {
-      url = "github:korotovsky/slack-mcp-server/v1.3.0";
-      flake = false;
-    };
   };
 
   outputs =
@@ -67,9 +42,6 @@
       nixpkgs-factorio,
       agenix,
       disko,
-      comin,
-      home-manager,
-      slack-mcp-server,
       ...
     }:
     let
@@ -84,10 +56,7 @@
             inherit
               agenix
               disko
-              comin
-              home-manager
               nixpkgs-factorio
-              slack-mcp-server
               ;
           };
           modules = [
@@ -103,12 +72,13 @@
     {
       nixosConfigurations = {
         lg-gram-14-2022 = mkSystem "lg-gram-14-2022";
-        lg-gram-17-2022 = mkSystem "lg-gram-17-2022";
         lg-gram-pro-17-2025 = mkSystem "lg-gram-pro-17-2025";
-        opencode = mkSystem "opencode";
-        macbook12-1 = mkSystem "macbook12-1";
-        macbook12-2 = mkSystem "macbook12-2";
-        openclaw = mkSystem "openclaw";
       };
+
+      # `nix flake check` builds every host; `nix fmt` runs RFC-style nixfmt.
+      checks.${system} = nixpkgs.lib.mapAttrs (
+        _: host: host.config.system.build.toplevel
+      ) self.nixosConfigurations;
+      formatter.${system} = nixpkgs.legacyPackages.${system}.nixfmt;
     };
 }

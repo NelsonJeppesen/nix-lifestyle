@@ -1,11 +1,13 @@
-# LG Gram Pro 17 2025 17Z90TP-G (Intel Core Ultra, Meteor/Arrow Lake)
+# LG Gram Pro 17 2025 17Z90TP-G (Intel Core Ultra 7 255H, Arrow Lake-H)
 { pkgs, ... }:
 {
   system.stateVersion = "26.05";
 
   imports = [
-    ../profiles/factorio.nix
+    ../profiles/chrome-policies.nix
+    ../profiles/console.nix
     ../profiles/desktop.nix
+    ../profiles/factorio.nix
     ../profiles/gnome.nix
     ../profiles/intel.nix
     ../profiles/keychron.nix
@@ -13,20 +15,24 @@
     ../profiles/lg_gram_common.nix
     ../profiles/networking.nix
     ../profiles/nix-ld.nix
+    ../profiles/plymouth.nix
     ../profiles/s3fs.nix
     ../profiles/tailscale.nix
     ../profiles/wifi.nix
     ../profiles/x86_64.nix
-    ../profiles/zsh.nix
   ];
 
-  # GPU: use `i915`; `xe` repeatedly hard-froze the desktop.
-  # NOTE: PCI ID 7d51 is Meteor Lake-P (Arc Graphics). On Arrow Lake the IDs
-  # differ (7d67/7d45/64a0); verify with `lspci -nn | grep VGA` if upgrading.
+  # GPU: `xe`, like lg-gram-14-2022. 7d51 is this Arrow Lake-H iGPU (check
+  # with `cat /sys/class/drm/card*/device/device`). xe still needs
+  # force_probe for it, and i915 is kept off the device.
   #
-  # `xe` was disabled after repeated TLB invalidation fence timeouts and hard
-  # freezes, including failures in its suspend/resume path.
+  # This host ran i915 until Oct 2026 because xe hit repeated TLB
+  # invalidation fence timeouts and hard freezes, including in suspend and
+  # resume. If those return, boot the previous generation, then swap the
+  # force_probe values and the blacklist back to i915.
   boot.kernelParams = [
+    "xe.force_probe=7d51"
+    "i915.force_probe=!7d51"
     # "acpi.ec_no_wakeup=1"
     # GPE storm fix carried from 12th-gen LG Gram. Verify the offending GPE
     # is still 0x6e on this machine via:
@@ -48,14 +54,7 @@
     "i8042.kbdreset"
   ];
 
-  boot.blacklistedKernelModules = [ "xe" ];
-
-  # Load the real KMS driver in initrd so Plymouth comes up on the KMS driver
-  # directly instead of starting on `simpledrm` (efifb) and flipping mid-boot.
-  # This eliminates the resolution-change flicker between Plymouth and GDM.
-  boot.initrd.kernelModules = [ "i915" ];
-  # systemd-in-initrd gives Plymouth a cleaner handoff to the display manager.
-  boot.initrd.systemd.enable = true;
+  boot.blacklistedKernelModules = [ "i915" ];
 
   # 2880x1800 panel: Plymouth's auto-detect picks 1x and renders the splash
   # postage-stamp sized. 2x makes the logical canvas 1440x900, the splash

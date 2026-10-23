@@ -1,7 +1,7 @@
 # shared.nix - Cross-host baseline (always imported via configuration.nix)
 #
 # Sets up: keyd Caps→layer remap, locale, zsh as default shell, nix flakes,
-# Wayland session env, neovim as system editor, nightly nix-gc, openssh,
+# Wayland session env, neovim as system editor, weekly nh clean, openssh,
 # the `nelson` user with standard groups, and a minimal package set.
 {
   config,
@@ -67,14 +67,20 @@
   services.dbus.implementation = "broker";
   users.defaultUserShell = pkgs.zsh;
 
+  # Firefox has defaulted to Wayland since 121, so MOZ_ENABLE_WAYLAND is gone.
   environment.sessionVariables = {
-    GDK_BACKEND = "wayland"; # prefer Wayland, fallback to X11 if needed
-    MOZ_ENABLE_WAYLAND = "1";
+    GDK_BACKEND = "wayland,x11"; # prefer Wayland, fall back to X11
     MOZ_USE_XINPUT2 = "1"; # smoother scrolling/input
     NIXOS_OZONE_WL = "1";
   };
 
-  nix.extraOptions = "experimental-features = nix-command flakes";
+  nix.settings.experimental-features = [
+    "nix-command"
+    "flakes"
+  ];
+  # Flakes are the only input source. NIX_PATH keeps nixpkgs=flake:nixpkgs,
+  # pinned to this flake's nixpkgs.
+  nix.channel.enable = false;
   services.fwupd.enable = lib.mkDefault true;
 
   # Install neovim as the system's editor
@@ -85,13 +91,18 @@
 
   zramSwap.enable = lib.mkDefault true;
 
-  nix = {
-    gc = {
-      automatic = lib.mkDefault true;
-      dates = lib.mkDefault "weekly";
-      options = lib.mkDefault "--delete-older-than 30d";
-    };
+  # GC with `nh clean all` instead of nix.gc: run as root, nix-collect-garbage
+  # never prunes the Home Manager and `nix profile` generations under each
+  # user's ~/.local/state/nix/profiles, so their closures piled up. nh also
+  # drops stale result/direnv GC roots. Keep 30 days, and at least 5 of each.
+  programs.nh.clean = {
+    enable = lib.mkDefault true;
+    dates = lib.mkDefault "weekly";
+    extraArgs = lib.mkDefault "--keep-since 30d --keep 5";
   };
+
+  # Weekly hard-link deduplication of identical store files.
+  nix.optimise.automatic = lib.mkDefault true;
 
   services.openssh.enable = lib.mkDefault true;
   users.users.nelson.isNormalUser = lib.mkDefault true;

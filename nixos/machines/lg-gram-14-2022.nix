@@ -4,19 +4,21 @@
   system.stateVersion = "25.05";
 
   imports = [
+    ../profiles/chrome-policies.nix
+    ../profiles/console.nix
     ../profiles/desktop.nix
     ../profiles/gnome.nix
     ../profiles/intel.nix
     ../profiles/laptop_power.nix
     ../profiles/lg_gram_common.nix
     ../profiles/networking.nix
+    ../profiles/plymouth.nix
     ../profiles/s3fs.nix
     ../profiles/tailscale.nix
     ../profiles/x86_64.nix
-    ../profiles/zsh.nix
   ];
 
-  # force new, xe video driver
+  # GPU: `xe` for the Alder Lake iGPU (46a6); i915 is kept off the device.
   boot.kernelParams = [
     "xe.force_probe=46a6"
     "i915.force_probe=!46a6"

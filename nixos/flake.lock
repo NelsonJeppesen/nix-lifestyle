@@ -20,28 +20,6 @@
         "type": "github"
       }
     },
-    "comin": {
-      "inputs": {
-        "flake-compat": "flake-compat",
-        "nixpkgs": [
-          "nixpkgs"
-        ],
-        "treefmt-nix": "treefmt-nix"
-      },
-      "locked": {
-        "lastModified": 1792310586,
-        "narHash": "sha256-4gaALWPUrc+coBvu02PB5WAuwSGdDgfJkkVX65buXX0=",
-        "owner": "nlewo",
-        "repo": "comin",
-        "rev": "1399adecc682e557bc3ee914d929f8e20391a148",
-        "type": "github"
-      },
-      "original": {
-        "owner": "nlewo",
-        "repo": "comin",
-        "type": "github"
-      }
-    },
     "disko": {
       "inputs": {
         "nixpkgs": [
@@ -62,54 +40,18 @@
         "type": "github"
       }
     },
-    "flake-compat": {
-      "flake": false,
-      "locked": {
-        "lastModified": 1765121682,
-        "narHash": "sha256-4VBOP18BFeiPkyhy9o4ssBNQEvfvv1kXkasAYd0+rrA=",
-        "owner": "NixOS",
-        "repo": "flake-compat",
-        "rev": "65f23138d8d09a92e30f1e5c87611b23ef451bf3",
-        "type": "github"
-      },
-      "original": {
-        "owner": "NixOS",
-        "repo": "flake-compat",
-        "type": "github"
-      }
-    },
-    "home-manager": {
-      "inputs": {
-        "nixpkgs": [
-          "nixpkgs"
-        ]
-      },
-      "locked": {
-        "lastModified": 1792703141,
-        "narHash": "sha256-3X34FaSeMJXMx8CK/BN6sZ9knwNauuiJXQhLM+bQQuI=",
-        "owner": "nix-community",
-        "repo": "home-manager",
-        "rev": "6750249c69969d09d952efaf3fab88a2bdac7ec6",
-        "type": "github"
-      },
-      "original": {
-        "owner": "nix-community",
-        "repo": "home-manager",
-        "type": "github"
-      }
-    },
     "nixpkgs": {
       "locked": {
-        "lastModified": 1770107345,
-        "narHash": "sha256-tbS0Ebx2PiA1FRW8mt8oejR0qMXmziJmPaU1d4kYY9g=",
+        "lastModified": 1792502884,
+        "narHash": "sha256-IoNisKcGbUjdd45qCqywGMCYmZ5EnkxezvLII0FWwNA=",
         "owner": "nixos",
         "repo": "nixpkgs",
-        "rev": "4533d9293756b63904b7238acb84ac8fe4c8c2c4",
+        "rev": "02c087f3fe673c9e317f206a627cb6b910336dbe",
         "type": "github"
       },
       "original": {
         "owner": "nixos",
-        "ref": "nixpkgs-unstable",
+        "ref": "nixos-unstable",
         "repo": "nixpkgs",
         "type": "github"
       }
@@ -130,66 +72,12 @@
         "type": "github"
       }
     },
-    "nixpkgs_2": {
-      "locked": {
-        "lastModified": 1792502884,
-        "narHash": "sha256-IoNisKcGbUjdd45qCqywGMCYmZ5EnkxezvLII0FWwNA=",
-        "owner": "nixos",
-        "repo": "nixpkgs",
-        "rev": "02c087f3fe673c9e317f206a627cb6b910336dbe",
-        "type": "github"
-      },
-      "original": {
-        "owner": "nixos",
-        "ref": "nixos-unstable",
-        "repo": "nixpkgs",
-        "type": "github"
-      }
-    },
     "root": {
       "inputs": {
         "agenix": "agenix",
-        "comin": "comin",
         "disko": "disko",
-        "home-manager": "home-manager",
-        "nixpkgs": "nixpkgs_2",
-        "nixpkgs-factorio": "nixpkgs-factorio",
-        "slack-mcp-server": "slack-mcp-server"
-      }
-    },
-    "slack-mcp-server": {
-      "flake": false,
-      "locked": {
-        "lastModified": 1778798792,
-        "narHash": "sha256-I4f6yKV0BXtaxnqi/XNID+Pwl2mWjSqxIHhb07U7sc4=",
-        "owner": "korotovsky",
-        "repo": "slack-mcp-server",
-        "rev": "a079b3cd4d5836d791c942a9fc107987e7865b37",
-        "type": "github"
-      },
-      "original": {
-        "owner": "korotovsky",
-        "ref": "v1.3.0",
-        "repo": "slack-mcp-server",
-        "type": "github"
-      }
-    },
-    "treefmt-nix": {
-      "inputs": {
-        "nixpkgs": "nixpkgs"
-      },
-      "locked": {
-        "lastModified": 1770228511,
-        "narHash": "sha256-wQ6NJSuFqAEmIg2VMnLdCnUc0b7vslUohqqGGD+Fyxk=",
-        "owner": "numtide",
-        "repo": "treefmt-nix",
-        "rev": "337a4fe074be1042a35086f15481d763b8ddc0e7",
-        "type": "github"
-      },
-      "original": {
-        "owner": "numtide",
-        "repo": "treefmt-nix",
-        "type": "github"
+        "nixpkgs": "nixpkgs",
+        "nixpkgs-factorio": "nixpkgs-factorio"
       }
     }
   },

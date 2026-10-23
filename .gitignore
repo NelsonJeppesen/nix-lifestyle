@@ -1,5 +1,4 @@
 nixos/falcon/
-nixos/.hostname
 result
 home-manager/.sisyphus/
 wkhtmltox-al2023/dist/

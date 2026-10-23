@@ -2,7 +2,7 @@
 #
 # Imported by every nixosConfigurations.* output in flake.nix together with
 # the machine-specific module. Hostname is set in the flake's mkSystem
-# helper, so this file no longer reads /etc/nixos/.hostname.
+# helper.
 { ... }:
 {
   networking.domain = "home.arpa";

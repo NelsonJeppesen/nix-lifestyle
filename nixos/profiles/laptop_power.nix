@@ -17,17 +17,11 @@
 # - PCIe ASPM powersupersave on battery (enables L1.2 substates).
 # - WIFI_PWR forced off — Intel AX211/BE200 powersave causes disconnects
 #   (cost: ~0.5-1 W).
-# - powertop --auto-tune at boot (additive, mostly idempotent with TLP).
+# - powertop --auto-tune stays off; it would re-enable USB autosuspend.
+# - The battery charge cap is LG-specific and lives in lg_gram_common.nix.
 { lib, ... }:
 {
   services.thermald.enable = false;
-
-  # TLP <=1.9.x still writes vm.laptop_mode (deprecated since kernel 6.5,
-  # ignored by the kernel which logs a warning on every change). Pre-set the
-  # sysctl so TLP's write is a no-op and the dmesg/journal noise stops.
-  # Safe to remove once TLP drops the write (>=1.6 upstream, but still
-  # present in 1.9.1 nixpkgs). See `tlp: vm.laptop_mode is deprecated`.
-  boot.kernel.sysctl."vm.laptop_mode" = 0;
 
   # Suppress systemd-rfkill: NixOS's TLP module already masks it (TLP manages
   # radio devices itself), but masking alone still leaves the rfkill udev

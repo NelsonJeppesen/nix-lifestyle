@@ -1,6 +1,6 @@
 # Nix Lifestyle
 
-A personal, reproducible NixOS + Home Manager setup for laptops, dev workstations, and a small k3s cluster of old MacBooks.
+A personal, reproducible NixOS + Home Manager setup for my LG Gram laptops.
 
 Goals:
 - Declarative & auditable (system + user config in one repo)
@@ -19,8 +19,8 @@ Goals:
 ├── nixos/             # System layer (flake)
 │   ├── flake.nix      # nixosConfigurations.<hostname> per machine in machines/
 │   ├── configuration.nix
-│   ├── machines/      # Per-host module (lg-gram-*, macbook12-*, openclaw)
-│   └── profiles/      # Reusable bundles (gnome, intel, desktop, k3s, ...)
+│   ├── machines/      # Per-host module (lg-gram-*)
+│   └── profiles/      # Reusable bundles (gnome, intel, desktop, tailscale, ...)
 ├── home-manager/      # User layer (flake)
 │   ├── flake.nix      # homeConfigurations.nelson
 │   ├── home.nix
@@ -79,7 +79,7 @@ home-manager switch --flake ~/.config/home-manager#nelson
 
 Both layers eval pure (no `--impure`); `age.secrets.<x>.file` entries use quoted strings so the encrypted files at `/etc/secrets/encrypted/` are not copied into the store at eval time.
 
-Garbage collection runs weekly (30d retention) via `nixos/profiles/shared.nix`.
+Garbage collection runs weekly via `nh clean all` (30-day retention, at least 5 generations, user profiles included), set in `nixos/profiles/shared.nix`; the store is also deduplicated weekly.
 
 ---
 ## Adding things
@@ -98,7 +98,6 @@ Garbage collection runs weekly (30d retention) via `nixos/profiles/shared.nix`.
 Encrypted secrets live outside this repo, under `/etc/secrets/encrypted/*.age`, managed by [agenix](https://github.com/ryantm/agenix). They are referenced (never decrypted) by `age.secrets` in both layers.
 
 Examples currently wired up:
-- `k3s-token.age` — k3s cluster token
 - `awscredentials.personal.age` — AWS credentials
 - `kubeconfig.personal.age` — kubeconfig (decrypted to `.orig` for context-switching workflows)
 - `envrc.{personal,root}.age` — direnv envs

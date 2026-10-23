@@ -7,7 +7,6 @@
 { pkgs, ... }:
 
 {
-  age.secrets.wifi-0x01.file = "/etc/secrets/encrypted/wifi.0x01.age";
   age.secrets.wifi-0x02.file = "/etc/secrets/encrypted/wifi.0x02.age";
 
   # On every iwd start, copy each decrypted secret into iwd's state dir
@@ -19,7 +18,6 @@
         "${pkgs.coreutils}/bin/install -d -m700 /var/lib/iwd"
 
         # Copy secret into place with correct mode
-        "${pkgs.coreutils}/bin/install -m600 /run/agenix/wifi-0x01   /var/lib/iwd/0x01.psk"
         "${pkgs.coreutils}/bin/install -m600 /run/agenix/wifi-0x02   /var/lib/iwd/0x02.psk"
       ];
     };

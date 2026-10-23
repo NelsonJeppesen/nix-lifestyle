@@ -15,7 +15,7 @@
 # - A handful of tools poking /dev/tty* directly (legacy installers, some
 #   recovery utilities) may behave differently. None used here today.
 # - `config.hwaccel = true` requires DRM/KMS access; fine on all current
-#   hosts (Intel xe/i915, Apple AGX via simpledrm fallback).
+#   hosts (Intel xe/i915).
 #
 # Font: JetBrainsMono Nerd Font ships the full Nerd Fonts glyph set
 # (Powerline, Devicons, Font Awesome, Material, Octicons, Codicons, etc.)

@@ -70,9 +70,14 @@
 
                 content = {
                   extraArgs = [ "-f" ];
+                  # zstd:1 is cheap and roughly halves /nix/store; noatime stops
+                  # reads causing CoW metadata writes. No autodefrag: it suits
+                  # spinning disks and only adds write amplification on NVMe.
+                  # Existing data stays uncompressed until rewritten.
                   mountOptions = [
+                    "compress=zstd:1"
+                    "noatime"
                     "discard=async"
-                    "autodefrag"
                   ];
                   mountpoint = "/";
                   format = "btrfs";

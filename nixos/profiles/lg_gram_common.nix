@@ -5,11 +5,13 @@
 # - Loads the lg-laptop kernel module (Fn brightness, reader mode, and
 #   battery charge threshold via /sys/devices/platform/lg-laptop/battery_care_limit).
 # - Enables upower so battery state is reported to the desktop.
-#
-# Battery charge cap is now configured per machine (or in laptop_power.nix)
-# rather than here.
+# - Stops charging at 80 % through TLP.
 { lib, ... }:
 {
+  # LG firmware accepts only 80 or 100. `sudo tlp fullcharge` charges to
+  # 100 % once, until the next boot.
+  services.tlp.settings.STOP_CHARGE_THRESH_BAT0 = 80;
+
   # Fix ACPI errors:
   #   ACPI Error: No handler for Region [XIN1] (...) [UserDefinedRegion]
   #   ACPI Error: Region UserDefinedRegion (ID=143) has no handler
