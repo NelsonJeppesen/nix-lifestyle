@@ -15,7 +15,6 @@
 
   boot = {
     kernelPackages = pkgs.linuxPackages_latest;
-    initrd.systemd.enable = true;
     loader = {
       efi.canTouchEfiVariables = true;
       systemd-boot = {

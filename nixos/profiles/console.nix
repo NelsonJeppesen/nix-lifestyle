@@ -9,8 +9,7 @@
 # Trade-offs vs. the kernel VT:
 # - kmscon owns the TTYs after stage-2, so Plymouth's handoff is to kmscon
 #   rather than the kernel framebuffer console. In practice this works
-#   cleanly with `boot.initrd.systemd.enable = true` (already set on the
-#   hosts importing this), but if a future Plymouth/kmscon version flickers
+#   cleanly with the systemd initrd, but if a future Plymouth/kmscon version flickers
 #   on handoff, disabling kmscon falls back to the kernel VT immediately.
 # - A handful of tools poking /dev/tty* directly (legacy installers, some
 #   recovery utilities) may behave differently. None used here today.

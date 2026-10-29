@@ -45,7 +45,6 @@
     "fbcon=nodefer"
   ];
   boot.consoleLogLevel = 3;
-  boot.initrd.verbose = false;
 
   # Pipewire
   security.rtkit.enable = true;
