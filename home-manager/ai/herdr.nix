@@ -127,10 +127,8 @@ in
             focus_pane_up = "ctrl+shift+k"
             focus_pane_right = "ctrl+shift+l"
 
-            # Splits — vertical reuses kitty's ctrl+shift+enter "new window" muscle
-            # memory; horizontal is the natural ctrl+shift+d beneath it.
-            split_vertical = "ctrl+shift+enter"
-            split_horizontal = "ctrl+shift+d"
+            split_horizontal = "ctrl+shift+enter"
+            split_vertical = "ctrl+shift+d"
 
             # Pane lifecycle.
             close_pane = "ctrl+shift+backspace"
