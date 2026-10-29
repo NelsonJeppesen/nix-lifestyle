@@ -27,6 +27,7 @@
   ];
 
   boot.blacklistedKernelModules = [ "i915" ];
+  boot.initrd.kernelModules = [ "xe" ];
 
   # 8GiB laptop; things get tight
   zramSwap.memoryPercent = 80;

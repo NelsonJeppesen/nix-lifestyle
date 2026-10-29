@@ -22,17 +22,25 @@
     ../profiles/x86_64.nix
   ];
 
-  # GPU: `xe`, like lg-gram-14-2022. 7d51 is this Arrow Lake-H iGPU (check
-  # with `cat /sys/class/drm/card*/device/device`). xe still needs
-  # force_probe for it, and i915 is kept off the device.
+  # GPU: `i915`, not `xe`. 7d51 is this Arrow Lake-H iGPU (check with
+  # `cat /sys/class/drm/card*/device/device`).
   #
-  # This host ran i915 until Oct 2026 because xe hit repeated TLB
-  # invalidation fence timeouts and hard freezes, including in suspend and
-  # resume. If those return, boot the previous generation, then swap the
-  # force_probe values and the blacklist back to i915.
+  # xe has hard-frozen this machine three times (Jul, Sep and Oct 2026),
+  # always after a run of "TLB invalidation fence timeout, seqno=N
+  # recv=N-1". Cause: the standalone media GT's GuC acks TLB invalidations
+  # through a CTB that xe maps CPU-cached, and on MTL/ARL that mapping
+  # isn't coherent, so the CPU reads the ack ~2.3 s late. i915 has the
+  # fix (Wa_22016122933, uncached GuC buffers on media GT 13.00); xe
+  # doesn't. No BIOS setting or GuC update helps (70.53.0 is the only ARL
+  # GuC). Upstream: drm/xe work item 8678, issue 8760; patch "drm/xe: fix
+  # GuC TLB invalidation ack stalls on ARL" (v6, Sep 2026, unmerged).
+  #
+  # Retry xe only once the kernel has the workaround:
+  #   xz -dc $(modinfo -n xe) | grep -ac 22016122933   # must be > 0
+  # then add "xe.force_probe=7d51" "i915.force_probe=!7d51" to kernelParams
+  # and swap the blacklist and initrd.kernelModules to xe. i915 binds 7d51
+  # natively, so it needs no force_probe.
   boot.kernelParams = [
-    "xe.force_probe=7d51"
-    "i915.force_probe=!7d51"
     # "acpi.ec_no_wakeup=1"
     # GPE storm fix carried from 12th-gen LG Gram. Verify the offending GPE
     # is still 0x6e on this machine via:
@@ -54,7 +62,8 @@
     "i8042.kbdreset"
   ];
 
-  boot.blacklistedKernelModules = [ "i915" ];
+  boot.blacklistedKernelModules = [ "xe" ];
+  boot.initrd.kernelModules = [ "i915" ];
 
   # 2880x1800 panel: Plymouth's auto-detect picks 1x and renders the splash
   # postage-stamp sized. 2x makes the logical canvas 1440x900, the splash

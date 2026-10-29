@@ -23,10 +23,10 @@
   # Update microcode when available
   hardware.cpu.intel.updateMicrocode = true;
 
-  # Every host drives its iGPU with `xe` (each machine file sets its
-  # force_probe ID). Loading it in initrd lets Plymouth start on the real KMS
-  # driver instead of flipping from simpledrm mid-boot.
-  boot.initrd.kernelModules = [ "xe" ];
+  # The KMS driver (xe or i915) differs per host, so each machine file picks
+  # it: force_probe, blacklist and boot.initrd.kernelModules. Loading it in
+  # initrd lets Plymouth start on the real KMS driver instead of flipping
+  # from simpledrm mid-boot.
 
   boot.initrd.availableKernelModules = [
     "aesni_intel"
