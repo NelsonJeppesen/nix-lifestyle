@@ -85,7 +85,10 @@ in
     Install.WantedBy = [ "default.target" ];
   };
 
-  # Run the tunnel with the matching host token.
+  # Run the tunnel with the matching host token. Off for now: no host has a
+  # token yet, so it isn't started at login. Once a token is in place, start
+  # it with `systemctl --user start herdr-remote-tunnel`, or restore
+  # `Install.WantedBy = [ "default.target" ];` to start it at login.
   systemd.user.services.herdr-remote-tunnel = {
     Unit = {
       Description = "Cloudflare Tunnel for the herdr-remote relay";
@@ -116,7 +119,7 @@ in
             token_file="${tokenDir}/token.$label"
             if [ ! -r "$token_file" ]; then
               echo "herdr-remote-tunnel: token for '$label' missing at $token_file." >&2
-              exit 1
+              exit 78 # EX_CONFIG: retrying can't fix a missing token
             fi
             exec cloudflared tunnel --no-autoupdate run --token "$(cat "$token_file")"
           '';
@@ -126,8 +129,8 @@ in
         ExecStart = lib.getExe run;
         Restart = "on-failure";
         RestartSec = 5;
+        # Fail once on a missing token instead of retrying every 5 s forever.
+        RestartPreventExitStatus = 78;
       };
-
-    Install.WantedBy = [ "default.target" ];
   };
 }
