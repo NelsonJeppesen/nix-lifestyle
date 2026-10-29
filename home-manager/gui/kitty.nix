@@ -258,7 +258,7 @@ in
     file = {
       # Follow the desktop color scheme.
       ".config/kitty/dark-theme.auto.conf".source =
-        pkgs.kitty-themes + "/share/kitty-themes/themes/base2tone-sea-dark.conf";
+        pkgs.kitty-themes + "/share/kitty-themes/themes/base2tone-lake-dark.conf";
 
       # Use soft Everforest outside dark mode.
       ".config/kitty/no-preference-theme.auto.conf".source =
@@ -288,12 +288,10 @@ in
         "kitty_mod+equal" = "change_font_size all +2.0";
         "kitty_mod+plus" = "change_font_size all +2.0";
         "kitty_mod+minus" = "change_font_size all -2.0";
-
       };
 
       #  Terminal settings
       settings = {
-
         # Drop ALL of kitty's built-in keyboard shortcuts, keeping only the allowlist mapped above.
         clear_all_shortcuts = "yes";
 
