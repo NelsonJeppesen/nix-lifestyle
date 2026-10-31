@@ -1,7 +1,7 @@
 { ... }: {
   imports = [
     ./gnome.nix
-    ./extensions_bitcoin-markets.nix
+    ./extensions_crypto-price-tracker.nix
     ./extensions_appindicator.nix
     ./extensions_blur-my-shell.nix
     ./extensions_caffeine.nix
