@@ -75,16 +75,32 @@ in
             onboarding = false
 
             [theme]
-            # Follow kitty's reported light/dark appearance.
+            # Use kitty's own ANSI palette, so herdr follows kitty's light/dark
+            # themes (gui/kitty.nix) instead of carrying its own.
+            name = "terminal"
+            # Switching only picks the sidebar overrides below; both sides
+            # stay on kitty's palette.
             auto_switch = true
-            dark_name = "gruvbox"
-            light_name = "gruvbox-light"
+            dark_name = "terminal"
+            light_name = "terminal"
 
             [theme.custom]
             # Follow Kitty’s background.
             panel_bg = "reset"
 
-            # Use each built-in theme's active_row_bg/selection_bg and foregrounds.
+            # Sidebar a shade darker than the panes, selected row in kitty's
+            # selection_background, per kitty theme (gui/kitty.nix). Hex, not
+            # ANSI names: Suburb's color0 is its background and color8 too bright.
+            [theme.custom.dark]
+            # Base2Tone Suburb dark: background #1e202f.
+            sidebar_bg = "#171925"
+            active_row_bg = "#292c3d"
+
+            [theme.custom.light]
+            # Base2Tone Lake dark, kitty's light-mode theme: background #192d34.
+            sidebar_bg = "#13232a"
+            active_row_bg = "#223c44"
+
             [update]
             # Nix owns herdr's version; silence the background update nag. `herdr
             # update` is a no-op for a Nix-managed install anyway.
@@ -212,9 +228,6 @@ in
             pane_gaps = false
             status_indicators = "symbols"
 
-            # Navigation accent; focused rows use the built-in theme's active_row_bg.
-            accent = "#fe8019"
-
       ${lib.optionalString herdrProjects ''
         # "projects: N need you" from herdr-projects, through the stable link
         # herdr-projects.nix owns. Entries match what `herdr-projects configure`
@@ -223,6 +236,11 @@ in
           { type = "command", command = "${config.home.homeDirectory}/.local/bin/herdr-projects --root ${config.home.homeDirectory}/.herdr-projects needs-you --line", interval_seconds = 15, timeout_seconds = 5 },
         ]
       ''}
+            [ui.toast]
+            # Agent finished/needs-input popups as toasts inside herdr, not
+            # desktop notifications; herdr-arc's notifications use them too.
+            delivery = "herdr"
+
             [ui.sidebar.agents]
             row_gap = 1
             rows = [
