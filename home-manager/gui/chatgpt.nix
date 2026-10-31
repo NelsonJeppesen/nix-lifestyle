@@ -76,14 +76,14 @@ let
       systemd
       tpm2-tss
       xz
-      xorg.libX11
-      xorg.libXScrnSaver
-      xorg.libXcomposite
-      xorg.libXdamage
-      xorg.libXext
-      xorg.libXfixes
-      xorg.libXrandr
-      xorg.libxcb
+      libx11
+      libxscrnsaver
+      libxcomposite
+      libxdamage
+      libxext
+      libxfixes
+      libxrandr
+      libxcb
     ];
     # dlopen()ed at runtime, so autoPatchelf cannot see them via DT_NEEDED.
     runtimeDependencies = with pkgs; [
