@@ -10,14 +10,18 @@
 # Deliberately not a herdr-plus worktree layout: those fire on every
 # `herdr worktree create`, including the ones herdr-projects makes for its
 # threads, and would stack extra tabs onto those Spaces.
+#
+# Every run also logs to the journal: `journalctl -t herdr-arc -e`.
 set -euo pipefail
 
 usage() {
   cat >&2 <<'EOF'
-usage: herdr-arc new     REPO TITLE...       file an ARC ticket via Claude Code, then branch it
+usage: herdr-arc new     REPO REQUEST...     in the background: file an ARC ticket via
+                                             Claude Code, branch it, start the agent on it
        herdr-arc tickets REPO                my open ARC tickets, for a select picker
        herdr-arc key     REPO KEY [TOPIC...] branch an existing ticket (1234 short topic)
        herdr-arc list    REPO [worktrees]    ARC branches (or only checkouts), for a picker
+       herdr-arc current REPO                the ARC branch of the focused Space, if any
        herdr-arc open    REPO BRANCH         focus, reopen, or check out an existing branch
        herdr-arc close   REPO BRANCH         remove the checkout, then mark the ticket Done
 EOF
@@ -28,6 +32,11 @@ EOF
 agent="${HERDR_ARC_AGENT:-claude}"
 site=alchemer.atlassian.net
 worktree_root="$HOME/source/worktrees"
+# Set in the detached copy `new` re-runs itself as; see cmd_new.
+detached="${HERDR_ARC_DETACHED:-}"
+# A Space opened from the background must not steal focus mid-keystroke.
+focus=--focus
+[ -z "$detached" ] || focus=--no-focus
 
 # Git-ignored files a fresh checkout lacks but the main one carries: local
 # direnv overrides and Claude Code's per-project permission grants.
@@ -41,6 +50,31 @@ hold_on_failure() {
     printf '\nFailed (exit %s) · Enter closes\n' "$status" >&2
     read -r _ </dev/tty || true
   fi
+}
+
+# The detached `new` has no pane to hold open, so it reports through herdr.
+notify_on_failure() {
+  local status=$?
+  if [ "$status" -ne 0 ]; then
+    echo "Failed (exit $status)" >&2
+    notify "ARC: new ticket failed" "journalctl -t herdr-arc -e"
+  fi
+}
+
+notify() {
+  herdr notification show "$1" --body "$2" --sound request >/dev/null || true
+}
+
+# Mirror a pane-facing run into the journal so its output outlives the pane.
+# Pickers (list, tickets) mirror only stderr: their stdout is the option list.
+log_to_journal() {
+  local picker=$1
+  shift
+  systemd-cat -t herdr-arc echo "herdr-arc $command $repo $*" || true
+  if [ -z "$picker" ]; then
+    exec > >(tee >(systemd-cat -t herdr-arc))
+  fi
+  exec 2> >(tee >(systemd-cat -t herdr-arc -p err) >&2)
 }
 
 # Lowercase hyphenated words, at most 40 characters, no dangling hyphen.
@@ -61,13 +95,16 @@ has_ref() {
 # Only the Atlassian server, under a name of its own: a claude.ai Atlassian
 # connector would otherwise shadow the Home Manager one, and nothing else
 # needs to start. Unset ANTHROPIC_API_KEY so the claude.ai login is used.
-# An empty cwd keeps repo context out of a few-tool-call session.
+# An empty cwd keeps repo context out of a few-tool-call session. The session
+# id is logged so its transcript can be found when a reply looks wrong.
 claude_jira() {
-  local tools=$1 prompt=$2 mcp scratch output status=0
+  local tools=$1 prompt=$2 mcp scratch session output status=0
   mcp="$(jq -cn --arg url "${ATLASSIAN_MCP_URL:?}" '{mcpServers: {atlassian: {type: "http", url: $url}}}')"
   scratch="$(mktemp -d)"
+  session="$(</proc/sys/kernel/random/uuid)"
+  echo "Claude Code session $session (~/.claude/projects/*/$session.jsonl)" >&2
   output="$(cd "$scratch" && env -u ANTHROPIC_API_KEY claude -p --model haiku \
-    --strict-mcp-config --mcp-config "$mcp" \
+    --session-id "$session" --strict-mcp-config --mcp-config "$mcp" \
     --allowedTools="mcp__atlassian__${tools//,/,mcp__atlassian__}" \
     "On Jira cloudId $site: $prompt" </dev/null)" || status=$?
   rmdir "$scratch"
@@ -85,6 +122,11 @@ fetch_main() {
 worktrees() {
   herdr worktree list --cwd "$repo" |
     jq -c '.result.worktrees[] | select(.is_prunable | not)'
+}
+
+# The Space with focus; a popup overlays it without taking focus.
+focused_space() {
+  herdr workspace list | jq -r '.result.workspaces[] | select(.focused) | .workspace_id'
 }
 
 # Make a checkout behave like the main one: copy ignored local files, populate
@@ -114,10 +156,10 @@ prepare() {
 }
 
 # Open PATH as a Space labelled BRANCH; an already-open Space just gets focus,
-# a new one gets an agent.
+# a new one gets an agent, handed PROMPT as its first message when given.
 open_space() {
-  local path=$1 branch=$2 result pane name suffix
-  result="$(herdr worktree open --cwd "$repo" --path "$path" --label "$branch" --focus)"
+  local path=$1 branch=$2 prompt=${3:-} result pane name suffix
+  result="$(herdr worktree open --cwd "$repo" --path "$path" --label "$branch" "$focus")"
   if jq -e '.result.already_open' <<<"$result" >/dev/null; then
     return
   fi
@@ -129,34 +171,60 @@ open_space() {
   suffix="$(printf '%s' "$pane" | sha256sum | cut -c1-12)"
   name="${name:0:19}-$suffix"
   herdr agent start "$name" --kind "$agent" --pane "$pane"
+  if [ -n "$prompt" ]; then
+    herdr agent prompt "$name" "$prompt"
+  fi
 }
 
 # New branch from a freshly fetched origin/main, prepared and opened.
 create_from_main() {
-  local branch=$1 path
+  local branch=$1 prompt=${2:-} path
   path="$worktree_root/$(basename "$repo")/$branch"
   wait "$fetch_pid" ||
     echo "fetch failed; branching from the local origin/main" >&2
   git -C "$repo" worktree add --quiet --no-track -b "$branch" "$path" origin/main
   prepare "$path"
-  open_space "$path" "$branch"
+  open_space "$path" "$branch" "$prompt"
 }
 
+# REQUEST is free text: Claude Code turns it into a clean ticket summary and a
+# short branch topic, and the agent in the new Space starts on the request
+# itself. The quick-action popup only launches a detached copy of this, which
+# logs to the journal and reports through herdr notifications.
 cmd_new() {
-  local title="$*"
-  [ -n "$title" ] || usage
+  local request="$*"
+  [ -n "$request" ] || usage
+  if [ -z "$detached" ]; then
+    HERDR_ARC_DETACHED=1 setsid -f systemd-cat -t herdr-arc --stderr-priority=err \
+      "$0" new "$repo" "$request" </dev/null
+    echo "Filing in the background; herdr notifies when the Space is ready."
+    return
+  fi
+  notify "ARC: filing ticket" "$request"
   fetch_main
-  echo "Filing an ARC ticket with Claude Code: $title"
-  local output key
-  output="$(claude_jira atlassianUserInfo,createJiraIssue \
-    "Create one Jira issue in project ARC: issue type Task, summary exactly \"$title\", no description, assigned to the current user (look up their account id with atlassianUserInfo). Do nothing else. Reply with only the final line KEY=<issue key>.")"
+  echo "Filing an ARC ticket with Claude Code: $request"
+  local output key summary topic branch
+  output="$(claude_jira atlassianUserInfo,createJiraIssue "Create one Jira issue in project ARC from the request between the ---- lines:
+----
+$request
+----
+Summary: the request as a concise ticket title, spelling and grammar fixed, sentence case, at most 80 characters; keep names of repos, hosts, services and people as written. If the summary leaves out detail from the request, use the request verbatim as the description; otherwise no description. Issue type Task, assigned to the current user (look up their account id with atlassianUserInfo). Do nothing else.
+Reply with only these three final lines:
+KEY=<issue key>
+SUMMARY=<summary used>
+TOPIC=<2 to 5 lowercase words joined by hyphens naming the work, at most 40 characters, for a git branch>")"
   key="$(grep -oE '^KEY=ARC-[0-9]+' <<<"$output" | tail -n1 | cut -d= -f2)" || true
   if [ -z "$key" ]; then
     printf 'Claude Code did not return an ARC key:\n%s\n' "$output" >&2
     exit 1
   fi
-  echo "Filed $key · https://$site/browse/$key"
-  create_from_main "$key-$(slugify "$title")"
+  summary="$(sed -n 's/^SUMMARY=//p' <<<"$output" | tail -n1)"
+  summary="${summary:-$request}"
+  topic="$(sed -n 's/^TOPIC=//p' <<<"$output" | tail -n1)"
+  branch="$key-$(slugify "${topic:-$summary}")"
+  echo "Filed $key ($summary) · https://$site/browse/$key"
+  create_from_main "$branch" "Jira $key: $summary (https://$site/browse/$key). This worktree's branch $branch was cut from origin/main for it. The request as written: $request -- Start on it."
+  notify "ARC: $key ready" "Space $branch · $summary"
 }
 
 # My unresolved ARC tickets as "ARC-N summary<TAB>status", newest first. The
@@ -205,17 +273,21 @@ cmd_key() {
   create_from_main "$branch"
 }
 
-# Branch<TAB>where it is: open Spaces, then worktrees, then local branches and
-# branches only on origin, newest first. Case-insensitive, since older branches
-# use arc-N.
+# Branch<TAB>where it is: the focused Space, other open Spaces, then worktrees,
+# then local branches and branches only on origin, newest first.
+# Case-insensitive, since older branches use arc-N.
 cmd_list() {
   local only=${1:-} seen="" branch state ref
   while IFS=$'\t' read -r branch state; do
     printf '%s\t%s\n' "$branch" "$state"
     seen+="|$branch|"
-  done < <(worktrees | jq -r 'select(.branch // "" | test("^arc-"; "i"))
-    | [.branch, (if .open_workspace_id then "open Space" else "worktree" end)] | @tsv' |
-    sort -t$'\t' -k2,2)
+  done < <(worktrees | jq -r --arg space "$(focused_space)" '
+    select(.branch // "" | test("^arc-"; "i"))
+    | if .open_workspace_id == $space then [0, .branch, "this Space"]
+      elif .open_workspace_id then [1, .branch, "open Space"]
+      else [2, .branch, "worktree"] end
+    | @tsv' |
+    sort -t$'\t' -k1,1n | cut -f2-)
   [ "$only" = worktrees ] && return
   for ref in refs/heads refs/remotes/origin; do
     while read -r branch; do
@@ -226,6 +298,10 @@ cmd_list() {
     done < <(git -C "$repo" for-each-ref --sort=-committerdate --format='%(refname:lstrip=-1)' \
       "$ref/[Aa][Rr][Cc]-*")
   done
+}
+
+cmd_current() {
+  cmd_list worktrees | awk -F'\t' '$2 == "this Space" { print $1 }'
 }
 
 cmd_open() {
@@ -284,12 +360,24 @@ cmd_close() {
 command=$1
 repo=$2
 shift 2
-case $command in list | tickets) ;; *) trap hold_on_failure EXIT ;; esac
+# The detached `new` already writes straight to the journal (systemd-cat).
+if [ -n "$detached" ]; then
+  trap notify_on_failure EXIT
+else
+  case $command in
+  list | tickets | current) log_to_journal picker "$@" ;;
+  *)
+    log_to_journal "" "$@"
+    trap hold_on_failure EXIT
+    ;;
+  esac
+fi
 case $command in
 new) cmd_new "$@" ;;
 tickets) cmd_tickets ;;
 key) cmd_key "$@" ;;
 list) cmd_list "$@" ;;
+current) cmd_current ;;
 open) cmd_open "$@" ;;
 close) cmd_close "$@" ;;
 *) usage ;;

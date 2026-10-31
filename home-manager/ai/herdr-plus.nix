@@ -128,10 +128,10 @@ let
   quickActions = {
     arc-new = {
       name = "ARC: New ticket + worktree";
-      description = "Claude Code files an ARC Task, then a Space branches it from origin/main";
+      description = "In the background: Claude Code files a tidied ARC Task, then an agent starts on it in a new Space";
       type = "form";
       command = "${lib.getExe herdrArc} new ${devops}";
-      form.prompt = "Ticket title";
+      form.prompt = "What needs doing";
     };
 
     arc-ticket = {

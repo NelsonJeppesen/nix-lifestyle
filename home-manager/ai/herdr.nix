@@ -15,7 +15,8 @@ let
 
   # herdr-plus's "ARC: Close worktree + ticket" quick action on a direct key.
   # herdr-plus can only bind its whole quick-actions menu, so this popup runs
-  # that action's own list and close commands, with fzf as the picker.
+  # that action's own list and close commands, with fzf as the picker. Inside
+  # an ARC Space it skips the picker and closes that one (close still asks).
   arcClose = pkgs.writeShellApplication {
     name = "herdr-arc-close";
     runtimeInputs = [
@@ -24,6 +25,10 @@ let
     ];
     text = ''
       devops=${config.home.homeDirectory}/source/devops
+      current="$(herdr-arc current "$devops")"
+      if [ -n "$current" ]; then
+        exec herdr-arc close "$devops" "$current"
+      fi
       worktrees="$(herdr-arc list "$devops" worktrees)"
       if [ -z "$worktrees" ]; then
         echo "No ARC worktrees to close · Enter closes"
