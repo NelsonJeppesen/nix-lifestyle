@@ -105,7 +105,7 @@ Examples currently wired up:
 ---
 ## Notable opinions
 
-- **Wayland-first**: `GDK_BACKEND=wayland`, X11 fallback allowed
+- **Wayland-first**: GTK, Firefox and Electron apps (`NIXOS_OZONE_WL`) run on Wayland natively; X11 apps run through XWayland
 - **TLP**: tuned for quiet thermals + battery (Turbo capped, powersave governors)
 - **Firefox/Chrome**: aggressive background throttling for idle savings
 - **GNOME**: CapsLock → Super (via keyd), heavy dconf/keybinding remap, run-or-raise shortcuts

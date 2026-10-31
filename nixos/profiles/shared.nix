@@ -68,8 +68,10 @@
   users.defaultUserShell = pkgs.zsh;
 
   # Firefox has defaulted to Wayland since 121, so MOZ_ENABLE_WAYLAND is gone.
+  # No GDK_BACKEND: GTK already prefers Wayland, and any value makes
+  # xdg-desktop-portal-gnome expose only Settings, which breaks portal
+  # screenshots (Flameshot), screencasts and file choosers.
   environment.sessionVariables = {
-    GDK_BACKEND = "wayland,x11"; # prefer Wayland, fall back to X11
     MOZ_USE_XINPUT2 = "1"; # smoother scrolling/input
     NIXOS_OZONE_WL = "1";
   };
