@@ -258,12 +258,13 @@ in
     file = {
       # Follow the desktop color scheme.
       ".config/kitty/dark-theme.auto.conf".source =
+        pkgs.kitty-themes + "/share/kitty-themes/themes/base2tone-suburb-dark.conf";
+      # Light mode keeps a dark palette too: Base2Tone Lake, the previous dark theme.
+      ".config/kitty/light-theme.auto.conf".source =
         pkgs.kitty-themes + "/share/kitty-themes/themes/base2tone-lake-dark.conf";
 
-      # Use soft Everforest outside dark mode.
+      # Use soft Everforest when the desktop states no preference.
       ".config/kitty/no-preference-theme.auto.conf".source =
-        pkgs.kitty-themes + "/share/kitty-themes/themes/everforest_dark_soft.conf";
-      ".config/kitty/light-theme.auto.conf".source =
         pkgs.kitty-themes + "/share/kitty-themes/themes/everforest_dark_soft.conf";
     };
   };
