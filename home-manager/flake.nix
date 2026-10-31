@@ -125,6 +125,30 @@
               env = (o.env or { }) // {
                 RUSTFLAGS = "-C link-arg=-fuse-ld=lld";
               };
+              # Hide the expanded sidebar's Agents section: Spaces take the
+              # full height and the drag divider between them goes away. No
+              # config or plugin API can do this; the Agents header already
+              # skips drawing into a zero-height area. Upstream's versions stay
+              # alongside, unused, so a failed replace shows what moved.
+              postPatch = (o.postPatch or "") + ''
+                substituteInPlace src/ui/sidebar.rs \
+                  --replace-fail \
+                    'fn sidebar_section_heights(total_height: u16, split_ratio: f32) -> (u16, u16) {' \
+                    'fn sidebar_section_heights(total_height: u16, _split_ratio: f32) -> (u16, u16) {
+                    (total_height, 0)
+                }
+
+                #[allow(dead_code)]
+                fn upstream_sidebar_section_heights(total_height: u16, split_ratio: f32) -> (u16, u16) {' \
+                  --replace-fail \
+                    'pub(crate) fn sidebar_section_divider_rect(area: Rect, split_ratio: f32) -> Rect {' \
+                    'pub(crate) fn sidebar_section_divider_rect(_area: Rect, _split_ratio: f32) -> Rect {
+                    Rect::default()
+                }
+
+                #[allow(dead_code)]
+                fn upstream_sidebar_section_divider_rect(area: Rect, split_ratio: f32) -> Rect {'
+              '';
             });
             # diff-cover 10.5.1's HTML integration tests fail against the
             # current nixpkgs toolchain; it's only a sqlfluff build dep.
