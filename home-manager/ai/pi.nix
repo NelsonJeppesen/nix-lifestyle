@@ -31,20 +31,21 @@ let
     '';
   };
 
-  slackMcpServer = pkgs.buildGoModule {
-    pname = "slack-mcp-server";
-    version = "1.3.0";
-    src = slack-mcp-server;
-    vendorHash = "sha256-+uQRODO9oL8mGKBmdghTxE6R9Fz+3GJFVTi17306gT8=";
-    subPackages = [ "cmd/slack-mcp-server" ];
-    ldflags = [
-      "-s"
-      "-w"
-      "-X=github.com/korotovsky/slack-mcp-server/pkg/version.Version=v1.3.0"
-      "-X=github.com/korotovsky/slack-mcp-server/pkg/version.BinaryName=slack-mcp-server"
-    ];
-    meta.mainProgram = "slack-mcp-server";
-  };
+  # Disabled: see ai/mcp.nix (native Slack connector in use).
+  # slackMcpServer = pkgs.buildGoModule {
+  #   pname = "slack-mcp-server";
+  #   version = "1.3.0";
+  #   src = slack-mcp-server;
+  #   vendorHash = "sha256-+uQRODO9oL8mGKBmdghTxE6R9Fz+3GJFVTi17306gT8=";
+  #   subPackages = [ "cmd/slack-mcp-server" ];
+  #   ldflags = [
+  #     "-s"
+  #     "-w"
+  #     "-X=github.com/korotovsky/slack-mcp-server/pkg/version.Version=v1.3.0"
+  #     "-X=github.com/korotovsky/slack-mcp-server/pkg/version.BinaryName=slack-mcp-server"
+  #   ];
+  #   meta.mainProgram = "slack-mcp-server";
+  # };
 in
 {
   home.packages = [ pkgs.pi-coding-agent ];
@@ -96,15 +97,15 @@ in
           env.MEMORY_FILE_PATH = "${config.home.homeDirectory}/.local/share/mcp-memory/memory.json";
           lifecycle = "lazy";
         };
-        slack = {
-          command = lib.getExe slackMcpServer;
-          env = {
-            SLACK_MCP_ENABLED_TOOLS = "conversations_history,conversations_replies,conversations_search_messages,conversations_unreads,channels_list,channels_me,usergroups_list,users_search";
-            SLACK_MCP_XOXC_TOKEN = "\${SLACK_MCP_XOXC_TOKEN}";
-            SLACK_MCP_XOXD_TOKEN = "\${SLACK_MCP_XOXD_TOKEN}";
-          };
-          lifecycle = "lazy";
-        };
+        # slack = {
+        #   command = lib.getExe slackMcpServer;
+        #   env = {
+        #     SLACK_MCP_ENABLED_TOOLS = "conversations_history,conversations_replies,conversations_search_messages,conversations_unreads,channels_list,channels_me,usergroups_list,users_search";
+        #     SLACK_MCP_XOXC_TOKEN = "\${SLACK_MCP_XOXC_TOKEN}";
+        #     SLACK_MCP_XOXD_TOKEN = "\${SLACK_MCP_XOXD_TOKEN}";
+        #   };
+        #   lifecycle = "lazy";
+        # };
       };
     };
   };

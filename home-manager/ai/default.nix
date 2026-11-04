@@ -14,7 +14,7 @@
     ./paperclip.nix
     ./pi.nix
     # ./ralph.nix
-    ./slack-mcp.nix
+    # ./slack-mcp.nix
     ./packages.nix
     ./secrets.nix
     ./files.nix
