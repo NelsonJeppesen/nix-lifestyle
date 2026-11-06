@@ -1,11 +1,9 @@
 { pkgs, lib, ... }:
 let
-  # OpenAI only publishes "latest" .deb/.rpm URLs; the Arch repo keeps
-  # immutable per-version paths, so it is the one source we can pin.
-  # Bump: take the newest entry of `versions=(...)` in
-  # https://persistent.oaistatic.com/codex-app-prod/linux/install-arch.sh
-  # and run `nix store prefetch-file <url>` for the new hash.
-  version = "26.930.31730";
+  # nixpkgs' chatgpt package (pkgs/by-name/ch/chatgpt) replaces the bundled
+  # `cua_node` runtime with nodejs-slim. The bundled one segfaulted in ld.so
+  # after autoPatchelf added an rpath, which left the in-app browser (Codex
+  # browser use) stuck on blank pages.
 
   # Mirrors the Wayland/GPU/RAM tuning in slack.nix.
   chatgptFlags = lib.concatStringsSep " " [
@@ -28,109 +26,29 @@ let
     # keep both V8 flags in one argv entry (see slack.nix).
     "--js-flags='--max-old-space-size=4096 --max-semi-space-size=64'"
 
-    # HTTP/code cache in tmpfs: JS bundles and images reload from RAM, wiped
-    # on logout. Budget is sized to share the 3.1 GiB $XDG_RUNTIME_DIR with
-    # Slack's ~1 GiB cache.
-    "--disk-cache-dir=$CHATGPT_CACHE_DIR"
-    "--disk-cache-size=402653184" # 384 MiB
-    "--media-cache-size=67108864" # 64 MiB
+    # No --disk-cache-dir / --disk-cache-size here (unlike slack.nix): with a
+    # custom cache dir the in-app browser's "codex-browser-app" session hung
+    # forever creating its HTTP cache backend, so pages never loaded.
   ];
 
-  chatgpt = pkgs.stdenv.mkDerivation {
-    pname = "chatgpt";
-    inherit version;
-    src = pkgs.fetchurl {
-      url = "https://persistent.oaistatic.com/codex-app-prod/linux/arch/${version}/x86_64/chatgpt-bin-${version}-1-x86_64.pkg.tar.zst";
-      hash = "sha256-gfPXXSHsbGtW4NT8O8HJsJRcK2sh5Rfp9n0D4f7mm44=";
-    };
-    sourceRoot = ".";
-    nativeBuildInputs = [
-      pkgs.autoPatchelfHook
-      pkgs.makeWrapper
-      pkgs.zstd
-    ];
-    # Shared libraries the Electron shell links against (from the package's
-    # Arch `depend` list).
-    buildInputs = with pkgs; [
-      alsa-lib
-      at-spi2-atk
-      at-spi2-core
-      cairo
-      cups
-      dbus
-      expat
-      gdk-pixbuf
-      glib
-      gtk3
-      libdrm
-      libgbm
-      libnotify
-      libsecret
-      libusb1
-      libxkbcommon
-      nspr
-      nss
-      openssl
-      pango
-      stdenv.cc.cc.lib
-      systemd
-      tpm2-tss
-      xz
-      libx11
-      libxscrnsaver
-      libxcomposite
-      libxdamage
-      libxext
-      libxfixes
-      libxrandr
-      libxcb
-    ];
-    # dlopen()ed at runtime, so autoPatchelf cannot see them via DT_NEEDED.
-    runtimeDependencies = with pkgs; [
-      libGL
-      libnotify
-      libsecret
-      systemd
-      vulkan-loader
-    ];
-    # Chromium's optional Qt theme shims (GTK is used instead) and musl
-    # prebuilds of node-hid/serialport that glibc never loads.
-    autoPatchelfIgnoreMissingDeps = [
-      "libQt5*"
-      "libQt6*"
-      "libc.musl-x86_64.so.1"
-    ];
-    dontBuild = true;
-    dontConfigure = true;
-    # Stripping corrupts the bundled Node/Electron snapshots.
-    dontStrip = true;
-    installPhase = ''
-      runHook preInstall
-      mkdir -p $out/lib $out/bin
-      cp -R usr/lib/chatgpt $out/lib/chatgpt
-      cp -R usr/share $out/share
-      makeWrapper $out/lib/chatgpt/ChatGPT $out/bin/chatgpt \
-        --prefix PATH : ${lib.makeBinPath [ pkgs.xdg-utils ]} \
-        --set ELECTRON_OZONE_PLATFORM_HINT wayland \
-        --run 'CHATGPT_CACHE_DIR="''${XDG_RUNTIME_DIR:-/tmp}/chatgpt-cache"; mkdir -p "$CHATGPT_CACHE_DIR"' \
-        --add-flags ${lib.escapeShellArg chatgptFlags}
-      # Keep the launcher on the wrapper, and don't claim http(s): the app
-      # would otherwise register itself as a browser for web links.
+  chatgpt = pkgs.chatgpt.overrideAttrs (prev: {
+    postFixup = (prev.postFixup or "") + ''
+      # The nixpkgs launcher forwards extra args to Electron, so our tuning
+      # flags go on top of (and override) its own Wayland defaults. A shell
+      # shim rather than wrapProgram keeps the flag list readable.
+      mv $out/bin/chatgpt $out/bin/.chatgpt-nixpkgs
+      cat > $out/bin/chatgpt <<'EOF'
+      #!${pkgs.runtimeShell}
+      exec ${placeholder "out"}/bin/.chatgpt-nixpkgs ${chatgptFlags} "$@"
+      EOF
+      chmod +x $out/bin/chatgpt
+      # Don't claim http(s): the app would otherwise register itself as a
+      # browser for web links.
       substituteInPlace $out/share/applications/chatgpt.desktop \
-        --replace-fail "Exec=chatgpt" "Exec=$out/bin/chatgpt" \
         --replace-fail "x-scheme-handler/http;x-scheme-handler/https;" ""
-      runHook postInstall
     '';
-    meta = {
-      description = "ChatGPT desktop app (with Codex) by OpenAI";
-      homepage = "https://learn.chatgpt.com/docs/linux/linux-app";
-      license = lib.licenses.unfree;
-      mainProgram = "chatgpt";
-      platforms = [ "x86_64-linux" ];
-      sourceProvenance = [ lib.sourceTypes.binaryNativeCode ];
-    };
-  };
+  });
 in
 {
-  home.packages = [ chatgpt ]; # ChatGPT desktop app (pinned above)
+  home.packages = [ chatgpt ]; # ChatGPT desktop app (nixpkgs, with local flags)
 }
