@@ -46,7 +46,14 @@ in
 
   programs.opencode = {
     enable = true;
-    package = pkgs.opencode;
+    # nixpkgs' opencode 2.2.5 node_modules hash is wrong on Linux; upstream
+    # fixed it in NixOS/nixpkgs@c399e1b7f (2026-11-04). Drop this override
+    # once that commit reaches nixpkgs-unstable.
+    package = pkgs.opencode.overrideAttrs (prev: {
+      node_modules = prev.node_modules.overrideAttrs {
+        outputHash = "sha256-prx9dX7kUvs/E3zopkaPk5LXh3xJAy5sZeum/W8L7cA=";
+      };
+    });
     enableMcpIntegration = true; # Pull the shared programs.mcp.servers catalogue (mcp.nix) into settings.mcp
 
     # Loopback web UI behind Cloudflare Access.
