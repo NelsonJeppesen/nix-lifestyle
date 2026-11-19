@@ -1,3 +1,5 @@
+# Give the active local desktop user access to the Keychron B1 Pro.
+# uaccess grants a seat-scoped ACL instead of making every HID device writable.
 { pkgs, ... }:
 {
   services.udev.packages = [

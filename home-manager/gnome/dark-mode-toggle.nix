@@ -1,3 +1,4 @@
+# Toggle the desktop color preference with a managed keyboard shortcut.
 { pkgs, ... }:
 let
   toggleDarkMode = pkgs.writeShellApplication {

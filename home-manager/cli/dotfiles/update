@@ -1,75 +1,110 @@
 #!/usr/bin/env bash
-# update - Switch NixOS + Home Manager, with optional flake-input refresh.
-#
-# System layer: `sudo nixos-rebuild switch` (direct; covered by the
-#   passwordless sudo rule in nixos/profiles/shared.nix).
-# User layer:   `nh home switch` (no sudo needed; nh's TUI/diff is kept here).
-#
-# We intentionally do NOT use `nh os switch` for the system layer:
-# nh always wraps the activation in `sudo env … switch-to-configuration`,
-# which can't be safely scoped in sudoers (allowing `sudo env` is
-# equivalent to full root). Calling `nixos-rebuild` directly lets the
-# narrow allowlist (just nixos-rebuild + nix) actually work.
+# update - Switch NixOS + Home Manager, with optional input refresh or dry build.
 #
 # Flags:
-#   -u, --update    Refresh flake inputs (both layers, in parallel) before switching.
-#   -h, --help      Show this help.
+#   -u, --update          Refresh both independent flake inputs in parallel.
+#   -n, --dry-run         Resolve both build plans without building or activating.
+#   --system-flake PATH  System flake directory (default: /etc/nixos).
+#   --home-flake PATH    Home flake directory (default: ~/.config/home-manager).
+#   -h, --help           Show this help.
 #
-# Firmware updates live in `firmware-update` (separate script — interactive sudo).
+# Use explicit directories to review worktrees; the current hostname selects
+# the NixOS output and nelson selects the Home Manager output. Dry runs never
+# refresh lock files; combine input updates with a regular switch instead.
+# System activation uses nixos-rebuild, which is covered by the sudo policy.
+# Firmware updates require the separate, interactive firmware-update command.
 set -euo pipefail
 
-UPDATE_INPUTS=0
-for arg in "$@"; do
-  case "$arg" in
-  -u | --update) UPDATE_INPUTS=1 ;;
+update_inputs=0
+dry_run=0
+system_flake=/etc/nixos
+home_flake="$HOME/.config/home-manager"
+while (($#)); do
+  case "$1" in
+  -u | --update) update_inputs=1 ;;
+  -n | --dry-run) dry_run=1 ;;
+  --system-flake | --home-flake)
+    if (($# < 2)) || [[ -z $2 ]]; then
+      printf 'update: %s requires a directory\n' "$1" >&2
+      exit 2
+    fi
+    if [[ $1 == --system-flake ]]; then system_flake=$2; else home_flake=$2; fi
+    shift
+    ;;
   -h | --help)
     sed -n '/^# update -/,/^[^#]/p' "$0" | sed -e '$d' -e 's/^# \?//'
     exit 0
     ;;
   *)
-    echo "update: unknown flag: $arg" >&2
+    printf 'update: unknown flag: %s\n' "$1" >&2
     exit 2
     ;;
   esac
+  shift
 done
 
-red() {
-  tput setaf 1 2>/dev/null || true
-  echo -e "\n$*\033[0m"
-}
+if ((dry_run && update_inputs)); then
+  printf 'update: --dry-run cannot be combined with --update (lock files must stay unchanged)\n' >&2
+  exit 2
+fi
+for flake in "$system_flake" "$home_flake"; do
+  if [[ ! -f "$flake/flake.nix" ]]; then
+    printf 'update: no flake.nix in %s\n' "$flake" >&2
+    exit 1
+  fi
+done
+
+if ((dry_run)); then
+  # Evaluate the selected checkout directly, without sudo or activation.
+  nixos-rebuild dry-build --no-write-lock-file --no-update-lock-file --flake "$system_flake"
+  nix build --dry-run --no-write-lock-file --no-update-lock-file "$home_flake#homeConfigurations.nelson.activationPackage"
+  exit
+fi
 
 command -v nh >/dev/null || {
-  echo "update: nh not found on PATH (expected pkgs.nh from home-manager)." >&2
+  printf 'update: nh not found on PATH (expected pkgs.nh from Home Manager).\n' >&2
   exit 1
 }
 
-# Authenticate flake fetches against GitHub to avoid the 60 req/hr
-# unauthenticated API limit. `gh auth token` reuses the existing gh login;
-# falls back to no-op if gh is unavailable.
-GH_TOKEN_ARGS=()
-if command -v gh >/dev/null && GH_TOKEN="$(gh auth token 2>/dev/null)" && [ -n "$GH_TOKEN" ]; then
-  GH_TOKEN_ARGS=(--access-tokens "github.com=$GH_TOKEN")
-fi
+if ((update_inputs)); then
+  # Lock refreshes run as the checkout owner, not root. Check both directories
+  # before starting either update so a permission failure cannot half-refresh.
+  for flake in "$system_flake" "$home_flake"; do
+    if [[ ! -w $flake || (-e "$flake/flake.lock" && ! -w "$flake/flake.lock") ]]; then
+      printf 'update: %s must be writable by the current user to refresh inputs\n' "$flake" >&2
+      exit 1
+    fi
+  done
+  # A private include keeps the GitHub credential out of argv and sudo logs.
+  auth_dir=""
+  trap '[[ -z "$auth_dir" ]] || rm -rf -- "$auth_dir"' EXIT
+  nix_config="${NIX_CONFIG:-}"
+  if command -v gh >/dev/null && github_token="$(gh auth token 2>/dev/null)" && [[ -n $github_token ]]; then
+    auth_dir="$(mktemp -d)"
+    (
+      umask 077
+      printf 'access-tokens = github.com=%s\n' "$github_token" >"$auth_dir/auth.conf"
+    )
+    nix_config+=$'\n'"include $auth_dir/auth.conf"
+  fi
+  unset github_token
 
-if [ "$UPDATE_INPUTS" = 1 ]; then
-  red "Refreshing flake inputs [system + user] in parallel..."
-  sudo nix flake update "${GH_TOKEN_ARGS[@]}" --flake /etc/nixos &
-  SYS_UPD_PID=$!
-  nix flake update "${GH_TOKEN_ARGS[@]}" --flake "$HOME/.config/home-manager" &
-  HM_UPD_PID=$!
+  printf '\nRefreshing flake inputs [system + user] in parallel...\n'
+  NIX_CONFIG="$nix_config" nix flake update --flake "$system_flake" &
+  system_pid=$!
+  NIX_CONFIG="$nix_config" nix flake update --flake "$home_flake" &
+  home_pid=$!
   status=0
-  wait "$SYS_UPD_PID" || status=1
-  wait "$HM_UPD_PID" || status=1
-  if [ "$status" -ne 0 ]; then
-    echo "update: one or more flake updates failed" >&2
+  wait "$system_pid" || status=1
+  wait "$home_pid" || status=1
+  if ((status)); then
+    printf 'update: one or more flake updates failed\n' >&2
     exit 1
   fi
 fi
 
-red "Switching system layer (nixos-rebuild)..."
-sudo nixos-rebuild switch --flake /etc/nixos
-
-red "Switching user layer via nh..."
-nh home switch "$HOME/.config/home-manager" -c nelson
-
-red "Done."
+printf '\nSwitching system layer (nixos-rebuild)...\n'
+sudo nixos-rebuild switch --flake "$system_flake"
+printf '\nSwitching user layer via nh...\n'
+nh home switch "$home_flake" -c nelson
+printf '\nDone.\n'

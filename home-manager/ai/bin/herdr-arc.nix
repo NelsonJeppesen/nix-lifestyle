@@ -6,6 +6,11 @@
   hmConfig,
   writeShellApplication,
   git,
+  coreutils,
+  findutils,
+  gawk,
+  gnugrep,
+  gnused,
   herdr,
   jq,
   systemd,
@@ -17,6 +22,11 @@ writeShellApplication {
     hmConfig.programs.claude-code.finalPackage
     hmConfig.programs.mise.package
     git
+    coreutils
+    findutils
+    gawk
+    gnugrep
+    gnused
     herdr
     jq
     systemd

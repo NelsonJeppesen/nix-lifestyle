@@ -1,3 +1,4 @@
+# Provide a curated radio menu and its mpv playback dependencies.
 { pkgs, ... }: {
   dconf.settings = {
     "org/gnome/shell/extensions/quick-lofi" = {

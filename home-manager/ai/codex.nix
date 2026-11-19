@@ -1,3 +1,4 @@
+# Configure Codex trust and MCP servers without preventing the app from saving settings.
 { ... }:
 {
   programs.codex = {

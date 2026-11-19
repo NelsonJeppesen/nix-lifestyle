@@ -1,5 +1,9 @@
+# Machine-local configuration outside the declared laptop flakes.
 nixos/falcon/
+# Nix build result links.
 result
+# Agent scratch state; keep task state out of the configuration tree.
 home-manager/.sisyphus/
+# Local packaging outputs.
 wkhtmltox-al2023/dist/
 wkhtmltox-al2023/*.tar.gz

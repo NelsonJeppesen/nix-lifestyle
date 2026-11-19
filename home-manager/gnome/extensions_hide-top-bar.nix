@@ -1,3 +1,4 @@
+# Reveal the top bar on demand while keeping it available in Activities.
 { pkgs, ... }: {
   dconf.settings = {
     "org/gnome/shell/extensions/hidetopbar" = {

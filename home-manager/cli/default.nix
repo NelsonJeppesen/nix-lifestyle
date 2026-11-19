@@ -1,3 +1,4 @@
+# Compose command-line features; each imported module owns one tool or workflow.
 { ... }: {
   imports = [
     ./bat.nix
@@ -7,6 +8,7 @@
     ./mise.nix
     ./nix-index.nix
     ./ruby.nix
+    ./scanner.nix
     ./zoxide.nix
     ./zsh.nix
     ./packages.nix

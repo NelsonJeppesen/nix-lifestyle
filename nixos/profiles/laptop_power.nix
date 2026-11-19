@@ -1,24 +1,12 @@
-# Laptop power profile (TLP + iwd) — applies to all laptops, regardless of
-# CPU vendor. Previously these settings lived in profiles/intel.nix, which
-# meant Intel desktops/NUCs also got battery-oriented TLP defaults.
+# Laptop power policy (TLP + iwd), explicitly imported by laptop machines.
+# Hardware-specific charge limits belong in lg_gram_common.nix.
 #
-# Tuned for Intel Core Ultra (Meteor/Arrow Lake) hybrid P+E core CPUs:
-# - powersave governor on both AC and BAT; energy preference (EPP) is the
-#   real knob with HWP. The performance *governor* on a hybrid CPU pegs
-#   frequencies and increases throttling, *reducing* sustained throughput —
-#   so the governor stays powersave. EPP, by contrast, is where snappiness
-#   lives: EPP=performance on AC ramps frequency near-instantly on bursty
-#   interactive work (terminal keystroke->render, editor redraw) while still
-#   letting Intel Thread Director park work on E-cores. AC-only, so there is
-#   no battery cost; BAT keeps EPP=power.
-# - CPU_MAX_PERF kept at 100 on both rails; capping max_perf_pct interferes
-#   with Intel Thread Director's E-core preference.
-# - thermald is disabled (HWP + DPTF firmware handle thermals on Core Ultra).
-# - PCIe ASPM powersupersave on battery (enables L1.2 substates).
-# - WIFI_PWR forced off — Intel AX211/BE200 powersave causes disconnects
-#   (cost: ~0.5-1 W).
-# - powertop --auto-tune stays off; it would re-enable USB autosuspend.
-# - The battery charge cap is LG-specific and lives in lg_gram_common.nix.
+# Intel HWP uses the powersave governor with an energy-performance preference
+# (EPP): performance on AC for responsiveness, power on battery for efficiency.
+# Actual throughput, temperatures, and battery cost depend on host and workload.
+# USB autosuspend and Wi-Fi power saving are disabled for input/link reliability;
+# these choices trade idle power for responsiveness. Review with tlp-stat and
+# repeatable workloads before tightening power limits.
 { lib, ... }:
 {
   services.thermald.enable = false;
@@ -39,16 +27,15 @@
 
   services.tlp.enable = lib.mkDefault true;
   services.tlp.settings = {
+    # Applied only on hardware exposing the ACPI platform_profile interface.
     PLATFORM_PROFILE_ON_AC = "balanced";
     PLATFORM_PROFILE_ON_BAT = "low-power";
 
     CPU_SCALING_GOVERNOR_ON_AC = "powersave";
     CPU_SCALING_GOVERNOR_ON_BAT = "powersave";
 
-    # EPP is the real interactive-latency knob with HWP. `performance` on AC
-    # gives near-instant frequency ramp on bursty keystroke->render work
-    # (kitty, neovim, opencode TUI) without pegging clocks the way the
-    # performance *governor* would. AC-only: BAT stays `power` for battery life.
+    # Prefer responsiveness for bursty editor/terminal workloads on AC,
+    # and energy efficiency on battery. Measure latency and power per host.
     CPU_ENERGY_PERF_POLICY_ON_AC = "performance";
     CPU_ENERGY_PERF_POLICY_ON_BAT = "power";
 
@@ -65,16 +52,14 @@
     AHCI_RUNTIME_PM_ON_BAT = "auto";
     AHCI_RUNTIME_PM_TIMEOUT = 15;
 
-    # LG Gram only supports s2idle (modern standby) on both AC and BAT.
+    # Request modern standby; confirm supported modes in /sys/power/mem_sleep.
     MEM_SLEEP_ON_AC = "s2idle";
     MEM_SLEEP_ON_BAT = "s2idle";
 
     NMI_WATCHDOG = 0;
 
-    NVME_APST_ON_AC = 1;
-    NVME_APST_ON_BAT = 1;
-    NVME_APST_MAX_LATENCY_ON_AC = 70000;
-    NVME_APST_MAX_LATENCY_ON_BAT = 100000;
+    # NVMe APST uses the kernel defaults. TLP does not implement NVME_APST_*
+    # settings; PCI runtime PM below is a separate mechanism.
 
     PCIE_ASPM_ON_AC = "default";
     PCIE_ASPM_ON_BAT = "powersupersave";
@@ -90,16 +75,15 @@
     # 1s autosuspend (10s caused pop-on-resume on some LG Gram revisions)
     SOUND_POWER_SAVE_ON_BAT = 1;
 
-    # USB autosuspend off across the board. With it on, Logitech Unifying
-    # receivers (046d:c52b, 046d:c548) and the internal BT controller
-    # (8087:0037) suspend after 2s idle and need ~50–500 ms to wake on the
-    # next HID event, presenting as mouse/keyboard hitching. Cost of
-    # leaving it off: ~0.5 W on battery — acceptable for the latency win.
+    # Workaround for HID/BT input lag when Logitech receivers (046d:c52b,
+    # 046d:c548) or the internal BT controller (8087:0037) autosuspend.
+    # This disables autosuspend for all USB devices; a measured per-device
+    # denylist is an alternative when battery life matters more.
     USB_AUTOSUSPEND = 0;
     USB_EXCLUDE_PHONE = 1;
 
-    # AX211/BE200 hate powersave=1 — leave OFF on both rails (cost ~0.5-1 W
-    # for stable connectivity).
+    # Keep Wi-Fi awake to avoid power-save-related disconnects. This costs
+    # idle power; revisit after validating the actual adapter/firmware pair.
     WIFI_PWR_ON_AC = "off";
     WIFI_PWR_ON_BAT = "off";
 

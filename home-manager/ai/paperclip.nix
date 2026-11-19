@@ -1,3 +1,4 @@
+# Run the local Paperclip dashboard with private state and its embedded database.
 {
   config,
   lib,
@@ -25,8 +26,9 @@ in
   # Keep the CLI on a stable path alongside the other agent launchers.
   home.file.".local/bin/paperclipai".source = "${paperclipPackage}/bin/paperclipai";
 
-  # User lingering is already enabled on this laptop, so default.target also
-  # starts at boot and keeps the service running after logout.
+  # On demand: `systemctl --user start paperclipai` opens the local service;
+  # stop it with `systemctl --user stop paperclipai` when finished. No login
+  # target starts the dashboard or its embedded database automatically.
   systemd.user.services.paperclipai = {
     Unit = {
       Description = "Paperclip AI agent management";
@@ -61,6 +63,6 @@ in
       UMask = "0077";
     };
 
-    Install.WantedBy = [ "default.target" ];
+    Install.WantedBy = [ ];
   };
 }

@@ -1,10 +1,9 @@
 # shared.nix - Cross-host baseline (always imported via configuration.nix)
 #
 # Sets up: keyd Caps→layer remap, locale, zsh as default shell, nix flakes,
-# Wayland session env, neovim as system editor, weekly nh clean, openssh,
+# Wayland session env, neovim as system editor, weekly nh clean, disabled SSH serving,
 # the `nelson` user with standard groups, and a minimal package set.
 {
-  config,
   pkgs,
   lib,
   ...
@@ -32,23 +31,14 @@
   environment.defaultPackages = lib.mkDefault [ ]; # Remove default packages
   nixpkgs.config.allowUnfree = true; # Chrome, steam etc
   programs.zsh.enable = true;
+  # Cache interactive sudo authentication for ten hours per sudo policy.
   security.sudo.extraConfig = "Defaults timestamp_timeout=600";
 
-  # Allow `nelson` to drive system rebuilds without a sudo password.
-  # The `update` script invokes:
-  #   1. `sudo nix flake update --flake /etc/nixos`         → /run/current-system/sw/bin/nix
-  #   2. `sudo nixos-rebuild switch --flake /etc/nixos`     → /run/current-system/sw/bin/nixos-rebuild
-  # Both are stable symlinks (`/run/current-system/sw/bin/*` re-point on
-  # activation, but the path itself never changes).
-  #
-  # We deliberately do NOT use `nh os switch` for the system layer here:
-  # nh always wraps activation in `sudo env … switch-to-configuration`,
-  # and sudo matches on argv[0] = `env`, which can't be safely allowlisted
-  # (allowing `sudo env` is equivalent to full root). `nh home switch`
-  # for the user layer needs no sudo at all and is still used.
-  #
-  # Firmware updates intentionally NOT covered: those live in the
-  # separate `firmware-update` script which prompts normally.
+  # Passwordless system updates are an intentional root-equivalent grant.
+  # `nix` can execute arbitrary commands as root and `nixos-rebuild` can
+  # activate a caller-selected configuration; this command list is not a
+  # sandbox for agents or for untrusted repositories. The `update` helper
+  # uses these stable paths; firmware-update still requests authentication.
   security.sudo.extraRules = [
     {
       users = [ "nelson" ];
@@ -67,7 +57,7 @@
   services.dbus.implementation = "broker";
   users.defaultUserShell = pkgs.zsh;
 
-  # Firefox has defaulted to Wayland since 121, so MOZ_ENABLE_WAYLAND is gone.
+  # Firefox and GTK select Wayland through their native defaults.
   # No GDK_BACKEND: GTK already prefers Wayland, and any value makes
   # xdg-desktop-portal-gnome expose only Settings, which breaks portal
   # screenshots (Flameshot), screencasts and file choosers.
@@ -93,10 +83,9 @@
 
   zramSwap.enable = lib.mkDefault true;
 
-  # GC with `nh clean all` instead of nix.gc: run as root, nix-collect-garbage
-  # never prunes the Home Manager and `nix profile` generations under each
-  # user's ~/.local/state/nix/profiles, so their closures piled up. nh also
-  # drops stale result/direnv GC roots. Keep 30 days, and at least 5 of each.
+  # Clean system and per-user profiles, including Home Manager generations
+  # under ~/.local/state/nix/profiles. Keep 30 days and at least 5 generations;
+  # protect any long-term recovery generation separately from this policy.
   programs.nh.clean = {
     enable = lib.mkDefault true;
     dates = lib.mkDefault "weekly";
@@ -106,7 +95,12 @@
   # Weekly hard-link deduplication of identical store files.
   nix.optimise.automatic = lib.mkDefault true;
 
-  services.openssh.enable = lib.mkDefault true;
+  # These laptops do not accept incoming OpenSSH sessions. Outgoing SSH
+  # clients remain available for Git and other authenticated connections.
+  services.openssh = {
+    enable = false;
+    openFirewall = false;
+  };
   users.users.nelson.isNormalUser = lib.mkDefault true;
 
   users.users.nelson.extraGroups = lib.mkDefault [
@@ -121,11 +115,11 @@
   ];
 
   environment.systemPackages = with pkgs; [
-    keyd
-    wget
-    curl
-    git
-    btop
-    screen
+    keyd # Keyboard remapping daemon and diagnostic CLI.
+    wget # Download files from a recovery console.
+    curl # Inspect HTTP endpoints and transfer data.
+    git # Fetch and inspect configuration repositories.
+    btop # Inspect CPU, memory, and process pressure.
+    screen # Keep terminal work running across disconnects.
   ];
 }

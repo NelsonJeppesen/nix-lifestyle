@@ -1,0 +1,324 @@
+#!/usr/bin/env python3
+"""Capture ScanSnap batches and export searchable PDFs from explicit page plans.
+
+All processing stays local. Raw captures survive failures; completed OCR lives
+in processed/. Page numbers always refer to that immutable combined PDF. Plans
+must account for every side, including blank backs, before exports are written.
+"""
+
+import argparse
+import hashlib
+import json
+import os
+from pathlib import Path
+import re
+import shutil
+import subprocess
+import sys
+import tempfile
+from datetime import datetime
+
+import img2pdf
+import pikepdf
+from PIL import Image
+
+
+class ScanError(Exception):
+  pass
+
+
+def run(command, **kwargs):
+  return subprocess.run(command, check=True, **kwargs)
+
+
+def digest(path):
+  with path.open("rb") as source:
+    return hashlib.file_digest(source, "sha256").hexdigest()
+
+
+def write_json(path, value):
+  path.write_text(json.dumps(value, indent=2) + "\n", encoding="utf-8")
+
+
+def new_session(path):
+  if path is None:
+    root = Path.home() / "Documents" / "Scans"
+    root.mkdir(parents=True, exist_ok=True)
+    path = Path(tempfile.mkdtemp(prefix=datetime.now().strftime("%Y-%m-%d_%H%M%S-"), dir=root))
+  else:
+    path = path.expanduser().absolute()
+    path.mkdir(parents=True, exist_ok=False)
+  print(f"Session: {path}", flush=True)
+  return path
+
+
+def devices():
+  result = run(["scanimage", "--formatted-device-list=%d\t%v\t%m%n"],
+               capture_output=True, text=True)
+  if result.stderr:
+    print(result.stderr, file=sys.stderr, end="")
+  return [line.split("\t", 2) for line in result.stdout.splitlines() if line.strip()]
+
+
+def select_device(requested):
+  if requested:
+    return requested
+  matches = [row[0] for row in devices()
+             if row[0].startswith("fujitsu:") and "S1500" in " ".join(row)]
+  if len(matches) != 1:
+    raise ScanError("Expected one ScanSnap S1500. Run 'scan-docs devices', then use --device ID.")
+  return matches[0]
+
+
+def scan(args):
+  device = select_device(args.device)
+  session = new_session(args.output)
+  # Dimensions are millimetres. Fixed page geometry avoids clipping Letter
+  # with an A4 width; the user selects Legal/A4 explicitly when needed.
+  width, height = {"letter": (215.9, 279.4), "a4": (210, 297), "legal": (215.9, 355.6)}[args.paper]
+  write_json(session / "capture.json", {
+    "device": device, "dpi": args.dpi, "paper": args.paper,
+    "source": "ADF Front" if args.simplex else "ADF Duplex",
+  })
+  batch = 1
+  while True:
+    folder = session / f"batch-{batch:04d}"
+    folder.mkdir()
+    command = ["scanimage", "--device-name", device, "--format=tiff",
+               "--batch=page-%06d.tiff", "--batch-print", "--resolution", str(args.dpi),
+               "--mode", "Color", "--source", "ADF Front" if args.simplex else "ADF Duplex",
+               "--page-width", str(width), "--page-height", str(height),
+               "-x", str(width), "-y", str(height)]
+    print(f"Scanning batch {batch}; each scanned side is one PDF page.", flush=True)
+    # SANE_STATUS_NO_DOCS (7) is normal at feeder exhaustion. Other errors,
+    # including jams, must not turn a partial stack into a successful document.
+    # Keep a marker even on Ctrl-C so recovery always requires explicit review.
+    marker = session / "capture-incomplete"
+    marker.write_text("Check all captured pages and remove damaged TIFFs before recovery.\n")
+    with (folder / "scanimage.log").open("w") as log:
+      result = subprocess.run(command, cwd=folder, stderr=log)
+    print((folder / "scanimage.log").read_text(), file=sys.stderr, end="")
+    images = sorted(folder.glob("page-*.tiff"))
+    # scanimage may create an empty next-page file when the feeder runs out.
+    if result.returncode in (0, 7) and images and images[-1].stat().st_size == 0:
+      images.pop().unlink()
+    if result.returncode not in (0, 7) or not images:
+      raise ScanError(f"Capture stopped (status {result.returncode}); originals kept in {session}. "
+                      "Check the scanner and pages; use 'process --accept-partial' only after review.")
+    marker.unlink()
+    if not args.more or input("Load another stack, then Enter to scan; q to finish: ").strip().lower() == "q":
+      break
+    batch += 1
+  process(session, args.language)
+
+
+def import_pdfs(args):
+  # Preserve source order and mark incomplete imports so a missing input
+  # cannot silently turn a partial import into a completed document.
+  session = new_session(args.output)
+  marker = session / "capture-incomplete"
+  marker.write_text("Import incomplete; verify the sources before processing.\n")
+  source_dir = session / "sources"
+  source_dir.mkdir()
+  for number, source in enumerate(args.pdfs, 1):
+    source = source.expanduser().resolve(strict=True)
+    with pikepdf.open(source) as pdf:
+      if not len(pdf.pages):
+        raise ScanError(f"No pages in {source}")
+    shutil.copyfile(source, source_dir / f"{number:04d}.pdf")
+  write_json(session / "sources.json", [str(path.expanduser().resolve()) for path in args.pdfs])
+  marker.unlink()
+  process(session, args.language)
+
+
+def process(session, language, accept_partial=False):
+  session = session.expanduser().resolve(strict=True)
+  destination = session / "processed"
+  if destination.exists():
+    raise ScanError(f"Already processed: {destination}. Use its plan.json to export documents.")
+  if (session / "capture-incomplete").exists() and not accept_partial:
+    raise ScanError("Capture is incomplete. Review the TIFFs, then retry with --accept-partial.")
+  images = sorted(session.glob("batch-*/page-*.tiff"))
+  sources = sorted((session / "sources").glob("*.pdf"))
+  if bool(images) == bool(sources):
+    raise ScanError("Session must contain either captured TIFFs or imported source PDFs.")
+  # Build in a private sibling directory, then publish the complete result.
+  # OCR/conversion failures leave source files intact and permit a retry.
+  with tempfile.TemporaryDirectory(prefix=".processing-", dir=session) as temporary:
+    work = Path(temporary)
+    original = work / "original.pdf"
+    if images:
+      for path in images:
+        with Image.open(path) as image:
+          image.load()  # Reject truncated captures, including partially written final pages.
+      with original.open("wb") as output:
+        img2pdf.convert(*map(str, images), outputstream=output)
+    else:
+      with pikepdf.Pdf.new() as merged:
+        for source in sources:
+          with pikepdf.open(source) as pdf:
+            merged.pages.extend(pdf.pages)
+        merged.save(original)
+    combined = work / "combined.pdf"
+    run(["ocrmypdf", "--skip-text", "--rotate-pages", "--deskew", "--language", language,
+         "--output-type", "pdf", "--optimize", "1", "--jobs", "2",
+         str(original), str(combined)])
+    with pikepdf.open(combined) as pdf:
+      count = len(pdf.pages)
+    with pikepdf.open(original) as pdf:
+      if not count or count != len(pdf.pages):
+        raise ScanError("OCR changed the page count; sources retained for inspection.")
+    # pdftotext includes existing digital text as well as newly generated OCR.
+    # Its form-feed boundaries retain blank pages and stable 1-based numbering.
+    extracted = run(["pdftotext", "-layout", str(combined), "-"], capture_output=True).stdout.decode("utf-8")
+    pages = extracted.split("\f")
+    if pages and not pages[-1].strip():
+      pages.pop()
+    if len(pages) != count:
+      raise ScanError("Text extraction page count differs from PDF; inspect the sources.")
+    with (work / "pages.txt").open("w", encoding="utf-8") as output:
+      for number, content in enumerate(pages, 1):
+        output.write(f"===== PAGE {number} =====\n{content.strip() or '[No text detected; inspect the PDF visually.]'}\n\n")
+    write_json(work / "plan.json", {
+      "source_sha256": digest(combined),
+      "documents": [{"file": "all-documents.pdf", "pages": f"1-{count}"}],
+      "discard_pages": "",
+    })
+    os.rename(work, destination)
+  print(f"Searchable PDF: {destination / 'combined.pdf'}")
+  print(f"Readable text:  {destination / 'pages.txt'}")
+  print(f"Export plan:    {destination / 'plan.json'}")
+  print("Tell your assistant this session path and how to split/combine the documents.")
+
+
+def page_numbers(spec, count):
+  if not isinstance(spec, str):
+    raise ScanError("Page selections must be strings, for example '1-3,5,8-6'.")
+  if not spec.strip():
+    return []
+  result = []
+  for part in spec.split(","):
+    match = re.fullmatch(r"\s*([1-9][0-9]*)(?:\s*-\s*([1-9][0-9]*))?\s*", part)
+    if not match:
+      raise ScanError(f"Invalid page selection: {part!r}")
+    first = int(match[1])
+    last = int(match[2] or first)
+    if max(first, last) > count:
+      raise ScanError(f"Page selection {part!r} exceeds {count} pages.")
+    result.extend(range(first, last + (1 if last >= first else -1), 1 if last >= first else -1))
+  if len(result) != len(set(result)):
+    raise ScanError(f"Repeated pages in selection: {spec!r}")
+  return result
+
+
+def validate_plan(plan, source, count):
+  if not isinstance(plan, dict) or plan.get("source_sha256") != digest(source):
+    raise ScanError("Plan source_sha256 does not match this combined.pdf.")
+  documents = plan.get("documents")
+  if not isinstance(documents, list) or not documents:
+    raise ScanError("Plan must have a nonempty documents list.")
+  discarded = set(page_numbers(plan.get("discard_pages", ""), count))
+  assigned, names, selections = set(), set(), []
+  for document in documents:
+    if not isinstance(document, dict):
+      raise ScanError("Each document must have file and pages fields.")
+    name = document.get("file")
+    if (not isinstance(name, str) or not name.lower().endswith(".pdf") or
+        name.startswith(".") or any(char in name for char in '/\\\x00\n\r') or name in names):
+      raise ScanError(f"Expected a unique PDF filename without directories: {name!r}")
+    selection = page_numbers(document.get("pages"), count)
+    if not selection:
+      raise ScanError(f"No pages selected for {name}")
+    names.add(name)
+    assigned.update(selection)
+    selections.append((name, selection))
+  if assigned & discarded:
+    raise ScanError("A page cannot be both exported and discarded.")
+  missing = set(range(1, count + 1)) - assigned - discarded
+  if missing:
+    raise ScanError(f"Unassigned pages: {sorted(missing)}. Assign them or list them in discard_pages.")
+  return selections, discarded
+
+
+def export(args):
+  session = args.session.expanduser().resolve(strict=True)
+  source = session / "processed" / "combined.pdf"
+  plan_path = args.plan or session / "processed" / "plan.json"
+  plan = json.loads(plan_path.expanduser().read_text(encoding="utf-8"))
+  with pikepdf.open(source) as pdf:
+    selections, discarded = validate_plan(plan, source, len(pdf.pages))
+    for name, selection in selections:
+      print(f"{name}: pages {', '.join(map(str, selection))}")
+    print(f"Discarded pages: {sorted(discarded)}")
+    if args.dry_run:
+      return
+    destination = (args.output or session / "export").expanduser().absolute()
+    # mkdir is exclusive: a mistaken rerun cannot overwrite existing documents.
+    destination.mkdir(parents=True, exist_ok=False)
+    marker = destination / ".incomplete"
+    marker.touch()
+    try:
+      for name, selection in selections:
+        with pikepdf.Pdf.new() as document:
+          document.pages.extend(pdf.pages[number - 1] for number in selection)
+          document.save(destination / name)
+      write_json(destination / "plan.json", plan)
+      marker.unlink()
+    except BaseException:
+      print(f"Export incomplete: {destination}; source PDF is intact. Retry with a new --output directory.", file=sys.stderr)
+      raise
+  print(f"Saved PDFs: {destination}")
+
+
+def main():
+  os.umask(0o077)  # Scans and temporary OCR artifacts are private to this user.
+  parser = argparse.ArgumentParser(prog="scan-docs", description=__doc__)
+  commands = parser.add_subparsers(dest="command", required=True)
+  commands.add_parser("devices", help="List SANE device IDs")
+  scan_parser = commands.add_parser("scan", help="Scan a feeder stack, then OCR locally")
+  scan_parser.add_argument("--device", help="SANE device ID; auto-selects a single S1500")
+  scan_parser.add_argument("--simplex", action="store_true", help="Scan fronts only; default is duplex")
+  scan_parser.add_argument("--more", action="store_true", help="Prompt for additional stacks before OCR")
+  scan_parser.add_argument("--paper", choices=["letter", "a4", "legal"], default="letter")
+  scan_parser.add_argument("--dpi", type=int, choices=[150, 200, 300, 600], default=300)
+  import_parser = commands.add_parser("import", help="Combine existing PDFs in argument order and OCR")
+  import_parser.add_argument("pdfs", type=Path, nargs="+")
+  for subparser in (scan_parser, import_parser):
+    subparser.add_argument("--output", type=Path, help="New session directory; default ~/Documents/Scans/<timestamp>")
+    subparser.add_argument("--language", default="eng", help="Tesseract languages, e.g. eng or eng+spa")
+  process_parser = commands.add_parser("process", help="Retry OCR on a captured/imported session")
+  process_parser.add_argument("session", type=Path)
+  process_parser.add_argument("--language", default="eng")
+  process_parser.add_argument("--accept-partial", action="store_true", help="Use reviewed captures from an interrupted scan")
+  export_parser = commands.add_parser("export", help="Split/combine pages according to a JSON plan")
+  export_parser.add_argument("session", type=Path)
+  export_parser.add_argument("--plan", type=Path, help="Default: SESSION/processed/plan.json")
+  export_parser.add_argument("--output", type=Path, help="New output directory; default SESSION/export")
+  export_parser.add_argument("--dry-run", action="store_true", help="Validate and display the plan without writing PDFs")
+  args = parser.parse_args()
+  try:
+    if args.command == "devices":
+      found = devices()
+      for row in found:
+        print("\t".join(row))
+      if not found:
+        print("No SANE scanners found. Activate the scanner profile, connect USB/power, and open the feeder lid.")
+    elif args.command == "scan":
+      scan(args)
+    elif args.command == "import":
+      import_pdfs(args)
+    elif args.command == "process":
+      process(args.session, args.language, args.accept_partial)
+    else:
+      export(args)
+  except (ScanError, OSError, ValueError, pikepdf.PdfError, subprocess.CalledProcessError) as error:
+    print(f"scan-docs: {error}", file=sys.stderr)
+    return 1
+  except (KeyboardInterrupt, EOFError):
+    print("\nscan-docs: interrupted; captured sources are retained in the printed session directory.", file=sys.stderr)
+    return 130
+  return 0
+
+
+if __name__ == "__main__":
+  sys.exit(main())

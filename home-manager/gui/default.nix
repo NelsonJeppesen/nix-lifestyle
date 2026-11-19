@@ -1,3 +1,4 @@
+# Compose managed graphical applications; commented imports are optional choices.
 { ... }: {
   imports = [
     ./chatgpt.nix

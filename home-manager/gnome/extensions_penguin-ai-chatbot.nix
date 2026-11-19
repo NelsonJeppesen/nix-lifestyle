@@ -1,3 +1,4 @@
+# Set preferences for a separately installed Penguin AI Chatbot extension.
 { ... }: {
 
   dconf.settings = {

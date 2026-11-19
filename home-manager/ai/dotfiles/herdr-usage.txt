@@ -7,7 +7,6 @@ Prefix: ctrl+b, then release and press the action key.
 Start and session
 -----------------
   h                       start or attach
-  hr <host>               attach remotely
   prefix+q                detach; processes keep running
 
 Direct keys
@@ -31,7 +30,7 @@ Direct keys
   ctrl+shift+x             Codex in a new tab at the active directory
   ctrl+shift+p             Pi in a new tab at the active directory
   ctrl+shift+s             shell in a new tab at the active directory
-  ctrl+shift+a             herdr-projects popup (projects and threads)
+  ctrl+shift+a             herdr-projects popup (only when its module is enabled)
   ctrl+shift+g             herdr-plus projects (workspace templates)
   ctrl+shift+e             herdr-plus quick actions (DevOps, git)
   ctrl+shift+w             ARC: close worktree + ticket (this Space, else pick)
@@ -89,3 +88,28 @@ Notes
 Kitty reserves ctrl+shift+c/v and ctrl+shift+=/-. Other ctrl+shift keys pass
 to herdr. New panes inherit the active directory, but each starts a new shell;
 direnv therefore runs once per pane.
+
+Parallel worktrees
+------------------
+Use one task branch and Herdr Space per independent change, with named agent,
+test, and shell tabs inside that Space. Ctrl-Shift-G opens project templates;
+Ctrl-Shift-E opens ARC ticket/worktree actions. Keep one writer per checkout.
+
+From a task worktree, create its private handoff file without overwriting one:
+  handoff="$(git rev-parse --git-path HANDOFF.md)"
+  test -e "$handoff" || cp ~/.config/herdr/worktree-handoff.md "$handoff"
+  "$EDITOR" "$handoff"
+
+The handoff belongs to that worktree's Git metadata, outside tracked source.
+Update its goal, owner, files, exact checks/results, and next action before
+passing work between agents. Keep separate build output and dev-server ports.
+
+If ARC close removed a checkout but Jira failed, use its printed recovery:
+  herdr-arc finish REPO KEY_OR_BRANCH
+This retries Jira only. Close the remaining Space after completion.
+
+Paperclip dashboard
+-------------------
+  systemctl --user start paperclipai    start on demand (http://127.0.0.1:3100)
+  systemctl --user stop paperclipai     stop the dashboard and its database
+Herdr remote/mobile relays are not provisioned by this configuration.

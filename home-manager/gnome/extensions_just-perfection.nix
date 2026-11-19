@@ -1,3 +1,4 @@
+# Configure shell layout, startup presentation, and window placement.
 { pkgs, ... }: {
   dconf.settings = {
     "org/gnome/shell/extensions/just-perfection" = {

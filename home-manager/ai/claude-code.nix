@@ -1,3 +1,4 @@
+# Enable Claude Code with the shared MCP catalogue while leaving its settings writable.
 { ... }:
 {
   programs.zsh.shellAliases = {

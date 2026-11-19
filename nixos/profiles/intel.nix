@@ -3,7 +3,7 @@
 # Battery-tuned bits (TLP, thermald, iwd, etc.) live in laptop_power.nix
 # so this profile is safe to import on Intel desktops/NUCs as well.
 { pkgs, ... }: {
-  # Use modern Intel iGPU with all the bells
+  # Use the generic Xorg modesetting driver and Intel video/compute runtimes.
   services.xserver.videoDrivers = [ "modesetting" ];
   hardware.graphics.enable = true;
   hardware.graphics.extraPackages = with pkgs; [
@@ -37,8 +37,4 @@
     "xhci_pci"
   ];
 
-  # NOTE: TLP, thermald, power-profiles-daemon, and the iwd Wi-Fi backend
-  # were moved to profiles/laptop_power.nix so Intel desktops/NUCs no longer
-  # inherit battery-oriented defaults. Each laptop machine imports
-  # laptop_power.nix explicitly.
 }

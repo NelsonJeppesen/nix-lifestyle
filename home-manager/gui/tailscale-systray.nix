@@ -1,3 +1,4 @@
+# Start the Tailscale tray only for the lifetime of a graphical session.
 { pkgs, ... }:
 {
   systemd.user.services.tailscale-systray = {

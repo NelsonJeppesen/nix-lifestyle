@@ -24,6 +24,7 @@ usage: herdr-arc new     REPO REQUEST...     in the background: file an ARC tick
        herdr-arc current REPO                the ARC branch of the focused Space, if any
        herdr-arc open    REPO BRANCH         focus, reopen, or check out an existing branch
        herdr-arc close   REPO BRANCH         remove the checkout, then mark the ticket Done
+       herdr-arc finish  REPO KEY_OR_BRANCH  retry only the Jira transition, without a checkout
 EOF
   exit 2
 }
@@ -41,6 +42,9 @@ focus=--focus
 # Git-ignored files a fresh checkout lacks but the main one carries: local
 # direnv overrides and Claude Code's per-project permission grants.
 local_files=(.envrc.local .claude/settings.local.json)
+# Git-ignored directories any tool rebuilds on demand; `close` removes them
+# without asking. Matched by name at any depth.
+regenerable_dirs='^(.*/)?(\.terraform|\.direnv|\.venv|node_modules|__pycache__|\.pytest_cache|\.mypy_cache|\.ruff_cache)/'
 
 # The quick-action pane closes when this exits; on failure, hold it open so the
 # error is readable instead of flashing by. `list` feeds a picker, never a pane.
@@ -90,8 +94,9 @@ has_ref() {
   git -C "$repo" show-ref --quiet "$1"
 }
 
-# Run one Jira task through Claude Code's Atlassian MCP, allowing only TOOLS
-# (comma-separated, without the mcp__atlassian__ prefix); prints its reply.
+# Run one Jira task without built-in shell/file tools. TOOLS names the MCP
+# calls pre-approved for this task (comma-separated, without mcp__atlassian__).
+# Other Atlassian tools remain advertised but are not pre-approved.
 # Only the Atlassian server, under a name of its own: a claude.ai Atlassian
 # connector would otherwise shadow the Home Manager one, and nothing else
 # needs to start. Unset ANTHROPIC_API_KEY so the claude.ai login is used.
@@ -104,7 +109,7 @@ claude_jira() {
   session="$(</proc/sys/kernel/random/uuid)"
   echo "Claude Code session $session (~/.claude/projects/*/$session.jsonl)" >&2
   output="$(cd "$scratch" && env -u ANTHROPIC_API_KEY claude -p --model haiku \
-    --session-id "$session" --strict-mcp-config --mcp-config "$mcp" \
+    --session-id "$session" --tools "" --strict-mcp-config --mcp-config "$mcp" \
     --allowedTools="mcp__atlassian__${tools//,/,mcp__atlassian__}" \
     "On Jira cloudId $site: $prompt" </dev/null)" || status=$?
   rmdir "$scratch"
@@ -113,8 +118,18 @@ claude_jira() {
 }
 
 # Fetch in the background so it overlaps the ticket call or the picker.
+# Several runs may fetch at once (`new` is filed back to back) and Git fails
+# all but one when they race to update refs/remotes/origin/main, so runs take
+# turns on a lock in the shared Git directory. One retry covers a fetch started
+# by something else, which leaves the ref current for the second attempt.
 fetch_main() {
-  git -C "$repo" fetch --quiet origin main &
+  local lock
+  lock="$(git -C "$repo" rev-parse --path-format=absolute --git-common-dir)/herdr-arc-fetch.lock"
+  (
+    flock 9
+    git -C "$repo" fetch --quiet origin main ||
+      { sleep 1 && git -C "$repo" fetch --quiet origin main; }
+  ) 9>"$lock" &
   fetch_pid=$!
 }
 
@@ -180,8 +195,10 @@ open_space() {
 create_from_main() {
   local branch=$1 prompt=${2:-} path
   path="$worktree_root/$(basename "$repo")/$branch"
-  wait "$fetch_pid" ||
-    echo "fetch failed; branching from the local origin/main" >&2
+  if ! wait "$fetch_pid"; then
+    echo "Fetch failed; no worktree created. Retry after restoring access to origin." >&2
+    return 1
+  fi
   git -C "$repo" worktree add --quiet --no-track -b "$branch" "$path" origin/main
   prepare "$path"
   open_space "$path" "$branch" "$prompt"
@@ -223,7 +240,12 @@ TOPIC=<2 to 5 lowercase words joined by hyphens naming the work, at most 40 char
   topic="$(sed -n 's/^TOPIC=//p' <<<"$output" | tail -n1)"
   branch="$key-$(slugify "${topic:-$summary}")"
   echo "Filed $key ($summary) · https://$site/browse/$key"
-  create_from_main "$branch" "Jira $key: $summary (https://$site/browse/$key). This worktree's branch $branch was cut from origin/main for it. The request as written: $request -- Start on it."
+  if ! create_from_main "$branch" "Jira $key: $summary (https://$site/browse/$key). This worktree's branch $branch was cut from origin/main for it. The request as written: $request -- Start on it."; then
+    printf '%s is filed but has no worktree. Create it with: herdr-arc key %q %q\n' \
+      "$key" "$repo" "$key ${branch#"$key"-}" >&2
+    notify "ARC: $key filed, worktree failed" "herdr-arc key $repo $key ${branch#"$key"-}"
+    exit 1
+  fi
   notify "ARC: $key ready" "Space $branch · $summary"
 }
 
@@ -236,12 +258,13 @@ cmd_tickets() {
     cat "$cache"
     return
   fi
+  # A failed lookup still has to print one option, or the picker opens empty.
   output="$(claude_jira searchJiraIssuesUsingJql \
-    "Search with JQL exactly 'project = ARC AND assignee = currentUser() AND statusCategory != Done ORDER BY updated DESC', fields summary and status, up to 100 results. Do nothing else. Reply with one line per issue, exactly ISSUE|<key>|<status name>|<summary>, and nothing else.")"
+    "Search with JQL exactly 'project = ARC AND assignee = currentUser() AND statusCategory != Done ORDER BY updated DESC', fields summary and status, up to 100 results. Do nothing else. Reply with one line per issue, exactly ISSUE|<key>|<status name>|<summary>, and nothing else.")" || output=""
   output="$(grep -E '^ISSUE\|ARC-[0-9]+\|' <<<"$output" |
     awk -F'|' '{ s = $4; for (i = 5; i <= NF; i++) s = s "|" $i; printf "%s %s\t%s\n", $2, s, $3 }')" || true
   if [ -z "$output" ]; then
-    printf 'No open ARC tickets found (or Claude Code failed)\tuse "Worktree for ARC number" instead\n'
+    printf 'No open ARC tickets found (or Claude Code failed)\tsee journalctl -t herdr-arc, or run: herdr-arc key REPO ARC-N\n'
     return
   fi
   mkdir -p "$(dirname "$cache")"
@@ -275,7 +298,7 @@ cmd_key() {
 
 # Branch<TAB>where it is: the focused Space, other open Spaces, then worktrees,
 # then local branches and branches only on origin, newest first.
-# Case-insensitive, since older branches use arc-N.
+# Match both ARC-N and arc-N ticket branch prefixes.
 cmd_list() {
   local only=${1:-} seen="" branch state ref
   while IFS=$'\t' read -r branch state; do
@@ -309,7 +332,7 @@ cmd_open() {
   path="$(worktrees | jq -r --arg b "$branch" 'select(.branch == $b) | .path' | head -n1)"
   if [ -z "$path" ]; then
     path="$worktree_root/$(basename "$repo")/$branch"
-    # A checkout whose directory vanished (old /tmp ones) still claims the branch.
+    # Remove stale Git worktree metadata for directories that no longer exist.
     git -C "$repo" worktree prune
     if has_ref "refs/heads/$branch"; then
       git -C "$repo" worktree add --quiet "$path" "$branch"
@@ -322,10 +345,62 @@ cmd_open() {
   open_space "$path" "$branch"
 }
 
-# Close BRANCH's Space, remove its checkout (refusing local changes), drop the
-# branch if merged, and transition its ticket to Done.
+# Complete the Jira step independently of checkout existence. A failed close
+# can be recovered without recreating a worktree or repeating local cleanup.
+finish_ticket() {
+  local key=$1 output
+  echo "Marking $key Done with Claude Code"
+  output="$(claude_jira getJiraIssue,getTransitionsForJiraIssue,transitionJiraIssue \
+    "Read issue $key with getJiraIssue. If its status is already Done, do nothing. Otherwise transition it to Done (find the transition with getTransitionsForJiraIssue; pick the one leading to Done), then read the issue again to confirm. Do nothing else. Reply with exactly DONE only when its status is confirmed Done; otherwise explain the failure.")" || return
+  if ! grep -qx 'DONE' <<<"$output"; then
+    printf 'Jira completion was not confirmed:\n%s\n' "$output" >&2
+    return 1
+  fi
+  rm -f "${XDG_CACHE_HOME:-$HOME/.cache}/herdr-arc/tickets.tsv"
+}
+
+cmd_finish() {
+  local branch=${1:?usage: herdr-arc finish REPO KEY_OR_BRANCH} key answer
+  if ! [[ ${branch^^} =~ ^(ARC-[0-9]+)(-|$) ]]; then
+    echo "Expected an ARC ticket key or ticket-prefixed branch." >&2
+    return 2
+  fi
+  key=${BASH_REMATCH[1]}
+  printf 'Mark %s Done without changing any checkout? [y/N] ' "$key"
+  read -r answer </dev/tty
+  [[ $answer =~ ^[Yy]$ ]] || return 0
+  finish_ticket "$key"
+}
+
+indent() {
+  sed 's/^/  /'
+}
+
+# Git-ignored paths in checkout PATH that removing it would destroy for good:
+# everything ignored except regenerable directories and the local files
+# `prepare` copied in unchanged from the main checkout.
+ignored_keepsakes() {
+  local path=$1 entry file
+  while IFS= read -r -d '' entry; do
+    [[ $entry =~ $regenerable_dirs ]] && continue
+    for file in "${local_files[@]}"; do
+      if [ "$entry" = "$file" ] && cmp -s "$path/$entry" "$repo/$file"; then
+        continue 2
+      fi
+    done
+    printf '%s\n' "$entry"
+  done < <(git -C "$path" ls-files -z --others --ignored --exclude-standard --directory)
+}
+
+# Close BRANCH's Space, remove its checkout, drop the branch if merged, and
+# transition its ticket to Done. Tracked or untracked changes refuse the close.
+# Work Git does not report as a change needs its own confirmation: ignored
+# files and the task handoff are deleted with the checkout, and commits on no
+# remote survive only on the kept local branch, so the ticket stays open unless
+# confirmed.
 cmd_close() {
   local branch=${1:?usage: herdr-arc close REPO BRANCH} entry path space key answer
+  local keepsakes handoff unpushed
   entry="$(worktrees | jq -c --arg b "$branch" 'select(.branch == $b)' | head -n1)"
   path="$(jq -r '.path // empty' <<<"$entry")"
   space="$(jq -r '.open_workspace_id // empty' <<<"$entry")"
@@ -333,27 +408,58 @@ cmd_close() {
     echo "$branch has no linked checkout to remove." >&2
     exit 1
   fi
-  key="$(grep -oiE '^arc-[0-9]+' <<<"$branch")" || true
-  key="${key^^}"
-  printf 'Close %s: remove %s%s? [y/N] ' "$branch" "$path" "${key:+ and mark $key Done}"
-  read -r answer </dev/tty
-  [[ $answer =~ ^[Yy] ]] || exit 0
   if [ -n "$(git -C "$path" status --porcelain)" ]; then
     echo "$path has uncommitted changes; commit or discard them first." >&2
     git -C "$path" status --short >&2
     exit 1
   fi
+  key="$(grep -oiE '^arc-[0-9]+' <<<"$branch")" || true
+  key="${key^^}"
+  printf 'Close %s: remove %s%s? [y/N] ' "$branch" "$path" "${key:+ and mark $key Done}"
+  read -r answer </dev/tty
+  [[ $answer =~ ^[Yy] ]] || exit 0
+
+  keepsakes="$(ignored_keepsakes "$path")"
+  handoff="$(git -C "$path" rev-parse --path-format=absolute --git-path HANDOFF.md)"
+  [ -e "$handoff" ] || handoff=""
+  if [ -n "$keepsakes$handoff" ]; then
+    echo "Removing the checkout also deletes these, which Git does not track:"
+    [ -z "$keepsakes" ] || indent <<<"$keepsakes"
+    [ -z "$handoff" ] || echo "  $handoff (task handoff)"
+    printf 'Delete them? [y/N] '
+    read -r answer </dev/tty
+    [[ $answer =~ ^[Yy] ]] || exit 0
+  fi
+
+  unpushed="$(git -C "$repo" log --oneline "$branch" --not --remotes)"
+  if [ -n "$unpushed" ] && [ -n "$key" ]; then
+    echo "$branch has commits that are on no remote:"
+    indent <<<"$unpushed"
+    printf 'Still mark %s Done? [y/N] ' "$key"
+    read -r answer </dev/tty
+    if ! [[ $answer =~ ^[Yy] ]]; then
+      echo "Leaving $key open; finish it later with: herdr-arc finish $(printf '%q %q' "$repo" "$key")"
+      key=""
+    fi
+  fi
+
   git -C "$repo" worktree remove "$path"
   git -C "$repo" branch -d "$branch" 2>/dev/null ||
     echo "Kept branch $branch (not merged into HEAD)"
   if [ -n "$key" ]; then
-    echo "Marking $key Done with Claude Code"
-    claude_jira getTransitionsForJiraIssue,transitionJiraIssue \
-      "Transition issue $key to the Done status (find the transition with getTransitionsForJiraIssue; pick the one leading to Done). Do nothing else. Reply with only one final line: the issue's new status."
-    rm -f "${XDG_CACHE_HOME:-$HOME/.cache}/herdr-arc/tickets.tsv"
+    if ! finish_ticket "$key"; then
+      printf 'Local checkout removed. Retry Jira only: herdr-arc finish %q %q\n' "$repo" "$key" >&2
+      [ -z "$space" ] || printf 'After recovery, close the remaining Space: herdr workspace close %q\n' "$space" >&2
+      return 1
+    fi
   fi
-  # Last: launched from inside that Space, this pane closes with it.
-  [ -z "$space" ] || herdr workspace close "$space"
+  # Last: launched from inside that Space, this pane and its terminal close
+  # with it, which can end the herdr call itself non-zero. The work is done by
+  # then, so neither that status nor the failure hold applies.
+  if [ -n "$space" ]; then
+    trap - EXIT
+    herdr workspace close "$space" || true
+  fi
 }
 
 [ $# -ge 2 ] || usage
@@ -380,5 +486,6 @@ list) cmd_list "$@" ;;
 current) cmd_current ;;
 open) cmd_open "$@" ;;
 close) cmd_close "$@" ;;
+finish) cmd_finish "$@" ;;
 *) usage ;;
 esac

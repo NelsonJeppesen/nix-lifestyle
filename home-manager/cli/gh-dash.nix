@@ -1,3 +1,4 @@
+# Show authored pull requests and incoming review requests in a terminal dashboard.
 { ... }:
 {
   programs.gh-dash = {

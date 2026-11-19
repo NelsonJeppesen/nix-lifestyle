@@ -1,3 +1,4 @@
+# Configure Kitty rendering, shell integration, fonts, and live theme helpers.
 { pkgs, ... }:
 let
   kitty-theme-test = pkgs.writeShellApplication {
@@ -217,11 +218,9 @@ in
     kitty-theme-test # Interactively preview Kitty themes without changing managed config
     kitty-font-test # Cycle through programming fonts using Kitty remote control
 
-    # Font-test catalogue, commented out 2026-09-18 to cut build and disk
-    # cost: several build from source (pkgs.iosevka drives a whole nodejs
-    # toolchain build whenever nixpkgs runs ahead of Hydra). Only Lilex,
-    # kitty's actual font_family, stays installed. Symbols Nerd Font Mono
-    # comes from pkgs.nerd-fonts.symbols-only in packages.nix.
+    # Optional font catalogue. Enable a package and its matching helper entry
+    # together. Lilex is the configured face; installing extra fonts can add
+    # source builds and store space. Symbols come from gui/packages.nix.
     # pkgs.adwaita-fonts
     # pkgs.cascadia-code
     # pkgs.commit-mono
@@ -247,7 +246,7 @@ in
     # pkgs.hermit
     # pkgs.ia-writer-mono
     # pkgs.julia-mono
-    pkgs.lilex
+    pkgs.lilex # Primary terminal font
     # pkgs.meslo-lg
     # pkgs.monoid
     # pkgs.office-code-pro
@@ -259,7 +258,7 @@ in
       # Follow the desktop color scheme.
       ".config/kitty/dark-theme.auto.conf".source =
         pkgs.kitty-themes + "/share/kitty-themes/themes/base2tone-suburb-dark.conf";
-      # Light mode keeps a dark palette too: Base2Tone Lake, the previous dark theme.
+      # Light mode uses a distinct dark palette to preserve terminal contrast.
       ".config/kitty/light-theme.auto.conf".source =
         pkgs.kitty-themes + "/share/kitty-themes/themes/base2tone-lake-dark.conf";
 
@@ -276,7 +275,7 @@ in
       # Source kitty's zsh integration fragment from .zshrc.
       shellIntegration = {
         enableZshIntegration = true;
-        mode = "no-cursor"; # equivalent to old `shell_integration = "no-cursor"`
+        mode = "no-cursor"; # Keep the configured cursor shape across shell modes
       };
 
       keybindings = {
@@ -284,8 +283,7 @@ in
         "kitty_mod+c" = "copy_to_clipboard";
         "kitty_mod+v" = "paste_from_clipboard";
 
-        # Font size — kitty's own defaults, re-added after the clear. Reset
-        # (kitty_mod+backspace) is intentionally omitted; see the note above.
+        # Allow font-size changes alongside clipboard shortcuts.
         "kitty_mod+equal" = "change_font_size all +2.0";
         "kitty_mod+plus" = "change_font_size all +2.0";
         "kitty_mod+minus" = "change_font_size all -2.0";

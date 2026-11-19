@@ -1,11 +1,8 @@
 # Home Manager Tooling Reference
 
-This is the practical reference for the Git, pull-request, OpenCode, Pi,
-Herdr, Neovim, and supporting shell tooling added or changed
-between 2026-07-19 and 2026-08-01.
-
-The current configuration is authoritative. The history section explains why
-the tools exist and what they replaced. More focused references remain in:
+This is the practical reference for Git, pull requests, OpenCode, Pi,
+Herdr, Neovim, and the supporting shell tools. The current configuration is
+authoritative; Git and the changelog hold change history. Focused references:
 
 - `doc/neovim-cheatsheet.md`
 - `ai/dotfiles/herdr-usage.txt`
@@ -28,7 +25,7 @@ the tools exist and what they replaced. More focused references remain in:
 | Start DevOps work on an ARC ticket in its own worktree | `Ctrl-Shift-e`, then DevOps: New ARC ticket / Worktree for existing ARC / Open ARC branch |
 | Finish an ARC worktree: remove the checkout, mark the ticket Done | `Ctrl-Shift-w` in Herdr |
 | Watch every agent session from one dashboard | `Super-a` (Agent Deck window) or `ad` |
-| Split work across parallel agent threads | `Ctrl-Shift-a` in Herdr (Herdr Projects) |
+| Split work across parallel agent threads | Separate Herdr Spaces/worktrees; optional Herdr Projects provides a coordinator |
 | Open a whole templated workspace, or run a quick action | `Ctrl-Shift-g` / `Ctrl-Shift-e` in Herdr (herdr-plus) |
 | Navigate to a known project | `z NAME` or `cd ~NAME` |
 | Search source structurally | `ast-grep` |
@@ -82,7 +79,7 @@ Current defaults relevant to daily work:
 - Pulls are fast-forward-only.
 - Push defaults to the current branch and automatically establishes upstream.
 - GitHub, GitLab, and Bitbucket HTTPS URLs are rewritten to SSH.
-- Plaintext `credential.helper = store` is no longer configured.
+- Credentials use the configured authentication tools; Git does not use plaintext credential storage.
 
 `git open` only supports a GitHub `origin`; its optional path is not URL
 escaped, and detached HEAD behavior is limited.
@@ -100,8 +97,8 @@ escaped, and detached HEAD behavior is limited.
 | `Ctrl-Shift-o` | Open OpenCode in a new Herdr tab at the active directory |
 
 The Home Manager default model is `github-copilot/gpt-5.6-sol`. A
-repository-local `opencode.json` can override it; this repository currently
-uses `openai/gpt-5.6-sol`.
+repository-local `opencode.json` can override it. Inspect the active client
+configuration when a model or tool differs from the managed defaults.
 
 OpenCode pre-allows external file access under `~/source/**` and `~/tmp/**`.
 This removes repetitive directory prompts; it is not permission to expose
@@ -109,8 +106,6 @@ credentials, escalate privileges, or perform arbitrary destructive actions.
 
 There are no custom agent definitions in `ai/opencode.nix`. Pi is a separate
 coding agent.
-
-The former `oc-standup` workflow was removed.
 
 ### MCP servers
 
@@ -122,33 +117,18 @@ The former `oc-standup` workflow was removed.
 | GitHub | Enabled | Uses `GITHUB_TOKEN`; PR, issue, repository, and Actions tools |
 | Terraform | Enabled | Registry/provider/module documentation tools |
 | Memory | Enabled | Persistent graph at `~/.local/share/mcp-memory/memory.json` |
+| WorkIQ | Enabled | Microsoft 365 queries; tenant consent may be required |
 | Kubernetes | Disabled | Enable deliberately when cluster access is needed |
-| Slack read | Disabled | OpenCode server `slack-read`; explicit read-only tool allowlist |
-| Slack write | Disabled | Mutating tools; enable deliberately and temporarily |
 
 <!-- markdownlint-enable MD013 -->
 
-The comments near the MCP declaration currently say that all servers default
-to disabled, but the actual booleans above are authoritative. In particular,
-Terraform is enabled.
+The table describes the Home Manager catalogue. A separate launcher or local
+client configuration can override it; inspect the effective client setup when
+a declared tool is absent.
 
 Persistent memory is shared across sessions. Store durable conventions,
 architectural decisions, stable environment facts, and recurring gotchas.
 Never store secrets, tokens, transient status, or large file contents.
-
-### Slack credentials
-
-When deliberately enabling Slack MCP support:
-
-```bash
-eval "$(slack-stealth-tokens)"
-slack-stealth-tokens --envrc >> secret.env
-```
-
-The command prints browser-session secrets to stdout. Treat the output as a
-secret and never commit it. Read-only Slack and mutating `slack-write` are
-separate disabled configurations; registering the write tools makes those
-operations live without channel restrictions.
 
 ## Pi
 
@@ -162,15 +142,16 @@ Pi is installed alongside OpenCode for testing, not as a replacement.
 
 Pi has a pinned, Nix-built MCP adapter and shares the Herdr skill with
 OpenCode. Its MCP servers start lazily and include Atlassian, GitHub,
-Terraform, persistent memory, and read-only Slack.
+WorkIQ, Terraform, and persistent memory.
 
-Pi does not currently receive Kubernetes or Slack-write. Pi and OpenCode share
+Pi does not receive Kubernetes tools. Pi and OpenCode share
 the same persistent memory JSON file. Herdr reports Pi's
 blocked, working, and done states in the sidebar.
 
 ## Herdr
 
-Herdr is the terminal multiplexer around agents and interactive review tools.
+Herdr is the local terminal multiplexer around agents and interactive review
+tools. Its remote relay, tunnel, and mobile-relay provisioning are disabled.
 Kitty intentionally delegates tabs, panes, sessions, and most `Ctrl-Shift`
 bindings to Herdr.
 
@@ -179,7 +160,6 @@ bindings to Herdr.
 | Command | Action |
 | --- | --- |
 | `h` | Start or attach Herdr |
-| `hr HOST` | Attach remotely |
 | `ho` | Reinstall Herdr's OpenCode integration |
 | `ws` | Create a workspace rooted at `~/source` |
 | `hrf COMMAND...` | Run a command in a new focused tab |
@@ -205,8 +185,8 @@ bindings to Herdr.
 | `Ctrl-Shift-o` | OpenCode tab at active directory |
 | `Ctrl-Shift-x` | Codex tab at active directory |
 | `Ctrl-Shift-p` | Pi tab at active directory |
-| `Ctrl-Shift-s` | Shell tab at active directory (replaces `Ctrl-Shift-t`) |
-| `Ctrl-Shift-a` | Herdr Projects popup |
+| `Ctrl-Shift-s` | Shell tab at active directory |
+| `Ctrl-Shift-a` | Herdr Projects popup, only with the optional module enabled |
 | `Ctrl-Shift-g` | herdr-plus workspace templates |
 | `Ctrl-Shift-e` | herdr-plus quick actions |
 | `Ctrl-Shift-w` | ARC: close worktree + ticket |
@@ -251,7 +231,11 @@ pane.
 - Close temporary tabs after collecting their output, but leave active servers,
   auth prompts, and user-facing TUIs open.
 
-### Herdr Projects
+### Herdr Projects (optional)
+
+`ai/default.nix` leaves `herdr-projects.nix` disabled. Its commands, hooks, and
+`Ctrl-Shift-a` binding require enabling that import and rebuilding first.
+The following describes its configured behavior when enabled.
 
 The `herdr-projects` plugin puts one coordinator conversation in front of
 parallel worker threads. Each thread runs in its own pane on its own git
@@ -266,7 +250,7 @@ under `~/.herdr-projects/<name>/`.
 | `herdr-projects open SLUG` | Open a project and start its coordinator |
 | `herdr-projects doctor` | Check the setup |
 
-Nix builds the plugin from the pinned `herdr-projects` flake input.
+When enabled, Nix builds the plugin from the pinned `herdr-projects` flake input.
 Activation links it with `herdr plugin link` and runs
 `herdr-projects configure --hooks-only`. That adds the progress hooks to
 `~/.claude/settings.json` and `~/.codex/hooks.json` and links the
@@ -293,28 +277,38 @@ action there, not by hand in that directory.
 | Picker | Entries |
 | --- | --- |
 | Projects (`Ctrl-Shift-g`) | DevOps, DevOps: Terraform, nix-lifestyle |
-| Quick actions (`Ctrl-Shift-e`) | New tab (any launcher), new ARC ticket + worktree, worktree for an existing ARC, open an ARC branch, open ARC ticket, validate changes, `mise run test:agents`/`test:harness`, open a harness `HANDOFF.md`, read-only k9s, AWS SSO login, open PR, git status |
+| Quick actions (`Ctrl-Shift-e`) | ARC: New ticket + worktree; Worktree for my open ticket; Open worktree; Close worktree + ticket |
 
-- **DevOps: New ARC ticket + worktree** asks for a title. A headless Claude
+- **ARC: New ticket + worktree** asks for a title. A headless Claude
   Code (Haiku, Atlassian MCP only, claude.ai login) files an ARC Task assigned
   to you. Its key and the slugged title become the branch, e.g.
   `ARC-4100-rotate-eks-node-amis`. The git fetch runs while the ticket is
   being filed.
-- **DevOps: Worktree for existing ARC** takes `1234 short topic`. If that
-  branch already exists, it opens instead of failing.
-- **DevOps: Open ARC branch** lists ARC branches: open Spaces first, then
+- **ARC: Worktree for my open ticket** lets you select an open ticket
+  assigned to you. An existing branch opens without creating a duplicate checkout.
+- **ARC: Open worktree** lists ARC branches: open Spaces first, then
   worktrees, local branches, and origin-only branches, newest first. Picking
   one focuses its Space, reopens its worktree, or checks it out.
 - **ARC: Close worktree + ticket** (also `Ctrl-Shift-w`, a Herdr popup that
   runs the same action with fzf as the picker) lists ARC checkouts. After you
   confirm, it removes the checkout, deletes the branch if it is merged, marks
   the ticket Done through Claude Code, and closes the Space. It refuses a
-  checkout with uncommitted changes.
+  checkout with uncommitted changes. It asks again before deleting git-ignored
+  files (other than rebuildable caches such as `.terraform`) or the task's
+  `HANDOFF.md`, and before marking the ticket Done while the branch has
+  commits on no remote.
+- If Jira fails after local checkout removal, run
+  `herdr-arc finish ~/source/devops ARC-1234` to retry only the Jira transition.
+  It asks for confirmation and does not require recreating the checkout. Close
+  the remaining Space after completion; the failure message identifies it.
+  A new checkout requires a successful fetch, so a fetch failure must be fixed
+  before retrying creation. A ticket filed before that failure can be selected
+  through **ARC: Worktree for my open ticket**.
 - All Herdr worktrees, ARC or not, live in `~/source/worktrees/<repo>/`
-  (`worktrees.directory` in `ai/herdr.nix`, instead of `~/.herdr/worktrees`).
-  devops' `.envrc` runs `source_up`, and the API keys, GitHub token, and sticky
-  AWS profile come from `~/source/.envrc`, which only a checkout under
-  `~/source` inherits. direnv whitelists that root, so no `direnv allow` is
+  (`worktrees.directory` in `ai/herdr.nix`).
+  A checkout's reviewed `.envrc` can use `source_up` to inherit its parent
+  environment under `~/source`. Select the AWS profile/region explicitly per
+  task; the shell pickers do not persist a shared global identity. direnv whitelists that root, so no `direnv allow` is
   needed. Each new ARC checkout also gets `mise trust`, the `terraform` submodule (using the main
   checkout's objects), and copies of `.envrc.local` and
   `.claude/settings.local.json`. New Spaces start OpenCode; set
@@ -327,6 +321,73 @@ action there, not by hand in that directory.
   threads, and would add tabs to those Spaces.
 - To upgrade, bump the `herdr-plus` flake input (and `vendorHash` if Go
   dependencies changed). Activation relinks the plugin with `herdr plugin link`.
+
+## Parallel worktrees without losing context
+
+Use one Git worktree and one Herdr Space per independently edited task. Keep
+agent, test, and shell tabs in that Space at the same checkout path. Give each
+Space the ticket/branch name, and use the workspace picker (`Ctrl-b`, then `w`)
+or `Ctrl-Shift-Up/Down` to resume work without switching branches in place.
+`Ctrl-b`, then `Shift-g` creates a generic worktree; `Ctrl-Shift-e` provides the
+ARC workflows described above.
+
+Before launching parallel work, record the task, branch, checkout path, owner,
+and acceptance command in the task description. Assign non-overlapping files
+where possible. Reserve a separate worktree for integration and review, and
+merge or cherry-pick reviewed changes there one at a time. Branch refs and the
+stash are shared within the repository; each worktree has its own index and
+working files. A second task should not edit another task's checkout.
+
+For this repository, dry-build the task checkout explicitly:
+
+```sh
+bash home-manager/cli/dotfiles/update -n \
+  --system-flake "$PWD/nixos" --home-flake "$PWD/home-manager"
+```
+
+Use the 2022 hostname explicitly when reviewing that machine:
+
+```sh
+nixos-rebuild dry-build --flake ./nixos#lg-gram-14-2022
+```
+
+Dry builds plan dependencies; compile/package checks are still needed for
+changes that affect build behavior. Each checkout's new files must be tracked
+before a Git-backed flake includes them. Keep flake input refreshes with one
+owner to avoid conflicting lockfile edits.
+
+For app repositories, share immutable dependency/download caches while keeping
+build outputs, local environment overrides, databases, and server ports separate.
+Start with two active agents and increase only while the UI stays responsive
+and memory pressure/build queues remain acceptable. Use `btop` and
+`cat /proc/pressure/memory /proc/pressure/io` to compare before/after behavior;
+CPU utilization alone does not show memory or disk contention. Reduce concurrent
+heavy builds if task switching degrades or sustained pressure rises. The 8 GiB
+laptop has less room for parallel builds than the 2025 machine.
+
+Initialize a handoff inside the task worktree's Git metadata (after activating
+the Home Manager template):
+
+```sh
+handoff="$(git rev-parse --git-path HANDOFF.md)"
+test -e "$handoff" || cp ~/.config/herdr/worktree-handoff.md "$handoff"
+```
+
+Before activation, copy `home-manager/ai/dotfiles/worktree-handoff.md` from this
+checkout instead. Edit the handoff in place as a current snapshot. Include the
+owner, base/current commit, acceptance checks, Space/tab IDs, files owned, ports,
+and running commands. This file belongs to one worktree and is not committed.
+
+At handoff, record the exact commit, test result, next step, and any running
+service/port. Before removing a checkout, check both uncommitted files and
+whether commits are pushed or integrated. ARC close retains an unmerged branch,
+but a clean worktree alone is not evidence that its commits are integrated.
+
+The worktree root is automatically trusted by direnv. Review `.envrc` and mise
+configuration before bringing an untrusted branch into that root; separate
+checkouts isolate files, not credentials or execution privileges. See the
+[Git worktree manual](https://git-scm.com/docs/git-worktree) for shared state and
+worktree lifecycle details.
 
 ## OpenRig
 
@@ -344,7 +405,7 @@ commands include tmux in their runtime path.
 | `rig daemon status` | Check daemon health |
 | `rig up <spec-or-library-name> --plan` | Preview a team launch |
 
-The daemon starts on demand; Paperclip has the continuously running service.
+The daemon starts on demand. Paperclip also requires an explicit start.
 OpenRig stores local state in `~/.openrig/`. Use the dashboard to configure and
 launch teams. Review the setup preview before applying `rig setup`, which can
 change agent trust settings. Update the `openrig` flake input, dependency lock,
@@ -352,13 +413,16 @@ and package hash to upgrade through Home Manager.
 
 ## Paperclip
 
-Paperclip runs continuously as the `paperclipai` systemd user service. Open
+Start Paperclip explicitly with `systemctl --user start paperclipai`, then open
 <http://127.0.0.1:3100> to create a company, add agents, and assign work.
-The dashboard listens on loopback. User lingering keeps it running after
-logout and starts it at boot; it resumes after the laptop wakes from sleep.
+The dashboard listens on loopback and is not attached to the login target.
+Once started, it stays running until stopped or the user manager exits;
+lingering can keep an explicitly started service alive after logout.
 
 | Command | Purpose |
 | --- | --- |
+| `systemctl --user start paperclipai` | Start the dashboard when needed |
+| `systemctl --user stop paperclipai` | Stop it when finished |
 | `systemctl --user status paperclipai` | Check the service |
 | `journalctl --user -u paperclipai -f` | Follow server logs |
 | `systemctl --user restart paperclipai` | Restart the server |
@@ -443,7 +507,8 @@ Configured hostnames:
 | `lg-gram-pro-17-2025` | `lg-gram-17-oc.jeppesen.io` |
 
 An unmapped host starts no connector. A mapped host with a missing token causes
-the tunnel unit to fail and retry. Tunnel/DNS/Access infrastructure is managed
+the tunnel unit to exit without retrying; provision its token and start it
+explicitly when ready. Tunnel/DNS/Access infrastructure is managed
 outside this repository in `~/source/personal/terraform/core/`.
 
 ## Neovim
@@ -462,6 +527,18 @@ from Herdr.
 See `doc/neovim-cheatsheet.md` for shortcuts and enabled languages.
 
 ## Shell and Supporting CLI Tools
+
+### Cloud identity in parallel tasks
+
+`ap` and `ar` select the AWS profile and region for the invoking shell and its
+children. They do not write shared identity files or change other running tabs.
+For reproducible task environments, declare `AWS_PROFILE`, `AWS_REGION`, and a
+separate writable `KUBECONFIG` in that worktree's reviewed direnv configuration.
+Do not copy credential contents into the checkout or handoff document.
+`rst` returns to `~/source`, unsets the current kube context through `kubectx`,
+and clears `AWS_PROFILE`/`AWS_REGION`. Other shells can share that kubeconfig;
+use a task-specific `KUBECONFIG` when context isolation matters. Inspect the
+resulting directory environment before running a mutating cloud command.
 
 ### Navigation
 
@@ -547,42 +624,9 @@ branch.
 
 ### Long-running OpenCode work stops after locking the laptop
 
-On AC power, GNOME is configured to lock/blank after 15 minutes but delay
-automatic suspend for two hours. Battery suspend behavior is unchanged. The
-comment in `gnome/gnome.nix` currently says three hours, but `7200` seconds and the
-commit subject both indicate two hours.
-
-## What Changed and Why
-
-Baseline for this guide: the last commit before the window was
-`e9372f7` on 2026-07-17.
-
-<!-- markdownlint-disable MD013 -->
-
-| Date | Commit | Effect |
-| --- | --- | --- |
-| 2026-07-19 | `8f93ea7` | Tuned Herdr/Kitty and added mobile relay prerequisites. |
-| 2026-07-19 | `4a01c31` | Added direct Herdr sidebar and resize keybindings. |
-| 2026-07-19 | `4c9ee77` | Hardened shell/Herdr commands, removed plaintext Git credential storage, moved F1 scrollback handling to Herdr, and cleaned stale Neovim configuration. |
-| 2026-07-19 | `4c8cd02` | Added the loopback OpenCode web service and per-laptop Cloudflare Tunnel connector. |
-| 2026-08-01 | `8e694a7` | Updated flake pins and added nix-index-database, Pi MCP adapter, and a terminal review input. |
-| 2026-08-01 | `26f6d42` | Added the Ansible suite, ast-grep, and prebuilt nix-index integration. |
-| 2026-08-01 | `8fb22c9` | Added Pi, gh-dash integration, modern agent tool guidance, and removed `oc-standup`. |
-| 2026-08-01 | `4b79708` | Added Ansible/Jinja LSP support and save-time nvim-lint; removed hardtime.nvim. |
-| 2026-08-01 | `4d3e9ea` | Added zoxide, bat, named directories, `vu`/`vm`, and the Pi Herdr launcher. |
-| 2026-08-01 | `07050ad` | Imported the new feature modules and pruned unused packages. |
-| 2026-08-01 | `17093fe` | Added Chromium v11 cookie decryption and padding validation to `slack-stealth-tokens`. |
-| 2026-08-01 | `e3ea3e2` | Delayed AC suspend so long-running OpenCode work survives idle lock. |
-
-<!-- markdownlint-enable MD013 -->
-
-### Superseded tools and workflows
-
-- The `git wt` alias, shell `wt` function, and lazyworktree integration were
-  removed. Herdr provides worktree creation via `prefix+shift+g`.
-- `oc-standup` and its redaction/collector files were removed. GitHub work now
-  centers on `gh-dash`.
-- `hardtime.nvim` was removed.
+On AC power, GNOME locks/blanks after 15 minutes and automatically suspends
+after two hours of idle time (`7200` seconds). Battery suspend uses its own
+policy. A lock does not keep a long-running job awake through suspend.
 
 ## Configuration Map
 
@@ -611,5 +655,6 @@ Baseline for this guide: the last commit before the window was
 <!-- markdownlint-enable MD013 -->
 
 After changing these modules, format touched Nix files with `nixfmt` and test
-with a Home Manager build/switch appropriate to the task. Interactive switching
-belongs in a Herdr tab because it may be long-running and can involve prompts.
+with a dry build of the checkout being reviewed. A switch activates changes and
+is a separate operation. Interactive switching belongs in a Herdr tab because it
+may be long-running and can involve prompts.

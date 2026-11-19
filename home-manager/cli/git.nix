@@ -1,3 +1,4 @@
+# Configure SSH-signed Git work, review shortcuts, and repository identity.
 {
   config,
   gitalias,

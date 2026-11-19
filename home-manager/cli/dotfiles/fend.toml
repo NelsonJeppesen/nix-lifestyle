@@ -1,3 +1,4 @@
+# Interactive calculator display and local result-history preferences.
 enable-colors = 'always'
 max-history-size = 1000
 prompt = 'fend: '

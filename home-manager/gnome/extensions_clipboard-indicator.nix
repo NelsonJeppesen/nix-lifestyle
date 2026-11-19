@@ -1,11 +1,12 @@
+# Keep searchable clipboard history; copied text can persist in the local cache.
 { pkgs, ... }: {
   dconf.settings = {
     "org/gnome/shell/extensions/clipboard-indicator" = {
       blink-icon-on-copy = true;
-      cache-size = 10; # Number of items to persist across restarts
+      cache-size = 10; # MiB threshold checked when reading the persistent cache
       clear-history = [ ];
       disable-down-arrow = true;
-      display-mode = 1; # Compact display mode
+      display-mode = 1; # Display clipboard text in the top bar
       history-size = 200; # Total items to keep in history
       move-item-first = true; # Move selected item to top of history
       next-entry = [ ]; # Unbound: <Shift><Control> chords belong to herdr (herdr.nix)
@@ -30,7 +31,21 @@
 
   programs.gnome-shell.extensions = [
     {
-      package = pkgs.gnomeExtensions.clipboard-indicator;
+      # nixpkgs packages clipboard-indicator v71, which calls
+      # Clutter.get_default_backend() and sets St.BoxLayout:vertical; GNOME
+      # Shell 51 removed both, so enable() throws and the panel icon never
+      # appears. v72 ports it to GNOME 51
+      # (https://github.com/Tudmotu/gnome-shell-extension-clipboard-indicator/pull/641).
+      # Drop this override once pkgs.gnomeExtensions.clipboard-indicator is
+      # v72 or later.
+      package = pkgs.gnomeExtensions.clipboard-indicator.overrideAttrs {
+        version = "72";
+        src = pkgs.fetchzip {
+          url = "https://extensions.gnome.org/extension-data/clipboard-indicatortudmotu.com.v72.shell-extension.zip";
+          hash = "sha256-NX3JtWrehr1cbqG+JwK4V+qWs2if1tbFJHwXF+l5/Ww=";
+          stripRoot = false;
+        };
+      };
     }
   ];
 }

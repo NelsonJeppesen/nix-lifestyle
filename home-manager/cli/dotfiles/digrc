@@ -1,1 +1,2 @@
+# Print only DNS answer records by default.
 +noall +answer

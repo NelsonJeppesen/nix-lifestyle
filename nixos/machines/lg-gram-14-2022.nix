@@ -1,11 +1,15 @@
 # LG Gram 14 2022 14Z90Q-K.ARW5U1 Intel 12th Gen
 { ... }:
 {
+  # Compatibility defaults for stateful services; do not bump during upgrades.
   system.stateVersion = "25.05";
+
+  # Installation target. Verify the physical disk and replace this with its
+  # /dev/disk/by-id identity on the 2022 host before any destructive install.
+  disko.devices.disk.vdb.device = "/dev/nvme0n1";
 
   imports = [
     ../profiles/chrome-policies.nix
-    ../profiles/console.nix
     ../profiles/desktop.nix
     ../profiles/gnome.nix
     ../profiles/intel.nix
@@ -14,6 +18,8 @@
     ../profiles/networking.nix
     ../profiles/plymouth.nix
     ../profiles/s3fs.nix
+    ../profiles/storage-maintenance.nix
+    ../profiles/scanner.nix
     ../profiles/tailscale.nix
     ../profiles/x86_64.nix
   ];

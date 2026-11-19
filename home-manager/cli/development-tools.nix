@@ -1,3 +1,4 @@
+# Install language-aware search tools shared by repositories.
 { pkgs, ... }:
 {
   home.packages = [

@@ -1,9 +1,12 @@
+# User-layer dependency boundary. This flake intentionally pins nixpkgs
+# independently of nixos/flake.nix; updates and rollback can differ by layer.
 {
   description = "Home Manager configuration";
 
   inputs = {
     nixpkgs.url = "github:nixos/nixpkgs/nixos-unstable";
 
+    # Nix modules share this layer's package set to avoid duplicate evaluations.
     home-manager = {
       url = "github:nix-community/home-manager";
       inputs.nixpkgs.follows = "nixpkgs";
@@ -24,6 +27,8 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
+    # Source-only inputs are packaged/configured by the consuming feature module.
+    # Exact revisions and integrity hashes are recorded in flake.lock.
     gitalias = {
       url = "github:GitAlias/gitalias";
       flake = false;
@@ -35,37 +40,28 @@
     };
 
     pi-mcp-adapter = {
-      url = "github:nicobailon/pi-mcp-adapter/v2.11.0";
+      url = "github:nicobailon/pi-mcp-adapter/v7.0.1";
       flake = false;
     };
 
+    # npm release archives have matching offline dependency locks under ai/.
     openrig = {
-      url = "https://registry.npmjs.org/@openrig/cli/-/cli-0.6.4.tgz";
+      url = "https://registry.npmjs.org/@openrig/cli/-/cli-0.7.14.tgz";
       flake = false;
     };
 
     paperclip = {
-      url = "https://registry.npmjs.org/paperclipai/-/paperclipai-2026.1001.0.tgz";
+      url = "https://registry.npmjs.org/paperclipai/-/paperclipai-2026.1106.0.tgz";
       flake = false;
     };
 
     workiq = {
-      url = "https://registry.npmjs.org/@microsoft/workiq/-/workiq-1.0.0.tgz";
-      flake = false;
-    };
-
-    slack-mcp-server = {
-      url = "github:korotovsky/slack-mcp-server/v1.3.0";
+      url = "https://registry.npmjs.org/@microsoft/workiq/-/workiq-1.0.1.tgz";
       flake = false;
     };
 
     agent-deck = {
-      url = "github:asheshgoplani/agent-deck/v1.16.18";
-      flake = false;
-    };
-
-    herdr-remote = {
-      url = "github:dcolinmorgan/herdr-remote/v0.8.0";
+      url = "github:asheshgoplani/agent-deck/v1.16.38";
       flake = false;
     };
 
@@ -79,13 +75,9 @@
       flake = false;
     };
 
+    # The notification extension's review branch supplies its Nix package.
     gnome-github-notifications-redux = {
       url = "github:NelsonJeppesen/gnome-github-notifications-redux/review-01";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
-
-    flameshot = {
-      url = "github:flameshot-org/flameshot/410cfae9e2ab32c376e3844c0fc41470362c3174";
       inputs.nixpkgs.follows = "nixpkgs";
     };
   };
@@ -99,15 +91,12 @@
       gitalias,
       nix-index-database,
       gnome-github-notifications-redux,
-      flameshot,
       open-ralph-wiggum,
       pi-mcp-adapter,
       openrig,
       paperclip,
       workiq,
-      slack-mcp-server,
       agent-deck,
-      herdr-remote,
       herdr-projects,
       herdr-plus,
       ...
@@ -117,14 +106,8 @@
       pkgs = import nixpkgs {
         inherit system;
         overlays = [
-          # binutils 2.46's ld.bfd rejects libghostty-vt's Zig-emitted
-          # .eh_frame ("overlapping FDEs"); link with lld instead.
           (final: prev: {
             herdr = prev.herdr.overrideAttrs (o: {
-              nativeBuildInputs = o.nativeBuildInputs ++ [ final.lld ];
-              env = (o.env or { }) // {
-                RUSTFLAGS = "-C link-arg=-fuse-ld=lld";
-              };
               # Hide the expanded sidebar's Agents section: Spaces take the
               # full height and the drag divider between them goes away. No
               # config or plugin API can do this; the Agents header already
@@ -150,13 +133,6 @@
                 fn upstream_sidebar_section_divider_rect(area: Rect, split_ratio: f32) -> Rect {'
               '';
             });
-            # diff-cover 10.5.1's HTML integration tests fail against the
-            # current nixpkgs toolchain; it's only a sqlfluff build dep.
-            pythonPackagesExtensions = prev.pythonPackagesExtensions ++ [
-              (pyFinal: pyPrev: {
-                diff-cover = pyPrev.diff-cover.overridePythonAttrs { doCheck = false; };
-              })
-            ];
           })
         ];
       };
@@ -173,7 +149,8 @@
           nix-index-database.homeModules.nix-index # Package index
         ];
 
-        # Module inputs.
+        # Pass external sources explicitly; feature modules must not fetch
+        # independent copies during evaluation.
         extraSpecialArgs = {
           inherit
             nvf
@@ -181,15 +158,12 @@
             gitalias
             nix-index-database
             gnome-github-notifications-redux
-            flameshot
             open-ralph-wiggum
             pi-mcp-adapter
             openrig
             paperclip
             workiq
-            slack-mcp-server
             agent-deck
-            herdr-remote
             herdr-projects
             herdr-plus
             ;

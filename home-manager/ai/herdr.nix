@@ -1,3 +1,4 @@
+# Own Herdr UI, keybindings, launchers, and integration reconciliation through Home Manager.
 {
   config,
   lib,
@@ -9,8 +10,7 @@ let
   # herdr-projects.nix is imported (it owns this link).
   herdrProjects = config.home.file ? ".local/bin/herdr-projects";
 
-  # Agent or shell tab at the active pane's directory; herdr-plus.nix offers
-  # the same launchers as quick actions.
+  # Agent and shell launchers open tabs at the active pane's directory.
   newTab = pkgs.callPackage ./bin/herdr-new-tab.nix { };
 
   # herdr-plus's "ARC: Close worktree + ticket" quick action on a direct key.
@@ -40,30 +40,16 @@ let
     '';
   };
 
-  mobileRelayEnsure = pkgs.writeShellApplication {
-    name = "herdr-mobile-relay-ensure";
-    runtimeInputs = with pkgs; [
-      herdr
-      jq
-      bash
-      gnused
-      coreutils
-    ];
-    text = builtins.readFile ./bin/herdr-mobile-relay-ensure;
-  };
 in
 {
   # Nix owns the herdr version.
   home.packages = [
-    pkgs.cloudflared # Public HTTPS/WSS tunnel for the mobile relay
     pkgs.herdr
-    pkgs.uv # Isolated Python runtime used by the mobile relay
   ];
 
   # Agent launcher aliases.
   programs.zsh.shellAliases = {
     h = "herdr"; # start or attach the multiplexer server
-    hr = "herdr --remote"; # attach to a remote herdr over ssh
     ho = "herdr integration install opencode"; # (re)install the opencode agent-state plugin
   };
 
@@ -184,7 +170,7 @@ in
             command = "${lib.getExe newTab} pi"
             description = "open Pi in a new tab"
 
-            # A plain shell, where the old ctrl+shift+t new_tab went.
+            # A plain shell at the active pane's working directory.
             [[keys.command]]
             key = "ctrl+shift+s"
             type = "shell"
@@ -267,10 +253,12 @@ in
 
     # Keybinding reference.
     ".config/herdr/usage.txt".source = ./dotfiles/herdr-usage.txt;
+    # Copy into each worktree's private Git directory to record task ownership.
+    ".config/herdr/worktree-handoff.md".source = ./dotfiles/worktree-handoff.md;
 
     ".config/opencode/skills/herdr/SKILL.md" = {
       source = "${pkgs.herdr}/share/skills/herdr/herdr/SKILL.md";
-      # Replace the unmanaged file written by the previous activation hook.
+      # Keep this skill owned by Home Manager even if an integration installer writes it.
       force = true;
     };
   };
@@ -286,10 +274,4 @@ in
     fi
   '';
 
-  # Pin fresh plugin installs, verify registration, and warn rather than migrate existing relay state.
-  home.activation.herdrMobileRelay = lib.hm.dag.entryAfter [ "linkGeneration" ] ''
-    if ! $DRY_RUN_CMD ${lib.getExe mobileRelayEnsure} ${lib.getExe pkgs.bash}; then
-      warnEcho "Herdr mobile relay verification failed unexpectedly; inspect the activation output."
-    fi
-  '';
 }

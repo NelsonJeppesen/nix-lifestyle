@@ -1,3 +1,4 @@
+# Shared user identity, directory layout, runtime secret destinations, and text style.
 { config, ... }: {
   nixpkgs.config.allowUnfree = true;
   # User directories.
@@ -20,7 +21,8 @@
   # User fonts.
   fonts.fontconfig.enable = true;
 
-  # Encrypted secrets.
+  # Ciphertext stays outside the Nix store; agenix decrypts at activation. Parent
+  # .envrc files provide directory-scoped credentials when direnv authorizes them.
   age.secrets = {
     # direnv .envrc for personal projects (API keys, tokens, etc.)
     "envrc_personal" = {
@@ -34,7 +36,8 @@
       path = "${config.home.homeDirectory}/source/personal/.aws/credentials";
     };
 
-    # Writable kubeconfig source.
+    # The .orig file is the immutable secret source; shell helpers copy it to a
+    # writable kubeconfig before kubectl changes contexts.
     "kubeconfig.personal" = {
       file = "/etc/secrets/encrypted/kubeconfig.personal.age";
       path = "${config.home.homeDirectory}/source/personal/.kube/config.orig";

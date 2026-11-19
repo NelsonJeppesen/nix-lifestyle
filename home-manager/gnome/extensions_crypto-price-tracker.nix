@@ -1,3 +1,4 @@
+# Show selected market pairs through the extension's CoinGecko backend.
 { pkgs, ... }: {
   dconf.settings = {
     "org/gnome/shell/extensions/crypto-tracker" =

@@ -33,12 +33,10 @@
 
   disko.devices = {
     disk = {
-      # Attribute name is leftover from VM days; the actual device is
-      # /dev/nvme0n1 below. Renaming the attr would change partition
-      # labels and risk a remount, so it's left alone.
+      # `vdb` contributes to generated partition labels. Keep this key stable
+      # unless migrating labels; each machine supplies its installation device.
       vdb = {
         type = "disk";
-        device = "/dev/nvme0n1";
         content = {
           type = "gpt";
           partitions = {
@@ -69,9 +67,9 @@
 
                 content = {
                   extraArgs = [ "-f" ];
-                  # zstd:1 is cheap and roughly halves /nix/store; noatime stops
-                  # reads causing CoW metadata writes. No autodefrag: it suits
-                  # spinning disks and only adds write amplification on NVMe.
+                  # Low-level zstd compression trades CPU for fewer stored bytes;
+                  # the saving depends on content. noatime avoids access-time
+                  # writes, and omitting autodefrag avoids extra rewrite work.
                   # Existing data stays uncompressed until rewritten.
                   mountOptions = [
                     "compress=zstd:1"

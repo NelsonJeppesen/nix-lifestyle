@@ -1,11 +1,9 @@
 #!/usr/bin/env bash
 # firmware-update - Refresh and apply firmware updates via fwupdmgr.
 #
-# Split out of `update` because firmware ops need an interactive sudo
-# prompt (the passwordless sudo rule in nixos/profiles/shared.nix only
-# covers `nixos-rebuild` / `nix`, not `fwupdmgr`). Run this manually
-# when you want firmware updates; it's not part of the regular `update`
-# flow anymore.
+# Firmware operations require interactive sudo because the passwordless policy
+# covers nixos-rebuild and nix. Run this manually when firmware maintenance is
+# intended; the regular update command manages only NixOS and Home Manager.
 #
 # Flags:
 #   -h, --help    Show this help.

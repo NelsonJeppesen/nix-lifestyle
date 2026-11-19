@@ -1,30 +1,12 @@
+# Share the enabled MCP server catalogue across Home Manager-managed agent clients.
 {
   config,
   lib,
   pkgs,
-  slack-mcp-server,
   ...
 }:
 let
   memoryFile = "${config.home.homeDirectory}/.local/share/mcp-memory/memory.json";
-
-  # Slack MCP disabled: the native claude.ai Slack connector is used instead.
-  # The stealth xoxc/xoxd session shared with the desktop app got revoked by
-  # Slack on every server start (korotovsky/slack-mcp-server#86).
-  # slackMcpServer = pkgs.buildGoModule {
-  #   pname = "slack-mcp-server";
-  #   version = "1.3.0";
-  #   src = slack-mcp-server;
-  #   vendorHash = "sha256-+uQRODO9oL8mGKBmdghTxE6R9Fz+3GJFVTi17306gT8=";
-  #   subPackages = [ "cmd/slack-mcp-server" ];
-  #   ldflags = [
-  #     "-s"
-  #     "-w"
-  #     "-X=github.com/korotovsky/slack-mcp-server/pkg/version.Version=v1.3.0"
-  #     "-X=github.com/korotovsky/slack-mcp-server/pkg/version.BinaryName=slack-mcp-server"
-  #   ];
-  #   meta.mainProgram = "slack-mcp-server";
-  # };
 
   # Map GITHUB_TOKEN to GITHUB_PERSONAL_ACCESS_TOKEN.
   githubMcpServer = pkgs.writeShellApplication {
@@ -36,25 +18,6 @@ let
     '';
   };
 
-  # # Read-only Slack tools.
-  # slackReadTools = [
-  #   "conversations_history"
-  #   "conversations_replies"
-  #   "conversations_search_messages"
-  #   "conversations_unreads"
-  #   "channels_list"
-  #   "channels_me"
-  #   "usergroups_list"
-  #   "users_search"
-  # ];
-  #
-  # # Listed write tools have no channel restrictions.
-  # slackWriteTools = slackReadTools ++ [
-  #   "conversations_add_message"
-  #   "reactions_add"
-  #   "reactions_remove"
-  #   "conversations_mark"
-  # ];
 in
 {
   programs.mcp = {
@@ -88,13 +51,6 @@ in
         enabled = true;
       };
 
-      # # Slack reads and writes.
-      # slack = {
-      #   command = lib.getExe slackMcpServer;
-      #   env.SLACK_MCP_ENABLED_TOOLS = lib.concatStringsSep "," slackWriteTools;
-      #   enabled = true;
-      # };
-
       # Leave disabled servers commented to keep Claude settings writable.
       # k8s.command = lib.getExe pkgs.mcp-k8s-go;
     };
@@ -114,6 +70,5 @@ in
     pkgs.mcp-k8s-go
     pkgs.mcp-server-memory
     pkgs.terraform-mcp-server
-    # slackMcpServer
   ];
 }

@@ -78,6 +78,9 @@ its store path.
 
 ### `<leader>d` — debugger (nvim-dap)
 
+The UI is enabled; each project still needs an appropriate debug adapter and
+launch configuration before these commands can start a debug session.
+
 | Key | Action |
 | --- | --- |
 | `<leader>db` / `<leader>dc` | Toggle breakpoint / continue |
@@ -99,7 +102,7 @@ its store path.
 
 | Keys | Owner | Notes |
 | --- | --- | --- |
-| `<C-hjkl>` | smart-splits | Move between windows and panes, `<C-\>` to the previous one |
+| `<C-hjkl>` | smart-splits | Move between Neovim windows, `<C-\>` to the previous one; Herdr panes use `Ctrl-Shift-h/j/k/l` |
 | `<M-hjkl>` | smart-splits | Resize the current window |
 | `<C-t>` | toggleterm | Floating terminal |
 | `]c` / `[c` | gitsigns | Next / previous hunk |
@@ -107,7 +110,7 @@ its store path.
 | `]q` `]l` `]b` `]t` `]a` | built-in | Quickfix, loclist, buffer, tag and arglist motions, `[` reverses |
 | `gz` / `gZ` | nvim-surround | `gz{motion}`, `gzd` delete, `gzr` replace, capitals for line-wise |
 | `gc` / `gb` | comment.nvim | Line and block comments, `gcc` / `gbc` for the current line |
-| `gr` | built-in LSP | `grn` rename, `gra` code action, `grr` references, `gri` implementation, `grt` type definition, `grx` codelens, `gO` document symbols |
+| `gr` | built-in LSP | `grn` rename, `gra` code action, `grr` references, `gri` implementation, `grt` type definition, `grx` codelens; inspect `:verbose nmap gO` for the active document-symbol/mini.basics binding |
 | `gs` | leap | Jump from another window |
 | `gx` | built-in | Open the path or URL under the cursor |
 | `<M-n>` / `<M-p>` | illuminate | Next / previous reference of the word under the cursor |

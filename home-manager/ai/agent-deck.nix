@@ -1,3 +1,4 @@
+# Package the tmux-backed agent dashboard and give it a distinct desktop window.
 {
   config,
   lib,
@@ -9,17 +10,17 @@ let
   # Upstream ships no flake and nixpkgs has no package; build the pinned tag.
   agentDeck = pkgs.buildGoModule {
     pname = "agent-deck";
-    version = "1.16.18";
+    version = "1.16.38";
     src = agent-deck;
-    vendorHash = "sha256-ZIBWsEa6IpoW66/kd40UNihBrbo5yjCsRIQatCbt4q8=";
+    vendorHash = "sha256-8d56v5csbdGaQku2LR7Twy2fKoXBVPKN9KPHdsithjg=";
     subPackages = [ "cmd/agent-deck" ];
     env.CGO_ENABLED = 0;
     ldflags = [
       "-s"
       "-w"
-      "-X=main.Version=1.16.18"
+      "-X=main.Version=1.16.38"
     ];
-    # The suite drives live tmux servers; the release tag already passed CI.
+    # The suite requires live tmux servers, unavailable in this sandboxed build.
     doCheck = false;
     nativeBuildInputs = [ pkgs.installShellFiles ];
     postInstall = ''

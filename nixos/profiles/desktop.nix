@@ -2,12 +2,12 @@
 #
 # Sets up:
 # - Logitech wireless (Solaar), Bluetooth, PipeWire (replaces PulseAudio)
-# - systemd-boot loader with high console mode
+# - systemd-boot loader with firmware-selected console resolution
 # - Quiet boot kernel params so the splash owns the screen end-to-end
 #
-# Machines import chrome-policies.nix, console.nix and plymouth.nix beside
+# Machines import chrome-policies.nix and plymouth.nix beside
 # this one; profiles stay leaf (nixos/AGENTS.md).
-{ pkgs, ... }:
+{ ... }:
 {
   hardware.logitech.wireless = {
     enable = true;

@@ -1,3 +1,4 @@
+# Install standalone graphical apps and shared terminal icon fonts.
 { pkgs, ... }: {
   home.packages = [
     # pkgs.mindustry

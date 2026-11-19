@@ -41,4 +41,4 @@ replace=$2
 target=${3:-.}
 
 rg -l -0 -- "$search" "$target" |
-  xargs -0 -r -n1 sd "$search" "$replace"
+  xargs -0 -r sd -- "$search" "$replace"

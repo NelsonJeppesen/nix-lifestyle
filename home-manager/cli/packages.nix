@@ -1,17 +1,19 @@
+# Install general CLI tools; feature-specific tools belong in their own modules.
 { pkgs, ... }: {
   home.packages = [
     pkgs.kafkactl # Kafka CLI
-    pkgs.amber-lang # Bash compiler
+    #pkgs.amber-lang # Bash compiler
     pkgs.nixpkgs-review # Nixpkgs PR review
     pkgs.nh # Nix helper
     pkgs.nixfmt # Nix formatter
     # pkgs.vitetris # Terminal tetris clone
     pkgs.lsof # Open files
     (pkgs.python313.withPackages (ps: [ ps.pyserial ])) # Python 3.13 + pyserial (MediaTek preloader exploits)
+    pkgs.uv # Python tool runner; supplies uvx for okta-awscli and nless aliases
     pkgs.android-tools # adb/fastboot
     pkgs.circumflex # Hacker News reader
     #pkgs.fx
-    #pkgs.somafm-cli # forked
+    # pkgs.somafm-cli # SomaFM terminal radio player
     # pkgs.google-cloud-sdk
     pkgs.awscli2 # AWS CLI v2
     # pkgs.oci-cli # Oracle Cloud Infrastructure CLI
@@ -24,7 +26,6 @@
     # pkgs.wireshark # Network protocol analyzer
     # pkgs.wireguard-tools # WireGuard VPN management
     # pkgs.fluxcd # GitOps continuous delivery for Kubernetes
-    pkgs.k9s # Kubernetes dashboard
     pkgs.jq # JSON processor
     pkgs.jqp # Interactive jq
     pkgs.fastgron # Greppable JSON

@@ -1,3 +1,4 @@
+# Expose the packaged OpenRig CLIs without starting or changing a running rig.
 { pkgs, openrig, ... }:
 let
   openrigPackage = pkgs.callPackage ./openrig/package.nix { inherit openrig; };

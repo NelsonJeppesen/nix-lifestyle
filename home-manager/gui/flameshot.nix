@@ -1,16 +1,27 @@
+# Own screenshot shortcuts and launch Flameshot with a fresh capture process.
 {
   config,
   pkgs,
-  flameshot,
   ...
 }:
 let
   flameshotScreenshot = pkgs.writeShellApplication {
     name = "flameshot-screenshot";
-    runtimeInputs = [ pkgs.procps ];
+    runtimeInputs = [
+      pkgs.procps
+      pkgs.coreutils
+    ];
     text = ''
-      pkill -f '/bin/[f]lameshot( |$)' || true
-      while pgrep -f '/bin/[f]lameshot( |$)' >/dev/null; do
+      # Replace only this user's capture process. A stuck process must not
+      # leave a keyboard-shortcut launcher polling forever.
+      pkill -u "$UID" -f '/bin/[f]lameshot( |$)' || true
+      attempts=0
+      while pgrep -u "$UID" -f '/bin/[f]lameshot( |$)' >/dev/null; do
+        if (( attempts >= 100 )); then
+          printf 'flameshot-screenshot: capture process did not exit within five seconds\n' >&2
+          exit 1
+        fi
+        attempts=$((attempts + 1))
         sleep 0.05
       done
       exec ${config.services.flameshot.package}/bin/flameshot "$@"
@@ -25,7 +36,6 @@ in
       screenshot = [ ];
     };
     "org/gnome/settings-daemon/plugins/media-keys" = {
-      screenshot = [ ];
       custom-keybindings = [
         "/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom0/"
         "/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/flameshot-full/"
@@ -46,7 +56,6 @@ in
 
   services.flameshot = {
     enable = true;
-    package = flameshot.packages.${pkgs.stdenv.hostPlatform.system}.flameshot;
     settings = {
       General = {
         # Don't pop the "Welcome to Flameshot" message on every restart

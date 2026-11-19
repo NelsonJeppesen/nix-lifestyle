@@ -1,3 +1,4 @@
+# Adapt the pinned Paperclip npm release and its native dependencies to NixOS.
 {
   lib,
   pkgs,
@@ -5,14 +6,16 @@
 }:
 pkgs.buildNpmPackage {
   pname = "paperclipai";
-  version = "2026.1001.0";
+  version = "2026.1106.0";
   src = paperclip;
   nodejs = pkgs.nodejs_24;
 
   postPatch = ''
-    # The release bundles Linux x64 dependencies. The lock omits optional
-    # entries for other platforms that are absent from those bundles.
-    cp ${./package-lock.json} package-lock.json
+    # package-lock.json is `npm install --package-lock-only --ignore-scripts`
+    # output for the release's package.json. Some packages bundle their
+    # Linux x64 dependencies with broken edges that `npm ci` rejects;
+    # bundled-lock.jq repairs only those bundled entries.
+    ${lib.getExe pkgs.jq} -f ${./bundled-lock.jq} ${./package-lock.json} > package-lock.json
 
     # The stable Home Manager CLI link is not an upstream managed-install
     # shim. Code in the Nix store needs no ~/.paperclip/cli/install.json.
@@ -29,7 +32,7 @@ pkgs.buildNpmPackage {
   '';
 
   npmDepsFetcherVersion = 2;
-  npmDepsHash = "sha256-36bu9zaS99Ycy4qwPqRqBWpGDC88LBKe7UTg+wga3yE=";
+  npmDepsHash = "sha256-J06mlgHPsDkwL3cC6bw42Lo4WBNQHwbncDJCwHUZcAY=";
   dontNpmBuild = true;
   dontNpmPrune = true;
   npmFlags = [ "--ignore-scripts" ];
@@ -77,8 +80,8 @@ pkgs.buildNpmPackage {
       --set PAPERCLIP_UPDATE_CHECK 0
   '';
 
-  # Exercise the native dependency that crashed during server startup with
-  # the older ELF patcher, after the installed binaries have been fixed up.
+  # Exercise libvips through sharp after ELF fixups; a successful CLI version
+  # check alone does not prove the image-processing addon can load.
   doInstallCheck = true;
   installCheckPhase = ''
     runHook preInstallCheck

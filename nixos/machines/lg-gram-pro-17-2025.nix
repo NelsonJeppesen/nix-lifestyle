@@ -1,13 +1,17 @@
 # LG Gram Pro 17 2025 17Z90TP-G (Intel Core Ultra 7 255H, Arrow Lake-H)
 { pkgs, ... }:
 {
+  # Compatibility defaults for stateful services; do not bump during upgrades.
   system.stateVersion = "26.05";
+
+  # Stable identity of the disk backing /boot and /dev/mapper/crypted.
+  # NVMe numeric names can exchange places between boots. This selects the
+  # destructive installation target; ordinary rebuilds do not repartition it.
+  disko.devices.disk.vdb.device = "/dev/disk/by-id/nvme-eui.002538b2514012f8";
 
   imports = [
     ../profiles/chrome-policies.nix
-    ../profiles/console.nix
     ../profiles/desktop.nix
-    ../profiles/factorio.nix
     ../profiles/gnome.nix
     ../profiles/intel.nix
     ../profiles/keychron.nix
@@ -17,6 +21,8 @@
     ../profiles/nix-ld.nix
     ../profiles/plymouth.nix
     ../profiles/s3fs.nix
+    ../profiles/storage-maintenance.nix
+    ../profiles/scanner.nix
     ../profiles/tailscale.nix
     ../profiles/wifi.nix
     ../profiles/x86_64.nix
@@ -25,8 +31,8 @@
   # GPU: `i915`, not `xe`. 7d51 is this Arrow Lake-H iGPU (check with
   # `cat /sys/class/drm/card*/device/device`).
   #
-  # xe has hard-frozen this machine three times (Jul, Sep and Oct 2026),
-  # always after a run of "TLB invalidation fence timeout, seqno=N
+  # Workaround for xe hard freezes preceded by "TLB invalidation fence
+  # timeout, seqno=N
   # recv=N-1". Cause: the standalone media GT's GuC acks TLB invalidations
   # through a CTB that xe maps CPU-cached, and on MTL/ARL that mapping
   # isn't coherent, so the CPU reads the ack ~2.3 s late. i915 has the
@@ -42,7 +48,7 @@
   # natively, so it needs no force_probe.
   boot.kernelParams = [
     # "acpi.ec_no_wakeup=1"
-    # GPE storm fix carried from 12th-gen LG Gram. Verify the offending GPE
+    # Workaround for a firmware GPE storm. Verify the offending GPE
     # is still 0x6e on this machine via:
     #   grep -v '   0$' /sys/firmware/acpi/interrupts/gpe*
     "acpi_mask_gpe=0x6e"
@@ -73,10 +79,9 @@
     DeviceScale=2
   '';
 
-  # AX211 / BE200 Wi-Fi tuning + Intel SOF audio (Meteor/Arrow Lake).
-  # AX211 is prone to disconnects with default power_save=1 + uapsd; both
-  # workarounds below are widely used. SOF dsp_driver=3 forces the SOF stack
-  # over the legacy HDA fallback (which gives "dummy output" on some Grams).
+  # Disable Intel Wi-Fi power saving for link reliability. iwlmvm settings
+  # apply only when that op-mode is loaded; kernels using iwlmld ignore them.
+  # SOF dsp_driver=3 selects the DSP audio stack required by this hardware.
   boot.extraModprobeConfig = ''
     options iwlwifi power_save=0 uapsd_disable=1
     options iwlmvm power_scheme=1

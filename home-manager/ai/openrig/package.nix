@@ -1,3 +1,4 @@
+# Build OpenRig from its pinned npm release and compile its native SQLite binding.
 {
   lib,
   pkgs,
@@ -5,16 +6,17 @@
 }:
 pkgs.buildNpmPackage {
   pname = "openrig";
-  version = "0.6.4";
+  version = "0.7.14";
   src = openrig;
   nodejs = pkgs.nodejs_24;
 
+  # Freeze transitive npm integrity metadata alongside the pinned release.
   postPatch = ''
     cp ${./package-lock.json} package-lock.json
   '';
 
   npmDepsFetcherVersion = 2;
-  npmDepsHash = "sha256-ROLRT6ARVs9GIhUUJ2m0fDS+M5BuMukpcnHQrgdDWsY=";
+  npmDepsHash = "sha256-lf8TmO+HXsq1GyoINT0REN3gEEWOvC2y/EI4S8gUtvw=";
   dontNpmBuild = true;
   npmFlags = [ "--ignore-scripts" ];
   nativeBuildInputs = [ pkgs.python3 ];

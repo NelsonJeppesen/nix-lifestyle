@@ -10,9 +10,15 @@
   age.secrets.s3fs-creds.file = "/etc/secrets/encrypted/s3fs.creds.age";
   environment.systemPackages = with pkgs; [ s3fs ];
 
+  # Keep the local file cache private; it may contain decrypted bucket data.
+  systemd.tmpfiles.rules = [ "d /var/cache/s3fs 0700 root root -" ];
+
   fileSystems."/s3fs" = {
     device = "jeppesen.io-s3fs";
-    fsType = "fuse./run/current-system/sw/bin/s3fs";
+    # util-linux dispatches this type to the packaged mount.s3fs helper.
+    # An absolute binary path in a fuse.* type bypasses that helper and sends
+    # S3 options to the kernel, which rejects them as unknown parameters.
+    fsType = "s3fs";
     noCheck = true;
     options = [
       # Defer mount until network-online and don't fail boot if S3 is

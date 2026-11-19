@@ -1,3 +1,4 @@
+# Provide an explicit screen-idle inhibitor for presentations or long tasks.
 { pkgs, ... }: {
   dconf.settings = {
     "org/gnome/shell/extensions/caffeine" = {

@@ -22,8 +22,12 @@ Writes loop.webm next to this script. Needs yt-dlp and ffmpeg; on NixOS:
 EOF
 }
 
-if [ $# -lt 1 ] || [ "$1" = "-h" ] || [ "$1" = "--help" ]; then
+if [ "${1:-}" = "-h" ] || [ "${1:-}" = "--help" ]; then
   usage
+  exit 0
+fi
+if [ $# -lt 1 ] || [ $# -gt 3 ]; then
+  usage >&2
   exit 1
 fi
 
@@ -31,7 +35,8 @@ src=$1
 start=${2:-0}
 duration=${3:-}
 here=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
-work=$(mktemp -d)
+# Keep temporary output on the destination filesystem so mv is an atomic rename.
+work=$(mktemp -d "$here/.make-loop.XXXXXX")
 trap 'rm -rf "$work"' EXIT
 
 if [ -f "$src" ]; then
@@ -46,13 +51,15 @@ fi
 trim=(-ss "$start")
 [ -n "$duration" ] && trim+=(-t "$duration")
 
-# Scale by height then centre-crop to width, so 16:9 sources fill a 16:10
-# frame instead of being letterboxed into it.
+# Scale until both dimensions cover the target, then center-crop. This also
+# accepts portrait and square sources without requesting an oversized crop.
+# Encode into the temporary directory so failure preserves the tracked clip.
 ffmpeg -nostdin -y -loglevel error "${trim[@]}" -i "$input" \
-  -vf "scale=-2:900,crop=1440:900" \
+  -vf "scale=1440:900:force_original_aspect_ratio=increase:force_divisible_by=2,crop=1440:900" \
   -c:v libvpx-vp9 -crf 32 -b:v 0 -an -row-mt 1 \
-  "$here/loop.webm"
+  "$work/loop.webm"
 
+mv -- "$work/loop.webm" "$here/loop.webm"
 printf 'wrote %s (%s)\n' "$here/loop.webm" \
   "$(du -h "$here/loop.webm" | cut -f1)"
 printf 'remember: git add it, or the flake cannot see it\n'

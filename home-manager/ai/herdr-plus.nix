@@ -1,3 +1,4 @@
+# Build the Herdr project/action plugin and declare project layouts and ARC workflows.
 {
   config,
   lib,
@@ -160,7 +161,10 @@ let
   };
 in
 {
-  home.packages = [ herdrPlus ];
+  home.packages = [
+    herdrPlus # Project templates and quick-action UI
+    herdrArc # ARC worktree commands, including Jira-only recovery
+  ];
 
   home.file = {
     # herdr-plus reads its config from the herdr-managed plugin config dir.

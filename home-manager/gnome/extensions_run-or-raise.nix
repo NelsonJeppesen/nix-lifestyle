@@ -1,3 +1,4 @@
+# Bind application keys to focus an existing window or start the application.
 { pkgs, ... }: {
   programs.gnome-shell.extensions = [
     {

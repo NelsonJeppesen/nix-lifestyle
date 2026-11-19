@@ -1,3 +1,4 @@
+# Configure desktop behavior and reserve key chords for application launchers.
 {
   config,
   lib,
@@ -40,7 +41,7 @@
     "org/gnome/settings-daemon/plugins/power" = {
       idle-dim = false; # no early backlight dim-to-30% before the blank
       ambient-enabled = false;
-      # On AC, hold off auto-suspend for 3 h so long-running background work (e.g.
+      # Suspend after two idle hours on AC; use an inhibitor for longer jobs.
       sleep-inactive-ac-type = "suspend";
       sleep-inactive-ac-timeout = 7200;
     };
@@ -113,7 +114,6 @@
     "org/gnome/desktop/wm/keybindings" = {
       switch-input-source = [ ]; # Free up <Super>space for app launcher
       switch-input-source-backward = [ ]; # Free up <Super><Shift>space
-      toggle-message-tray = [ "<Super>v" ]; # Reassign from <Super>m
       close = [ "<Super>BackSpace" ]; # Close window
       toggle-fullscreen = [ "<Super>Print" ]; # Fullscreen toggle
     };

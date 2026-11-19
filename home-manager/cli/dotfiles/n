@@ -1,3 +1,10 @@
 #!/usr/bin/env bash
-cd ~/source/personal/notes || exit 1
-nb edit "$(ls *.md | fzf --multi)"
+# Pick one Markdown note from the notes checkout and edit it with nb.
+# NUL-delimited filenames preserve spaces and newlines; cancelling does not edit.
+set -euo pipefail
+cd "$HOME/source/personal/notes" || exit 1
+shopt -s nullglob
+notes=(./*.md)
+((${#notes[@]})) || exit 0
+IFS= read -r -d '' selection < <(printf '%s\0' "${notes[@]}" | fzf --read0 --print0) || exit 0
+exec nb edit "$selection"

@@ -38,5 +38,4 @@ if [ "$#" -eq 0 ]; then
   set -- "$pkg"
 fi
 
-set -x
 exec nix shell "nixpkgs#$pkg" --command "$@"

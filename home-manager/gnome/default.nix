@@ -1,3 +1,4 @@
+# Compose desktop preferences and independently configurable GNOME extensions.
 { ... }: {
   imports = [
     ./gnome.nix

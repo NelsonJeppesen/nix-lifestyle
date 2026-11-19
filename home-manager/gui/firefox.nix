@@ -1,3 +1,4 @@
+# Define an optional Firefox profile; enable it through gui/default.nix.
 { pkgs, ... }:
 {
   programs.firefox = {

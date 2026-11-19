@@ -1,7 +1,7 @@
 # gnome.nix - GDM + GNOME desktop with unused services trimmed off
 #
 # User-side GNOME tweaks (dconf, keybindings, extensions) live in
-# home-manager/gnome.nix. This module only handles the system-level
+# home-manager/gnome/gnome.nix. This module only handles the system-level
 # session, display manager, and the trim-down of bundled services.
 { lib, pkgs, ... }:
 {
@@ -31,7 +31,7 @@
     };
   };
 
-  # Remove gnome tools I don't use
+  # Exclude bundled applications outside this workstation's workflow.
   environment.gnome.excludePackages = [
     pkgs.gnome-backgrounds
     pkgs.gnome-maps

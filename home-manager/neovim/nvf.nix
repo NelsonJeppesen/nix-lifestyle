@@ -1,3 +1,4 @@
+# Configure the nvf editor, language tools, navigation, and plugin workarounds.
 {
   lib,
   pkgs,
@@ -33,6 +34,23 @@
           # lspsaga and lspkind are disabled.
         };
 
+        # Work around the inverted buffer override in nvf's Conform callbacks
+        # (nvf ab3159a, modules/plugins/formatter/conform-nvim/conform-nvim.nix).
+        # Remove when upstream interprets false as disabled in both save phases.
+        # One synchronous pass keeps the on-disk file equal to the saved buffer.
+        formatter.conform-nvim.setupOpts = {
+          format_on_save = lib.generators.mkLuaInline ''
+            function(bufnr)
+              local enabled = vim.b[bufnr].nvf_format_save
+              if enabled == nil then enabled = vim.g.nvf_format_save end
+              if enabled then
+                return { lsp_format = "fallback", timeout_ms = 500 }
+              end
+            end
+          '';
+          format_after_save = null;
+        };
+
         debugger.nvim-dap = {
           enable = true;
           ui.enable = true;
@@ -49,7 +67,10 @@
           env.enable = true;
           json.enable = true;
           lua.enable = true;
-          nix.enable = true;
+          nix = {
+            enable = true;
+            format.type = [ "nixfmt" ]; # Match repository formatting on save
+          };
           python.enable = true;
           sql.enable = true;
           toml.enable = true;
@@ -156,21 +177,27 @@
           };
         };
 
+        # avante is off while its Rust library (avante-nvim-lib) fails to build
+        # at nixos-unstable f4a03c0: nixpkgs' cargoSetupHook exports
+        # AWS_LC_SYS_USE_SYSTEM=1 (NixOS/nixpkgs#537108) and nvf's avante build
+        # doesn't list aws-lc. Uncomment the three avante settings below once
+        # it builds.
         assistant = {
-          avante-nvim.enable = true;
+          # avante-nvim.enable = true;
           # Copilot itself is off; this only takes effect once it is enabled.
           copilot.cmp.enable = true;
         };
         # avante's commands require mega.cmdparse, which nvf's avante build does not ship.
-        luaPackages = [ "mega-cmdparse" ];
-        # avante now loads its native libraries from lua/, but nvf still links them into build/.
-        pluginOverrides.avante-nvim =
-          nvf.packages.${pkgs.stdenv.hostPlatform.system}.avante-nvim.overrideAttrs
-            (old: {
-              postInstall = old.postInstall + ''
-                cp -P $out/build/* $out/lua/
-              '';
-            });
+        # luaPackages = [ "mega-cmdparse" ];
+        # Work around nvf placing Avante native libraries in build/ while Avante
+        # loads them from lua/. Remove when the pinned package installs both correctly.
+        # pluginOverrides.avante-nvim =
+        #   nvf.packages.${pkgs.stdenv.hostPlatform.system}.avante-nvim.overrideAttrs
+        #     (old: {
+        #       postInstall = old.postInstall + ''
+        #         cp -P $out/build/* $out/lua/
+        #       '';
+        #     });
 
         # Mini modules
         mini = {
@@ -178,7 +205,7 @@
           basics.enable = true;
           # Richer `a`/`i` text objects: arguments, brackets, quotes, tags.
           ai.enable = true;
-          # Smooth scrolling, carried over from the pre-nvf config.
+          # Animate scroll and resize while leaving cursor and popup motion immediate.
           animate = {
             enable = true;
             setupOpts = {

@@ -1,3 +1,4 @@
+# Compose independent feature categories; shared user identity lives in other.nix.
 { ... }: {
   imports = [
     ./gnome

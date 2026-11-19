@@ -1,12 +1,16 @@
+# Rotate forest wallpapers about once a day; the lock screen keeps its own wallpaper.
 { pkgs, ... }: {
   dconf.settings = {
     "org/gnome/shell/extensions/space-iflow-randomwallpaper" = {
       auto-fetch = true;
-      change-lock-screen = false;
+      change-type = 0; # Desktop background only
       disable-hover-preview = true;
       fetch-on-startup = true;
       hide-panel-icon = true;
-      hours = 24;
+      # Rotation interval; the schema caps hours at 23 and minutes at 59, and an
+      # out-of-range value silently falls back to the 1 h 30 min default.
+      hours = 23;
+      minutes = 59;
       sources = [ "forest" ];
     };
 
@@ -32,7 +36,17 @@
 
   programs.gnome-shell.extensions = [
     {
-      package = pkgs.gnomeExtensions.random-wallpaper;
+      # nixpkgs packages random-wallpaper v39 (3.2.0), which sets
+      # St.BoxLayout:vertical in its panel menu; GNOME Shell 51 removed that
+      # property, so enable() throws and the extension stays in ERROR. Drop
+      # this patch once pkgs.gnomeExtensions.random-wallpaper lists shell
+      # version 51 in its metadata.json.
+      package = pkgs.gnomeExtensions.random-wallpaper.overrideAttrs (old: {
+        postPatch = (old.postPatch or "") + ''
+          substituteInPlace historyMenuElements.js \
+            --replace-fail "vertical: true," "orientation: Clutter.Orientation.VERTICAL,"
+        '';
+      });
     }
   ];
 }

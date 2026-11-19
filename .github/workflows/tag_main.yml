@@ -1,6 +1,6 @@
-# Tag every push to main with a UTC timestamp tag (YYYY-MM-DD-HH-MM).
-# Provides easy "what was deployed when" rollback points without manual
-# release management. Tags are pushed back to the repo using the default
+# Tag each main-branch push with its UTC time and unique workflow run/attempt.
+# These identify source snapshots, not proof of activation on a machine.
+# Tags are pushed back to the repo using the default
 # GITHUB_TOKEN with explicit `contents: write` scope.
 name: Tag Commit with Timestamp
 
@@ -9,11 +9,7 @@ on:
     branches:
       - main
 
-# Serialize tag jobs so two pushes within the same minute don't both try
-# to create (and push) the same timestamp tag.
-concurrency:
-  group: tag-main
-  cancel-in-progress: false
+# Independent tag names allow every push to run without a shared pending slot.
 
 # Restrict the implicit GITHUB_TOKEN to the minimum scope this job needs.
 permissions:
@@ -27,13 +23,8 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Set up Git
-        run: |
-          git config user.name "github-actions[bot]"
-          git config user.email "github-actions[bot]@users.noreply.github.com"
-
       - name: Generate timestamp tag
         run: |
-          TAG_NAME=$(date -u +"%Y-%m-%d-%H-%M")
-          git tag "$TAG_NAME"
+          TAG_NAME="$(date -u +'%Y-%m-%d-%H-%M-%S')-${GITHUB_RUN_ID}-${GITHUB_RUN_ATTEMPT}"
+          git tag "$TAG_NAME" "$GITHUB_SHA"
           git push origin "$TAG_NAME"

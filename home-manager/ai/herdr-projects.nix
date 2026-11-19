@@ -1,3 +1,4 @@
+# Optional project/thread plugin; importing this module enables its Herdr UI additions.
 {
   lib,
   pkgs,

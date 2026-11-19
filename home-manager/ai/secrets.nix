@@ -1,3 +1,4 @@
+# Decrypt tunnel credentials into runtime files; secret contents never enter the Nix store.
 { config, ... }: {
   age.secrets = {
     # Private OpenCode command.

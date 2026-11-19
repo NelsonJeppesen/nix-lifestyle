@@ -1,3 +1,4 @@
+# Find commands in nixpkgs using a prebuilt index instead of scanning locally.
 {
   programs.nix-index = {
     enable = true;

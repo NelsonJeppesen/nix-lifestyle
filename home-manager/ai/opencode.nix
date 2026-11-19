@@ -1,3 +1,4 @@
+# Manage OpenCode CLI defaults, agent instructions, and the loopback web service.
 {
   config,
   lib,
@@ -13,14 +14,6 @@ let
   ocwebLabelPairs = lib.concatStringsSep " " (
     lib.mapAttrsToList (host: label: "[${host}]=${label}") ocwebHostLabels
   );
-
-  # Removed 2026-09-18: opencode was built against a pinned bun 1.3.13 because
-  # nixpkgs' bun 1.4.2 (2026-09-12) miscompiled opencode's single-file bundle --
-  # a module landed as `undefined` in the service-layer graph, so every prompt
-  # died with "undefined is not an object (evaluating 'a.name')" before the
-  # first model call. nixpkgs is still on bun 1.4.2, so if that resurfaces,
-  # recover the override with:
-  #   git log -S bunPinned -- home-manager/ai/opencode.nix
 in
 {
   # Shell aliases for quick OpenCode invocation
@@ -32,28 +25,24 @@ in
 
   # `os`: fzf-pick one of the last 16 sessions and resume it.
   programs.zsh.initContent = ''
-    os() {
+    os() (
+      setopt pipefail
       local sess
       sess=$(mktemp -t opencode-sess.XXXXXX) || return
-      trap "rm -f -- '$sess'" EXIT INT TERM HUP
+      trap 'rm -f -- "$sess"' EXIT
+      trap 'exit 130' INT
+      trap 'exit 143' TERM
+      trap 'exit 129' HUP
       opencode session list -n 16 --format json \
-        | jq -r '.[] | "\(.id)\t\(((.updated // .created) / 1000) | strftime("%Y-%m-%d %H:%M"))\t\(.title)"' > "$sess"
+        | jq -r '.[] | "\(.id)\t\(((.updated // .created) / 1000) | strftime("%Y-%m-%d %H:%M"))\t\(.title)"' > "$sess" || return
       local id
       id=$(fzf --with-nth=2.. --delimiter=$'\t' < "$sess") || return
       opencode --session "''${id%%	*}"
-    }
+    )
   '';
 
   programs.opencode = {
     enable = true;
-    # nixpkgs' opencode 2.2.5 node_modules hash is wrong on Linux; upstream
-    # fixed it in NixOS/nixpkgs@c399e1b7f (2026-11-04). Drop this override
-    # once that commit reaches nixpkgs-unstable.
-    package = pkgs.opencode.overrideAttrs (prev: {
-      node_modules = prev.node_modules.overrideAttrs {
-        outputHash = "sha256-prx9dX7kUvs/E3zopkaPk5LXh3xJAy5sZeum/W8L7cA=";
-      };
-    });
     enableMcpIntegration = true; # Pull the shared programs.mcp.servers catalogue (mcp.nix) into settings.mcp
 
     # Loopback web UI behind Cloudflare Access.
@@ -98,20 +87,20 @@ in
     context = ''
       # Persistent Memory (MCP `memory` server)
 
-      A `memory` MCP server is always available. It exposes a knowledge graph
-      with entities, relations, and observations that persist across sessions
+      When enabled in the active profile, the `memory` MCP server exposes a
+      knowledge graph with entities, relations, and observations across sessions
       in `~/.local/share/mcp-memory/memory.json`.
 
       ## When to read memory
-      - At the start of any non-trivial task, call `memory.search_nodes` with
-        relevant keywords (project name, repo, tool, person) before exploring
-        files. If results look relevant, follow up with `memory.open_nodes`.
+      - If the memory tools are available, start non-trivial tasks with
+        `memory.search_nodes` using relevant keywords (project name, repo, tool,
+        person) before exploring files. If results look relevant, follow up with `memory.open_nodes`.
       - When the user references prior work ("like we did last time", "the
-        usual setup", "remember that…"), query memory first.
+        usual setup", "remember that…"), query memory first when available.
 
       ## When to write memory
       Persist information that is durable and reusable across sessions:
-      - Repo conventions and constraints (e.g. "nix-lifestyle: no flakes,
+      - Repo conventions and constraints (e.g. "nix-lifestyle: two independent flakes,
         signed commits required, nixfmt on touched files").
       - Architectural decisions and their rationale.
       - Stable facts about the user's environment, hosts, and tooling.
@@ -201,9 +190,11 @@ in
             token_file="${tokenDir}/token.$label"
             if [ ! -r "$token_file" ]; then
               echo "opencode-web-tunnel: token for '$label' missing at $token_file." >&2
-              exit 1
+              exit 78 # EX_CONFIG: a missing credential needs operator action
             fi
-            exec cloudflared tunnel --no-autoupdate run --token "$(cat "$token_file")"
+            # An inherited inline token takes precedence over --token-file.
+            unset TUNNEL_TOKEN
+            exec cloudflared tunnel --no-autoupdate run --token-file "$token_file"
           '';
         };
       in
@@ -211,6 +202,8 @@ in
         ExecStart = lib.getExe run;
         Restart = "on-failure";
         RestartSec = 5;
+        # Do not wake the laptop repeatedly for a missing credential.
+        RestartPreventExitStatus = 78;
       };
 
     Install.WantedBy = [ "default.target" ];

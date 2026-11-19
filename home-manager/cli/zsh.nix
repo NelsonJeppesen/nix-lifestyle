@@ -1,3 +1,4 @@
+# Compose the interactive shell, packaged helpers, completion, and prompt.
 { config, pkgs, ... }:
 let
   # Package shell helpers with runtime dependencies.
@@ -291,7 +292,6 @@ in
 
       #  Shell init (large blob; kept last per AGENTS.md "module structure")
       initContent = ''
-        # Shell titles for Kitty and herdr.
         # Zsh-native batch rename.
         autoload -Uz zmv
         alias zmv='noglob zmv'
@@ -302,26 +302,24 @@ in
         compdef g=git k=kubectl
 
 
+        # Select AWS identity for this shell and its child commands only.
+        # For directory-scoped persistence, set AWS_PROFILE in a reviewed .envrc.
         ap() {
-          local query="$1"
+          local query="''${1:-}"
           local profile
-          mkdir -p ~/.aws
           profile="$(${pkgs.awscli2}/bin/aws configure list-profiles | sort | ${pkgs.fzf}/bin/fzf --exact --query="$query" --select-1)" || return
           if [ -n "$profile" ]; then
-            print -r -- "export AWS_PROFILE=''${(q)profile}" > ~/.aws/sticky.profile
-            source ~/.aws/sticky.profile
+            export AWS_PROFILE="$profile"
           fi
         }
 
-        # Select and persist an AWS region.
+        # Region selection is local to this shell, matching ap's scope.
         ar() {
-          local query="$1"
+          local query="''${1:-}"
           local region
-          mkdir -p ~/.aws
           region="$(printf '%s\n' us-east-1 ca-central-1 eu-central-1 ap-southeast-2 | ${pkgs.fzf}/bin/fzf --exact --query="$query" --select-1)" || return
           if [ -n "$region" ]; then
-            print -r -- "export AWS_REGION=''${(q)region}" > ~/.aws/sticky.region
-            source ~/.aws/sticky.region
+            export AWS_REGION="$region"
           fi
         }
 
@@ -394,16 +392,13 @@ in
         rst() {
           cd ~/source || return
           ${pkgs.kubectx}/bin/kubectx --unset
-          mkdir -p ~/.aws
-          : > ~/.aws/sticky.profile
-          : > ~/.aws/sticky.region
           unset AWS_PROFILE AWS_REGION
           clear
         }
 
         # curl-all-ips: curl every A/AAAA record behind a DNS name individually.
         curl-all-ips() {
-          local host="$1" path="''${2:-/}" port="''${3:-443}"
+          local host="$1" request_path="''${2:-/}" port="''${3:-443}"
           if [[ -z "$host" ]]; then
             echo "usage: curl-all-ips HOST [PATH] [PORT]" >&2
             return 1
@@ -412,25 +407,33 @@ in
           host="''${host#https://}"
           host="''${host#http://}"
           host="''${host%%/*}"
-          [[ "$path" = /* ]] || path="/$path"
+          [[ "$request_path" = /* ]] || request_path="/$request_path"
 
-          local -a ips
-          ips=(''${(f)"$(${pkgs.dnsutils}/bin/dig +short A "$host"; ${pkgs.dnsutils}/bin/dig +short AAAA "$host")"})
+          # Read address records only: +short also emits CNAME targets, which
+          # curl cannot use as --resolve addresses. Deduplicate dual queries.
+          local -aU ips
+          ips=(''${(f)"$(
+            { ${pkgs.dnsutils}/bin/dig +noall +answer A "$host";
+              ${pkgs.dnsutils}/bin/dig +noall +answer AAAA "$host"; } |
+              ${pkgs.gawk}/bin/awk '$4 == "A" || $4 == "AAAA" { print $5 }'
+          )"})
           if (( ''${#ips} == 0 )); then
             echo "curl-all-ips: no A/AAAA records for $host" >&2
             return 1
           fi
 
-          echo "$host -> ''${#ips} IP(s) on :$port$path"
-          local ip
+          echo "$host -> ''${#ips} IP(s) on :$port$request_path"
+          local ip resolve_ip
           for ip in "''${ips[@]}"; do
+            resolve_ip="$ip"
+            [[ "$ip" != *:* ]] || resolve_ip="[$ip]"
             printf '%-39s ' "$ip"
             ${pkgs.curl}/bin/curl \
               --silent --show-error --output /dev/null \
               --max-time 10 \
-              --resolve "$host:$port:$ip" \
+              --resolve "$host:$port:$resolve_ip" \
               --write-out 'status=%{http_code} time=%{time_total}s\n' \
-              "https://$host:$port$path" \
+              "https://$host:$port$request_path" \
               || echo "request failed"
           done
         }

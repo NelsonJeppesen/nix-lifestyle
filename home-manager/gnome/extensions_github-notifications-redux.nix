@@ -1,3 +1,4 @@
+# Install the flake-pinned GitHub notification indicator.
 { pkgs, gnome-github-notifications-redux, ... }: {
   programs.gnome-shell.extensions = [
     {

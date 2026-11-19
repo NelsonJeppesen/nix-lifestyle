@@ -1,3 +1,4 @@
+# Provide Ruby and RSpec together so the interpreter can find the test gems.
 { pkgs, ... }:
 {
   home.packages = [

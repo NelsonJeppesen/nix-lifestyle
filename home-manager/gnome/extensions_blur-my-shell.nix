@@ -1,3 +1,4 @@
+# Describe typed blur pipelines and choose which shell surfaces use them.
 { pkgs, lib, ... }: {
   dconf.settings = {
     "org/gnome/shell/extensions/blur-my-shell" =

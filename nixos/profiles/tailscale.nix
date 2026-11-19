@@ -8,7 +8,11 @@
 { ... }:
 {
   services.tailscale.enable = true;
-  services.tailscale.extraSetFlags = [ "--operator=nelson" ];
+  # The VPN remains available, but its separate SSH server must stay off too.
+  services.tailscale.extraSetFlags = [
+    "--operator=nelson"
+    "--ssh=false"
+  ];
 
   # tailscaled talks to resolved over DBus to install per-interface resolvers.
   services.resolved.enable = true;

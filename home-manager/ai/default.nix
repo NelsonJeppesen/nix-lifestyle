@@ -1,3 +1,4 @@
+# Compose AI tools; commented imports are optional features, not installed services.
 { ... }: {
   imports = [
     ./agent-deck.nix
@@ -6,7 +7,6 @@
     ./herdr.nix
     ./herdr-plus.nix
     # ./herdr-projects.nix
-    ./herdr-remote.nix
     ./mcp.nix
     ./microsoft-365.nix
     ./opencode.nix
@@ -14,7 +14,6 @@
     ./paperclip.nix
     ./pi.nix
     # ./ralph.nix
-    # ./slack-mcp.nix
     ./packages.nix
     ./secrets.nix
     ./files.nix

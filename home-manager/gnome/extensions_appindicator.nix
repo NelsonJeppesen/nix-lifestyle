@@ -1,3 +1,4 @@
+# Display application tray indicators in the GNOME top bar.
 { pkgs, ... }: {
   dconf.settings = {
     "org/gnome/shell/extensions/appindicator" = {

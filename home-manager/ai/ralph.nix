@@ -1,3 +1,4 @@
+# Optional repeat-until-complete agent runner, packaged against pinned source.
 {
   pkgs,
   open-ralph-wiggum,
